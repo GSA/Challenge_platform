@@ -1,0 +1,40 @@
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@2.1.3
+  docker: circleci/docker@2.6.0
+
+executors:
+  test_executor:
+    working_directory: ~/Challenge_platform
+    docker:
+      - image: cimg/ruby:3.2.2
+        environment:
+          RAILS_ENV: test
+
+jobs:
+  rspec:
+    executor:
+      name: test_executor
+    steps:
+      - checkout
+      - run: gem install bundler --version 2.4.13
+      - restore_cache:
+          keys:
+            - bundle-cache-v1-{{ checksum "Gemfile.lock" }}
+            - bundle-cache-v1-
+      - run:
+          name: Install dependencies
+          command: bundle install --path vendor/bundle
+      - save_cache:
+          key: bundle-cache-v1-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: Run Tests
+          command: bundle exec rspec
+
+workflows:
+  build_and_test:
+    jobs:
+      - rspec
