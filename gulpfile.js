@@ -16,8 +16,8 @@ uswds.settings.version = 3;
 * Path settings
 * Set as many as you need
 */
-uswds.paths.dist.css = './assets/stylesheets';
-uswds.paths.dist.theme = './sass/uswds';
+uswds.paths.dist.css = './app/assets/stylesheets';
+uswds.paths.dist.theme = './app/assets/uswds';
 uswds.paths.src.sass = './node_modules/@uswds/uswds/packages'
 
 /**

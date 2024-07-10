@@ -6,9 +6,13 @@ Rails.application.config.assets.version = "1.0"
 # Add additional assets to the asset load path.
 Rails.application.config.assets.paths << './uswds'
 
-Rails.application.config.assets.enabled = true
-Rails.application.config.assets.paths << Rails.root.join("app", "assets", "plugins", "uswds","css")
-Rails.application.config.assets.paths << Rails.root.join("app", "assets", "plugins", "uswds","js")
+Rails.application.config.assets.paths += [
+  Rails.root.join('uswds', 'assets').to_s
+]
+
+# Rails.application.config.assets.enabled = true
+# Rails.application.config.assets.paths << Rails.root.join("app", "assets", "plugins", "uswds","css")
+# Rails.application.config.assets.paths << Rails.root.join("app", "assets", "plugins", "uswds","js")
 
 
 # Precompile additional assets.

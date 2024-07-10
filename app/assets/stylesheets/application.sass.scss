@@ -2,12 +2,8 @@
 
 // Entry point for your Sass build
 //  1. Load your project's USWDS settings configuration
-@forward "../sass/uswds/_uswds-theme.scss";
+@forward "../app/assets/uswds/_uswds-theme.scss";
 
 
 // // 2. Load USWDS source code
-@forward "/node_modules/@uswds/uswds/packages/uswds/_index.scss";
-
-body {
-    background-color: green;    
-}
+@forward "../node_modules/@uswds/uswds/packages/uswds/_index.scss";
