@@ -16,6 +16,12 @@ gem "pg"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
+# Use the popular Faraday HTTP library
+gem "faraday"
+
+# Use the JWT gem for JSON Web Tokens
+gem "jwt"
+
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 
