@@ -23,5 +23,8 @@ module RailsNew
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Use the Postgresql-specific syntax for DB dumps
+    config.active_record.schema_format = :sql
   end
 end
