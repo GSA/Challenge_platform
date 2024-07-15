@@ -93,6 +93,8 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+    codeclimate-test-reporter (1.0.9)
+      simplecov (<= 0.13)
     concurrent-ruby (1.3.3)
     connection_pool (2.4.1)
     crass (1.0.6)
@@ -101,6 +103,7 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     diff-lcs (1.5.1)
+    docile (1.1.5)
     drb (2.2.1)
     erubi (1.13.0)
     globalid (1.2.1)
@@ -245,6 +248,11 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    simplecov (0.13.0)
+      docile (~> 1.1.0)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -292,6 +300,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   capybara
+  codeclimate-test-reporter
   debug
   importmap-rails
   jbuilder

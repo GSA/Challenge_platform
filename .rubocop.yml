@@ -1,0 +1,169 @@
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'bin/**/*'
+    - 'config/**/*'
+    - 'config.ru'
+    - 'db/**/*'
+    - 'vendor/**/*'
+
+#### Bundler ####
+
+Bundler/OrderedGems:
+  Enabled: false
+
+#### Layout ####
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Layout/ExtraSpacing:
+  AllowForAlignment: true
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+#### Lint ####
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    # https://github.com/rubocop/rubocop/issues/4222#issuecomment-290655562
+    - 'spec/**/*'
+
+#### Metrics ####
+
+Metrics/BlockLength:
+  CountComments: false  # count full line comments?
+  Max: 25
+  AllowedMethods:
+    # By default, exclude the `#refine` method, as it tends to have larger
+    # associated blocks.
+    - refine
+  Exclude:
+    # Specs by nature tend to have lengthy, nested blocks
+    - '*.gemspec'
+    - 'spec/**/*'
+
+Metrics/ClassLength:
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+
+Metrics/MethodLength:
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+
+#### Performance ####
+
+Performance/TimesMap:
+  # Disabling. Using `Array.new` with a block is marginally more performant, but
+  # `n.times.map` is much more readable. The former can be used when n is large.
+  # https://stackoverflow.com/questions/41518896/why-does-rubocop-suggest-replacing-times-map-with-array-new
+  Enabled: false
+
+#### Rails ####
+
+Rails/SkipsModelValidations:
+  # We are leaving this cop enabled as a warning.
+  # Failures can be approved as needed during code review.
+  Enabled: true
+
+#### RSpec ####
+
+# See also the list of RSpec statements that we exempt from the block
+# length cop, under Metrics/BlockLength above
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/lib/tasks/**/*'
+
+RSpec/DescribedClass:
+  SkipBlocks: true
+
+RSpec/ExampleLength:
+  Enabled: false
+
+# Marked as unsafe due to ongoing issues with awkward wording.
+# See: https://github.com/rubocop/rubocop-rspec/issues/1179
+RSpec/ExampleWording:
+  SafeAutoCorrect: false
+
+RSpec/ExpectChange:
+  EnforcedStyle: block
+
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
+
+RSpec/MessageChain:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+#### Style ####
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'spec/**/*'
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  Description: 'Use parentheses for method calls with arguments.'
+  Enabled: true
+  AllowedMethods:
+    # Ignore Ruby keyword methods:
+    # https://rubystyle.guide/#methods-that-have-keyword-status-in-ruby
+    - require
+    - yield
+    # https://rubystyle.guide/#exceptions
+    - raise
+    # Ignore logging methods, as they are considered part of an internal DSL
+    # https://rubystyle.guide/#methods-that-are-part-of-an-internal-dsl
+    - debug
+    - info
+    - warn
+    - error
+    - fatal
+    # Ignore Rails DSL methods
+    - has_many
+    - has_one
+    - order
+    - redirect_to
+    - render
+    - reset_callbacks
+    - set_callback
+    - skip_callback
+  Exclude:
+    - 'spec/**/*'
+    - 'Gemfile'
+    - 'db/**/*'
+    - '*.gemspec'
+
+Style/MixinUsage:
+  Exclude:
+    - bin/*
+
+Style/RescueStandardError:
+  Enabled: false
+
+Style/SymbolArray:
+  MinSize: 4
