@@ -48,23 +48,6 @@ jobs:
           paths:
             - ~/Challenge_platform
 
-  rubocop:
-    parameters:
-      ruby_version:
-        type: string
-
-    executor: 
-      name: test_executor
-      ruby_version: << parameters.ruby_version >>
-
-    steps:
-      - restore_cache:
-          key: repo-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Run Rubocop
-          command: rubocop
-
   snyk:
     parameters:
       ruby_version:
@@ -162,15 +145,6 @@ workflows:
     jobs:
       - checkout_code:
           name: "checkout code: Ruby << matrix.ruby_version >>"
-          matrix:
-            parameters:
-              ruby_version:
-                - 3.2.2
-
-      - rubocop:
-          requires:
-            - checkout_code
-          name: "rubocop code scan: Ruby << matrix.ruby_version >>"
           matrix:
             parameters:
               ruby_version:

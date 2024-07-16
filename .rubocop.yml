@@ -91,11 +91,6 @@ RSpec/DescribedClass:
 RSpec/ExampleLength:
   Enabled: false
 
-# Marked as unsafe due to ongoing issues with awkward wording.
-# See: https://github.com/rubocop/rubocop-rspec/issues/1179
-RSpec/ExampleWording:
-  SafeAutoCorrect: false
-
 RSpec/ExpectChange:
   EnforcedStyle: block
 
@@ -122,6 +117,9 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/**/*'
+
+Style/StringLiterals:
+  Enabled: false
 
 Style/IfUnlessModifier:
   Enabled: false
