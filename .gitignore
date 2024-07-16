@@ -41,5 +41,3 @@ node_modules
 !/app/assets/builds/.keep
 
 /node_modules
-
-/assets/uswds

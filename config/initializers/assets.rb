@@ -7,11 +7,15 @@ Rails.application.config.assets.version = "1.0"
 Rails.application.config.assets.paths << './uswds'
 
 Rails.application.config.assets.paths += [
-  Rails.root.join('uswds', 'assets').to_s
+  Rails.root.join('assets', 'uswds').to_s
 ]
 
-# Rails.application.config.assets.enabled = true
-# Rails.application.config.assets.paths << Rails.root.join("app", "assets", "plugins", "uswds","css")
+Rails.application.config.assets.enabled = true
+Rails.application.config.assets.paths << Rails.root.join("fonts")
+Rails.application.config.assets.paths << Rails.root.join("img")
+
+
+
 # Rails.application.config.assets.paths << Rails.root.join("app", "assets", "plugins", "uswds","js")
 
 
