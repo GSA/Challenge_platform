@@ -1,0 +1,152 @@
+<%= form_with(model: user) do |form| %>
+  <% if user.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+        <% user.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :role, style: "display: block" %>
+    <%= form.text_field :role %>
+  </div>
+
+  <div>
+    <%= form.label :status, style: "display: block" %>
+    <%= form.text_field :status %>
+  </div>
+
+  <div>
+    <%= form.label :finalized, style: "display: block" %>
+    <%= form.check_box :finalized %>
+  </div>
+
+  <div>
+    <%= form.label :display, style: "display: block" %>
+    <%= form.check_box :display %>
+  </div>
+
+  <div>
+    <%= form.label :email, style: "display: block" %>
+    <%= form.text_field :email %>
+  </div>
+
+  <div>
+    <%= form.label :email_confirmation, style: "display: block" %>
+    <%= form.text_field :email_confirmation %>
+  </div>
+
+  <div>
+    <%= form.label :password_hash, style: "display: block" %>
+    <%= form.text_field :password_hash %>
+  </div>
+
+  <div>
+    <%= form.label :password, style: "display: block" %>
+    <%= form.text_field :password %>
+  </div>
+
+  <div>
+    <%= form.label :password_confirmation, style: "display: block" %>
+    <%= form.text_field :password_confirmation %>
+  </div>
+
+  <div>
+    <%= form.label :token, style: "display: block" %>
+    <%= form.text_field :token %>
+  </div>
+
+  <div>
+    <%= form.label :jwt_token, style: "display: block" %>
+    <%= form.text_field :jwt_token %>
+  </div>
+
+  <div>
+    <%= form.label :email_verification_token, style: "display: block" %>
+    <%= form.text_field :email_verification_token %>
+  </div>
+
+  <div>
+    <%= form.label :email_verified_at, style: "display: block" %>
+    <%= form.datetime_field :email_verified_at %>
+  </div>
+
+  <div>
+    <%= form.label :password_reset_token, style: "display: block" %>
+    <%= form.text_field :password_reset_token %>
+  </div>
+
+  <div>
+    <%= form.label :password_reset_expires_at, style: "display: block" %>
+    <%= form.datetime_field :password_reset_expires_at %>
+  </div>
+
+  <div>
+    <%= form.label :first_name, style: "display: block" %>
+    <%= form.text_field :first_name %>
+  </div>
+
+  <div>
+    <%= form.label :last_name, style: "display: block" %>
+    <%= form.text_field :last_name %>
+  </div>
+
+  <div>
+    <%= form.label :phone_number, style: "display: block" %>
+    <%= form.text_field :phone_number %>
+  </div>
+
+  <div>
+    <%= form.label :avatar_key, style: "display: block" %>
+    <%= form.text_field :avatar_key %>
+  </div>
+
+  <div>
+    <%= form.label :avatar_extension, style: "display: block" %>
+    <%= form.text_field :avatar_extension %>
+  </div>
+
+  <div>
+    <%= form.label :terms_of_use, style: "display: block" %>
+    <%= form.datetime_field :terms_of_use %>
+  </div>
+
+  <div>
+    <%= form.label :privacy_guidelines, style: "display: block" %>
+    <%= form.datetime_field :privacy_guidelines %>
+  </div>
+
+  <div>
+    <%= form.label :agency_id, style: "display: block" %>
+    <%= form.number_field :agency_id %>
+  </div>
+
+  <div>
+    <%= form.label :last_active, style: "display: block" %>
+    <%= form.datetime_field :last_active %>
+  </div>
+
+  <div>
+    <%= form.label :recertification_expired_at, style: "display: block" %>
+    <%= form.datetime_field :recertification_expired_at %>
+  </div>
+
+  <div>
+    <%= form.label :active_session, style: "display: block" %>
+    <%= form.check_box :active_session %>
+  </div>
+
+  <div>
+    <%= form.label :renewal_request, style: "display: block" %>
+    <%= form.text_field :renewal_request %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
