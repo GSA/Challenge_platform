@@ -19,7 +19,7 @@ let
     pkgs.git
 
     pkgs.imagemagick
-    pkgs.postgresql
+    pkgs.postgresql_15
     pkgs.redis
 
     pkgs.ruby_3_2

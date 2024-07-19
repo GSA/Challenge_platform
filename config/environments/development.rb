@@ -77,13 +77,11 @@ Rails.application.configure do
   config.login_gov_oidc = {
     idp_host: "https://idp.int.identitysandbox.gov",
     login_redirect_uri: "http://localhost:3000/auth/result",
-    logout_uri: "https://idp.int.identitysandbox.gov/openid_connect/logout",
     logout_redirect_uri: "https://www.challenge.gov/",
     acr_value: "http://idmanagement.gov/ns/assurance/loa/1",
     client_id: "urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:challenge_gov_platform_dev",
     private_key_password: nil,
     private_key_path: "config/private.pem",
     public_key_path: "config/public.crt",
-    token_endpoint: "https://idp.int.identitysandbox.gov/api/openid_connect/token"
   }
 end

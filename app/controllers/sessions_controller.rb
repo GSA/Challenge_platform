@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
 
-  before_action :handle_result_error, :well_known_configuration, :decode_token, only: [:result]
+  before_action :check_result_error, :exchange_token, only: [:result]
 
   def new
     # TODO: handle redirect to login page due to inactivity
@@ -25,36 +25,28 @@ class SessionsController < ApplicationController
 
   private
 
-  def handle_result_error
+  def check_result_error
     if params[:error]
       Rails.logger.error("Login.gov authentication error: #{params[:error]}")
       flash[:error] = "There was an issue with logging in. Please try again."
       redirect_to new_session_path
     end
 
-    if params[:code].nil? && params[:state].nil?
+    if params[:code].nil?
       Rails.logger.error("Login.gov unknown error")
       flash[:error] = "Please try again."
       redirect_to new_session_path
     end
   end
 
-  def well_known_configuration
-    @login_gov = LoginGov.new
-    status, body = @login_gov.get_well_known_configuration
-
-    if status != 200
-      Rails.logger.error("well-known/openid-configuration error: code=#{status} - body:\n#{body}")
-      flash[:error] = "There was an issue logging in."
-      redirect_to new_session_path
-      return
-    end
-
-    Rails.logger.debug("well_known_config response body=#{body}")
-    @openid_config = body
-  end
-
-  def decode_token
-    private_key = @login_gov.private_key
+  # Authenticates a user with login.gov using JWT
+  def exchange_token
+    login_gov = LoginGov.new
+    @login_gov_user = login_gov.exchange_token_from_auth_result params[:code]
+    Rails.logger.debug("GOT userinfo=#{@login_gov_user}")
+  rescue LoginGov::LoginApiError => error
+    Rails.logger.error("LoginGov::LoginApiError(#{error.message}) status_code(#{error.status_code}) response_body:\n#{error.response_body}")
+    flash[:error] = "There was an issue logging in."
+    redirect_to new_session_path
   end
 end
