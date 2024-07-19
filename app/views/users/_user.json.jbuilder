@@ -1,2 +1,0 @@
-json.extract! user, :id, :role, :status, :finalized, :display, :email, :email_confirmation, :password_hash, :password, :password_confirmation, :token, :jwt_token, :email_verification_token, :email_verified_at, :password_reset_token, :password_reset_expires_at, :first_name, :last_name, :phone_number, :avatar_key, :avatar_extension, :terms_of_use, :privacy_guidelines, :agency_id, :last_active, :recertification_expired_at, :active_session, :renewal_request, :created_at, :updated_at
-json.url user_url(user, format: :json)
