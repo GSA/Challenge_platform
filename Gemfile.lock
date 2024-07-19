@@ -310,6 +310,7 @@ DEPENDENCIES
   rspec_junit_formatter
   rubocop
   selenium-webdriver
+  simplecov
   sprockets-rails
   stimulus-rails
   turbo-rails
