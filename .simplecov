@@ -6,7 +6,7 @@ if ENV['CIRCLECI']
       if SimpleCov.result.covered_percent < 100
         puts "=========== Lines missing coverage: ==========="
         result_hash['Cucumber, RSpec']['coverage'].each do |file_name, file_lines|
-           file_lines.each_with_index { |val, index| puts "#{file_name}, #{index + 1}" if val == 0 }
+          file_lines.each_with_index { |val, index| puts "#{file_name}, #{index + 1}" if val == 0 }
         end
       end
     end

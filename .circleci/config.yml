@@ -137,8 +137,6 @@ jobs:
 
             ./cc-test-reporter upload-coverage --input coverage/codeclimate_full_report.json
 
-            ruby scripts/check_coverage.rb ${PWD}/coverage/codeclimate_full_report.json
-
 workflows:
   version: 2
   build_and_test:

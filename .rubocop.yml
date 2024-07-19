@@ -12,6 +12,7 @@ AllCops:
     - 'config.ru'
     - 'db/**/*'
     - 'vendor/**/*'
+    - .simplecov
 
 #### Bundler ####
 
