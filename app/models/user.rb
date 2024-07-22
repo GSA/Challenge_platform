@@ -31,4 +31,52 @@
 #  recertification_expired_at :datetime
 #
 class User < ApplicationRecord
+  has_many :challenges
+  has_many :challenge_managers
+  has_many :challenge_manager_challenges, through: :challenge_managers, source: :challenge
+  has_many :members
+  has_many :supporting_documents, class_name: 'Document'
+  has_many :submissions, foreign_key: :submitter_id
+  has_many :managed_submissions, class_name: 'Submission', foreign_key: :manager_id
+  has_many :submission_documents, class_name: 'Submissions::Document'
+  has_many :message_context_statuses
+
+  # Virtual Attributes
+  attr_accessor :email_confirmation, :password, :password_confirmation
+
+  attribute :role, :string, default: -> { read_attribute(:role) }
+  attribute :status, :string, default: 'pending'
+  attribute :finalized, :boolean, default: true
+  attribute :display, :boolean, default: true
+
+  attribute :email, :string
+  attribute :password_hash, :string
+  attribute :token, :uuid
+  attribute :jwt_token, :string
+
+  attribute :email_verification_token, :string
+  attribute :email_verified_at, :datetime
+
+  attribute :password_reset_token, :uuid
+  attribute :password_reset_expires_at, :datetime
+
+  attribute :first_name, :string
+  attribute :last_name, :string
+  attribute :phone_number, :string
+
+  attribute :avatar_key, :uuid
+  attribute :avatar_extension, :string
+
+  attribute :terms_of_use, :datetime
+  attribute :privacy_guidelines, :datetime
+  attribute :agency_id, :integer
+
+  attribute :last_active, :datetime
+  attribute :recertification_expired_at, :datetime
+  attribute :active_session, :boolean
+
+  attribute :renewal_request, :string
+
+  attribute :created_at, :datetime, precision: 6
+  attribute :updated_at, :datetime, precision: 6
 end
