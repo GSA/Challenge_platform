@@ -1,0 +1,16 @@
+version: '2'
+plugins:
+  brakeman:
+    enabled: true
+  rubocop:
+    enabled: true
+    channel: rubocop-1-48-1
+exclude_patterns:
+- .nix-bundler
+- config/
+- db/
+- vendor/
+-  "**/vendor/**/*"
+- app/assets/images/
+- app/assets/stylesheets/uswds.css
+- app/assets/stylesheets/uswds_override.css
