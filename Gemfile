@@ -58,7 +58,7 @@ group :development, :test do
 
   gem "rubocop"
   gem "rspec-rails"
-  gem 'codeclimate-test-reporter'
+  gem "codeclimate-test-reporter"
 end
 
 group :development do
@@ -77,8 +77,9 @@ group :test do
   gem "webmock"
   gem "capybara"
   gem "selenium-webdriver"
-  gem 'rspec_junit_formatter'
-  gem 'simplecov'
+  gem "rspec_junit_formatter"
+  gem "simplecov"
+  gem "rails-controller-testing"
 end
 
 gem "cssbundling-rails", "~> 1.4"

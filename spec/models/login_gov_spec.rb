@@ -1,22 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe LoginGov do
-  subject(:login_gov) { LoginGov.new(login_gov_config) }
+  subject(:login_gov) { LoginGov.new }
 
-  let(:login_gov_config) do
-    {
-      idp_host: 'http://localhost:3003',
-      login_redirect_uri: "http://localhost:3000/auth/result",
-      logout_redirect_uri: "https://www.challenge.gov/",
-      acr_value: "http://idmanagement.gov/ns/assurance/loa/1",
-      client_id: "urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:challenge_gov_platform_dev",
-      private_key_password: nil,
-      private_key_path: "config/private.pem",
-      public_key_path: "config/public.crt",
-    }
-  end
-  let(:jwks_uri) { login_gov_config[:idp_host] + "/api/openid_connect/certs" }
-  let(:end_session_endpoint) { login_gov_config[:idp_host] + "/openid_connect/logout" }
+  let(:jwks_uri) { login_gov.config[:idp_host] + "/api/openid_connect/certs" }
+  let(:end_session_endpoint) { login_gov.config[:idp_host] + "/openid_connect/logout" }
   let(:code_param) { "ABC123" }
   let(:public_key) do
     {"keys": [{"alg":"RS256", "use":"sig", "kty":"RSA", "n":"a-key-here", "e":"AQAB", "kid":"a-kid-here"}]}
