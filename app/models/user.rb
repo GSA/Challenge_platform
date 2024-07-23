@@ -39,7 +39,11 @@ class User < ApplicationRecord
   has_many :members, dependent: :destroy
   has_many :supporting_documents, class_name: 'Document', dependent: :destroy
   has_many :submissions, foreign_key: :submitter_id, inverse_of: :submitter, dependent: :destroy
-  has_many :managed_submissions, class_name: 'Submission', foreign_key: :manager_id, inverse_of: :manager, dependent: :destroy
+  has_many :managed_submissions,
+           class_name: 'Submission',
+           foreign_key: :manager_id,
+           inverse_of: :manager,
+           dependent: :destroy
   has_many :submission_documents, class_name: 'Submissions::Document', dependent: :destroy
   has_many :message_context_statuses, dependent: :destroy
 
