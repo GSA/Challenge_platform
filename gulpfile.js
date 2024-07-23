@@ -19,7 +19,9 @@ uswds.settings.version = 3;
 uswds.paths.dist.css = './app/assets/stylesheets';
 uswds.paths.dist.theme = './app/assets/uswds';
 uswds.paths.src.sass = './node_modules/@uswds/uswds/packages'
-uswds.paths.dist.img = '../app/img'
+uswds.paths.dist.img = './public/img'
+uswds.paths.dist.fonts = './public/fonts'
+uswds.paths.dist.js = './app/javascript/uswds'
 
 /**
 * Exports
