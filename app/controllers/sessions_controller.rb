@@ -20,7 +20,8 @@ class SessionsController < ApplicationController
   end
 
   def result
-    
+    # TODO: store the user_info in the session
+    # session[:user_info] = @login_userinfo
   end
 
   private
@@ -42,8 +43,8 @@ class SessionsController < ApplicationController
   # Authenticates a user with login.gov using JWT
   def exchange_token
     login_gov = LoginGov.new
-    @login_gov_user = login_gov.exchange_token_from_auth_result params[:code]
-    Rails.logger.debug("GOT userinfo=#{@login_gov_user}")
+    @login_userinfo = login_gov.exchange_token_from_auth_result params[:code]
+    Rails.logger.debug("GOT userinfo=#{@login_userinfo}")
   rescue LoginGov::LoginApiError => error
     Rails.logger.error("LoginGov::LoginApiError(#{error.message}) status_code(#{error.status_code}) response_body:\n#{error.response_body}")
     flash[:error] = "There was an issue logging in."
