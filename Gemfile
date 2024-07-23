@@ -56,8 +56,18 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
 
-  gem "rubocop"
   gem "rspec-rails"
+
+  # add the Ruby LSP package so it's bundled with the rest of the gems and available to VS Code
+  gem "ruby-lsp"
+
+  # rubocop and specific extensions used by VS Code
+  gem "rubocop"
+  gem "rubocop-performance", require: false
+  gem "rubocop-rake", require: false
+  gem "rubocop-rails", require: false
+  gem "rubocop-rspec", require: false
+
   gem "codeclimate-test-reporter"
 end
 

@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe LoginGov do
-  subject(:login_gov) { LoginGov.new }
+  subject(:login_gov) { described_class.new }
 
-  let(:jwks_uri) { login_gov.config[:idp_host] + "/api/openid_connect/certs" }
-  let(:end_session_endpoint) { login_gov.config[:idp_host] + "/openid_connect/logout" }
+  let(:jwks_uri) { "#{login_gov.config[:idp_host]}/api/openid_connect/certs" }
+  let(:end_session_endpoint) { "#{login_gov.config[:idp_host]}/openid_connect/logout" }
   let(:code_param) { "ABC123" }
   let(:public_key) do
-    {"keys": [{"alg":"RS256", "use":"sig", "kty":"RSA", "n":"a-key-here", "e":"AQAB", "kid":"a-kid-here"}]}
+    { keys: [{ alg: "RS256", use: "sig", kty: "RSA", n: "a-key-here", e: "AQAB", kid: "a-kid-here" }] }
   end
   let(:private_key) do
     key = <<~EOKEY
@@ -46,24 +46,24 @@ RSpec.describe LoginGov do
   let(:user_info) do
     [
       {
-        "sub"=>"sub",
-        "iss"=>"https://idp.int.identitysandbox.gov/",
-        "email"=>"test@example.gov",
-        "email_verified"=>true,
-        "ial"=>"http://idmanagement.gov/ns/assurance/ial/1",
-        "aal"=>"urn:gov:gsa:ac:classes:sp:PasswordProtectedTransport:duo",
-        "nonce"=>"nonce",
-        "aud"=>"urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:challenge_gov_platform_dev",
-        "jti"=>"jti",
-        "at_hash"=>"hash-EQg7x1gw",
-        "c_hash"=>"hash-KnQ",
-        "acr"=>"http://idmanagement.gov/ns/assurance/ial/1",
-        "exp"=>1721696128,
-        "iat"=>1721695228,
-        "nbf"=>1721695228
+        "sub" => "sub",
+        "iss" => "https://idp.int.identitysandbox.gov/",
+        "email" => "test@example.gov",
+        "email_verified" => true,
+        "ial" => "http://idmanagement.gov/ns/assurance/ial/1",
+        "aal" => "urn:gov:gsa:ac:classes:sp:PasswordProtectedTransport:duo",
+        "nonce" => "nonce",
+        "aud" => "urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:challenge_gov_platform_dev",
+        "jti" => "jti",
+        "at_hash" => "hash-EQg7x1gw",
+        "c_hash" => "hash-KnQ",
+        "acr" => "http://idmanagement.gov/ns/assurance/ial/1",
+        "exp" => 1_721_696_128,
+        "iat" => 1_721_695_228,
+        "nbf" => 1_721_695_228
       }, {
-        "kid"=>"abc10930230928df",
-        "alg"=>"RS256"
+        "kid" => "abc10930230928df",
+        "alg" => "RS256"
       }
     ]
   end
@@ -71,8 +71,8 @@ RSpec.describe LoginGov do
   before do
     stub_request(:get, login_gov.well_known_configuration_url).
       to_return(body: {
-        jwks_uri: jwks_uri,
-        end_session_endpoint: end_session_endpoint,
+        jwks_uri:,
+        end_session_endpoint:
       }.to_json)
   end
 
@@ -87,12 +87,16 @@ RSpec.describe LoginGov do
 
     it 'returns userinfo on success' do
       # mock the encryption and http requests
-      jwks = double("jwks double")
-      expect(login_gov).to receive(:get_public_key).with(jwks_uri) { public_key }
-      expect(login_gov).to receive(:read_private_key) { private_key }
-      expect(JWT::JWK::Set).to receive(:new).with(public_key) { jwks }
-      stub_request(:post, login_gov.token_endpoint_url).to_return(status: 200, body: "{\"id_token\": \"#{id_token}\"}", headers: {})
-      expect(JWT).to receive(:decode).with(id_token, nil, true, algorithms: ["RS256"], jwks: jwks).and_return(user_info)
+      jwks = class_double(JWT::JWK::Set, new: "jwks double")
+      allow(login_gov).to receive(:get_public_key).with(jwks_uri) { public_key } # rubocop:disable RSpec/SubjectStub
+      allow(login_gov).to receive(:read_private_key) { private_key } # rubocop:disable RSpec/SubjectStub
+      allow(JWT::JWK::Set).to receive(:new).with(public_key) { jwks }
+      stub_request(:post, login_gov.token_endpoint_url).to_return(
+        status: 200,
+        body: "{\"id_token\": \"#{id_token}\"}",
+        headers: {}
+      )
+      allow(JWT).to receive(:decode).with(id_token, nil, true, algorithms: ["RS256"], jwks:).and_return(user_info)
       actual = login_gov.exchange_token_from_auth_result code_param
       expect(actual).to eq(user_info)
     end

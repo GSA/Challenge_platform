@@ -1,6 +1,7 @@
-class SessionsController < ApplicationController
+# frozen_string_literal: true
 
-  before_action :check_result_error, :exchange_token, only: [:result]
+class SessionsController < ApplicationController
+  before_action :check_error_result, :require_code_param, :exchange_token, only: [:result]
 
   def new
     # TODO: handle redirect to login page due to inactivity
@@ -26,28 +27,32 @@ class SessionsController < ApplicationController
 
   private
 
-  def check_result_error
-    if params[:error]
-      Rails.logger.error("Login.gov authentication error: #{params[:error]}")
-      flash[:error] = "There was an issue with logging in. Please try again."
-      redirect_to new_session_path
-    end
+  def check_error_result
+    return unless params[:error]
 
-    if params[:code].nil?
-      Rails.logger.error("Login.gov unknown error")
-      flash[:error] = "Please try again."
-      redirect_to new_session_path
-    end
+    Rails.logger.error("Login.gov authentication error: #{params[:error]}")
+    flash[:error] = t("login_error")
+    redirect_to new_session_path
+  end
+
+  def require_code_param
+    return if params[:code].present?
+
+    Rails.logger.error("Login.gov unknown error")
+    flash[:error] = t("please_try_again")
+    redirect_to new_session_path
   end
 
   # Authenticates a user with login.gov using JWT
   def exchange_token
     login_gov = LoginGov.new
-    @login_userinfo = login_gov.exchange_token_from_auth_result params[:code]
-    Rails.logger.debug("GOT userinfo=#{@login_userinfo}")
-  rescue LoginGov::LoginApiError => error
-    Rails.logger.error("LoginGov::LoginApiError(#{error.message}) status_code(#{error.status_code}) response_body:\n#{error.response_body}")
-    flash[:error] = "There was an issue logging in."
+    @login_userinfo = login_gov.exchange_token_from_auth_result(params[:code])
+    Rails.logger.debug do
+      "userinfo=#{@login_userinfo}"
+    end
+  rescue LoginGov::LoginApiError => e
+    Rails.logger.error("LoginGov::LoginApiError(#{e.message}) status(#{e.status_code}):\n#{e.response_body}")
+    flash[:error] = t("login_error")
     redirect_to new_session_path
   end
 end

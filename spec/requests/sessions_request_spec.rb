@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SessionsController, type: :request do
+RSpec.describe "SessionsController" do
   it "get new renders successfully" do
     get "/session/new"
     expect(response).to render_template(:new)
@@ -9,7 +9,7 @@ RSpec.describe SessionsController, type: :request do
   it "post create redirects to login.gov" do
     auth_host, _auth_query = LoginGov.new.authorization_url.split("?")
     post "/session"
-    expect(response).to redirect_to(%r{\A#{auth_host}})
+    expect(response).to redirect_to(/\A#{auth_host}/)
   end
 
   it "delete session logs the user out" do
@@ -21,6 +21,7 @@ RSpec.describe SessionsController, type: :request do
   it "get /auth/result without params redirects to login" do
     get "/auth/result"
     expect(response).to redirect_to("/session/new")
+    expect(flash[:error]).to include("Please try again.")
   end
 
   it "get /auth/result with error param redirects to login" do
