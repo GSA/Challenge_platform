@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -32,18 +34,18 @@
 #
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
+RSpec.describe User do
   describe 'validations' do
     it 'validates presence of email' do
-      user = User.new(email: nil)
-      expect(user.valid?).to be_falsey
+      user = described_class.new(email: nil)
+      expect(user).not_to be_valid
       expect(user.errors[:email]).to include("can't be blank")
     end
   end
 
   describe 'default values' do
     it 'sets active_session to false by default' do
-      user = User.new
+      user = described_class.new
       expect(user.active_session).to be_falsey
     end
   end
