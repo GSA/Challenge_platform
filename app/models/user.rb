@@ -41,9 +41,6 @@ class User < ApplicationRecord
   has_many :submission_documents, class_name: 'Submissions::Document'
   has_many :message_context_statuses
 
-  # Virtual Attributes
-  attr_accessor :email_confirmation, :password, :password_confirmation
-
   attribute :role, :string, default: -> { read_attribute(:role) }
   attribute :status, :string, default: 'pending'
   attribute :finalized, :boolean, default: true
@@ -71,12 +68,14 @@ class User < ApplicationRecord
   attribute :privacy_guidelines, :datetime
   attribute :agency_id, :integer
 
-  attribute :last_active, :datetime
-  attribute :recertification_expired_at, :datetime
-  attribute :active_session, :boolean
+  attribute :last_active, :datetime, default: false
+  attribute :recertification_expired_at, :datetime, default: false
+  attribute :active_session, :boolean, default: false
 
   attribute :renewal_request, :string
 
   attribute :created_at, :datetime, precision: 6
   attribute :updated_at, :datetime, precision: 6
+
+  validates :email, presence: true
 end
