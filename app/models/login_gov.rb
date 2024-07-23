@@ -62,8 +62,6 @@ class LoginGov
   def exchange_token_from_auth_result code_param
     # fetch the well-known configuration template data from login.gov
     openid_config = get_well_known_configuration
-    puts "WELL KNOWN CONFIGURATION"
-    pp openid_config
 
     # read the private key from local file system
     private_key = read_private_key
