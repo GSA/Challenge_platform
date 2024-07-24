@@ -34,6 +34,8 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+/config/private.pem
+/config/public.crt
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
