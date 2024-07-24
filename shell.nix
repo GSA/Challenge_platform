@@ -26,6 +26,9 @@ let
     pkgs.bundler
     pkgs.nodejs_18
     pkgs.yarn
+
+    # cloud foundry CLI
+    pkgs.cloudfoundry-cli
   ];
 
   inputs = basePackages

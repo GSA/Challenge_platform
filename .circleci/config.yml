@@ -1,0 +1,173 @@
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@2.1.3
+  docker: circleci/docker@2.6.0
+
+executors:
+  test_executor:
+    parameters:
+      ruby_version:
+        type: string
+      postgres_version:
+        type: string
+
+    working_directory: ~/Challenge_platform
+
+    docker:
+      - image: cimg/ruby:<< parameters.ruby_version >>
+        environment:
+          RAILS_ENV: test
+      - image: cimg/postgres:<< parameters.postgres_version >>
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: challenge_gov_test
+
+commands:
+  prepare_database:
+    description: 'Prepare the test database'
+    steps:
+      - run: bundle exec rake db:setup
+
+jobs:
+  checkout_code:
+    parameters:
+      ruby_version:
+        type: string
+      postgres_version:
+        type: string
+
+    executor: 
+      name: test_executor
+      ruby_version: << parameters.ruby_version >>
+      postgres_version: << parameters.postgres_version >>
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - save_cache:
+          key: repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/Challenge_platform
+
+  rspec:
+    parameters:
+      ruby_version:
+        type: string
+      postgres_version:
+        type: string
+
+    executor: 
+      name: test_executor
+      ruby_version: << parameters.ruby_version >>
+      postgres_version: << parameters.postgres_version >>
+
+    parallelism: 1
+
+    steps:
+      - restore_cache:
+          key: repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - ruby/install-deps:
+          key: gems-ruby-<< parameters.ruby_version >>-v{{ .Environment.CACHE_VERSION }}
+
+      - prepare_database
+
+      - run:
+          name: Run Tests
+          command: |
+            mkdir /tmp/test-results
+            ./cc-test-reporter before-build
+
+            # Run Rspec tests
+            bundle exec rspec --format progress \
+                              --format RspecJunitFormatter \
+                              --out /tmp/test-results/rspec.xml \
+                              --format progress \
+                              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+
+            ./cc-test-reporter format-coverage \
+              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.<< parameters.ruby_version >>.json
+
+      - persist_to_workspace:
+          root: ~/Challenge_platform/coverage
+          paths:
+          - codeclimate.rspec.*.json
+
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+
+  report_coverage:
+    parameters:
+      ruby_version:
+        type: string
+      postgres_version:
+        type: string
+
+    executor: 
+      name: test_executor
+      ruby_version: << parameters.ruby_version >>
+      postgres_version: << parameters.postgres_version >>
+
+    steps:
+      - restore_cache:
+          key: repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: ~/Challenge_platform/coverage
+
+      - run:
+          name: Report coverage to Code Climate
+          command: |
+            ./cc-test-reporter sum-coverage \
+              coverage/codeclimate.*.json \
+              --output coverage/codeclimate_full_report.json
+
+            ./cc-test-reporter upload-coverage --input coverage/codeclimate_full_report.json
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - checkout_code:
+          name: "checkout code: Ruby << matrix.ruby_version >>"
+          matrix:
+            parameters:
+              ruby_version:
+                - 3.2.2
+              postgres_version:
+                - "16.3"
+
+      - rspec:
+          requires:
+            - checkout_code
+          name: "rspec: Ruby << matrix.ruby_version >>"
+          matrix:
+            parameters:
+              ruby_version:
+                - 3.2.2
+              postgres_version:
+                - "16.3"
+
+      - report_coverage:
+          requires:
+            - "rspec: Ruby << matrix.ruby_version >>"
+          name: "report coverage: Ruby << matrix.ruby_version >>"
+          matrix:
+            parameters:
+              ruby_version:
+                - 3.2.2
+              postgres_version:
+                - "16.3"
