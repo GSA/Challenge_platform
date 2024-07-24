@@ -73,3 +73,8 @@ group :test do
   gem 'rspec_junit_formatter'
   gem 'simplecov'
 end
+
+gem "cssbundling-rails", "~> 1.4"
+
+# Use Sass to process CSS
+gem "sassc-rails"
