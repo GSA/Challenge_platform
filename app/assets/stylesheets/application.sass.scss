@@ -1,9 +1,3 @@
-// @use "uswds-core" as *;
-@use "uswds-core" with (
-  $theme-font-path: "../sploing",
-  $theme-image-path: "../spling",
-);
-
 // Entry point for your Sass build
 //  1. Load your project's USWDS settings configuration
 @forward "../app/assets/uswds/_uswds-theme.scss";

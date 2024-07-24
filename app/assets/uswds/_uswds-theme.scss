@@ -7,9 +7,8 @@ in the form $setting: value,
 ----------------------------------------
 */
 
-//
-// @use "uswds-core" with (
-//   $theme-font-path: "../fonts",
-//   $theme-image-path: "../img",
-// );
-//
+// @use "uswds-core" as *;
+@use "uswds-core" with (
+  $theme-font-path: "../sploing",
+  $theme-image-path: "../spling",
+);
