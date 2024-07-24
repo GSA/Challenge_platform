@@ -36,5 +36,7 @@ RSpec.describe "SessionsController" do
     allow(LoginGov).to receive(:new).and_return(login_gov)
     allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return({ email: "test@example.com" })
     get "/auth/result", params: { code: }
+    expect(response).to have_http_status(:ok)
+    expect(response).to render_template(:result)
   end
 end
