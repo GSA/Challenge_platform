@@ -9,6 +9,6 @@ in the form $setting: value,
 
 // @use "uswds-core" as *;
 @use "uswds-core" with (
-  $theme-font-path: "../sploing",
-  $theme-image-path: "../spling",
+  $theme-font-path: "./assets/fonts",
+  $theme-image-path: "./assets/images",
 );

@@ -19,9 +19,9 @@ uswds.settings.version = 3;
 uswds.paths.dist.css = './app/assets/stylesheets';
 uswds.paths.dist.theme = './app/assets/uswds';
 uswds.paths.src.sass = './node_modules/@uswds/uswds/packages'
-uswds.paths.dist.img = './public/img'
-uswds.paths.dist.fonts = './public/fonts'
 uswds.paths.dist.js = './app/javascript/uswds'
+uswds.paths.dist.img = './app/assets/uswds/images'
+uswds.paths.dist.fonts = './app/assets/uswds/fonts'
 
 /**
 * Exports
@@ -30,3 +30,6 @@ uswds.paths.dist.js = './app/javascript/uswds'
 exports.init = uswds.init;
 exports.compile = uswds.compile;
 exports.watch = uswds.watch;
+exports.default = uswds.watch;
+exports.copyFonts = uswds.copyFonts;
+exports.copyImages = uswds.copyImages;
