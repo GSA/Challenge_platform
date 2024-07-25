@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: challenges
@@ -84,6 +86,25 @@
 #
 require 'rails_helper'
 
-RSpec.describe Challenge, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe Challenge do
+  describe 'validations' do
+    it 'validates presence of title' do
+      challenge = described_class.new(title: nil)
+      expect(challenge).not_to be_valid
+      expect(challenge.errors[:title]).to include("can't be blank")
+    end
+
+    it 'validates presence of status' do
+      challenge = described_class.new(status: nil)
+      expect(challenge).not_to be_valid
+      expect(challenge.errors[:status]).to include("can't be blank")
+    end
+  end
+
+  describe 'default values' do
+    it 'sets status to pending by default' do
+      challenge = described_class.new
+      expect(challenge.status).to eq('pending')
+    end
+  end
 end

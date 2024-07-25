@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: challenges
@@ -83,4 +85,21 @@
 #  upload_instruction_note        :string(255)
 #
 class Challenge < ApplicationRecord
+  belongs_to :user
+  belongs_to :agency
+  belongs_to :sub_agency, class_name: 'Agency', optional: true
+
+  has_many :events, dependent: :delete_all
+  has_many :supporting_documents, class_name: 'Document', dependent: :delete_all
+  has_many :challenge_managers, dependent: :delete_all
+  has_many :challenge_manager_users, through: :challenge_managers, source: :user
+  has_many :federal_partners, dependent: :delete_all
+  has_many :federal_partner_agencies, through: :federal_partners, source: :agency
+  has_many :non_federal_partners, dependent: :delete_all
+  has_many :phases
+  has_many :submissions
+  has_many :submission_exports
+
+  validates :title, presence: true
+  validates :status, presence: true
 end
