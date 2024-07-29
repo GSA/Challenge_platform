@@ -33,4 +33,55 @@
 #  recertification_expired_at :datetime
 #
 class User < ApplicationRecord
+  has_many :challenges, dependent: :destroy
+  has_many :challenge_managers, dependent: :destroy
+  has_many :challenge_manager_challenges, through: :challenge_managers, source: :challenge, dependent: :destroy
+  has_many :members, dependent: :destroy
+  has_many :supporting_documents, class_name: 'Document', dependent: :destroy
+  has_many :submissions, foreign_key: :submitter_id, inverse_of: :submitter, dependent: :destroy
+  has_many :managed_submissions,
+           class_name: 'Submission',
+           foreign_key: :manager_id,
+           inverse_of: :manager,
+           dependent: :destroy
+  has_many :submission_documents, class_name: 'Submissions::Document', dependent: :destroy
+  has_many :message_context_statuses, dependent: :destroy
+
+  attribute :role, :string, default: -> { self[:role] }
+  attribute :status, :string, default: 'pending'
+  attribute :finalized, :boolean, default: true
+  attribute :display, :boolean, default: true
+
+  attribute :email, :string
+  attribute :password_hash, :string
+  attribute :token, :uuid
+  attribute :jwt_token, :string
+
+  attribute :email_verification_token, :string
+  attribute :email_verified_at, :datetime
+
+  attribute :password_reset_token, :uuid
+  attribute :password_reset_expires_at, :datetime
+
+  attribute :first_name, :string
+  attribute :last_name, :string
+  attribute :phone_number, :string
+
+  attribute :avatar_key, :uuid
+  attribute :avatar_extension, :string
+
+  attribute :terms_of_use, :datetime
+  attribute :privacy_guidelines, :datetime
+  attribute :agency_id, :integer
+
+  attribute :last_active, :datetime
+  attribute :recertification_expired_at, :datetime
+  attribute :active_session, :boolean, default: false
+
+  attribute :renewal_request, :string
+
+  attribute :created_at, :datetime, precision: 6
+  attribute :updated_at, :datetime, precision: 6
+
+  validates :email, presence: true
 end

@@ -34,6 +34,19 @@
 #
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe User do
+  describe 'validations' do
+    it 'validates presence of email' do
+      user = described_class.new(email: nil)
+      expect(user).not_to be_valid
+      expect(user.errors[:email]).to include("can't be blank")
+    end
+  end
+
+  describe 'default values' do
+    it 'sets active_session to false by default' do
+      user = described_class.new
+      expect(user.active_session).to be_falsey
+    end
+  end
 end
