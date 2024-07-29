@@ -18,7 +18,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Agency, type: :model do
+RSpec.describe Agency do
   describe 'validations' do
     it 'validates presence of name' do
       agency = described_class.new(name: nil, acronym: 'TEST')
