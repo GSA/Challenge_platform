@@ -8,19 +8,12 @@ orbs:
 
 executors:
   test_executor:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
     working_directory: ~/Challenge_platform
-
     docker:
-      - image: cimg/ruby:<< parameters.ruby_version >>
+      - image: cimg/ruby:3.2.4
         environment:
           RAILS_ENV: test
-      - image: cimg/postgres:<< parameters.postgres_version >>
+      - image: cimg/postgres:16.3
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -34,16 +27,8 @@ commands:
 
 jobs:
   checkout_code:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
-    executor: 
+    executor:
       name: test_executor
-      ruby_version: << parameters.ruby_version >>
-      postgres_version: << parameters.postgres_version >>
 
     steps:
       - checkout
@@ -60,16 +45,8 @@ jobs:
             - ~/Challenge_platform
 
   rspec:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
-    executor: 
+    executor:
       name: test_executor
-      ruby_version: << parameters.ruby_version >>
-      postgres_version: << parameters.postgres_version >>
 
     parallelism: 1
 
@@ -78,7 +55,7 @@ jobs:
           key: repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - ruby/install-deps:
-          key: gems-ruby-<< parameters.ruby_version >>-v{{ .Environment.CACHE_VERSION }}
+          key: gems-ruby-3.2.4-v{{ .Environment.CACHE_VERSION }}
 
       - prepare_database
 
@@ -96,7 +73,7 @@ jobs:
                               $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
 
             ./cc-test-reporter format-coverage \
-              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.<< parameters.ruby_version >>.json
+              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json
 
       - persist_to_workspace:
           root: ~/Challenge_platform/coverage
@@ -112,16 +89,8 @@ jobs:
           destination: test-results
 
   report_coverage:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
-    executor: 
+    executor:
       name: test_executor
-      ruby_version: << parameters.ruby_version >>
-      postgres_version: << parameters.postgres_version >>
 
     steps:
       - restore_cache:
@@ -142,7 +111,7 @@ jobs:
   dev-deploy:
     parallelism: 1
     docker:
-      - image: cimg/ruby:3.2.2
+      - image: cimg/ruby:3.2.4
     steps:
       - checkout
       - run: bundle cache --all
@@ -174,37 +143,13 @@ workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - checkout_code:
-          name: "checkout code: Ruby << matrix.ruby_version >>"
-          matrix:
-            parameters:
-              ruby_version:
-                - 3.2.2
-              postgres_version:
-                - "16.3"
-
+      - checkout_code
       - rspec:
           requires:
             - checkout_code
-          name: "rspec: Ruby << matrix.ruby_version >>"
-          matrix:
-            parameters:
-              ruby_version:
-                - 3.2.2
-              postgres_version:
-                - "16.3"
-
       - report_coverage:
           requires:
-            - "rspec: Ruby << matrix.ruby_version >>"
-          name: "report coverage: Ruby << matrix.ruby_version >>"
-          matrix:
-            parameters:
-              ruby_version:
-                - 3.2.2
-              postgres_version:
-                - "16.3"
-
+            - rspec
       - dev-deploy:
           requires:
             - rspec

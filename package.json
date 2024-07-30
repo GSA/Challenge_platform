@@ -1,8 +1,11 @@
 {
   "name": "challenge_platform",
   "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "description": "Challenge.Gov is an open source platform that accepts contributions and feedback from our customers.",
-  "main": "index.js",
   "directories": {
     "lib": "lib",
     "test": "test"
