@@ -12,15 +12,17 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules/@uswds/uswds/packages"
+    "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@uswds/uswds": "3.8.1",
-    "sass": "^1.77.6"
+    "sass": "^1.77.8"
   },
   "devDependencies": {
-    "@uswds/compile": "^1.1.0"
+    "@uswds/compile": "^1.1.0",
+    "esbuild": "^0.23.0"
   }
 }

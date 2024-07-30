@@ -4,11 +4,11 @@
 Rails.application.config.assets.version = "1.0"
 
 # Add additional assets to the asset load path.
-Rails.application.config.assets.paths << './uswds'
+#Rails.application.config.assets.paths << './uswds'
 
-Rails.application.config.assets.paths += [
-  Rails.root.join('assets', 'uswds').to_s
-]
+#Rails.application.config.assets.paths += [
+  #Rails.root.join('assets', 'uswds').to_s
+#]
 
 Rails.application.config.assets.enabled = true
 
