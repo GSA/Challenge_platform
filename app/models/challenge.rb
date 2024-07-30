@@ -100,10 +100,10 @@ class Challenge < ApplicationRecord
   has_many :submissions, dependent: :destroy
   has_many :submission_exports, dependent: :destroy
 
-    # JSON fields
-  attribute :types, :jsonb, default: []
-  attribute :timeline_events, :jsonb, default: []
-  attribute :phases, :jsonb, default: []
+  # JSON fields
+  attribute :types, :jsonb
+  attribute :timeline_events, :jsonb
+  attribute :phases, :jsonb
 
   attribute :status, :string, default: "draft"
   attribute :prize_total, :integer, default: 0
