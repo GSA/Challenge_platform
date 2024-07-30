@@ -13,6 +13,7 @@ let
     pkgs.zlib
     pkgs.libxml2
     pkgs.libiconv
+    pkgs.libyaml
     pkgs.openssl
     pkgs.curl
     pkgs.netcat-gnu
