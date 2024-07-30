@@ -29,5 +29,6 @@ uswds.paths.dist.fonts = './app/assets/builds/fonts'
 */
 exports.init = uswds.init;
 exports.compile = uswds.compile;
+exports.copyAssets = uswds.copyAssets;
 exports.watch = uswds.watch;
 exports.default = uswds.watch;
