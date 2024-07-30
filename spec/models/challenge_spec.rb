@@ -102,9 +102,9 @@ RSpec.describe Challenge do
   end
 
   describe 'default values' do
-    it 'sets status to pending by default' do
+    it 'sets status to draft by default' do
       challenge = described_class.new
-      expect(challenge.status).to eq('pending')
+      expect(challenge.status).to eq('draft')
     end
   end
 end
