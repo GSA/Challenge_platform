@@ -1,15 +1,18 @@
 {
   "name": "challenge_platform",
   "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^20.15.0"
+  },
   "description": "Challenge.Gov is an open source platform that accepts contributions and feedback from our customers.",
-  "main": "index.js",
   "directories": {
     "lib": "lib",
     "test": "test"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
+    "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules/@uswds/uswds/packages"
   },
   "author": "",
   "license": "ISC",
