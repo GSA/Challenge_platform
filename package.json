@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "^20.15.1"
+    "node": "^20.15.0"
   },
   "description": "Challenge.Gov is an open source platform that accepts contributions and feedback from our customers.",
   "directories": {
