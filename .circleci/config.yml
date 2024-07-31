@@ -24,6 +24,7 @@ commands:
     description: 'Prepare the test database'
     steps:
       - run: bundle exec rake db:setup
+
   build_assets:
     description: 'Install yarn modules and build assets'
     steps:
@@ -33,6 +34,8 @@ commands:
           pkg-manager: yarn
       - run: npx gulp copyAssets
       - run: npx gulp compile
+      - run: yarn build
+      - run: yarn build:css
 
 jobs:
   checkout_code:
