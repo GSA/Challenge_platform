@@ -19,10 +19,10 @@
   "license": "ISC",
   "dependencies": {
     "@uswds/uswds": "3.8.1",
+    "esbuild": "^0.23.0",
     "sass": "^1.77.8"
   },
   "devDependencies": {
     "@uswds/compile": "^1.1.0",
-    "esbuild": "^0.23.0"
   }
 }
