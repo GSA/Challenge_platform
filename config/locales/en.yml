@@ -29,3 +29,5 @@
 
 en:
   hello: "Hello world"
+  please_try_again: "Please try again."
+  login_error: "There was an issue with logging in. Please try again."

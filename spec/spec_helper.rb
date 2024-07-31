@@ -1,4 +1,6 @@
 require 'simplecov'
+require 'webmock/rspec'
+
 SimpleCov.command_name 'RSpec'
 
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration

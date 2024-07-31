@@ -13,6 +13,12 @@ gem "pg"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
+# Use the popular Faraday HTTP library
+gem "faraday"
+
+# Use the JWT gem for JSON Web Tokens
+gem "jwt"
+
 # Use simple asset pipeline
 gem "propshaft", "~> 0.9.0"
 gem "cssbundling-rails", "~> 1.4"
@@ -49,8 +55,18 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
 
-  gem "rubocop"
   gem "rspec-rails"
+
+  # add the Ruby LSP package so it's bundled with the rest of the gems and available to VS Code
+  gem "ruby-lsp"
+
+  # rubocop and specific extensions used by VS Code
+  gem "rubocop"
+  gem "rubocop-performance", require: false
+  gem "rubocop-rake", require: false
+  gem "rubocop-rails", require: false
+  gem "rubocop-rspec", require: false
+
   gem "codeclimate-test-reporter"
 end
 
@@ -70,8 +86,10 @@ end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+  gem "webmock"
   gem "capybara"
   gem "selenium-webdriver"
   gem "rspec_junit_formatter"
   gem "simplecov"
+  gem "rails-controller-testing"
 end
