@@ -2,13 +2,10 @@
 
 source "https://rubygems.org"
 
-ruby "3.2.2"
+ruby "3.2.4"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.3", ">= 7.1.3.4"
-
-# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
 
 # Use postgresql as the database for Active Record
 gem "pg"
@@ -22,8 +19,10 @@ gem "faraday"
 # Use the JWT gem for JSON Web Tokens
 gem "jwt"
 
-# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-gem "importmap-rails"
+# Use simple asset pipeline
+gem "propshaft", "~> 0.9.0"
+gem "cssbundling-rails", "~> 1.4"
+gem "jsbundling-rails", "~> 1.3"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
@@ -81,6 +80,8 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+
+  gem 'foreman'
 end
 
 group :test do
@@ -92,8 +93,3 @@ group :test do
   gem "simplecov"
   gem "rails-controller-testing"
 end
-
-gem "cssbundling-rails", "~> 1.4"
-
-# Use Sass to process CSS
-gem "sassc-rails"

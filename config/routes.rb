@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  if Rails.env.development?
+  if Rails.env.development? || Rails.env.dev?
     get "/sandbox", to: "sandbox#index"
   end
 end

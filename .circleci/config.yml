@@ -1,24 +1,19 @@
 version: 2.1
 
 orbs:
+  cloudfoundry: circleci/cloudfoundry@1.0
   ruby: circleci/ruby@2.1.3
+  node: circleci/node@5.2.0
   docker: circleci/docker@2.6.0
 
 executors:
   test_executor:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
     working_directory: ~/Challenge_platform
-
     docker:
-      - image: cimg/ruby:<< parameters.ruby_version >>
+      - image: cimg/ruby:3.2.4
         environment:
           RAILS_ENV: test
-      - image: cimg/postgres:<< parameters.postgres_version >>
+      - image: cimg/postgres:16.3
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -32,16 +27,8 @@ commands:
 
 jobs:
   checkout_code:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
-    executor: 
+    executor:
       name: test_executor
-      ruby_version: << parameters.ruby_version >>
-      postgres_version: << parameters.postgres_version >>
 
     steps:
       - checkout
@@ -58,16 +45,8 @@ jobs:
             - ~/Challenge_platform
 
   rspec:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
-    executor: 
+    executor:
       name: test_executor
-      ruby_version: << parameters.ruby_version >>
-      postgres_version: << parameters.postgres_version >>
 
     parallelism: 1
 
@@ -76,7 +55,7 @@ jobs:
           key: repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - ruby/install-deps:
-          key: gems-ruby-<< parameters.ruby_version >>-v{{ .Environment.CACHE_VERSION }}
+          key: gems-ruby-3.2.4-v{{ .Environment.CACHE_VERSION }}
 
       - prepare_database
 
@@ -94,7 +73,7 @@ jobs:
                               $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
 
             ./cc-test-reporter format-coverage \
-              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.<< parameters.ruby_version >>.json
+              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json
 
       - persist_to_workspace:
           root: ~/Challenge_platform/coverage
@@ -110,16 +89,8 @@ jobs:
           destination: test-results
 
   report_coverage:
-    parameters:
-      ruby_version:
-        type: string
-      postgres_version:
-        type: string
-
-    executor: 
+    executor:
       name: test_executor
-      ruby_version: << parameters.ruby_version >>
-      postgres_version: << parameters.postgres_version >>
 
     steps:
       - restore_cache:
@@ -137,37 +108,53 @@ jobs:
 
             ./cc-test-reporter upload-coverage --input coverage/codeclimate_full_report.json
 
+  dev-deploy:
+    parallelism: 1
+    docker:
+      - image: cimg/ruby:3.2.4
+    steps:
+      - checkout
+      - run: bundle cache --all
+      - node/install:
+          install-yarn: true
+      - node/install-packages:
+          pkg-manager: yarn
+      - run: npx gulp copyAssets
+      - run: npx gulp compile
+      - run: echo -e $DEV_PRIVATE_KEY > dev_key.pem
+      - run: echo -e $DEV_PUBLIC_CERT > dev_cert.pem
+      - run: echo 'export CF_PASSWORD=$CF_PASSWORD_DEV' >> $BASH_ENV
+      - run: echo 'export CF_USERNAME=$CF_USERNAME_DEV' >> $BASH_ENV
+      - run:
+          name: Install Cloud Foundry CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y ca-certificates jq
+            sudo touch /etc/apt/sources.list.d/cloudfoundry-cli.list
+            echo "deb [trusted=yes] https://packages.cloudfoundry.org/debian stable main" | sudo tee -a /etc/apt/sources.list.d/cloudfoundry-cli.list
+            sudo apt-get update
+            sudo apt-get install dpkg
+            sudo apt-get install cf7-cli
+      - cloudfoundry/auth:
+          endpoint: "https://api.fr.cloud.gov"
+          org: gsa-tts-innovation-challenge
+          space: eval-dev
+      - run: cf push challenge-dev --strategy rolling
+
 workflows:
   version: 2
-  build_and_test:
+  test-and-deploy:
     jobs:
-      - checkout_code:
-          name: "checkout code: Ruby << matrix.ruby_version >>"
-          matrix:
-            parameters:
-              ruby_version:
-                - 3.2.2
-              postgres_version:
-                - "16.3"
-
+      - checkout_code
       - rspec:
           requires:
             - checkout_code
-          name: "rspec: Ruby << matrix.ruby_version >>"
-          matrix:
-            parameters:
-              ruby_version:
-                - 3.2.2
-              postgres_version:
-                - "16.3"
-
       - report_coverage:
           requires:
-            - "rspec: Ruby << matrix.ruby_version >>"
-          name: "report coverage: Ruby << matrix.ruby_version >>"
-          matrix:
-            parameters:
-              ruby_version:
-                - 3.2.2
-              postgres_version:
-                - "16.3"
+            - rspec
+      - dev-deploy:
+          requires:
+            - rspec
+          filters:
+            branches:
+              only: dev

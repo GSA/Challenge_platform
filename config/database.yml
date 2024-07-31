@@ -14,14 +14,20 @@ test:
   <<: *default
   database: challenge_gov_test
 
+dev:
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("POOL_SIZE", 15) %>
+  url: <%= ENV["DATABASE_URL"] %>
+
 staging:
-  <<: *default
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("POOL_SIZE", 15) %>
   url: <%= ENV["DATABASE_URL"] %>
 
 production:
-  <<: *default
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("POOL_SIZE", 15) %>
   url: <%= ENV["DATABASE_URL"] %>

@@ -1,6 +1,6 @@
 {
   lib ? import <lib> {},
-  pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/refs/tags/23.05.zip) {}
+  pkgs ? import (fetchTarball channel:nixos-24.05) {}
 }:
 
 let
@@ -13,6 +13,7 @@ let
     pkgs.zlib
     pkgs.libxml2
     pkgs.libiconv
+    pkgs.libyaml
     pkgs.openssl
     pkgs.curl
     pkgs.netcat-gnu
@@ -24,7 +25,7 @@ let
 
     pkgs.ruby_3_2
     pkgs.bundler
-    pkgs.nodejs_18
+    pkgs.nodejs_20
     pkgs.yarn
 
     # cloud foundry CLI

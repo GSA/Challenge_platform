@@ -1,9 +1,1 @@
 // Entry point for your Sass build
-// 1. Load your project's USWDS settings configuration
-@forward "../app/assets/uswds/_uswds-theme.scss";
-
-// 2. Load USWDS source code
-@forward "../node_modules/@uswds/uswds/packages/uswds/_index.scss";
-
-// 3. Load theme customizations
-@forward "../app/assets/uswds/_uswds-theme-custom-styles.scss"
