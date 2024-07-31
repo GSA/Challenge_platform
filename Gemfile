@@ -51,7 +51,7 @@ group :development, :test do
 
   gem "rubocop"
   gem "rspec-rails"
-  gem 'codeclimate-test-reporter'
+  gem "codeclimate-test-reporter"
 end
 
 group :development do
@@ -65,13 +65,13 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 
-  gem 'foreman'
+  gem "foreman"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  gem 'rspec_junit_formatter'
-  gem 'simplecov'
+  gem "rspec_junit_formatter"
+  gem "simplecov"
 end
