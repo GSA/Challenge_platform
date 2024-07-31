@@ -3,4 +3,4 @@
 # Default to port 3000 if not specified
 export PORT="${PORT:-3000}"
 
-exec bundle exec foreman start -f Procfile.dev "$@"
+exec bundle exec foreman start -f Procfile.dev --env /dev/null "$@"
