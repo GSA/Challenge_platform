@@ -5,16 +5,16 @@
 # Table name: security_log
 #
 #  id                    :bigint           not null, primary key
-#  action                :string           not null
+#  action                :string(255)      not null
 #  details               :jsonb
 #  originator_id         :bigint
-#  originator_role       :string
-#  originator_identifier :string
-#  originator_remote_ip  :string
+#  originator_role       :string(255)
+#  originator_identifier :string(255)
 #  target_id             :integer
-#  target_type           :string
-#  target_identifier     :string
+#  target_type           :string(255)
+#  target_identifier     :string(255)
 #  logged_at             :datetime         not null
+#  originator_remote_ip  :string(255)
 #
 class SecurityLog < ApplicationRecord
   self.table_name = 'security_log'
