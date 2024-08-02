@@ -61,7 +61,7 @@ group :development, :test do
   gem "ruby-lsp"
 
   # rubocop and specific extensions used by VS Code
-  gem "rubocop"
+  gem "rubocop", ">= 1.65.1"
   gem "rubocop-performance", require: false
   gem "rubocop-rake", require: false
   gem "rubocop-rails", require: false
