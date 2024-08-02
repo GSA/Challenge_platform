@@ -63,8 +63,10 @@ Once direnv is installed and your shell is restarted, clone the project and `cd`
 1. Set up your uswds files in the build directory `npx gulp copyAssets`
 1. Setup the database `rake db:create`, note that postgres must be running for this to work
 1. Boot the system, this will run the sass, esbuild, and uswds watchers along with the rails server
-  1. `./bin/dev`
-    1. NOTE for login.gov environment: if you are not using direnv/nix to eval .envrc, you can run `source .env_login` in your terminal before starting the server or add the env vars in that file to your local environment directly.
+    ```
+    ./bin/dev
+    ```
+    > _NOTE for login.gov configuration_ -- if you are **not** using direnv/nix to eval `.envrc`, you can run `source .env_login` in your terminal before starting the server or add the env vars in that file to your local environment directly.
 
 Now you can visit [`localhost:3000`](http://localhost:3000) from your browser.
 
