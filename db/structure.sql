@@ -24,29 +24,6 @@ CREATE TYPE public.oban_job_state AS ENUM (
 );
 
 
---
--- Name: oban_jobs_notify(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.oban_jobs_notify() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-  channel text;
-  notice json;
-BEGIN
-  IF NEW.state = 'available' THEN
-    channel = 'public.oban_insert';
-    notice = json_build_object('queue', NEW.queue);
-
-    PERFORM pg_notify(channel, notice::text);
-  END IF;
-
-  RETURN NULL;
-END;
-$$;
-
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -173,6 +150,37 @@ CREATE SEQUENCE public.certification_log_id_seq
 --
 
 ALTER SEQUENCE public.certification_log_id_seq OWNED BY public.certification_log.id;
+
+
+--
+-- Name: challenge_managers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.challenge_managers (
+    id bigint NOT NULL,
+    challenge_id bigint,
+    user_id bigint,
+    revoked_at timestamp(0) without time zone
+);
+
+
+--
+-- Name: challenge_owners_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.challenge_owners_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: challenge_owners_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.challenge_owners_id_seq OWNED BY public.challenge_managers.id;
 
 
 --
@@ -505,7 +513,6 @@ CREATE TABLE public.oban_jobs (
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
     CONSTRAINT positive_max_attempts CHECK ((max_attempts > 0)),
-    CONSTRAINT priority_range CHECK (((priority >= 0) AND (priority <= 3))),
     CONSTRAINT queue_length CHECK (((char_length(queue) > 0) AND (char_length(queue) < 128))),
     CONSTRAINT worker_length CHECK (((char_length(worker) > 0) AND (char_length(worker) < 128)))
 );
@@ -515,7 +522,7 @@ CREATE TABLE public.oban_jobs (
 -- Name: TABLE oban_jobs; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON TABLE public.oban_jobs IS '11';
+COMMENT ON TABLE public.oban_jobs IS '12';
 
 
 --
@@ -1073,6 +1080,13 @@ ALTER TABLE ONLY public.certification_log ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
+-- Name: challenge_managers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_managers ALTER COLUMN id SET DEFAULT nextval('public.challenge_owners_id_seq'::regclass);
+
+
+--
 -- Name: challenges id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1252,6 +1266,14 @@ ALTER TABLE ONLY public.certification_log
 
 
 --
+-- Name: challenge_managers challenge_owners_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_managers
+    ADD CONSTRAINT challenge_owners_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: challenges challenges_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1305,6 +1327,14 @@ ALTER TABLE ONLY public.messages
 
 ALTER TABLE ONLY public.non_federal_partners
     ADD CONSTRAINT non_federal_partners_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: oban_jobs non_negative_priority; Type: CHECK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE public.oban_jobs
+    ADD CONSTRAINT non_negative_priority CHECK ((priority >= 0)) NOT VALID;
 
 
 --
@@ -1506,10 +1536,75 @@ CREATE UNIQUE INDEX winners_phase_id_index ON public.phase_winners USING btree (
 
 
 --
--- Name: oban_jobs oban_notify; Type: TRIGGER; Schema: public; Owner: -
+-- Name: agencies agencies_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-CREATE TRIGGER oban_notify AFTER INSERT ON public.oban_jobs FOR EACH ROW EXECUTE FUNCTION public.oban_jobs_notify();
+ALTER TABLE ONLY public.agencies
+    ADD CONSTRAINT agencies_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.agencies(id);
+
+
+--
+-- Name: agency_members agency_members_agency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.agency_members
+    ADD CONSTRAINT agency_members_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES public.agencies(id);
+
+
+--
+-- Name: agency_members agency_members_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.agency_members
+    ADD CONSTRAINT agency_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: certification_log certification_log_approver_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.certification_log
+    ADD CONSTRAINT certification_log_approver_id_fkey FOREIGN KEY (approver_id) REFERENCES public.users(id);
+
+
+--
+-- Name: certification_log certification_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.certification_log
+    ADD CONSTRAINT certification_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: challenge_managers challenge_owners_challenge_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_managers
+    ADD CONSTRAINT challenge_owners_challenge_id_fkey FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: challenge_managers challenge_owners_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_managers
+    ADD CONSTRAINT challenge_owners_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: challenges challenges_agency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenges
+    ADD CONSTRAINT challenges_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES public.agencies(id);
+
+
+--
+-- Name: challenges challenges_sub_agency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenges
+    ADD CONSTRAINT challenges_sub_agency_id_fkey FOREIGN KEY (sub_agency_id) REFERENCES public.agencies(id);
 
 
 --
@@ -1521,11 +1616,27 @@ ALTER TABLE ONLY public.challenges
 
 
 --
+-- Name: federal_partners federal_partners_agency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.federal_partners
+    ADD CONSTRAINT federal_partners_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES public.agencies(id);
+
+
+--
 -- Name: federal_partners federal_partners_challenge_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.federal_partners
     ADD CONSTRAINT federal_partners_challenge_id_fkey FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: federal_partners federal_partners_sub_agency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.federal_partners
+    ADD CONSTRAINT federal_partners_sub_agency_id_fkey FOREIGN KEY (sub_agency_id) REFERENCES public.agencies(id);
 
 
 --
@@ -1702,6 +1813,14 @@ ALTER TABLE ONLY public.supporting_documents
 
 ALTER TABLE ONLY public.timeline_events
     ADD CONSTRAINT timeline_events_challenge_id_fkey FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: users users_agency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES public.agencies(id);
 
 
 --

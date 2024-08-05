@@ -1,5 +1,6 @@
 require 'simplecov'
 require 'webmock/rspec'
+require 'securerandom'
 
 SimpleCov.command_name 'RSpec'
 
