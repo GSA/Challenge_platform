@@ -71,7 +71,7 @@ RSpec.describe User, type: :model do
 
       user = described_class.create!(email:, token:)
 
-      found_user = User.user_from_userinfo(gov_userinfo)
+      found_user = described_class.user_from_userinfo(gov_userinfo)
 
       expect(user).to eq(found_user)
     end
@@ -80,7 +80,7 @@ RSpec.describe User, type: :model do
       email = gov_userinfo[0]["email"]
       token = gov_userinfo[0]["sub"]
 
-      created_user = User.user_from_userinfo(gov_userinfo)
+      created_user = described_class.user_from_userinfo(gov_userinfo)
 
       expect(created_user.email).to eq(email)
       expect(created_user.token).to eq(token)
@@ -92,7 +92,7 @@ RSpec.describe User, type: :model do
       email = non_gov_userinfo[0]["email"]
       token = non_gov_userinfo[0]["sub"]
 
-      created_user = User.user_from_userinfo(non_gov_userinfo)
+      created_user = described_class.user_from_userinfo(non_gov_userinfo)
 
       expect(created_user.email).to eq(email)
       expect(created_user.token).to eq(token)
@@ -105,9 +105,9 @@ RSpec.describe User, type: :model do
       token = gov_userinfo[0]["sub"]
 
       user = described_class.create!(email:)
-      expect(user.token).to eq(nil)
+      expect(user.token).to be_nil
 
-      updated_user = User.user_from_userinfo(gov_userinfo)
+      updated_user = described_class.user_from_userinfo(gov_userinfo)
 
       expect(updated_user.id).to eq(user.id)
       expect(updated_user.email).to eq(email)

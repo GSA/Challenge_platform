@@ -91,28 +91,35 @@ class User < ApplicationRecord
     email = userinfo[0]["email"]
     token = userinfo[0]["sub"]
 
-    if user = find_by(token:)
+    if (user = find_by(token:))
       user
-    elsif user = find_by(email:)
+    elsif (user = find_by(email:))
       update_admin_added_user(user, userinfo)
     else
-      default_role_and_status = default_role_and_status_for_email(email)
-      default_role = default_role_and_status[0]
-      default_status = default_role_and_status[1]
-
-      user = create({
-                      email:,
-                      role: default_role,
-                      token:,
-                      terms_of_use: nil,
-                      privacy_guidelines: nil,
-                      status: default_status
-                    })
+      create_user_from_userinfo(userinfo)
     end
   end
 
   def self.update_admin_added_user(user, userinfo)
     update(user.id, { token: userinfo[0]["sub"] })
+  end
+
+  def self.create_user_from_userinfo(userinfo)
+    email = userinfo[0]["email"]
+    token = userinfo[0]["sub"]
+
+    default_role_and_status = default_role_and_status_for_email(email)
+    default_role = default_role_and_status[0]
+    default_status = default_role_and_status[1]
+
+    create({
+             email:,
+             role: default_role,
+             token:,
+             terms_of_use: nil,
+             privacy_guidelines: nil,
+             status: default_status
+           })
   end
 
   def self.default_role_and_status_for_email(email)

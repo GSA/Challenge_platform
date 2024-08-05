@@ -29,6 +29,6 @@ class ApplicationController < ActionController::Base
   def redirect_if_logged_in(path = "/dashboard")
     return unless logged_in?
 
-    redirect_to path, notice: "You are already logged in."
+    redirect_to path, notice: I18n.t("already_logged_in_notice")
   end
 end
