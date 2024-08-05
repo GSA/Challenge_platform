@@ -21,6 +21,7 @@ class LoginGov
   attr_reader :config
 
   def initialize(config = Rails.configuration.login_gov_oidc)
+    puts config.inspect
     @config = config.freeze.dup
   end
 
