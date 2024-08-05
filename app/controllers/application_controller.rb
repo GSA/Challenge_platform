@@ -4,10 +4,10 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 
   def current_user
-    if session[:userinfo]
-      user_token = session["userinfo"][0]["sub"]
-      @current_user ||= User.find_by(token: user_token) if user_token
-    end
+    return unless session[:userinfo]
+
+    user_token = session["userinfo"][0]["sub"]
+    @current_user ||= User.find_by(token: user_token) if user_token
   end
 
   def logged_in?
@@ -27,8 +27,8 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_if_logged_in(path = "/dashboard")
-    if logged_in?
-      redirect_to path, notice: "You are already logged in."
-    end
+    return unless logged_in?
+
+    redirect_to path, notice: "You are already logged in."
   end
 end

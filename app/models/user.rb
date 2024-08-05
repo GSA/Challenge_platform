@@ -91,9 +91,9 @@ class User < ApplicationRecord
     email = userinfo[0]["email"]
     token = userinfo[0]["sub"]
 
-    if user = find_by(token: token)
+    if user = find_by(token:)
       user
-    elsif user = find_by(email: email)
+    elsif user = find_by(email:)
       update_admin_added_user(user, userinfo)
     else
       default_role_and_status = default_role_and_status_for_email(email)
@@ -101,26 +101,25 @@ class User < ApplicationRecord
       default_status = default_role_and_status[1]
 
       user = create({
-        email: email,
-        role: default_role,
-        token: token,
-        terms_of_use: nil,
-        privacy_guidelines: nil,
-        status: default_status
-      })
+                      email:,
+                      role: default_role,
+                      token:,
+                      terms_of_use: nil,
+                      privacy_guidelines: nil,
+                      status: default_status
+                    })
     end
   end
 
-  private
   def self.update_admin_added_user(user, userinfo)
-    update(user.id, {token: userinfo[0]["sub"]})
+    update(user.id, { token: userinfo[0]["sub"] })
   end
 
   def self.default_role_and_status_for_email(email)
     if default_challenge_manager?(email)
-      ["challenge_manager", "pending"]
+      %w[challenge_manager pending]
     else
-      ["solver", "active"]
+      %w[solver active]
     end
   end
 
