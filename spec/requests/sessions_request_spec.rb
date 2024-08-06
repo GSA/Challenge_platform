@@ -13,7 +13,6 @@ RSpec.describe "SessionsController" do
   end
 
   it "delete session logs the user out" do
-    # skip "not implemented"
     delete "/session"
     assert_response :redirect
   end
