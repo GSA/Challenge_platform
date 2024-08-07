@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: bundler
+    directory: "/"
+    target-branch: "production"
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "rails"
+        versions: ["~> 6.0.0"]
