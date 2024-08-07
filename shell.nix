@@ -13,13 +13,14 @@ let
     pkgs.zlib
     pkgs.libxml2
     pkgs.libiconv
+    pkgs.libyaml
     pkgs.openssl
     pkgs.curl
     pkgs.netcat-gnu
     pkgs.git
 
     pkgs.imagemagick
-    pkgs.postgresql
+    pkgs.postgresql_15
     pkgs.redis
 
     pkgs.ruby_3_2

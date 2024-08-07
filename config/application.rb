@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails/all"
@@ -26,5 +28,17 @@ module RailsNew
 
     # Use the Postgresql-specific syntax for DB dumps
     config.active_record.schema_format = :sql
+
+    # Shared login.gov config with ENV overrides
+    config.login_gov_oidc = {
+      idp_host: ENV.fetch("LOGIN_IDP_HOST", "https://idp.int.identitysandbox.gov"),
+      login_redirect_uri: ENV.fetch("LOGIN_REDIRECT_EVAL_URL", "https://challenge-dev.app.cloud.gov/auth/result"),
+      logout_redirect_uri: ENV.fetch("LOGOUT_REDIRECT_EVAL_URL", "https://challenge-dev.app.cloud.gov/"),
+      acr_value: "http://idmanagement.gov/ns/assurance/loa/1",
+      client_id: ENV.fetch("LOGIN_CLIENT_ID", "urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:_client_id"), # default fake ID for CI
+      private_key_password: ENV.fetch("LOGIN_PRIVATE_KEY_PASSWORD", nil), # optional
+      public_key_path: ENV.fetch("LOGIN_PUBLIC_KEY_PATH", "config/public.crt"),
+      private_key_path: ENV.fetch("LOGIN_PRIVATE_KEY_PATH", "config/private.pem"),
+    }
   end
 end

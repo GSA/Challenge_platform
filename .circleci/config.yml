@@ -25,6 +25,18 @@ commands:
     steps:
       - run: bundle exec rake db:setup
 
+  build_assets:
+    description: 'Install yarn modules and build assets'
+    steps:
+      - node/install:
+          install-yarn: true
+      - node/install-packages:
+          pkg-manager: yarn
+      - run: npx gulp copyAssets
+      - run: npx gulp compile
+      - run: yarn build
+      - run: yarn build:css
+
 jobs:
   checkout_code:
     executor:
@@ -58,6 +70,8 @@ jobs:
           key: gems-ruby-3.2.4-v{{ .Environment.CACHE_VERSION }}
 
       - prepare_database
+
+      - build_assets
 
       - run:
           name: Run Tests
@@ -119,6 +133,8 @@ jobs:
           install-yarn: true
       - node/install-packages:
           pkg-manager: yarn
+      - run: npx gulp copyAssets
+      - run: npx gulp compile
       - run: echo -e $DEV_PRIVATE_KEY > dev_key.pem
       - run: echo -e $DEV_PUBLIC_CERT > dev_cert.pem
       - run: echo 'export CF_PASSWORD=$CF_PASSWORD_DEV' >> $BASH_ENV
