@@ -1,13 +1,28 @@
-/*
-----------------------------------------
-USWDS with settings overrides
-----------------------------------------
-Uncomment the following lines and add a list of changed settings
-in the form $setting: value,
-----------------------------------------
-*/
-
-@use "uswds-core" with (
-  $theme-image-path: "images",
+@use "uswds-core" with ($theme-image-path: "images",
   $theme-font-path: "fonts"
-)
+);
+
+@use "uswds" as *;
+
+.footer-white {
+  color: white;
+}
+
+.usa-footer__logo-img {
+  max-width: 100%;
+  height: auto;
+}
+
+.usa-footer__social-links .usa-social-link__icon {
+  color: $primary-darker;
+  background-color: white;
+}
+
+.usa-social-link {
+  background-color: white;
+}
+
+.usa-footer__secondary-section .usa-social-link:hover .usa-social-link__icon {
+  background-color: white;
+  color: $primary-darker;
+}

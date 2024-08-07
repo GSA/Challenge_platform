@@ -296,76 +296,128 @@
   </table>
   <h3 class="site-preview-heading" id="slim-footer">Slim footer</h3>
 
-<footer class="usa-footer usa-footer--slim">
-  <div class="grid-container usa-footer__return-to-top">
-    <a href="#">Return to top</a>
-  </div>
+<footer class="usa-footer usa-footer--big">
   <div class="usa-footer__primary-section">
-    <div class="usa-footer__primary-container grid-row">
-      <div class="mobile-lg:grid-col-8">
-        <nav class="usa-footer__nav" aria-label="Footer navigation,">
-          <ul class="grid-row grid-gap">
-            <li
-              class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content"
-            >
-              <a class="usa-footer__primary-link" href="javascript:void(0);"
-                >&lt;Primary link&gt;</a
-              >
-            </li>
-            <li
-              class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content"
-            >
-              <a class="usa-footer__primary-link" href="javascript:void(0);"
-                >&lt;Primary link&gt;</a
-              >
-            </li>
-            <li
-              class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content"
-            >
-              <a class="usa-footer__primary-link" href="javascript:void(0);"
-                >&lt;Primary link&gt;</a
-              >
-            </li>
-            <li
-              class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content"
-            >
-              <a class="usa-footer__primary-link" href="javascript:void(0);"
-                >&lt;Primary link&gt;</a
-              >
-            </li>
-          </ul>
-        </nav>
+    <div class="grid-container">
+      <div class="grid-container usa-footer__return-to-top">
+        <a href="#">Return to top</a>
       </div>
-      <div class="mobile-lg:grid-col-4">
-        <address class="usa-footer__address">
-          <div class="grid-row grid-gap">
-            <div
-              class="grid-col-auto mobile-lg:grid-col-12 desktop:grid-col-auto"
-            >
-              <div class="usa-footer__contact-info">
-                <a href="tel:1-800-555-5555">&lt;(800) 555-GOVT&gt;</a>
+      <div class="grid-row grid-gap">
+        <div class="tablet:grid-col-8">
+          <nav class="usa-footer__nav" aria-label="Footer navigation,,">
+            <div class="grid-row grid-gap-4">
+              <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
+                <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
+                  <%# Col 1 %>
+                  <ul class="usa-list usa-list--unstyled">
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">About</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Contact</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Terms of use</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Privacy Policy</a>
+                    </li>
+                  </ul>
+                </section>
+              </div>
+              <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
+                <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
+                  <%# Col 2 %>
+                  <ul class="usa-list usa-list--unstyled">
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Innovator Resources</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Agency Resources</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Archived Challenges</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Active Challenges</a>
+                    </li>
+                  </ul>
+                </section>
+              </div>
+              <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
+                <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
+                  <%# Col 3 %>
+                  <ul class="usa-list usa-list--unstyled">
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">GSA Privacy Policy</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">Accessibility</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">FOIA</a>
+                    </li>
+                    <li class="usa-footer__secondary-link">
+                      <a href="javascript:void(0);">USA.gov</a>
+                    </li>
+                  </ul>
+                </section>
               </div>
             </div>
-            <div
-              class="grid-col-auto mobile-lg:grid-col-12 desktop:grid-col-auto"
-            >
-              <div class="usa-footer__contact-info">
-                <a href="mailto:info@agency.gov">&lt;info@agency.gov&gt;</a>
-              </div>
-            </div>
-          </div>
-        </address>
+          </nav>
+        </div>
       </div>
     </div>
   </div>
-  <div class="usa-footer__secondary-section">
+  <div class="usa-footer__secondary-section bg-primary-darker footer-white">
     <div class="grid-container">
-      <div class="usa-footer__logo grid-row grid-gap-2">
-        <div class="grid-col-auto">
-          <img width="1024" class="usa-footer__logo-img" src="<%= image_path("challenge-logo.svg") %>" alt="" />
+      <div class="grid-row grid-gap">
+        <div class="usa-footer__logo grid-row mobile-lg:grid-col-12 mobile-lg:grid-gap-2 desktop:grid-col-6">
+          <div class="mobile-lg:grid-col-auto">
+            <img class="usa-footer__logo-img" src="<%= image_path('GSA-LOGO.png') %>" alt="GSA Logo" />
+          </div>
+          <div class="mobile-lg:grid-col-auto">
+            <img class="usa-footer__logo-img" src="<%= image_path('ChallengeGov-Mono-Branding-Elements.png') %>" alt="Challenge.gov Logo" />
+          </div>
         </div>
-        <div class="grid-col-auto">
-          <p class="usa-footer__logo-heading">&lt;Agency Contact Center&gt;</p>
+        <div class="usa-footer__contact-links mobile-lg:grid-col-12 desktop:grid-col-6 footer-white">
+          <div class="usa-footer__social-links grid-row grid-gap-1">
+            <div class="grid-col-auto">
+              <a class="usa-social-link" href="javascript:void(0);">
+                <img class="usa-social-link__icon" src="<%= image_path('twitter.svg') %>" alt="Twitter" />
+              </a>
+            </div>
+            <div class="grid-col-auto">
+              <a class="usa-social-link" href="javascript:void(0);">
+                <img class="usa-social-link__icon" src="<%= image_path('facebook.svg') %>" alt="Facebook" />
+              </a>
+            </div>
+            <div class="grid-col-auto">
+              <a class="usa-social-link" href="javascript:void(0);">
+                <img class="usa-social-link__icon" src="<%= image_path('youtube.svg') %>" alt="YouTube" />
+              </a>
+            </div>
+            <div class="grid-col-auto">
+              <a class="usa-social-link" href="javascript:void(0);">
+                <img class="usa-social-link__icon" src="<%= image_path('linkedin.svg') %>" alt="LinkedIn" />
+              </a>
+            </div>
+            <div class="grid-col-auto">
+              <a class="usa-social-link" href="javascript:void(0);">
+                <img class="usa-social-link__icon" src="<%= image_path('github.svg') %>" alt="Github" />
+              </a>
+            </div>
+          </div>
+          <p class="usa-footer__contact-heading">
+            Contact Us
+          </p>
+          <address class="usa-footer__address">
+            <div class="usa-footer__contact-info grid-row grid-gap">
+              <div class="grid-col-auto text-white">
+                <a class="text-white" href="mailto:team@challenge.gov">team@challenge.gov</a>
+              </div>
+            </div>
+          </address>
         </div>
       </div>
     </div>
