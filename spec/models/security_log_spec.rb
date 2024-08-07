@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: security_log
@@ -17,7 +18,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe SecurityLog, type: :model do
+RSpec.describe SecurityLog do
   describe 'Security Log validations' do
     it 'validates presence of action' do
       security_log = described_class.new(action: nil)

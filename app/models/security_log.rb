@@ -25,6 +25,7 @@ class SecurityLog < ApplicationRecord
     status_change account_update role_change accessed_site session_duration
     create read update delete submit renewal_request
   ] }
+  validates :logged_at, presence: true
 
   before_validation :set_logged_at, on: :create
 
