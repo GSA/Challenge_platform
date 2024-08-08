@@ -21,10 +21,11 @@ class SecurityLog < ApplicationRecord
 
   belongs_to :originator, class_name: 'User', optional: true
 
-  validates :action, presence: true, inclusion: { in: %w[
+  ROLES = %w[
     status_change account_update role_change accessed_site session_duration
     create read update delete submit renewal_request
-  ] }
+  ].freeze
+  validates :action, presence: true, inclusion: { in: ROLES }
   validates :logged_at, presence: true
 
   before_validation :set_logged_at, on: :create
