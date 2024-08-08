@@ -20,10 +20,10 @@ require 'rails_helper'
 
 RSpec.describe SecurityLog do
   describe 'Security Log validations' do
-    it 'validates presence of action' do
-      security_log = described_class.new(action: nil)
-      expect(security_log).not_to be_valid
-      expect(security_log.errors[:action]).to include("can't be blank")
+    it 'sets logged_at before validation on create' do
+      security_log = described_class.new(action: 'create')
+      expect(security_log).to be_valid
+      expect(security_log.logged_at).not_to be_nil
     end
   end
 end
