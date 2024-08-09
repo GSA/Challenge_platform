@@ -57,11 +57,7 @@ RSpec.describe User do
   end
 
   describe 'validations' do
-    it 'validates presence of email' do
-      user = described_class.new(email: nil)
-      expect(user).not_to be_valid
-      expect(user.errors[:email]).to include("can't be blank")
-    end
+    it_behaves_like 'a model with required attributes', [:email]
   end
 
   describe 'default values' do
