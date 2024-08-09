@@ -80,16 +80,16 @@ RSpec.describe User do
 
       expect(user.inserted_at).not_to be_nil
       expect(user.updated_at).not_to be_nil
-  
+
       expect(user.inserted_at).to be_within(1.second).of(Time.current)
-      expect(user.updated_at).to be_within(1.second).of(Time.current) 
+      expect(user.updated_at).to be_within(1.second).of(Time.current)
 
       original_inserted_at = user.inserted_at
       original_updated_at = user.updated_at
 
       travel_to 1.hour.from_now do
         user.update!(email: 'new-email@example.com')
-  
+
         expect(user.inserted_at).to eq(original_inserted_at)
         expect(user.updated_at).to be > original_updated_at
         expect(user.updated_at).to be_within(1.second).of(Time.current)
