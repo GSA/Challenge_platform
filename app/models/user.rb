@@ -47,7 +47,7 @@ class User < ApplicationRecord
   has_many :submission_documents, class_name: 'Submissions::Document', dependent: :destroy
   has_many :message_context_statuses, dependent: :destroy
 
-  attribute :role, :string, default: -> { self[:role] }
+  attribute :role, :string
   attribute :status, :string, default: 'pending'
   attribute :finalized, :boolean, default: true
   attribute :display, :boolean, default: true
@@ -80,7 +80,6 @@ class User < ApplicationRecord
 
   attribute :renewal_request, :string
 
-  attribute :created_at, :datetime, precision: 6
   attribute :updated_at, :datetime, precision: 6
 
   validates :email, presence: true
