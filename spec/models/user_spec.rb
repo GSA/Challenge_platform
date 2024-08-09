@@ -42,6 +42,13 @@ RSpec.describe User do
     }]
   end
 
+  let(:mil_userinfo) do
+    [{
+      "email" => "test@example.mil",
+      "sub" => SecureRandom.uuid
+    }]
+  end
+
   let(:non_gov_userinfo) do
     [{
       "email" => "test@example.com",
@@ -64,6 +71,32 @@ RSpec.describe User do
     end
   end
 
+  describe 'timestamps' do
+    it 'properly sets inserted_at and updated_at' do
+      email = gov_userinfo[0]["email"]
+      token = gov_userinfo[0]["sub"]
+
+      user = described_class.create!(email:, token:)
+
+      expect(user.inserted_at).not_to be_nil
+      expect(user.updated_at).not_to be_nil
+  
+      expect(user.inserted_at).to be_within(1.second).of(Time.current)
+      expect(user.updated_at).to be_within(1.second).of(Time.current) 
+
+      original_inserted_at = user.inserted_at
+      original_updated_at = user.updated_at
+
+      travel_to 1.hour.from_now do
+        user.update!(email: 'new-email@example.com')
+  
+        expect(user.inserted_at).to eq(original_inserted_at)
+        expect(user.updated_at).to be > original_updated_at
+        expect(user.updated_at).to be_within(1.second).of(Time.current)
+      end
+    end
+  end
+
   describe 'user_from_userinfo' do
     it 'finds user if one matches token' do
       email = gov_userinfo[0]["email"]
@@ -81,6 +114,18 @@ RSpec.describe User do
       token = gov_userinfo[0]["sub"]
 
       created_user = described_class.user_from_userinfo(gov_userinfo)
+
+      expect(created_user.email).to eq(email)
+      expect(created_user.token).to eq(token)
+      expect(created_user.role).to eq("challenge_manager")
+      expect(created_user.status).to eq("pending")
+    end
+
+    it 'creates pending challenge_manager user if no matching token or email and .mil email' do
+      email = mil_userinfo[0]["email"]
+      token = mil_userinfo[0]["sub"]
+
+      created_user = described_class.user_from_userinfo(mil_userinfo)
 
       expect(created_user.email).to eq(email)
       expect(created_user.token).to eq(token)

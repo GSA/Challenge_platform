@@ -108,9 +108,7 @@ class User < ApplicationRecord
     email = userinfo[0]["email"]
     token = userinfo[0]["sub"]
 
-    default_role_and_status = default_role_and_status_for_email(email)
-    default_role = default_role_and_status[0]
-    default_status = default_role_and_status[1]
+    default_role, default_status = default_role_and_status_for_email(email)
 
     create({
              email:,
@@ -131,9 +129,6 @@ class User < ApplicationRecord
   end
 
   def self.default_challenge_manager?(email)
-    escaped_gov_tld = Regexp.escape('.gov')
-    matching_gov_string = ".*#{escaped_gov_tld}$"
-    gov_regex = Regexp.new(matching_gov_string)
-    gov_regex.match?(email)
+    /\.(gov|mil)$/.match?(email)
   end
 end
