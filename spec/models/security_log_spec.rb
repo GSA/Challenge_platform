@@ -20,6 +20,8 @@ require 'rails_helper'
 
 RSpec.describe SecurityLog do
   describe 'Security Log validations' do
+    it_behaves_like 'a model with required attributes', [:action]
+
     it 'sets logged_at before validation on create' do
       security_log = described_class.new(action: 'create')
       expect(security_log).to be_valid
