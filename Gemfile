@@ -90,6 +90,6 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "rspec_junit_formatter"
-  gem "simplecov"
+  gem 'simplecov', '~> 0.17.0', require: false
   gem "rails-controller-testing"
 end

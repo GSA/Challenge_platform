@@ -75,15 +75,4 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
-
-  config.login_gov_oidc = {
-    idp_host: "https://idp.int.identitysandbox.gov",
-    login_redirect_uri: "http://localhost:3000/auth/result",
-    logout_redirect_uri: "https://www.challenge.gov/",
-    acr_value: "http://idmanagement.gov/ns/assurance/loa/1",
-    client_id: "urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:challenge_gov_platform_dev",
-    private_key_password: nil,
-    private_key_path: "config/private.pem",
-    public_key_path: "config/public.crt",
-  }
 end
