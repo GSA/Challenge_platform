@@ -24,6 +24,10 @@ class SessionsController < ApplicationController
     redirect_to dashboard_path
   end
 
+  def renew
+    renew_session
+  end
+
   private
 
   def check_error_result
