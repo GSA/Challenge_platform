@@ -12,17 +12,16 @@ class SessionsController < ApplicationController
     redirect_to(login_gov.authorization_url, allow_other_host: true)
   end
 
-  def delete
+  def destroy
     login_gov = LoginGov.new
-    # TODO: update user session status, clear out JWT
     # TODO: add session duration to the security log
-    # TODO: delete session locally and Phoenix
-    redirect_to(login_gov.logout_url)
+    sign_out
+    redirect_to(login_gov.logout_url, allow_other_host: true)
   end
 
   def result
-    # TODO: store the user_info in the session
-    # session[:user_info] = @login_userinfo
+    sign_in(@login_userinfo)
+    redirect_to dashboard_path
   end
 
   private
