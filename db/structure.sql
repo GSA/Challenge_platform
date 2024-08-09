@@ -99,18 +99,6 @@ ALTER SEQUENCE public.agency_members_id_seq OWNED BY public.agency_members.id;
 
 
 --
--- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.ar_internal_metadata (
-    key character varying NOT NULL,
-    value character varying,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
 -- Name: certification_log; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1247,14 +1235,6 @@ ALTER TABLE ONLY public.agencies
 
 ALTER TABLE ONLY public.agency_members
     ADD CONSTRAINT agency_members_pkey PRIMARY KEY (id);
-
-
---
--- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.ar_internal_metadata
-    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
 
 
 --
