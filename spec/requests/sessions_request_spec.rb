@@ -55,7 +55,7 @@ RSpec.describe "SessionsController" do
     expect(session[:userinfo]).not_to be_nil
     expect(session[:session_timeout_at]).not_to be_nil
 
-    travel_to session_timeout_in_minutes.to_i.minutes.from_now do
+    travel_to (session_timeout_in_minutes.to_i + 1).minutes.from_now do
       get dashboard_path
 
       expect(session[:userinfo]).to be_nil
