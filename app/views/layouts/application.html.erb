@@ -11,10 +11,20 @@
     <%= javascript_include_tag 'application' %>
     <%= javascript_include_tag 'uswds', async: true %>
     <%= javascript_include_tag 'uswds-init', async: true %>
+
+    <script>
+      window.appConfig = {
+        sessionTimeoutMinutes: <%= ENV.fetch('SESSION_TIMEOUT_IN_MINUTES', 15).to_i.minutes %>
+      }
+    </script>
   </head>
 
   <body>
     <%= render "layouts/header" %>
+    <%= render "shared/flash" %>
+
     <%= yield %>
+
+    <%= render "modals/renew_session" %>
   </body>
 </html>
