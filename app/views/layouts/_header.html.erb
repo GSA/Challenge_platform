@@ -1,0 +1,18 @@
+<header class="usa-header usa-header--basic margin-bottom-2">
+  <div class="usa-nav-container">
+    <div class="usa-navbar">
+      <div class="usa-logo">
+        <em class="usa-logo__text">
+          <a href="/" title="Challenge Platform">Challenge Platform</a>
+        </em>
+      </div>
+    </div>
+    <nav aria-label="Primary navigation" class="usa-nav">
+      <% if logged_in? %>
+        <%= button_to("Logout", session_path, method: :delete, class: "usa-button usa-nav-link", type: "button") %>
+      <% else %>
+        <%= button_to("Login", new_session_path, method: :get, class: "usa-button usa-nav-link", type: "button") %>
+      <% end %>
+    </nav>
+  </div>
+</header>
