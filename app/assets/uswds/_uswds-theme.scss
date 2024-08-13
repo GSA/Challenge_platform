@@ -4,8 +4,9 @@
 
 @use "uswds" as *;
 
-.footer-white {
-  color: white;
+.usa-footer__logo {
+  display: flex;
+  align-items: center;
 }
 
 .usa-footer__logo-img {
@@ -13,8 +14,11 @@
   height: auto;
 }
 
+.footer-white {
+  color: white;
+}
+
 .usa-footer__social-links .usa-social-link__icon {
-  color: #162e51;
   background-color: white;
 }
 
@@ -24,5 +28,4 @@
 
 .usa-footer__secondary-section .usa-social-link:hover .usa-social-link__icon {
   background-color: white;
-  color: #162e51;
 }
