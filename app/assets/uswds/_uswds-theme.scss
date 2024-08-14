@@ -26,7 +26,11 @@ Add a list of changed settings in the form $setting: value.
 }
 
 .usa-footer__social-links .usa-social-link__icon {
-  background-color: white;
+  /*
+   * override the default svg stroke color to match brand color: #112F4E
+   * from: https://codepen.io/sosuke/pen/Pjoqqp
+   */
+  filter: invert(13%) sepia(87%) saturate(812%) hue-rotate(179deg) brightness(93%) contrast(94%);
 }
 
 .usa-social-link {
