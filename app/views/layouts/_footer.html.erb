@@ -1,15 +1,13 @@
 <footer class="usa-footer usa-footer--big">
   <div class="usa-footer__primary-section">
     <div class="grid-container">
-      <div class="grid-container usa-footer__return-to-top">
+      <div class="usa-footer__return-to-top">
         <a href="#">Return to top</a>
       </div>
-      <div class="grid-row grid-gap">
         <div class="tablet:grid-col-8">
           <nav class="usa-footer__nav" aria-label="Footer navigation,,">
-            <div class="grid-row grid-gap-4">
+            <div class="grid-row grid-gap-4 usa-footer__primary-content usa-footer__primary-content--collapsible">
               <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
-                <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
                   <%# Col 1 %>
                   <ul class="usa-list usa-list--unstyled">
                     <li class="usa-footer__secondary-link">
@@ -25,10 +23,8 @@
                       <a href="javascript:void(0);">Privacy Policy</a>
                     </li>
                   </ul>
-                </section>
               </div>
               <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
-                <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
                   <%# Col 2 %>
                   <ul class="usa-list usa-list--unstyled">
                     <li class="usa-footer__secondary-link">
@@ -44,10 +40,8 @@
                       <a href="javascript:void(0);">Active Challenges</a>
                     </li>
                   </ul>
-                </section>
               </div>
               <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
-                <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
                   <%# Col 3 %>
                   <ul class="usa-list usa-list--unstyled">
                     <li class="usa-footer__secondary-link">
@@ -63,12 +57,10 @@
                       <a href="javascript:void(0);">USA.gov</a>
                     </li>
                   </ul>
-                </section>
               </div>
             </div>
           </nav>
         </div>
-      </div>
     </div>
   </div>
   <div class="usa-footer__secondary-section bg-primary-darker footer-white">
@@ -88,27 +80,27 @@
           <div class="usa-footer__social-links grid-row grid-gap-1">
             <div class="grid-col-auto">
               <a class="usa-social-link" href="javascript:void(0);">
-                <img class="usa-social-link__icon" src="<%= image_path('twitter.svg') %>" alt="Twitter" />
+                <%= image_tag('images/usa-icons/twitter.svg', class: "usa-social-link__icon", alt: "Twitter") %>
               </a>
             </div>
             <div class="grid-col-auto">
               <a class="usa-social-link" href="javascript:void(0);">
-                <img class="usa-social-link__icon" src="<%= image_path('facebook.svg') %>" alt="Facebook" />
+                <%= image_tag('images/usa-icons/facebook.svg', class: "usa-social-link__icon", alt: "Facebook") %>
               </a>
             </div>
             <div class="grid-col-auto">
               <a class="usa-social-link" href="javascript:void(0);">
-                <img class="usa-social-link__icon" src="<%= image_path('youtube.svg') %>" alt="YouTube" />
+                <%= image_tag('images/usa-icons/youtube.svg', class: "usa-social-link__icon", alt: "YouTube") %>
               </a>
             </div>
             <div class="grid-col-auto">
               <a class="usa-social-link" href="javascript:void(0);">
-                <img class="usa-social-link__icon" src="<%= image_path('linkedin.svg') %>" alt="LinkedIn" />
+                <%= image_tag('images/usa-icons/linkedin.svg', class: "usa-social-link__icon", alt: "LinkedIn") %>
               </a>
             </div>
             <div class="grid-col-auto">
               <a class="usa-social-link" href="javascript:void(0);">
-                <img class="usa-social-link__icon" src="<%= image_path('github.svg') %>" alt="Github" />
+                <%= image_tag('images/usa-icons/github.svg', class: "usa-social-link__icon", alt: "Github") %>
               </a>
             </div>
           </div>
