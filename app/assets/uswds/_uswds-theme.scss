@@ -1,3 +1,10 @@
+/*
+----------------------------------------
+USWDS with settings overrides
+----------------------------------------
+Add a list of changed settings in the form $setting: value.
+----------------------------------------
+*/
 @use "uswds-core" with ($theme-image-path: "images",
   $theme-font-path: "fonts"
 );
