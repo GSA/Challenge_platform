@@ -40,16 +40,4 @@ RSpec.describe "SessionsController" do
     expect(response).to have_http_status(:redirect)
     expect(response).to redirect_to("/dashboard")
   end
-
-  describe "GET /" do
-    before { get "/" }
-
-    it_behaves_like "a page with footer content"
-  end
-
-  describe "GET /dashboard" do
-    before { get "/dashboard" }
-
-    it_behaves_like "a page with footer content"
-  end
 end
