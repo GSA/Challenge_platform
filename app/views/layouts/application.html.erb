@@ -25,7 +25,7 @@
           <img
             aria-hidden="true"
             class="usa-banner__header-flag"
-            src="/img/us_flag_small.png"
+            src="<%= image_path('images/us_flag_small.png') %>"
             alt=""
           />
         </div>
@@ -53,7 +53,7 @@
         <div class="usa-banner__guidance tablet:grid-col-6">
           <img
             class="usa-banner__icon usa-media-block__img"
-            src="/img/icon-dot-gov.svg"
+            src="<%= image_path('images/icon-dot-gov.svg') %>"
             role="img"
             alt=""
             aria-hidden="true"
@@ -69,7 +69,7 @@
         <div class="usa-banner__guidance tablet:grid-col-6">
           <img
             class="usa-banner__icon usa-media-block__img"
-            src="/img/icon-https.svg"
+            src="<%= image_path('images/icon-https.svg') %>"
             role="img"
             alt=""
             aria-hidden="true"
@@ -109,18 +109,22 @@
   <div class="usa-overlay"></div>
  </section> 
 <header class="usa-header usa-header--basic site-header">
-  <div class="usa-nav-container">
+  <div class="desktop:display-flex desktop:width-full">
     <div class="usa-navbar">
       <div class="usa-logo">
         <em class="usa-logo__text"
-          ><a href="/" title="challenge.gov"><img width="1024" class="usa-header__logo-img" src="<%= image_path("challenge-logo.svg") %>" alt="" /></a></em
+          ><a href="/" title="challenge.gov">
+          <span class="site-title--long">
+            <img width="300" class="usa-header__logo-img margin-left-4 desktop:margin-left-2 desktop:margin-bottom-2" src="<%= image_path("challenge-logo.svg") %>" alt="" />
+          </span>  
+          </a></em
         >
       </div>
       <button type="button" class="usa-menu-btn">Menu</button>
     </div>
     <nav aria-label="Primary navigation" class="usa-nav">
       <button type="button" class="usa-nav__close">
-        <img src="/assets/images/usa-icons/close.svg" role="img" alt="Close" />
+        <img src="<%= image_path('images/usa-icons/close.svg') %>" role="img" alt="Close" />
       </button>
       <ul class="usa-nav__primary usa-accordion">
         <li class="usa-nav__primary-item">
@@ -152,18 +156,19 @@
               id="search-field"
               type="search"
               name="search"
+              style="width: 140px"
             />
             <button class="usa-button" type="submit">
               <img
-                src="/assets/images/usa-icons-bg/search--white.svg"
+                src="<%= image_path('images/usa-icons-bg/search--white.svg') %>"
                 class="usa-search__submit-icon"
                 alt="Search"
               />
             </button>
           </form>
         </section>
-        <button class="usa-button usa-button--outline text-no-wrap desktop:margin-left-1">Logout</button>
-        <button class="usa-button text-no-wrap">Switch Task</button> 
+        <button class="usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1">Logout</button>
+        <button class="usa-button font-body-2xs text-no-wrap">Switch Task</button> 
     </nav>
   </div>
 </header>
