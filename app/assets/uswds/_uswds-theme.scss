@@ -11,6 +11,14 @@ Add a list of changed settings in the form $setting: value.
 
 @use "uswds" as *;
 
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
 .usa-footer__logo {
   display: flex;
   align-items: center;
@@ -27,10 +35,10 @@ Add a list of changed settings in the form $setting: value.
 
 .usa-footer__social-links .usa-social-link__icon {
   /*
-   * override the default svg stroke color to match brand color: #112F4E
-   * from: https://codepen.io/sosuke/pen/Pjoqqp
+   * override the default svg stroke color to match USWDS .bg-primary-darker: #162e51
+   * source: https://codepen.io/sosuke/pen/Pjoqqp
    */
-  filter: invert(13%) sepia(87%) saturate(812%) hue-rotate(179deg) brightness(93%) contrast(94%);
+  filter: invert(14%) sepia(17%) saturate(4304%) hue-rotate(190deg) brightness(94%) contrast(92%);
 }
 
 .usa-social-link {
