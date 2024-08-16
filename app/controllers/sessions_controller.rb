@@ -26,6 +26,13 @@ class SessionsController < ApplicationController
 
   def renew
     renew_session
+    head(:ok)
+  end
+
+  def timeout
+    sign_out
+    flash[:alert] = I18n.t("session_expired_alert")
+    head(:ok)
   end
 
   private

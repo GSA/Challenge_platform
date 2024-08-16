@@ -12,11 +12,15 @@
     <%= javascript_include_tag 'uswds', async: true %>
     <%= javascript_include_tag 'uswds-init', async: true %>
 
-    <script>
-      window.appConfig = {
-        sessionTimeoutMinutes: <%= ENV.fetch('SESSION_TIMEOUT_IN_MINUTES', 15).to_i.minutes %>
-      }
-    </script>
+    <% if logged_in? %>
+      <script>
+        window.appConfig = {
+          sessionTimeoutMinutes: <%= ENV.fetch('SESSION_TIMEOUT_IN_MINUTES', 15).to_i.minutes %>
+        }
+      </script>
+
+      <%= javascript_include_tag 'session_timeout' %>
+    <% end %>
   </head>
 
   <body>
