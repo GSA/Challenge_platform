@@ -15,8 +15,16 @@ Add a list of changed settings in the form $setting: value.
   text-align: left;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .text-right {
   text-align: right;
+}
+
+.text-justify {
+  text-align: justify;
 }
 
 .usa-footer__logo {
