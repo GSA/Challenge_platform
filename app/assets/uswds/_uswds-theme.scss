@@ -2,14 +2,58 @@
 ----------------------------------------
 USWDS with settings overrides
 ----------------------------------------
-Uncomment the following lines and add a list of changed settings
-in the form $setting: value,
+Add a list of changed settings in the form $setting: value.
 ----------------------------------------
 */
 
-//
-//  @use "uswds-core" with (
-//    $setting: value,
-//    $setting: value
-//  );
-//
+@use "uswds-core" with ($theme-image-path: "images",
+  $theme-font-path: "fonts"
+);
+
+@use "uswds" as *;
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.usa-footer__logo {
+  display: flex;
+  align-items: center;
+}
+
+.usa-footer__logo-img {
+  max-width: 100%;
+  height: auto;
+}
+
+.footer-white {
+  color: white;
+}
+
+.usa-footer__social-links .usa-social-link__icon {
+  /*
+   * override the default svg stroke color to match USWDS .bg-primary-darker: #162e51
+   * source: https://codepen.io/sosuke/pen/Pjoqqp
+   */
+  filter: invert(14%) sepia(17%) saturate(4304%) hue-rotate(190deg) brightness(94%) contrast(92%);
+}
+
+.usa-social-link {
+  background-color: white;
+}
+
+.usa-footer__secondary-section .usa-social-link:hover .usa-social-link__icon {
+  background-color: white;
+}
