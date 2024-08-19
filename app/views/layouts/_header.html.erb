@@ -110,7 +110,7 @@ aria-label="Official website of the United States government"
       <button type="button" class="usa-nav__close">
         <img src="<%= image_path('images/usa-icons/close.svg') %>" role="img" alt="Close" />
       </button>
-      <ul class="usa-nav__primary usa-accordion">
+      <ul class="usa-nav__primary usa-accordion flex-align-start">
         <li class="usa-nav__primary-item">
           <a href="javascript:void(0);" class="usa-nav-link text-no-wrap"
             ><span>Find a Challenge</span></a
@@ -132,6 +132,8 @@ aria-label="Official website of the United States government"
           >
         </li>
       </ul>
+      <!-- Desktop search and login area --> 
+      <section class="display-none desktop:display-flex">
         <section aria-label="Search component">
           <form class="usa-search usa-search--small" role="search">
             <label class="usa-sr-only" for="search-field">Search</label>
@@ -157,6 +159,35 @@ aria-label="Official website of the United States government"
           <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1", type: "button") %>
         <% end %>
         <button class="usa-button font-body-2xs text-no-wrap">Create Account</button> 
+      </section>
+      <!-- mobile search and login area --> 
+      <section class="desktop:display-none order-3 flex-align-self-end">
+        <section aria-label="Search component">
+          <form class="usa-search usa-search--small margin-y-1" role="search">
+            <label class="usa-sr-only" for="search-field">Search</label>
+            <input
+              class="usa-input"
+              id="search-field"
+              type="search"
+              name="search"
+              style="width: 140px"
+            />
+            <button class="usa-button" type="submit">
+              <img
+                src="<%= image_path('images/usa-icons-bg/search--white.svg') %>"
+                class="usa-search__submit-icon"
+                alt="Search"
+              />
+            </button>
+          </form>
+        </section>
+        <% if logged_in? %>
+          <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
+        <% else %>
+          <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
+        <% end %>
+        <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Create Account</button> 
+      </section>
     </nav>
   </div>
 </header>
