@@ -47,7 +47,7 @@ class User < ApplicationRecord
   has_many :submission_documents, class_name: 'Submissions::Document', dependent: :destroy
   has_many :message_context_statuses, dependent: :destroy
 
-  attribute :role, :string, default: -> { self[:role] }
+  attribute :role, :string
   attribute :status, :string, default: 'pending'
   attribute :finalized, :boolean, default: true
   attribute :display, :boolean, default: true
@@ -80,8 +80,55 @@ class User < ApplicationRecord
 
   attribute :renewal_request, :string
 
-  attribute :created_at, :datetime, precision: 6
-  attribute :updated_at, :datetime, precision: 6
-
   validates :email, presence: true
+
+  # Finds, creates, or updates user from userinfo
+  # Find in case of user with existing token matching userinfo["sub"]
+  # Create in case of no token or email matching in userinfo
+  # Update in case of matching email to userinfo["email"] but no token set
+  # TODO: Add relevant security log tracking here?
+  def self.user_from_userinfo(userinfo)
+    email = userinfo[0]["email"]
+    token = userinfo[0]["sub"]
+
+    if (user = find_by(token:))
+      user
+    elsif (user = find_by(email:))
+      update_admin_added_user(user, userinfo)
+    else
+      create_user_from_userinfo(userinfo)
+    end
+  end
+
+  def self.update_admin_added_user(user, userinfo)
+    update(user.id, { token: userinfo[0]["sub"] })
+  end
+
+  def self.create_user_from_userinfo(userinfo)
+    email = userinfo[0]["email"]
+    token = userinfo[0]["sub"]
+
+    default_role, default_status = default_role_and_status_for_email(email)
+
+    create({
+             email:,
+             role: default_role,
+             token:,
+             terms_of_use: nil,
+             privacy_guidelines: nil,
+             status: default_status
+           })
+  end
+
+  def self.default_role_and_status_for_email(email)
+    if default_challenge_manager?(email)
+      %w[challenge_manager pending]
+    else
+      %w[solver active]
+    end
+  end
+
+  def self.default_challenge_manager?(email)
+    /\.(gov|mil)$/.match?(email)
+  end
 end
