@@ -208,12 +208,30 @@ aria-label="Official website of the United States government"
         Dashboard
       </a>
     </div>
-    <div class="display-flex flex-align-center margin-x-1">
-      <%= image_tag('images/usa-icons/folder_open.svg', class: "usa-icon--size-3 icon-white margin-top-1 margin-right-1", alt: "Submissions") %>    
-      <a href="/submissions" class="usa-nav-link text-white margin-top-1">
-        Submissions
-      </a>
-    </div>
+    <% if current_user.role == "challenge_manager" %>
+      <div class="display-flex flex-align-center margin-x-1">
+        <%= image_tag('images/usa-icons/emoji_events.svg', class: "usa-icon--size-3 icon-white margin-top-1 margin-right-1", alt: "Challenges") %>    
+        <a href="/user-guide" class="usa-nav-link text-white margin-top-1">
+          Challenges
+        </a>
+      </div>
+    <% end %>
+    <% if current_user.role == "challenge_manager" || current_user.role == "solver" %>
+      <div class="display-flex flex-align-center margin-x-1">
+        <%= image_tag('images/usa-icons/folder_open.svg', class: "usa-icon--size-3 icon-white margin-top-1 margin-right-1", alt: "Submissions") %>    
+        <a href="/submissions" class="usa-nav-link text-white margin-top-1">
+          Submissions
+        </a>
+      </div>
+    <% end %>
+    <% if current_user.role == "challenge_manager" || current_user.role == "evaluator" %>
+      <div class="display-flex flex-align-center margin-x-1">
+        <%= image_tag('images/usa-icons/content_copy.svg', class: "usa-icon--size-3 icon-white margin-top-1 margin-right-1", alt: "Evaluations") %>    
+        <a href="/user-guide" class="usa-nav-link text-white margin-top-1">
+          Evaluations
+        </a>
+      </div>
+    <% end %>  
     <div class="display-flex flex-align-center margin-x-1">
       <%= image_tag('images/usa-icons/map.svg', class: "usa-icon--size-3 icon-white margin-top-1 margin-right-1", alt: "User Guides") %>    
       <a href="/user-guide" class="usa-nav-link text-white margin-top-1">
