@@ -15,6 +15,9 @@
 
   <body>
     <%= render "layouts/header" %>
+    <% if logged_in? %>
+      <%= render "layouts/utility_menu" %>
+    <% end %>  
     <%= yield %>
     <%= render "layouts/footer" %>
   </body>
