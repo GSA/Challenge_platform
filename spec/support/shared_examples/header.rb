@@ -5,5 +5,4 @@ RSpec.shared_examples "a page with header content" do
     expect(response.body).to include("Events")
     expect(response.body).to include("Contact")
   end
-end
-  
+end  
