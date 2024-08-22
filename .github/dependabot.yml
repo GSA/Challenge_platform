@@ -2,7 +2,7 @@ version: 2
 updates:
   - package-ecosystem: bundler
     directory: "/"
-    target-branch: "production"
+    target-branch: "dev"
     schedule:
       interval: weekly
     ignore:
