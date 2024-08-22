@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_session_expiration
-    if session[:session_timeout_at].present? && session[:session_timeout_at] < Time.current
+    if logged_in? && (session[:session_timeout_at].blank? || session[:session_timeout_at] < Time.current)
       sign_out
       redirect_to dashboard_path, alert: I18n.t("session_expired_alert")
     else
