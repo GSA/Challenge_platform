@@ -42,12 +42,12 @@ RSpec.describe "SessionsController" do
   end
 
   it "times out the session" do
-    session_timeout_in_minutes = ENV.fetch("SESSION_TIMEOUT_IN_MINUTES", 15)
+    session_timeout_in_minutes = SessionsController::SESSION_TIMEOUT_IN_MINUTES
 
     email = "test@example.gov"
     token = SecureRandom.uuid
 
-    puts User.create!({email:, token:})
+    User.create!({ email:, token: })
 
     code = "ABC123"
     login_gov = instance_double(LoginGov)

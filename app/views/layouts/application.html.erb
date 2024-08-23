@@ -15,7 +15,7 @@
     <% if logged_in? %>
       <script>
         window.appConfig = {
-          sessionTimeoutMinutes: <%= ENV.fetch('SESSION_TIMEOUT_IN_MINUTES', 15).to_i.minutes %>
+          sessionTimeoutMinutes: <%= SessionsController::SESSION_TIMEOUT_IN_MINUTES %>
         }
       </script>
 
