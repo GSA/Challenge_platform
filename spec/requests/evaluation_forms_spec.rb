@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "EvaluationForms", type: :request do
+RSpec.describe "EvaluationForms" do
   describe "GET /evaluation_forms" do
     it "renders the index view with the correct header" do
       get evaluation_forms_path

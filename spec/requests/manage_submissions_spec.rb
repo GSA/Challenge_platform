@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "ManageSubmissions", type: :request do
+RSpec.describe "ManageSubmissions" do
   describe "GET /manage_submissions" do
     it "renders the index view with the correct header" do
       get manage_submissions_path
