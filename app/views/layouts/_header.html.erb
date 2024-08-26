@@ -155,14 +155,11 @@ aria-label="Official website of the United States government"
         </section>
         <% if logged_in? %>
           <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1", type: "button") %>
+          <button class="usa-button font-body-2xs text-no-wrap">Switch Task</button> 
         <% else %>
           <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1", type: "button") %>
-        <% end %>
-        <% if logged_in? %>
-          <button class="usa-button font-body-2xs text-no-wrap">Switch Task</button> 
-        <% else %>  
           <button class="usa-button font-body-2xs text-no-wrap">Create Account</button> 
-        <% end %>  
+        <% end %>
       </section>
       <!-- mobile search and login area --> 
       <section class="desktop:display-none order-3">
@@ -189,17 +186,12 @@ aria-label="Official website of the United States government"
           <div class="text-primary font-body-2xs margin-y-1 padding-top-1">
             <%= current_user.email %>
           </div>  
-        <% end %>
-        <% if logged_in? %>
           <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
+          <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Switch Task</button> 
         <% else %>
           <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
-        <% end %>
-        <% if logged_in? %>
-          <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Switch Task</button> 
-        <% else %>  
           <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Create Account</button> 
-        <% end %>  
+        <% end %>
       </section>
     </nav>
   </div>
