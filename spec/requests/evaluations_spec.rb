@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Evaluations", type: :request do
+RSpec.describe "Evaluations" do
   describe "GET /index" do
     it "returns http success" do
       get "/evaluations"

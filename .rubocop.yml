@@ -85,6 +85,7 @@ Rails/SkipsModelValidations:
 RSpec/DescribeClass:
   Exclude:
     - 'spec/lib/tasks/**/*'
+    - 'spec/views/**/*'
 
 RSpec/DescribedClass:
   SkipBlocks: true

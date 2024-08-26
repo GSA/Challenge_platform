@@ -10,6 +10,6 @@ require 'rails_helper'
 #     end
 #   end
 # end
-RSpec.describe EvaluationsHelper, type: :helper do
+RSpec.describe EvaluationsHelper do
   pending "add some examples to (or delete) #{__FILE__}"
 end
