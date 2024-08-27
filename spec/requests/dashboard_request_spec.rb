@@ -2,17 +2,38 @@ require "rails_helper"
 
 RSpec.describe "DashboardController" do
   describe "GET /" do
+    let(:user) { create_and_log_in_user }
     before { get "/" }
 
     it_behaves_like "a page with footer content"
 
-    it_behaves_like "a page with header content"
+    context "public solver" do
+      before { 
+        user.update(role: "solver")  
+        get "/"
+      } 
 
-    # binding.pry
+      it_behaves_like "a page with utility menu links for a public solver"
+    end  
 
-    it_behaves_like "a page with utility menu links for a public solver"
-    it_behaves_like "a page with utility menu links for a challenge manager"
-    it_behaves_like "a page with utility menu links for an evaluator"
+
+    context "challenge manager" do
+      before { 
+        user.update(role: "challenge_manager")  
+        get "/"
+      } 
+
+      it_behaves_like "a page with utility menu links for a challenge manager"
+    end
+
+    context "challenge manager" do
+      before { 
+        user.update(role: "evaluator")  
+        get "/"
+      } 
+
+      it_behaves_like "a page with utility menu links for an evaluator"
+    end
   end
 
   describe "GET /dashboard" do
