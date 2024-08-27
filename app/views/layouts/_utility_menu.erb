@@ -1,65 +1,22 @@
-<!-- Desktop Utility Menu -->
-<div class="bg-primary-darker w-full display-none desktop:display-flex flex-justify-end padding-1 font-body-2xs text-white">
-    <%= utility_menu_link_desktop('grid_view', 'dashboard', 'dashboard', 'Dashboard') %>
+<!-- Utility Menu -->
+<div class="bg-primary-darker w-full display-flex flex-justify-center desktop:flex-justify-end padding-1 font-body-3xs desktop:font-body-2xs text-white">
+    <%= utility_menu_link('grid_view', 'dashboard', 'dashboard', 'Dashboard') %>
     <% if current_user.role == "challenge_manager" %>
-        <%= utility_menu_link_desktop('emoji_events', 'user_guide', 'challenges', 'Challenges') %>
+        <%= utility_menu_link('emoji_events', 'http://localhost:4000/', 'challenges', 'Challenges') %>
+        <%= utility_menu_link('content_copy', 'evaluation_forms', 'Evaluation Forms', 'Evaluations') %>
+        <%= utility_menu_link('folder_open', 'manage_submissions', 'Manage Submissions', 'Submissions') %>
     <% end %>
-    <% if current_user.role == "challenge_manager" || current_user.role == "solver" %>
-        <%= utility_menu_link_desktop('folder_open', 'submissions', 'submissions', 'Submissions') %>
-    <% end %>
-    <% if current_user.role == "challenge_manager" || current_user.role == "evaluator" %>
-        <%= utility_menu_link_desktop('content_copy', 'user-guide', 'evaluations', 'Evaluations') %>
+    <% if current_user.role == "evaluator" %>
+        <%= utility_menu_link('content_copy', 'evaluations', 'Evaluate Submissions', 'Evaluations') %>
     <% end %>  
-    <%= utility_menu_link_desktop('map', 'user_guide', 'user guides', 'User Guides') %>
-    <%= utility_menu_link_desktop('support_agent', 'federal-agency-faqs', 'help', 'Help') %>
-    <div class="display-flex flex-align-center margin-x-1 margin-top-1">
+    <% if current_user.role == "solver" %>
+        <%= utility_menu_link('folder_open', 'submissions', 'submissions', 'Submissions') %>
+    <% end %>
+    <%= utility_menu_link('map', 'user_guide', 'user guides', 'User Guides') %>
+    <%= utility_menu_link('support_agent', 'federal-agency-faqs', 'help', 'Help') %>
+    <div class="display-none desktop:display-flex flex-align-center margin-x-1 margin-top-1">
         |
         <%= image_tag('images/usa-icons/account_circle.svg', class: "usa-icon--size-3 icon-white margin-x-2", alt: "Help") %>    
         <%= current_user.email %>
-    </div>
-</div>
-<!-- Mobile Utility Menu -->
-<div class="bg-primary-darker w-full display-flex desktop:display-none flex-justify-center padding-1 text-white">
-    <div class="margin-x-1">
-        <a href="/dashboard" class="text-white display-flex flex-column flex-align-center" style="font-size: .7rem; text-decoration: none;">
-        <%= image_tag('images/usa-icons/grid_view.svg', class: "usa-icon--size-4 icon-white margin-bottom-05", alt: "Dashboard") %>
-        Dashboard
-        </a>
-    </div>
-    <% if current_user.role == "challenge_manager" %>
-        <div class="margin-x-1">
-            <a href="/user-guide" class="text-white display-flex flex-column flex-align-center" style="font-size: .7rem; text-decoration: none;">
-            <%= image_tag('images/usa-icons/emoji_events.svg', class: "usa-icon--size-4 icon-white margin-bottom-05", alt: "Challenges") %>
-            Challenges
-            </a>
-        </div>
-    <% end %>
-    <% if current_user.role == "challenge_manager" || current_user.role == "solver" %>
-        <div class="margin-x-1">
-            <a href="/submissions" class="text-white display-flex flex-column flex-align-center" style="font-size: .7rem; text-decoration: none;">
-            <%= image_tag('images/usa-icons/folder_open.svg', class: "usa-icon--size-4 icon-white margin-bottom-05", alt: "Submissions") %>
-            Submissions
-            </a>
-        </div>
-    <% end %>
-    <% if current_user.role == "challenge_manager" || current_user.role == "evaluator" %>
-        <div class="margin-x-1">
-            <a href="/user-guide" class="text-white display-flex flex-column flex-align-center" style="font-size: .7rem; text-decoration: none;">
-            <%= image_tag('images/usa-icons/content_copy.svg', class: "usa-icon--size-4 icon-white margin-bottom-05", alt: "Evaluations") %>
-            Evaluations
-            </a>
-        </div>
-    <% end %>  
-    <div class="margin-x-1">
-        <a href="/user-guide" class="text-white display-flex flex-column flex-align-center" style="font-size: .7rem; text-decoration: none;">
-        <%= image_tag('images/usa-icons/map.svg', class: "usa-icon--size-4 icon-white margin-bottom-05", alt: "User Guides") %>
-        User Guides
-        </a>
-    </div>
-    <div class="margin-x-1">
-        <a href="/federal-agency-faqs" class="text-white display-flex flex-column flex-align-center" style="font-size: .7rem; text-decoration: none;">
-        <%= image_tag('images/usa-icons/support_agent.svg', class: "usa-icon--size-4 icon-white margin-bottom-05", alt: "Help") %>
-        Help
-        </a>
     </div>
 </div>
