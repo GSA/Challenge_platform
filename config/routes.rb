@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get '/', to: "dashboard#index"
   get '/dashboard', to: "dashboard#index"
 
+  resources :evaluations, only: [:index]
   resources :evaluation_forms, only: [:index]
   resources :manage_submissions, only: [:index]
 
