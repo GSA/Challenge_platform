@@ -2,7 +2,7 @@
 
 class SessionsController < ApplicationController
   before_action :check_error_result, :require_code_param, :exchange_token, only: [:result]
-  before_action :check_session_expiration, except: [:timeout]
+  skip_before_action :check_session_expiration, only: [:timeout]
 
   SESSION_TIMEOUT_IN_MINUTES = 15
 
