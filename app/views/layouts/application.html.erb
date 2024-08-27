@@ -11,6 +11,16 @@
     <%= javascript_include_tag 'application' %>
     <%= javascript_include_tag 'uswds', async: true %>
     <%= javascript_include_tag 'uswds-init', async: true %>
+
+    <% if logged_in? %>
+      <script>
+        window.appConfig = {
+          sessionTimeoutMinutes: <%= SessionsController::SESSION_TIMEOUT_IN_MINUTES %>
+        }
+      </script>
+
+      <%= javascript_include_tag 'session_timeout' %>
+    <% end %>
   </head>
 
   <body>
@@ -18,7 +28,11 @@
     <% if logged_in? %>
       <%= render "layouts/utility_menu" %>
     <% end %>  
+    <%= render "shared/flash" %>
+
     <%= yield %>
+
     <%= render "layouts/footer" %>
+    <%= render "modals/renew_session" %>
   </body>
 </html>
