@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   get 'auth/result', to: 'sessions#result'
   resource 'session', only: [:new, :create, :destroy]
+  post 'sessions/renew', to: 'sessions#renew'
+  delete 'sessions/timeout', to: 'sessions#timeout'
 
   get '/', to: "dashboard#index"
   get '/dashboard', to: "dashboard#index"
