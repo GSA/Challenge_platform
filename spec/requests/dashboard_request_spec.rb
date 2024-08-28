@@ -6,6 +6,7 @@ RSpec.describe "DashboardController" do
     before { get "/" }
 
     it_behaves_like "a page with footer content"
+    it_behaves_like "a page with header content"
 
     context "public solver" do
       before { 
@@ -37,8 +38,38 @@ RSpec.describe "DashboardController" do
   end
 
   describe "GET /dashboard" do
+    let(:user) { create_and_log_in_user }
     before { get "/dashboard" }
 
     it_behaves_like "a page with footer content"
+    it_behaves_like "a page with header content"
+
+    context "public solver" do
+      before { 
+        user.update(role: "solver")  
+        get "/"
+      } 
+
+      it_behaves_like "a page with utility menu links for a public solver"
+    end  
+
+
+    context "challenge manager" do
+      before { 
+        user.update(role: "challenge_manager")  
+        get "/"
+      } 
+
+      it_behaves_like "a page with utility menu links for a challenge manager"
+    end
+
+    context "challenge manager" do
+      before { 
+        user.update(role: "evaluator")  
+        get "/"
+      } 
+
+      it_behaves_like "a page with utility menu links for an evaluator"
+    end
   end
 end
