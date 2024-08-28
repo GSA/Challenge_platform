@@ -4,6 +4,7 @@ defaults: &defaults
     - https://github.com/cloudfoundry/apt-buildpack
     - nodejs_buildpack
     - ruby_buildpack
+    - binary_buildpack
   memory: 512M
   disk_quota: 2G
   stack: cflinuxfs4
@@ -15,6 +16,11 @@ applications:
   <<: *defaults
   instances: 1
   disk_quota: 6GB
+  sidecars:
+    - name: local-proxy
+      process_types: [ 'web' ]
+      command: ./proxy/caddy run --config proxy/Caddyfile.local
+      memory: 64M
   env:
     RAILS_ENV: dev
     RAILS_LOG_TO_STDOUT: true
@@ -26,3 +32,19 @@ applications:
     LOGIN_PUBLIC_KEY_PATH: dev_cert.pem
     LOGIN_REDIRECT_EVAL_URL: https://challenge-dev.app.cloud.gov/auth/result
     LOGOUT_REDIRECT_EVAL_URL: https://challenge-dev.app.cloud.gov/
+
+- name: challenge-proxy
+  buildpacks:
+    - binary_buildpack
+  routes:
+    - route: challenge-proxy.apps.internal
+  stack: cflinuxfs4
+  memory: 64M
+  path: proxy
+  health-check-type: process
+  command: ./caddy run --config Caddyfile
+  env:
+    PROXY_USERNAME: ((username))
+    PROXY_PASSWORD: ((password))
+    PROXY_DENY: ((proxydeny))
+    PROXY_ALLOW: ((proxyallow))
