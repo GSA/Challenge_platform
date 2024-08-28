@@ -5,7 +5,7 @@ defaults: &defaults
     - nodejs_buildpack
     - ruby_buildpack
     - binary_buildpack
-  memory: 512MB
+  memory: 1G
   disk_quota: 2G
   stack: cflinuxfs4
   health-check-type: process
@@ -20,7 +20,7 @@ applications:
     - name: local-proxy
       process_types: [ 'web' ]
       command: ./proxy/sidecar_start.sh
-      memory: 128M
+      memory: 64M
   env:
     RAILS_ENV: dev
     RAILS_LOG_TO_STDOUT: true
