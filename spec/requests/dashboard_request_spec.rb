@@ -9,8 +9,8 @@ RSpec.describe "DashboardController" do
     it_behaves_like "a page with header content"
 
     context "public solver" do
-      before { 
-        user.update(role: "solver")  
+      before {
+        user.update(role: "solver")
         get "/"
       } 
 
@@ -20,18 +20,18 @@ RSpec.describe "DashboardController" do
 
     context "challenge manager" do
       before { 
-        user.update(role: "challenge_manager")  
+        user.update(role: "challenge_manager")
         get "/"
-      } 
+      }
 
       it_behaves_like "a page with utility menu links for a challenge manager"
     end
 
     context "challenge manager" do
-      before { 
-        user.update(role: "evaluator")  
+      before {
+        user.update(role: "evaluator")
         get "/"
-      } 
+      }
 
       it_behaves_like "a page with utility menu links for an evaluator"
     end
@@ -45,29 +45,29 @@ RSpec.describe "DashboardController" do
     it_behaves_like "a page with header content"
 
     context "public solver" do
-      before { 
-        user.update(role: "solver")  
+      before {
+        user.update(role: "solver")
         get "/"
-      } 
+      }
 
       it_behaves_like "a page with utility menu links for a public solver"
-    end  
+    end
 
 
     context "challenge manager" do
-      before { 
-        user.update(role: "challenge_manager")  
+      before {
+        user.update(role: "challenge_manager")
         get "/"
-      } 
+      }
 
       it_behaves_like "a page with utility menu links for a challenge manager"
     end
 
     context "challenge manager" do
-      before { 
-        user.update(role: "evaluator")  
+      before {
+        user.update(role: "evaluator")
         get "/"
-      } 
+      }
 
       it_behaves_like "a page with utility menu links for an evaluator"
     end
