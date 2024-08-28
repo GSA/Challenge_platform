@@ -25,8 +25,8 @@ def create_and_log_in_user
   login_gov = instance_double(LoginGov)
   allow(LoginGov).to receive(:new).and_return(login_gov)
   allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
-        [{ email:, sub: token }]
-    )
+    [{ email:, sub: token }]
+  )
 
   get "/auth/result", params: { code: }
   user
