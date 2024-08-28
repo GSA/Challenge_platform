@@ -8,7 +8,7 @@ RSpec.describe "DashboardController" do
     it_behaves_like "a page with footer content"
     it_behaves_like "a page with header content"
 
-    context "public solver" do
+    context "when logged in as public solver on the root url" do
       before {
         user.update(role: "solver")
         get "/"
@@ -18,7 +18,7 @@ RSpec.describe "DashboardController" do
     end  
 
 
-    context "challenge manager" do
+    context "when logged in as a challenge manager on the root url" do
       before { 
         user.update(role: "challenge_manager")
         get "/"
@@ -27,7 +27,7 @@ RSpec.describe "DashboardController" do
       it_behaves_like "a page with utility menu links for a challenge manager"
     end
 
-    context "challenge manager" do
+    context "when logged in as an evaluator on the root url" do
       before {
         user.update(role: "evaluator")
         get "/"
@@ -44,30 +44,30 @@ RSpec.describe "DashboardController" do
     it_behaves_like "a page with footer content"
     it_behaves_like "a page with header content"
 
-    context "public solver" do
-      before {
+    context "when logged in as a public solver on the dashboard" do
+      before do
         user.update(role: "solver")
-        get "/"
-      }
+        get "/dashboard"
+      end
 
       it_behaves_like "a page with utility menu links for a public solver"
     end
 
 
-    context "challenge manager" do
-      before {
+    context "when logged in as a challenge manager on the dashboard" do
+      before do
         user.update(role: "challenge_manager")
-        get "/"
-      }
+        get "/dashboard"
+      end
 
       it_behaves_like "a page with utility menu links for a challenge manager"
     end
 
-    context "challenge manager" do
-      before {
+    context "when logged in as an evaluator on the dashboard" do
+      before do
         user.update(role: "evaluator")
-        get "/"
-      }
+        get "/dashboard"
+      end
 
       it_behaves_like "a page with utility menu links for an evaluator"
     end
