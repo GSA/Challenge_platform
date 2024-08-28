@@ -7,4 +7,4 @@ if [ "$CF_INSTANCE_INDEX" == "0" ]; then
   echo "----- Migrated Database ----- Instance $CF_INSTANCE_INDEX -----"
 fi
 echo "------ Booting Web Process ------ Instance $CF_INSTANCE_INDEX -----"
-bundle exec rails s -b 0.0.0.0 -p $PORT -e $RAILS_ENV
+bundle exec puma -C config/puma.rb

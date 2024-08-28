@@ -4,7 +4,6 @@ defaults: &defaults
     - https://github.com/cloudfoundry/apt-buildpack
     - nodejs_buildpack
     - ruby_buildpack
-    - binary_buildpack
   memory: 256M
   disk_quota: 2G
   stack: cflinuxfs4
