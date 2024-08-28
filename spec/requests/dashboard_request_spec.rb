@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe "DashboardController" do
-  describe "GET /" do
-    let(:user) { create_and_log_in_user }
+  let(:user) { create_and_log_in_user }
 
+  describe "GET /" do
     before { get "/" }
 
     it_behaves_like "a page with footer content"
@@ -15,6 +15,7 @@ RSpec.describe "DashboardController" do
         get "/"
       end
 
+      it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for a public solver"
     end
 
@@ -24,6 +25,7 @@ RSpec.describe "DashboardController" do
         get "/"
       end
 
+      it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for a challenge manager"
     end
 
@@ -33,13 +35,12 @@ RSpec.describe "DashboardController" do
         get "/"
       end
 
+      it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for an evaluator"
     end
   end
 
   describe "GET /dashboard" do
-    let(:user) { create_and_log_in_user }
-
     before { get "/dashboard" }
 
     it_behaves_like "a page with footer content"
@@ -51,6 +52,7 @@ RSpec.describe "DashboardController" do
         get "/dashboard"
       end
 
+      it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for a public solver"
     end
 
@@ -60,6 +62,7 @@ RSpec.describe "DashboardController" do
         get "/dashboard"
       end
 
+      it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for a challenge manager"
     end
 
@@ -69,6 +72,7 @@ RSpec.describe "DashboardController" do
         get "/dashboard"
       end
 
+      it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for an evaluator"
     end
   end
