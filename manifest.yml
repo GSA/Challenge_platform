@@ -19,7 +19,7 @@ applications:
   sidecars:
     - name: local-proxy
       process_types: [ 'web' ]
-      command: ./proxy/caddy run --config proxy/Caddyfile.local
+      command: ./proxy/sidecar_start.sh
       memory: 64M
   env:
     RAILS_ENV: dev
