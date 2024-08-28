@@ -5,7 +5,7 @@ defaults: &defaults
     - nodejs_buildpack
     - ruby_buildpack
     - binary_buildpack
-  memory: 512M
+  memory: 768M
   disk_quota: 2G
   stack: cflinuxfs4
   health-check-type: process
