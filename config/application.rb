@@ -40,5 +40,7 @@ module RailsNew
       public_key_path: ENV.fetch("LOGIN_PUBLIC_KEY_PATH", "config/public.crt"),
       private_key_path: ENV.fetch("LOGIN_PRIVATE_KEY_PATH", "config/private.pem"),
     }
+
+    config.assets.initialize_on_precompile = false
   end
 end
