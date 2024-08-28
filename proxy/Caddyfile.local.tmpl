@@ -7,13 +7,13 @@
 	auto_https off
 }
 
-:8080 {
+:8888 {
 	route {
 		forward_proxy {
 			acl {
 			    allow all
 			}
-			ports 80 443 22 61443
+			ports 80 443 61443
 			upstream $PROXYROUTE
 		}
 	}
