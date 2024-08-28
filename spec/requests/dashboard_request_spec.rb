@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe "DashboardController" do
   describe "GET /" do
     let(:user) { create_and_log_in_user }
+    
     before { get "/" }
 
     it_behaves_like "a page with footer content"
