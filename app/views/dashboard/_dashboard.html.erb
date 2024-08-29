@@ -1,0 +1,14 @@
+<% cards.each do |card| %>
+    <%= link_to(card[:href],
+            class: "display-flex bg-primary-darker text-white flex-row margin-1") do %>
+        <%= image_tag(
+            "images/usa-icons/#{card[:image_path]}.svg",
+            class: "usa-icon--size-4 desktop:usa-icon--size-3 icon-white desktop:margin-right-1 text-white",
+            alt: card[:alt]
+        )%>
+        <div class="display-flex flex-column">
+            <h2><%= card[:title] %></h2>
+            <h3><%= card[:subtitle] %></h3>
+        </div>    
+    <% end %>    
+<% end %>    

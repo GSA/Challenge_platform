@@ -50,6 +50,10 @@ Add a list of changed settings in the form $setting: value.
   filter: invert(14%) sepia(17%) saturate(4304%) hue-rotate(190deg) brightness(94%) contrast(92%);
 }
 
+.icon-white {
+  filter: invert(99%) sepia(2%) saturate(3661%) hue-rotate(191deg) brightness(117%) contrast(80%);
+}
+
 .usa-social-link {
   background-color: white;
 }
