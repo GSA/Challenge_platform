@@ -1,16 +1,17 @@
-<div class="display-flex flex-wrap tablet:grid-row flex-justify-center width-full margin-left-auto">
+<h2><%= title %></h2>
+<div class="display-flex flex-wrap desktop:grid-row flex-justify-center width-full">
     <% cards.each do |card| %>
         <%= link_to(card[:href],
-                class: "display-flex bg-primary-darker text-white flex-align-center tablet:grid-col grid-gap-1 tablet:margin-x-1 margin-y-1 tablet:grid-col-5",
+                class: "display-flex bg-primary-darker text-white flex-align-center desktop:grid-col grid-gap-1 desktop:margin-x-1 margin-y-1 desktop:grid-col-5",
                 style: "text-decoration: none; gap: 1px") do %>
             <%= image_tag(
                 "images/usa-icons/#{card[:image_path]}.svg",
-                class: "usa-icon--size-6 icon-white margin-x-2 justify-self-center align-self-center",
+                class: "usa-icon--size-7 icon-white margin-x-2 justify-self-center align-self-center",
                 alt: card[:alt]
             )%>
             <div class="" >
-                <h3 style="text-decoration: none"><%= card[:title] %></h3>
-                <h4><%= card[:subtitle] %></h4>
+                <h3 class="font-body-lg"><%= card[:title] %></h3>
+                <h4 style="max-width: 250px;" class="text-normal"><%= card[:subtitle] %></h4>
             </div>    
         <% end %>    
     <% end %>    
