@@ -27,6 +27,7 @@ RSpec.describe "DashboardController" do
 
       it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for a challenge manager"
+      it_behaves_like "a page with dashboard content for a challenge manager"
     end
 
     context "when logged in as an evaluator on the root url" do
@@ -64,6 +65,7 @@ RSpec.describe "DashboardController" do
 
       it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for a challenge manager"
+      it_behaves_like "a page with dashboard content for a challenge manager"
     end
 
     context "when logged in as an evaluator on the dashboard" do
