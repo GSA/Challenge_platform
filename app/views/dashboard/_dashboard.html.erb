@@ -1,14 +1,17 @@
-<% cards.each do |card| %>
-    <%= link_to(card[:href],
-            class: "display-flex bg-primary-darker text-white flex-row margin-1") do %>
-        <%= image_tag(
-            "images/usa-icons/#{card[:image_path]}.svg",
-            class: "usa-icon--size-4 desktop:usa-icon--size-3 icon-white desktop:margin-right-1 text-white",
-            alt: card[:alt]
-        )%>
-        <div class="display-flex flex-column">
-            <h2><%= card[:title] %></h2>
-            <h3><%= card[:subtitle] %></h3>
-        </div>    
+<div class="grid-row">
+    <% cards.each do |card| %>
+        <%= link_to(card[:href],
+                class: "display-flex bg-primary-darker text-white margin-x-auto margin-y-1 flex-align-center  tablet:grid-col-6 grid-gap-2px",
+                style: "text-decoration: none") do %>
+            <%= image_tag(
+                "images/usa-icons/#{card[:image_path]}.svg",
+                class: "usa-icon--size-6 icon-white margin-x-2 justify-self-center align-self-center",
+                alt: card[:alt]
+            )%>
+            <div class="" >
+                <h3 style="text-decoration: none"><%= card[:title] %></h3>
+                <h4><%= card[:subtitle] %></h4>
+            </div>    
+        <% end %>    
     <% end %>    
-<% end %>    
+</div>    
