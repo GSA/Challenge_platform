@@ -25,6 +25,9 @@
 
   <body>
     <%= render "layouts/header" %>
+    <% if logged_in? %>
+      <%= render "layouts/utility_menu" %>
+    <% end %>  
     <%= render "shared/flash" %>
 
     <%= yield %>
