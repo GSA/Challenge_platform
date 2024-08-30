@@ -22,27 +22,20 @@ class ApplicationController < ActionController::Base
     @current_user = user
     renew_session
     session[:userinfo] = login_userinfo
-    session[:user_token] = user.token
-    session[:user_id] = user.id
   end
 
   def sign_out
     @current_user = nil
     session.delete(:userinfo)
     session.delete(:session_timeout_at)
-    session.delete(:user_token)
-    session.delete(:user_id)
   end
 
   def renew_session
-    session[:session_timeout_at] = (Time.current + ENV.fetch("SESSION_TIMEOUT_IN_MINUTES", 15).to_i.minutes).to_i
+    session[:session_timeout_at] = Time.current + ENV.fetch("SESSION_TIMEOUT_IN_MINUTES", 15).to_i.minutes
   end
 
   def check_session_expiration
-    puts("SESSION")
-    puts(session.to_h)
-    if session[:session_timeout_at].present? && session[:session_timeout_at] < Time.current.to_i
-      puts("Signing out")
+    if session[:session_timeout_at].present? && session[:session_timeout_at] < Time.current
       sign_out
       redirect_to dashboard_path, alert: I18n.t("session_expired_alert")
     else
