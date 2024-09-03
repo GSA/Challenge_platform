@@ -1,7 +1,7 @@
 <div class="usa-card__container custom-card col-md-6 rules-of-behavior">
   <div class="usa-card__body">
     <% if logged_in? %>
-      <%= dashboard(current_user) %>
+      <%= render partial: "dashboard", locals: { role: current_user.role.to_sym } %>
     <% else %>
       Logged Out Dashboard Index
     <% end %>

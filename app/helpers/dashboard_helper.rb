@@ -1,14 +1,7 @@
 # frozen_string_literal: true
 
 module DashboardHelper
-  def dashboard(user)
-    role = user.role.to_sym
-    cards = card_data[role]
-    title = dashboard_title[role]
-    render partial: "dashboard", locals: { cards:, title: }
-  end
-
-  def card_data
+  def dashboard_cards_by_role
     {
       challenge_manager: [
         { image_path: 'folder_open', href: 'manage_submissions', alt: 'submissions', title: 'Submissions',
