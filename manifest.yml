@@ -4,7 +4,7 @@ defaults: &defaults
     - https://github.com/cloudfoundry/apt-buildpack
     - nodejs_buildpack
     - ruby_buildpack
-  memory: 512M
+  memory: 256M
   disk_quota: 2G
   stack: cflinuxfs4
   health-check-type: process
@@ -15,6 +15,11 @@ applications:
   <<: *defaults
   instances: 1
   disk_quota: 6GB
+  sidecars:
+    - name: local-proxy
+      process_types: [ 'web' ]
+      command: ./proxy/sidecar_start.sh
+      memory: 64M
   env:
     RAILS_ENV: dev
     RAILS_LOG_TO_STDOUT: true
