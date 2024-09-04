@@ -1,0 +1,17 @@
+---
+applications:
+- name: challenge-proxy
+  buildpacks:
+    - binary_buildpack
+  routes:
+    - route: challenge-proxy.apps.internal
+  stack: cflinuxfs4
+  memory: 64M
+  path: proxy
+  health-check-type: process
+  command: ./caddy run --config Caddyfile
+  env:
+    PROXY_USERNAME: ((username))
+    PROXY_PASSWORD: ((password))
+    PROXY_DENY: ((proxydeny))
+    PROXY_ALLOW: ((proxyallow))

@@ -31,11 +31,13 @@ class ApplicationController < ActionController::Base
   end
 
   def renew_session
-    session[:session_timeout_at] = Time.current + ENV.fetch("SESSION_TIMEOUT_IN_MINUTES", 15).to_i.minutes
+    session[:session_timeout_at] = Time.current + SessionsController::SESSION_TIMEOUT_IN_MINUTES.minutes
   end
 
   def check_session_expiration
-    if session[:session_timeout_at].present? && session[:session_timeout_at] < Time.current
+    return unless logged_in?
+
+    if session[:session_timeout_at].blank? || session[:session_timeout_at] < Time.current
       sign_out
       redirect_to dashboard_path, alert: I18n.t("session_expired_alert")
     else

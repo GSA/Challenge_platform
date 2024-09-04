@@ -1,0 +1,28 @@
+{
+	debug
+	log {
+		format console
+		level INFO
+	}
+	auto_https off
+}
+
+:{$PORT} {
+	route {
+		forward_proxy {
+			basic_auth {$PROXY_USERNAME} {$PROXY_PASSWORD}
+			acl {
+				deny_file deny.acl
+				allow_file allow.acl
+				deny all
+			}
+			ports {$PROXY_PORTS}
+			serve_pac
+		}
+	}
+	log {
+		format json
+		level INFO
+		output stdout
+	}
+}

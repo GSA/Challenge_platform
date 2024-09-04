@@ -2,6 +2,9 @@
 
 class SessionsController < ApplicationController
   before_action :check_error_result, :require_code_param, :exchange_token, only: [:result]
+  skip_before_action :check_session_expiration, only: [:timeout]
+
+  SESSION_TIMEOUT_IN_MINUTES = 15
 
   def new
     # TODO: handle redirect to login page due to inactivity

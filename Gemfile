@@ -57,6 +57,8 @@ group :development, :test do
 
   gem "rspec-rails"
 
+  gem 'pry'
+
   # add the Ruby LSP package so it's bundled with the rest of the gems and available to VS Code
   gem "ruby-lsp"
 

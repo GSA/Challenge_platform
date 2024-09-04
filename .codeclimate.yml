@@ -1,4 +1,8 @@
 version: '2'
+checks:
+  similar-code:
+    config:
+      threshold: 75
 plugins:
   brakeman:
     enabled: true
@@ -12,5 +16,3 @@ exclude_patterns:
 - vendor/
 -  "**/vendor/**/*"
 - app/assets/images/
-- app/assets/stylesheets/uswds.css
-- app/assets/stylesheets/uswds_override.css
