@@ -87,12 +87,15 @@ group :development do
 end
 
 group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "webmock"
-  gem "axe-core-rspec"
-  gem "capybara"
-  gem "selenium-webdriver"
   gem "rspec_junit_formatter"
   gem 'simplecov', '~> 0.17.0', require: false
   gem "rails-controller-testing"
+end
+
+# Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+group :system_tests, :test do
+  gem "axe-core-rspec"
+  gem "capybara"
+  gem "selenium-webdriver"
 end
