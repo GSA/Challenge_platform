@@ -68,6 +68,7 @@ group :development, :test do
   gem "rubocop-rake", require: false
   gem "rubocop-rails", ">= 2.26.0", require: false
   gem "rubocop-rspec", require: false
+  gem "rubocop-capybara", require: false
 
   gem "codeclimate-test-reporter"
 end
