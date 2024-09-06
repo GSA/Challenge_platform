@@ -20,7 +20,7 @@ gem "faraday"
 gem "jwt"
 
 # Use simple asset pipeline
-gem "propshaft", "~> 0.9.0"
+gem "propshaft", "~> 0.9.1"
 gem "cssbundling-rails", "~> 1.4"
 gem "jsbundling-rails", "~> 1.3"
 
