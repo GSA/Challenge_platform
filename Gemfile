@@ -20,7 +20,7 @@ gem "faraday"
 gem "jwt"
 
 # Use simple asset pipeline
-gem "propshaft", "~> 0.9.0"
+gem "propshaft", "~> 0.9.1"
 gem "cssbundling-rails", "~> 1.4"
 gem "jsbundling-rails", "~> 1.3"
 
@@ -66,7 +66,7 @@ group :development, :test do
   gem "rubocop", ">= 1.65.1"
   gem "rubocop-performance", require: false
   gem "rubocop-rake", require: false
-  gem "rubocop-rails", require: false
+  gem "rubocop-rails", ">= 2.26.0", require: false
   gem "rubocop-rspec", require: false
 
   gem "codeclimate-test-reporter"
