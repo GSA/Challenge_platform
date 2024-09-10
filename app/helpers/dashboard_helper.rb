@@ -15,7 +15,6 @@ module DashboardHelper
         { image_path: 'support_agent', href: 'federal-agency-faqs', alt: 'help', title: 'Help',
           subtitle: 'Get support on the Challenge.Gov platform.' }
       ],
-      solver: [],
       evaluator: []
     }
   end
