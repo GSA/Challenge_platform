@@ -64,3 +64,12 @@ Add a list of changed settings in the form $setting: value.
 .usa-footer__secondary-section .usa-social-link:hover .usa-social-link__icon {
   background-color: white;
 }
+
+.dashboard-container {
+  @media (min-width:1025px) {
+    // pushes the last child to the left if it's odd
+    :nth-last-child(1):nth-child(odd) {
+      margin-right: calc(45% - 1rem)
+    }
+  }
+}

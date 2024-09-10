@@ -1,5 +1,5 @@
 <h2><%= dashboard_title[role] %></h2>
-<div class="display-flex flex-wrap desktop:grid-row flex-justify-center width-full">
+<div class="display-flex flex-wrap desktop:grid-row dashboard-container flex-justify-center width-full">
     <% dashboard_cards_by_role[role].each do |card| %>
         <%= link_to(card[:href],
                 class: "display-flex bg-primary-darker text-white flex-align-center desktop:grid-col " \
