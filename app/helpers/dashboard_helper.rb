@@ -4,6 +4,8 @@ module DashboardHelper
   def dashboard_cards_by_role
     {
       challenge_manager: [
+        { image_path: 'emoji_events', href: 'http://localhost:4000/', alt: 'challenges', title: 'Challenges',
+          subtitle: 'Create and manage challenges.' },
         { image_path: 'folder_open', href: 'manage_submissions', alt: 'submissions', title: 'Submissions',
           subtitle: 'Manage submissions, evaluations, and evaluators.' },
         { image_path: 'content_copy', href: 'evaluation_forms', alt: 'evaluation forms', title: 'Evaluation Forms',
