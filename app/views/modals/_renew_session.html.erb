@@ -1,18 +1,15 @@
-<a href="#renew-modal" style="display:none;" id="renew-modal-open-button" class="usa-button" aria-controls="renew-modal" data-open-modal></a>
-
-<div
-  class="usa-modal"
-  id="renew-modal"
-  aria-labelledby="modal-1-heading"
-  aria-describedby="modal-1-description"
->
+<dialog
+    id="renew-modal"
+    class="border-width-0 radius-lg"
+    aria-labelledby="renew-modal-heading"
+    aria-describedby="renew-modal-description">
   <div class="usa-modal__content">
     <div class="usa-modal__main">
-      <h2 class="usa-modal__heading" id="modal-1-heading">
+      <h2 class="usa-modal__heading" id="renew-modal-heading">
         Session expire
       </h2>
       <div class="usa-prose">
-        <p id="modal-1-description">
+        <p id="renew-modal-description">
             Your session will expire in <span class="countdown"></span><br>
             Please click below if you would like to continue.
         </p>
@@ -21,6 +18,5 @@
           <button class="usa-button modal-btn" id="extend-session-button" data-close-modal type="button">Renew Session</button>
       </div>
     </div>
-    <a href="#renew-modal" style="display:none;" id="renew-modal-close-button" class="usa-button" data-close-modal></a>
   </div>
-</div>
+</dialog>
