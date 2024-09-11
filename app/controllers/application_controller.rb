@@ -61,14 +61,14 @@ class ApplicationController < ActionController::Base
       exp: 24.hours.from_now.to_i
     }
 
-    JWT.encode(payload, ENV.fetch('JWT_SECRET', nil), 'HS256')
+    JWT.encode(payload, config.phoenix_interop.jwt_secret, 'HS256')
   end
 
-  def send_user_jwt_to_phoenix(jwt)
-    uri = URI("#{ENV.fetch('PHOENIX_URI', nil)}/api/external_login")
+  def send_user_jwt_to_phoenix(jwt) 
+    uri = URI("#{config.phoenix_interop.phoenix_uri}/api/external_login")
 
     req = Net::HTTP::Post.new(uri)
-    req['Login-Secret'] = ENV.fetch('LOGIN_SECRET', nil)
+    req['Login-Secret'] = config.phoenix_interop.login_secret
     req['User-JWT'] = jwt
 
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
@@ -79,6 +79,8 @@ class ApplicationController < ActionController::Base
     phoenix_session_cookie(phoenix_cookie)
 
     res.code == '200'
+  rescue StandardError => e
+    Rails.logger.error(e)
   end
 
   def extract_phoenix_cookie_from_response(res)

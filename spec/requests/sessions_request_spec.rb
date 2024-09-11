@@ -36,6 +36,9 @@ RSpec.describe "SessionsController" do
     allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
       [{ email: "test@example.com", sub: "sub" }]
     )
+
+    expect_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+
     get "/auth/result", params: { code: }
     expect(response).to have_http_status(:redirect)
     expect(response).to redirect_to("/dashboard")
@@ -55,6 +58,9 @@ RSpec.describe "SessionsController" do
     allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
       [{ email:, sub: token }]
     )
+
+    expect_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+
     get "/auth/result", params: { code: }
 
     expect(session[:userinfo]).not_to be_nil

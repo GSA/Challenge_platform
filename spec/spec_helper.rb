@@ -26,6 +26,8 @@ def create_and_log_in_user
     [{ email: user.email, sub: user.token }]
   )
 
+  expect_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+
   get "/auth/result", params: { code: }
   user
 end
