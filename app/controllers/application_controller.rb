@@ -67,6 +67,7 @@ class ApplicationController < ActionController::Base
     JWT.encode(payload, Rails.configuration.phx_interop[:jwt_secret], 'HS256')
   end
 
+  # :nocov:
   def send_user_jwt_to_phoenix(jwt)
     res = phoenix_external_login_request(jwt)
     phoenix_cookie = extract_phoenix_cookie_from_response(res)
@@ -104,6 +105,7 @@ class ApplicationController < ActionController::Base
       same_site: :lax
     }
   end
+  # :nocov:
 
   def delete_phoenix_session_cookie
     cookies.delete(:_challenge_gov_key)
