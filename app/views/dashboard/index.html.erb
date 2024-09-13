@@ -1,9 +1,11 @@
-<div class="usa-card__container custom-card col-md-6 rules-of-behavior">
-  <div class="usa-card__body">
-    <% if logged_in? %>
-      Logged In Dashboard Index
-    <% else %>
-      Logged Out Dashboard Index
-    <% end %>
+<main role="main">
+  <div class="usa-card__container custom-card col-md-6 rules-of-behavior">
+    <h1 class="usa-card__body">
+      <% if logged_in? %>
+        Logged In Dashboard Index
+      <% else %>
+        Logged Out Dashboard Index
+      <% end %>
+    </h1>
   </div>
-</div>
+</main>
