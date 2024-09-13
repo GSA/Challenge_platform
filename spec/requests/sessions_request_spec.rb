@@ -37,7 +37,9 @@ RSpec.describe "SessionsController" do
       [{ email: "test@example.com", sub: "sub" }]
     )
 
-    expect_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+    # rubocop:disable Layout/LineLength, RSpec/AnyInstance
+    allow_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+    # rubocop:enable Layout/LineLength, RSpec/AnyInstance
 
     get "/auth/result", params: { code: }
     expect(response).to have_http_status(:redirect)
@@ -59,7 +61,9 @@ RSpec.describe "SessionsController" do
       [{ email:, sub: token }]
     )
 
-    expect_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+    # rubocop:disable Layout/LineLength, RSpec/AnyInstance
+    allow_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+    # rubocop:enable Layout/LineLength, RSpec/AnyInstance
 
     get "/auth/result", params: { code: }
 

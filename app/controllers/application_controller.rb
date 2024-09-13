@@ -29,8 +29,11 @@ class ApplicationController < ActionController::Base
 
   def sign_out
     @current_user = nil
+
     session.delete(:userinfo)
     session.delete(:session_timeout_at)
+
+    delete_phoenix_session_cookie
   end
 
   def renew_session
@@ -61,20 +64,11 @@ class ApplicationController < ActionController::Base
       exp: 24.hours.from_now.to_i
     }
 
-    JWT.encode(payload, config.phoenix_interop.jwt_secret, 'HS256')
+    JWT.encode(payload, Rails.configuration.phx_interop[:jwt_secret], 'HS256')
   end
 
-  def send_user_jwt_to_phoenix(jwt) 
-    uri = URI("#{config.phoenix_interop.phoenix_uri}/api/external_login")
-
-    req = Net::HTTP::Post.new(uri)
-    req['Login-Secret'] = config.phoenix_interop.login_secret
-    req['User-JWT'] = jwt
-
-    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.request(req)
-    end
-
+  def send_user_jwt_to_phoenix(jwt)
+    res = phoenix_external_login_request(jwt)
     phoenix_cookie = extract_phoenix_cookie_from_response(res)
     phoenix_session_cookie(phoenix_cookie)
 
@@ -83,21 +77,35 @@ class ApplicationController < ActionController::Base
     Rails.logger.error(e)
   end
 
+  def phoenix_external_login_request(jwt)
+    uri = URI("#{config.phoenix_interop[:phoenix_uri]}/api/external_login")
+
+    req = Net::HTTP::Post.new(uri)
+    req['Login-Secret'] = config.phoenix_interop[:login_secret]
+    req['User-JWT'] = jwt
+
+    Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+  end
+
   def extract_phoenix_cookie_from_response(res)
     cookie_header = res['Set-Cookie']
     cookie_value = cookie_header.split(';').first.split('=').last
 
-    # TODO: Should this have an expires?
     { value: cookie_value }
   end
 
   def phoenix_session_cookie(phoenix_cookie)
     cookies[:_challenge_gov_key] = {
       value: phoenix_cookie[:value],
-      expires: phoenix_cookie[:expires],
       secure: true,
       httponly: true,
       same_site: :lax
     }
+  end
+
+  def delete_phoenix_session_cookie
+    cookies.delete(:_challenge_gov_key)
   end
 end

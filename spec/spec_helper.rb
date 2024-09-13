@@ -17,6 +17,7 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
+# rubocop:disable Metrics/AbcSize
 def create_and_log_in_user
   user = create_user
   code = "ABC123"
@@ -26,11 +27,14 @@ def create_and_log_in_user
     [{ email: user.email, sub: user.token }]
   )
 
-  expect_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+  # rubocop:disable Layout/LineLength, RSpec/AnyInstance
+  allow_any_instance_of(SessionsController).to receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
+  # rubocop:enable Layout/LineLength, RSpec/AnyInstance
 
   get "/auth/result", params: { code: }
   user
 end
+# rubocop:enable Metrics/AbcSize
 
 def create_user
   email = "testsolver@example.gov"
