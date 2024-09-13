@@ -15,4 +15,11 @@ assignees: ''
 - [ ] A requirement for completion
   - [ ] A subrequirement
 
-- [ ] This task updates UI (PR must include WAVE screenshot and automated a11y tests)
+_Disregard the following if this work **does not** include any UI changes_
+- [ ] WAVE screenshot
+- [ ] Automated a11y tests (axe-rspec specs)
+- [ ] Keyboard accessibility (tab navigation, form interactions)
+- [ ] Responsiveness at desktop and mobile
+
+## Out of Scope
+<!-- list specific things that should not be included in this task -->
