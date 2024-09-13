@@ -11,9 +11,14 @@ assignees: ''
 <!-- Describe the purpose and overview of the task -->
 <!-- make sure it's linked to the relevant Story on the project board -->
 
+### Figma Link
+<!-- link to specific component design if possible -->
+[link-to-figma](https://www.figma.com/design/VfdBFG8ShVnOStdSNYy9fR/Challenge.Gov-Component-Library)
+
 ## Acceptance Criteria
 - [ ] A requirement for completion
-  - [ ] A subrequirement
+  - [ ] Sub-requirement (optional)
+  - Additional notes (optional)
 
 _Disregard the following if this work **does not** include any UI changes_
 - [ ] WAVE screenshot
