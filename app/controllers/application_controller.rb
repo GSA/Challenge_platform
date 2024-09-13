@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 
-  before_action :check_session_expiration
+  before_action :check_session_expiration, except: [:sign_out]
 
   def current_user
     return unless session[:userinfo]
@@ -78,17 +78,20 @@ class ApplicationController < ActionController::Base
     Rails.logger.error(e)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def phoenix_external_login_request(jwt)
-    uri = URI("#{config.phoenix_interop[:phoenix_uri]}/api/external_login")
+    uri = URI("#{Rails.configuration.phx_interop[:phx_uri]}/api/external_login")
 
     req = Net::HTTP::Post.new(uri)
-    req['Login-Secret'] = config.phoenix_interop[:login_secret]
+    req['Login-Secret'] = Rails.configuration.phx_interop[:login_secret]
     req['User-JWT'] = jwt
+    req['Remote-IP'] = request.remote_ip
 
     Net::HTTP.start(uri.hostname, uri.port) do |http|
       http.request(req)
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def extract_phoenix_cookie_from_response(res)
     cookie_header = res['Set-Cookie']
