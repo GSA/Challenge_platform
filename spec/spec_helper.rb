@@ -17,8 +17,8 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
-def create_and_log_in_user
-  user = create_user
+def create_and_log_in_user(user_attrs = {})
+  user = create_user(user_attrs)
   code = "ABC123"
   login_gov = instance_double(LoginGov)
   allow(LoginGov).to receive(:new).and_return(login_gov)
@@ -30,8 +30,9 @@ def create_and_log_in_user
   user
 end
 
-def create_user
+def create_user(user_attrs = {})
   email = "testsolver@example.gov"
   token = SecureRandom.uuid
-  User.create!({ email:, token: })
+  user_attrs = { email:, token: }.merge(user_attrs)
+  User.create!(user_attrs)
 end
