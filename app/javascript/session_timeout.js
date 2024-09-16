@@ -9,27 +9,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const warningTimeoutMs =
     (sessionTimeoutMinutes - warningTimeoutMinutes) * 60 * 1000;
   // Debug overrides
-  // const sessionTimeoutMs = 10000;
+  // const sessionTimeoutMs = 20000;
   // const warningTimeoutMs = 5000;
 
   const renewalModal = document.getElementById("renew-modal");
-  const renewalModalOpenButton = document.getElementById(
-    "renew-modal-open-button"
-  );
-  const renewalModalCloseButton = document.getElementById(
-    "renew-modal-close-button"
-  );
   const countdownDiv = document.querySelector("#renew-modal .countdown");
   countdownDiv.textContent = formatMilliseconds(warningTimeoutMs);
 
   const activityRenewalInterval = 1000;
   var doRenewSession = false;
-  var ignoreNextActivity = false;
 
   const showTimeoutWarning = () => {
-    ignoreNextActivity = true;
-    renewalModalOpenButton.click();
-    ignoreNextActivity = false;
+    renewalModal.showModal();
   };
 
   const updateCountdown = () => {
@@ -54,13 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const handleUserActivity = (event) => {
     // Don't count the modal showing and hiding as user activity
-    if (ignoreNextActivity) {
-      return;
-    }
-
-    ignoreNextActivity = true;
-    renewalModalCloseButton.click();
-    ignoreNextActivity = false;
+    renewalModal.close();
 
     doRenewSession = true;
   };

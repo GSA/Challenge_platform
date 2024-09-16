@@ -68,6 +68,7 @@ group :development, :test do
   gem "rubocop-rake", require: false
   gem "rubocop-rails", ">= 2.26.0", require: false
   gem "rubocop-rspec", require: false
+  gem "rubocop-capybara", require: false
 
   gem "codeclimate-test-reporter"
 end
@@ -87,11 +88,15 @@ group :development do
 end
 
 group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "webmock"
-  gem "capybara"
-  gem "selenium-webdriver"
   gem "rspec_junit_formatter"
   gem 'simplecov', '~> 0.17.0', require: false
   gem "rails-controller-testing"
+end
+
+# Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+group :system_tests, :test do
+  gem "axe-core-rspec"
+  gem "capybara"
+  gem "selenium-webdriver"
 end
