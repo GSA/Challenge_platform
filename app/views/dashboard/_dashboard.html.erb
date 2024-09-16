@@ -1,19 +1,11 @@
 <h2><%= dashboard_title[role] %></h2>
-<div class="display-flex flex-wrap desktop:grid-row dashboard-container flex-justify-center width-full">
-    <% dashboard_cards_by_role[role].each do |card| %>
-        <%= link_to(card[:href],
-                class: "display-flex bg-primary-darker text-white flex-align-center desktop:grid-col " \
-                "grid-gap-1 desktop:margin-x-1 margin-y-1 desktop:grid-col-5 text-no-underline",
-                ) do %>
-            <%= image_tag(
-                "images/usa-icons/#{card[:image_path]}.svg",
-                class: "usa-icon--size-7 icon-white margin-x-2",
-                alt: card[:alt]
-            )%>
-            <div class="margin-right-2" >
-                <h3 class="font-body-lg"><%= card[:title] %></h3>
-                <h4 style="max-width: 250px;" class="text-normal"><%= card[:subtitle] %></h4>
-            </div>    
-        <% end %>    
+<div class="grid-container flex-justify-center width-full" style="gap: 1rem;">
+    <% dashboard_cards_by_role[role].each_slice(2) do |card1, card2| %>
+        <div class="grid-row grid-gap-2">
+            <%= render partial: "dashboard_card", locals: { card: card1 } %>
+            <% unless card2.nil? %>
+                <%= render partial: "dashboard_card", locals: { card: card2 } %>
+            <% end %>
+        </div>
     <% end %>    
 </div>
