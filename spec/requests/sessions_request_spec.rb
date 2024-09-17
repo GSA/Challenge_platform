@@ -30,18 +30,9 @@ RSpec.describe "SessionsController" do
   end
 
   it "get /auth/result successful" do
+    user = User.new(email: "test@example.com", token: SecureRandom.uuid)
     code = "ABC123"
-    login_gov = instance_double(LoginGov)
-    allow(LoginGov).to receive(:new).and_return(login_gov)
-    allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
-      [{ email: "test@example.com", sub: "sub" }]
-    )
-
-    # rubocop:disable RSpec/AnyInstance
-    allow_any_instance_of(SessionsController).to(
-      receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
-    )
-    # rubocop:enable RSpec/AnyInstance
+    mock_login_gov(user, code)
 
     get "/auth/result", params: { code: }
     expect(response).to have_http_status(:redirect)
@@ -54,20 +45,10 @@ RSpec.describe "SessionsController" do
     email = "test@example.gov"
     token = SecureRandom.uuid
 
-    User.create!({ email:, token: })
+    user = User.create!({ email:, token: })
 
     code = "ABC123"
-    login_gov = instance_double(LoginGov)
-    allow(LoginGov).to receive(:new).and_return(login_gov)
-    allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
-      [{ email:, sub: token }]
-    )
-
-    # rubocop:disable RSpec/AnyInstance
-    allow_any_instance_of(SessionsController).to(
-      receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
-    )
-    # rubocop:enable RSpec/AnyInstance
+    mock_login_gov(user, code)
 
     get "/auth/result", params: { code: }
 
