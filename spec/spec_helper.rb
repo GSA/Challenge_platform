@@ -17,6 +17,7 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
+# rubocop:disable Metrics/AbcSize
 def create_and_log_in_user(user_attrs = {})
   user = create_user(user_attrs)
   code = "ABC123"
@@ -33,6 +34,7 @@ def create_and_log_in_user(user_attrs = {})
   get "/auth/result", params: { code: }
   user
 end
+# rubocop:enable Metrics/AbcSize
 
 def create_user(user_attrs = {})
   email = "testsolver@example.gov"
