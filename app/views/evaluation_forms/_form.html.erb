@@ -1,0 +1,62 @@
+<%= form_with(model: evaluation_form) do |form| %>
+  <% if evaluation_form.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation_form from being saved:</h2>
+
+      <ul>
+        <% evaluation_form.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :instructions, style: "display: block" %>
+    <%= form.text_field :instructions %>
+  </div>
+
+  <div>
+    <%= form.label :challenge_phase, style: "display: block" %>
+    <%= form.number_field :challenge_phase %>
+  </div>
+
+  <div>
+    <%= form.label :status, style: "display: block" %>
+    <%=  form.collection_select :status, EvaluationForm.statuses.map{ |a| [a.first,a.first] },  :first, :second %>
+  </div>
+
+  <div>
+    <%= form.label :comments_required, style: "display: block" %>
+    <%= form.check_box :comments_required %>
+  </div>
+
+  <div>
+    <%= form.label :weighted_scoring, style: "display: block" %>
+    <%= form.check_box :weighted_scoring %>
+  </div>
+
+  <div>
+    <%= form.label :publication_date, style: "display: block" %>
+    <%= form.date_field :publication_date %>
+  </div>
+
+  <div>
+    <%= form.label :closing_date, style: "display: block" %>
+    <%= form.date_field :closing_date %>
+  </div>
+
+  <div>
+    <%= form.label :challenge_id, style: "display: block" %>
+    <%= form.text_field :challenge_id %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

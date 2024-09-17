@@ -2,6 +2,15 @@
   <div class="usa-card__body">
     <h1>Evaluation Forms</h1>
 
-    <p>Placeholder text for Evaluation Forms.</p>
+    <div id="evaluation_forms">
+      <% @evaluation_forms.each do |evaluation_form| %>
+        <%= render evaluation_form %>
+        <p>
+          <%= link_to "Show this evaluation form", evaluation_form %>
+        </p>
+      <% end %>
+    </div>
+
+    <%= link_to "New evaluation form", new_evaluation_form_path %>
   </div>
-</div>
+</div>    
