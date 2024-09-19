@@ -36,6 +36,25 @@ class EvaluationFormsController < ApplicationController
     end
   end
 
+  # NOTE: to reviewer: the following method works but it's impossible to use because there's a unique index on
+  # challenge_id and challenge_phase. So we can't clone evaluation forms without automatically advancing the challenge phase,
+  # or something along those lines
+  def create_from_existing
+    @existing_form = EvaluationForm.find(params[:evaluation_form])
+    @evaluation_form = EvaluationForm.new(@existing_form.attributes.except("id"))
+    respond_to do |format|
+      if @evaluation_form.save
+        format.html do
+          redirect_to evaluation_forms_url, notice: "Evaluation form was successfully cloned."
+        end
+        format.json { render :show, status: :created, location: @evaluation_form }
+      else
+        format.html { render :index, status: :unprocessable_entity }
+        format.json { render json: @evaluation_form.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # PATCH/PUT /evaluation_forms/1 or /evaluation_forms/1.json
   def update
     respond_to do |format|
