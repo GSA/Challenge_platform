@@ -385,7 +385,7 @@ DEPENDENCIES
   pg
   propshaft (~> 0.9.1)
   pry
-  puma (>= 5.0)
+  puma (>= 6.4.3)
   rails (~> 7.2.0)
   rails-controller-testing
   rspec-rails
@@ -408,4 +408,4 @@ RUBY VERSION
    ruby 3.2.4p170
 
 BUNDLED WITH
-   2.5.9
+   2.4.6
