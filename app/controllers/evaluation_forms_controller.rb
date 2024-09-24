@@ -38,7 +38,9 @@ class EvaluationFormsController < ApplicationController
 
   # NOTE: to reviewer: the following method works but it's impossible to use because there's a unique index on
   # challenge_id and challenge_phase. So we can't clone evaluation forms without automatically advancing the challenge phase,
-  # or something along those lines
+  # or something along those lines. Also, we're leaving out the clone button which would trigger this for now,
+  # but I'm leaving it in case the button gets implemented later.
+  
   def create_from_existing
     @existing_form = EvaluationForm.find(params[:evaluation_form])
     @evaluation_form = EvaluationForm.new(@existing_form.attributes.except("id"))

@@ -1,9 +1,9 @@
-<table class="usa-table usa-table--stacked-header width-full">
+<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
     <thead>
       <tr>
         <th scope="col">Form Title</th>
-        <th scope="col">Assigned to Challenge</th>
-        <th scope="col">Status</th>
+        <th scope="col">Assigned to Challenge:</th>
+        <th scope="col">Status:</th>
         <th scope="col"></th>
       </tr>
     </thead>
@@ -15,19 +15,32 @@
                 <%= evaluation_form.title %>
             <% end %>    
             </th>
-            <td data-label="Assigned to Challenge">
-                <%= evaluation_form.challenge.title %>
+            <td data-label="Assigned to Challenge:">
+                <%= challenge_with_phase(evaluation_form) %>
             </td>
-          <td data-label="Status">
+          <td data-label="Status:">
             <span style="<%="color: #{status_colors[evaluation_form.status.to_sym]}"%>">
                 <%= evaluation_form.status.capitalize %>
             </span>
           </td>
           <td>
-              <div class="display-flex flex-wrap width-full grid-row grid-gap-1">
-                <%= button_to "Edit", edit_evaluation_form_path(evaluation_form), method: :get, class: "usa-button width-full", form: {class: "grid-col-4"} %>
-                <%= button_to "Clone", evaluation_forms_clone_path, method: :post, params: {evaluation_form: evaluation_form}, class: "usa-button width-full", style: "background-color: #4d8055", form: {class: "grid-col-4"} %>
-                <%= button_to "Delete", evaluation_form, method: :delete, class: "usa-button usa-button--secondary width-full padding-x-1", form: {class: "grid-col-4"} %>
+              <div class="display-flex flex-wrap grid-row grid-gap-1">
+                <%= button_to edit_evaluation_form_path(evaluation_form), method: :get, class: "usa-button width-full", form: {class: "grid-col-6"} do %>
+                  <%= image_tag(
+                    "images/usa-icons/content_copy.svg",
+                    class: "usa-icon icon-white",
+                    alt: "evaluation forms"
+                  )%>
+                  Edit
+                <% end %>
+                <%= button_to evaluation_form, method: :delete, class: "usa-button usa-button--secondary width-full padding-x-1", form: {class: "grid-col-6"} do %>
+                  <%= image_tag(
+                    "images/usa-icons/content_copy.svg",
+                    class: "usa-icon icon-white",
+                    alt: "evaluation forms"
+                  )%>
+                  Delete
+                <% end %>
               </div>  
           </td>  
         </tr>
