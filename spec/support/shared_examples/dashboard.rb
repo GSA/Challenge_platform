@@ -17,6 +17,6 @@ end
 
 RSpec.shared_examples "a page with dashboard content for a public solver" do
   it "redirects to the phoenix app" do
-    expect(response).to redirect_to(Rails.configuration.phx_interop[:phx_uri])
+    expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
   end
 end

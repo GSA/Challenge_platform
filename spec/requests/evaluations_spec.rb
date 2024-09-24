@@ -35,7 +35,7 @@ RSpec.describe "Evaluations" do
       it "renders the index view with the correct header" do
         get evaluations_path
 
-        expect(response).to redirect_to(Rails.configuration.phx_interop[:phx_uri])
+        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
   end
