@@ -18,6 +18,9 @@ RSpec.configure do |config|
 end
 
 def create_and_log_in_user(user_attrs = {})
+  defaults = { email: "test@example.com", role: "challenge_manager" }
+  user_attrs = defaults.merge(user_attrs)
+
   user = create_user(user_attrs)
   code = "ABC123"
   mock_login_gov(user, code)

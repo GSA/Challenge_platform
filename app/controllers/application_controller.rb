@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 
   before_action :check_session_expiration, except: [:sign_out]
+  before_action :redirect_solvers_to_phoenix
 
   def current_user
     return unless session[:userinfo]
@@ -14,6 +15,18 @@ class ApplicationController < ActionController::Base
 
   def logged_in?
     !!current_user
+  end
+
+  def authorize_user(role)
+    return if current_user&.role == role
+
+    redirect_to dashboard_path, alert: I18n.t("access_denied")
+  end
+
+  def redirect_solvers_to_phoenix
+    return unless current_user&.role == 'solver'
+
+    redirect_to Rails.configuration.phx_interop[:phx_uri], allow_other_host: true
   end
 
   def sign_in(login_userinfo)

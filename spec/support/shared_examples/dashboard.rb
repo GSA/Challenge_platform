@@ -14,3 +14,9 @@ RSpec.shared_examples "a page with dashboard content for an evaluator" do
     expect(response.body).to include("Get support on the Challenge.Gov platform.")
   end
 end
+
+RSpec.shared_examples "a page with dashboard content for a public solver" do
+  it "redirects to the phoenix app" do
+    expect(response).to redirect_to(Rails.configuration.phx_interop[:phx_uri])
+  end
+end

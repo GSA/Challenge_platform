@@ -15,8 +15,7 @@ RSpec.describe "DashboardController" do
         get "/"
       end
 
-      it_behaves_like "a page with utility menu links for all users"
-      it_behaves_like "a page with utility menu links for a public solver"
+      it_behaves_like "a page with dashboard content for a public solver"
     end
 
     context "when logged in as a challenge manager on the root url" do
@@ -54,8 +53,7 @@ RSpec.describe "DashboardController" do
         get "/dashboard"
       end
 
-      it_behaves_like "a page with utility menu links for all users"
-      it_behaves_like "a page with utility menu links for a public solver"
+      it_behaves_like "a page with dashboard content for a public solver"
     end
 
     context "when logged in as a challenge manager on the dashboard" do
