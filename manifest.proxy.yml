@@ -15,3 +15,16 @@ applications:
     PROXY_PASSWORD: ((password))
     PROXY_DENY: ((proxydeny))
     PROXY_ALLOW: ((proxyallow))
+
+- name: challenge-smtp-proxy
+  buildpacks:
+    - https://github.com/cloudfoundry/apt-buildpack
+    - nginx_buildpack
+  routes:
+    - route: challenge-smtp-proxy.apps.internal
+  stack: cflinuxfs4
+  memory: 64M
+  path: proxy_smtp
+  health-check-type: process
+  env:
+    SMTP_SERVER: smtp-relay.gmail.com
