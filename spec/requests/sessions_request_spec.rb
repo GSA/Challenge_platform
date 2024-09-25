@@ -30,12 +30,10 @@ RSpec.describe "SessionsController" do
   end
 
   it "get /auth/result successful" do
+    user = User.new(email: "test@example.com", token: SecureRandom.uuid)
     code = "ABC123"
-    login_gov = instance_double(LoginGov)
-    allow(LoginGov).to receive(:new).and_return(login_gov)
-    allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
-      [{ email: "test@example.com", sub: "sub" }]
-    )
+    mock_login_gov(user, code)
+
     get "/auth/result", params: { code: }
     expect(response).to have_http_status(:redirect)
     expect(response).to redirect_to("/dashboard")
@@ -47,14 +45,11 @@ RSpec.describe "SessionsController" do
     email = "test@example.gov"
     token = SecureRandom.uuid
 
-    User.create!({ email:, token: })
+    user = User.create!({ email:, token: })
 
     code = "ABC123"
-    login_gov = instance_double(LoginGov)
-    allow(LoginGov).to receive(:new).and_return(login_gov)
-    allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
-      [{ email:, sub: token }]
-    )
+    mock_login_gov(user, code)
+
     get "/auth/result", params: { code: }
 
     expect(session[:userinfo]).not_to be_nil
