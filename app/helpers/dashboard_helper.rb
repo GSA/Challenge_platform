@@ -10,9 +10,9 @@ module DashboardHelper
           alt: 'submissions', title: 'Submissions', subtitle: 'Manage submissions, evaluations, and evaluators.' },
         { image_path: 'check_circle_outline', href: 'evaluation_forms',
           alt: 'evaluation forms', title: 'Evaluation Forms', subtitle: 'Create and manage evaluation forms.' },
-          { image_path: 'mail', href: "#{Rails.configuration.phx_interop[:phx_uri]}/messages",
+        { image_path: 'mail', href: "#{Rails.configuration.phx_interop[:phx_uri]}/messages",
           alt: 'help', title: 'Message Center', subtitle: 'View and send messages to Challenge.gov users.' },
-          { image_path: 'assessment', href: "#{Rails.configuration.phx_interop[:phx_uri]}/analytics",
+        { image_path: 'assessment', href: "#{Rails.configuration.phx_interop[:phx_uri]}/analytics",
           alt: 'help', title: 'Analytics', subtitle: 'View web analytics data related to your challenges.' },
         { image_path: 'support', href: 'https://www.challenge.gov/cm-user-guide/',
           alt: 'resources', title: 'Resources', subtitle: 'Learn how to make the most of the platform.' }
