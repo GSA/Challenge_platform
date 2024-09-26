@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class EvaluationForm < ApplicationRecord
-  belongs_to :challenge
+  belongs_to :challenge, required: false
 
-  validates :challenge_phase, presence: true
 end
