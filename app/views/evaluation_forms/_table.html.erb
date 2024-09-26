@@ -3,7 +3,6 @@
       <tr>
         <th scope="col">Form Title</th>
         <th scope="col">Assigned to Challenge:</th>
-        <th scope="col">Status:</th>
         <th scope="col"></th>
       </tr>
     </thead>
@@ -18,11 +17,6 @@
             <td data-label="Assigned to Challenge:">
                 <%= challenge_with_phase(evaluation_form) %>
             </td>
-          <td data-label="Status:">
-            <span style="<%="color: #{status_colors[evaluation_form.status.to_sym]}"%>">
-                <%= evaluation_form.status.capitalize %>
-            </span>
-          </td>
           <td>
               <div class="display-flex flex-wrap grid-row grid-gap-1">
                 <%= button_to edit_evaluation_form_path(evaluation_form), method: :get, class: "usa-button width-full", form: {class: "grid-col-6"} do %>

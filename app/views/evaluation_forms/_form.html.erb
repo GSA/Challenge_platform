@@ -27,11 +27,6 @@
   </div>
 
   <div>
-    <%= form.label :status, style: "display: block" %>
-    <%=  form.collection_select :status, EvaluationForm.statuses.map{ |a| [a.first,a.first] },  :first, :second %>
-  </div>
-
-  <div>
     <%= form.label :comments_required, style: "display: block" %>
     <%= form.check_box :comments_required %>
   </div>
@@ -39,11 +34,6 @@
   <div>
     <%= form.label :weighted_scoring, style: "display: block" %>
     <%= form.check_box :weighted_scoring %>
-  </div>
-
-  <div>
-    <%= form.label :publication_date, style: "display: block" %>
-    <%= form.date_field :publication_date %>
   </div>
 
   <div>
