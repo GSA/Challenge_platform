@@ -18,12 +18,10 @@ module DashboardHelper
           alt: 'resources', title: 'Resources', subtitle: 'Learn how to make the most of the platform.' }
       ],
       evaluator: [
-        { image_path: 'content_copy', href: 'manage_submissions',
-          alt: 'submissions', title: 'Submissions', subtitle: 'Evaluate my assigned submissions.' },
-        { image_path: 'map', href: 'user_guide',
-          alt: 'user guides', title: 'Resources', subtitle: 'Learn how to make the most of the platform.' },
-        { image_path: 'support_agent', href: 'federal-agency-faqs',
-          alt: 'help', title: 'Help', subtitle: 'Get support on the Challenge.Gov platform.' }
+        { image_path: 'star_half', href: 'manage_submissions',
+          alt: 'submissions', title: 'Submissions', subtitle: 'View submissions assigned to me and provide evaluations.' },
+        { image_path: 'support', href: 'https://www.challenge.gov/cm-user-guide/',
+          alt: 'resources', title: 'Resources', subtitle: 'Learn how to make the most of the platform.' }
       ],
       solver: []
     }
