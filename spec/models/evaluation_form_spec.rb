@@ -27,24 +27,24 @@ RSpec.describe EvaluationForm, type: :model do
     describe "by_user scope" do
       it 'returns an empty list when there are no forms' do
         user = create_user(role: :challenge_manager)
-        assert_empty EvaluationForm.by_user(user)
+        assert_empty described_class.by_user(user)
       end
 
       it 'returns the form for the user' do
         user = create_user(role: :challenge_manager)
         challenge = create_challenge(user:)
-        evaluation_form = EvaluationForm.create!(challenge:, challenge_phase: 1)
+        evaluation_form = described_class.create!(challenge:, challenge_phase: 1)
         expect(challenge.challenge_manager_users).to include(user)
-        expect(EvaluationForm.by_user(user)).to include(evaluation_form)
+        expect(described_class.by_user(user)).to include(evaluation_form)
       end
 
       it 'does not return the form for an unassociated user' do
         challenge_user = create_user(role: :challenge_manager, email: "user1@example.com")
         different_user = create_user(role: :challenge_manager, email: "user2@example.com")
         challenge = create_challenge(user: challenge_user)
-        evaluation_form = EvaluationForm.create!(challenge:, challenge_phase: 1)
+        evaluation_form = described_class.create!(challenge:, challenge_phase: 1)
         expect(challenge.challenge_manager_users).not_to include(different_user)
-        expect(EvaluationForm.by_user(different_user)).not_to include(evaluation_form)
+        expect(described_class.by_user(different_user)).not_to include(evaluation_form)
       end
     end
   end

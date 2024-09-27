@@ -14,11 +14,11 @@ RSpec.describe "EvaluationForms" do
       get evaluation_forms_path
       expect(response.body).to include("You currently do not have any evaluation forms.")
     end
-    
+
     it "renders a list of evaluation forms for the current user's challenges" do
       agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-      challenge = Challenge.create!(user: @user, agency: agency, title: "Turning red bull into water")
-      challenge_manager = ChallengeManager.create(user: @user, challenge: challenge)
+      challenge = Challenge.create!(user: @user, agency:, title: "Turning red bull into water")
+      ChallengeManager.create(user: @user, challenge:)
 
       EvaluationForm.create!(title: "Frodo", challenge_id: challenge.id)
       EvaluationForm.create!(title: "Sam", challenge_id: challenge.id)
@@ -26,15 +26,15 @@ RSpec.describe "EvaluationForms" do
       expect(response.body).to include("Sam")
       expect(response.body).to include("Frodo")
     end
-    
+
     it "does not include evaluation forms for challenges not assigned to the current user" do
       agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-      challenge = Challenge.create!(user: @user, agency: agency, title: "Turning monster energy into chamomile")
-      challenge_manager = ChallengeManager.create(user: @user, challenge: challenge)
+      challenge = Challenge.create!(user: @user, agency:, title: "Turning monster energy into chamomile")
+      ChallengeManager.create(user: @user, challenge:)
 
       user_2 = create_user(role: "challenge_manager", email: "testwizard@example.gov")
-      challenge_2 = Challenge.create!(user: user_2, agency: agency, title: "Turning frogs into princes")
-      challenge_manager_2 = ChallengeManager.create(user: user_2, challenge: challenge)
+      challenge_2 = Challenge.create!(user: user_2, agency:, title: "Turning frogs into princes")
+      ChallengeManager.create(user: user_2, challenge:)
 
       EvaluationForm.create!(title: "Shrek", challenge_id: challenge.id)
       EvaluationForm.create!(title: "Fiona", challenge_id: challenge.id)
