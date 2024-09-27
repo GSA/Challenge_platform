@@ -1,0 +1,45 @@
+<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+    <thead>
+      <tr>
+        <th scope="col">Form Title</th>
+        <th scope="col">Assigned to Challenge:</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @evaluation_forms.each do |evaluation_form| %>
+        <tr>
+          <th data-label="Form Title" scope="row">
+            <%= link_to evaluation_form do %>
+                <%= evaluation_form.title %>
+            <% end %>    
+            </th>
+            <td data-label="Assigned to Challenge:">
+                <% if evaluation_form.challenge %>
+                  <%= challenge_with_phase(evaluation_form) %>
+                <% end %>  
+            </td>
+          <td>
+              <div class="display-flex flex-wrap grid-row grid-gap-1">
+                <%= button_to edit_evaluation_form_path(evaluation_form), method: :get, class: "usa-button width-full", form: {class: "grid-col-6"} do %>
+                  <%= image_tag(
+                    "images/usa-icons/edit.svg",
+                    class: "usa-icon icon-white",
+                    alt: "evaluation forms"
+                  )%>
+                  Edit
+                <% end %>
+                <%= button_to evaluation_form, method: :delete, class: "usa-button usa-button--secondary width-full padding-x-1", form: {class: "grid-col-6"} do %>
+                  <%= image_tag(
+                    "images/usa-icons/delete.svg",
+                    class: "usa-icon icon-white",
+                    alt: "evaluation forms"
+                  )%>
+                  Delete
+                <% end %>
+              </div>  
+          </td>  
+        </tr>
+      <% end %>  
+    </tbody>
+  </table>

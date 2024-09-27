@@ -28,9 +28,10 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
-  please_try_again: "Please try again."
-  login_error: "There was an issue with logging in. Please try again."
-  already_logged_in_notice: "You are already logged in."
-  session_expired_alert: "Your session has expired. Please log in again."
   access_denied: "You do not have access to this section of Challenge.gov."
+  already_logged_in_notice: "You are already logged in."
+  evaluation_form_destroyed: "Evaluation form was successfully destroyed."
+  evaluation_form_saved: "Evaluation form was saved successfully."
+  login_error: "There was an issue with logging in. Please try again."
+  please_try_again: "Please try again."
+  session_expired_alert: "Your session has expired. Please log in again."
