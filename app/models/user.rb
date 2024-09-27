@@ -82,7 +82,7 @@ class User < ApplicationRecord
 
   validates :email, presence: true
 
-  ROLES = %w[challenge_manager evaluator solver].freeze
+  ROLES = %w[super_admin admin challenge_manager evaluator solver].freeze
   validates :role, inclusion: { in: ROLES }
 
   # Finds, creates, or updates user from userinfo

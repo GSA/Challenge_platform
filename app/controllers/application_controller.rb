@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user(role)
-    return if current_user&.role == role
+    return if current_user&.role == role || %w[super_admin admin].include?(current_user&.role)
 
     redirect_to dashboard_path, alert: I18n.t("access_denied")
   end
