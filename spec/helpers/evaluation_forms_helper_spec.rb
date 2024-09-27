@@ -10,7 +10,7 @@ require 'rails_helper'
 #     end
 #   end
 # end
-RSpec.describe EvaluationFormsHelper, type: :helper do
+RSpec.describe EvaluationFormsHelper do
   describe "challenge with phase" do
     it "concats challenge name with challenge phase" do
       user = create_user

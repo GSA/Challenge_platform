@@ -15,7 +15,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe EvaluationForm, type: :model do
+RSpec.describe EvaluationForm do
   describe 'validations' do
     it 'validates nothing' do
       evaluation_form = described_class.new
