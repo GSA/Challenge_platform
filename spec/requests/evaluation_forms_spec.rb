@@ -9,5 +9,18 @@ RSpec.describe "EvaluationForms" do
       expect(response).to have_http_status(:success)
       expect(response.body).to include("Evaluation Forms")
     end
+
+    it "renders an empty list" do
+      get evaluation_forms_path
+      expect(response.body).to include("You currently do not have any evaluation forms.")
+    end
+    
+    it "renders a list of evaluation forms" do
+      EvaluationForm.create!(title: "Frodo")
+      EvaluationForm.create!(title: "Sam")
+      get evaluation_forms_path
+      expect(response.body).to include("Frodo")
+      expect(response.body).to include("Sam")
+    end  
   end
 end
