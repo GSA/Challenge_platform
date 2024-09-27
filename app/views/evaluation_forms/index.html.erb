@@ -1,25 +1,25 @@
 <div class="usa-card__body">
   <h1>Evaluation Forms</h1>
-  <div class="display-flex flex-wrap tablet:flex-justify width-full">
-    <span class="text-base margin-bottom-1">Manage existing evaluation forms and create new evaluation forms.</span>
+  <p class="text-normal">Manage existing evaluation forms and create new evaluation forms.</p>
 
-        <%= link_to new_evaluation_form_path, class: "width-full tablet:width-auto" do %>
-          <button class="usa-button font-body-2xs text-no-wrap" style="background-color: #4d8055">
-            <%= image_tag(
-              "images/usa-icons/content_copy.svg",
-              class: "usa-icon icon-white",
-              alt: "evaluation forms"
-            )%>
-            Create New Evaluation Form
-          </button> 
+  <p>
+    <%= link_to new_evaluation_form_path, class: "width-full tablet:width-auto" do %>
+      <button class="usa-button font-body-2xs text-no-wrap" style="background-color: #4d8055">
+        <%= image_tag(
+          "images/usa-icons/content_copy.svg",
+          class: "usa-icon icon-white",
+          alt: "evaluation forms"
+        )%>
+        Create New Evaluation Form
+      </button>
     <% end %>
-  </div>  
+  </p>
 
   <% if @evaluation_forms.empty? %>
-    <div class="text-base align-center text-center">
-      <p>You currently do not have any evaluation forms.</p>
-      <p>Please create an evaluation form for your challenge before it is published.</p>
-    </div>  
+    <div class="text-normal">
+      <p>You currently do not have any evaluation forms.<br/>
+      Please create an evaluation form for your challenge before it is published.</p>
+    </div>
   <% else %>
     <%= render partial: "table", locals: { evaluation_forms: @evaluation_forms } %>
   <% end %>  
