@@ -25,7 +25,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.save
         format.html do
-          redirect_to evaluation_form_url(@evaluation_form), notice: "Evaluation form was successfully created."
+          redirect_to evaluation_form_url(@evaluation_form), notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :created, location: @evaluation_form }
       else
@@ -40,7 +40,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
         format.html do
-          redirect_to evaluation_form_url(@evaluation_form), notice: "Evaluation form was successfully updated."
+          redirect_to evaluation_form_url(@evaluation_form), notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -55,7 +55,7 @@ class EvaluationFormsController < ApplicationController
     @evaluation_form.destroy!
 
     respond_to do |format|
-      format.html { redirect_to evaluation_forms_url, notice: "Evaluation form was successfully destroyed." }
+      format.html { redirect_to evaluation_forms_url, notice: I18n.t("evaluation_form_destroyed") }
       format.json { head(:no_content) }
     end
   end

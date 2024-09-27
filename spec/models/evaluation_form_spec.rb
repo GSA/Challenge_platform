@@ -23,8 +23,8 @@ RSpec.describe EvaluationForm, type: :model do
     end
   end
 
-  context "scope" do
-    describe "by_user scope" do
+  describe "scope" do
+    describe "#by_user" do
       it 'returns an empty list when there are no forms' do
         user = create_user(role: :challenge_manager)
         assert_empty described_class.by_user(user)

@@ -17,6 +17,13 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
+def log_in_user(user)
+  code = "ABC123"
+  mock_login_gov(user, code)
+
+  get "/auth/result", params: { code: }
+end
+
 def create_and_log_in_user(user_attrs = {})
   user = create_user(user_attrs)
   code = "ABC123"

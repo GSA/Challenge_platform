@@ -58,6 +58,7 @@ Metrics/ClassLength:
     - heredoc
 
 Metrics/MethodLength:
+  Max: 20
   CountAsOne:
     - array
     - hash
