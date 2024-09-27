@@ -2,11 +2,10 @@
 
 class EvaluationFormsController < ApplicationController
   before_action :set_evaluation_form, only: %i[show edit update destroy]
+  before_action :set_evaluation_forms, only: %i[index]
 
   # GET /evaluation_forms or /evaluation_forms.json
-  def index
-    @evaluation_forms = EvaluationForm.all
-  end
+  def index; end
 
   # GET /evaluation_forms/1 or /evaluation_forms/1.json
   def show; end
@@ -66,6 +65,10 @@ class EvaluationFormsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_evaluation_form
     @evaluation_form = EvaluationForm.find(params[:id])
+  end
+
+  def set_evaluation_forms
+    @evaluation_forms = EvaluationForm.by_user(current_user)
   end
 
   # Only allow a list of trusted parameters through.
