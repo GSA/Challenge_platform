@@ -15,7 +15,9 @@
             <% end %>    
             </th>
             <td data-label="Assigned to Challenge:">
-                <%= challenge_with_phase(evaluation_form) %>
+                <% if evaluation_form.challenge %>
+                  <%= challenge_with_phase(evaluation_form) %>
+                <% end %>  
             </td>
           <td>
               <div class="display-flex flex-wrap grid-row grid-gap-1">
