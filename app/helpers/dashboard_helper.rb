@@ -3,14 +3,6 @@
 module DashboardHelper
   def dashboard_cards_by_role
     {
-      super_admin: [
-        { image_path: 'emoji_events', href: "",
-          alt: '', title: 'Placeholder', subtitle: 'Placeholder super admin dashboard.' }
-      ],
-      admin: [
-        { image_path: 'emoji_events', href: "",
-          alt: '', title: 'Placeholder', subtitle: 'Placeholder admin dashboard.' }
-      ],
       challenge_manager: [
         { image_path: 'emoji_events', href: Rails.configuration.phx_interop[:phx_uri],
           alt: 'challenges', title: 'Challenges', subtitle: 'Create and manage challenges.' },

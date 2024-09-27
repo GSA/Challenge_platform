@@ -7,11 +7,10 @@ RSpec.describe "EvaluationForms" do
         create_and_log_in_user(role: "super_admin")
       end
 
-      it "renders the index view with the correct header" do
+      it "redirects to the phoenix app" do
         get evaluation_forms_path
 
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include("Evaluation Forms")
+        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
 
@@ -20,11 +19,10 @@ RSpec.describe "EvaluationForms" do
         create_and_log_in_user(role: "admin")
       end
 
-      it "renders the index view with the correct header" do
+      it "redirects to the phoenix app" do
         get evaluation_forms_path
 
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include("Evaluation Forms")
+        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
 

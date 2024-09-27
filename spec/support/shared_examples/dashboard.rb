@@ -1,12 +1,12 @@
 RSpec.shared_examples "a page with dashboard content for a super admin" do
-  it "has the right subtitles for a super admin" do
-    expect(response.body).to include("Placeholder super admin dashboard.")
+  it "redirects to the phoenix app" do
+    expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
   end
 end
 
 RSpec.shared_examples "a page with dashboard content for an admin" do
-  it "has the right subtitles for an admin" do
-    expect(response.body).to include("Placeholder admin dashboard.")
+  it "redirects to the phoenix app" do
+    expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
   end
 end
 
