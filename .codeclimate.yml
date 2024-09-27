@@ -8,7 +8,7 @@ plugins:
     enabled: true
   rubocop:
     enabled: true
-    channel: rubocop-1-48-1
+    channel: rubocop-1-56-3
 exclude_patterns:
 - .nix-bundler
 - config/

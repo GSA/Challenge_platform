@@ -99,6 +99,18 @@ ALTER SEQUENCE public.agency_members_id_seq OWNED BY public.agency_members.id;
 
 
 --
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: certification_log; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -308,6 +320,43 @@ CREATE SEQUENCE public.dap_reports_id_seq
 --
 
 ALTER SEQUENCE public.dap_reports_id_seq OWNED BY public.dap_reports.id;
+
+
+--
+-- Name: evaluation_forms; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.evaluation_forms (
+    id bigint NOT NULL,
+    title character varying,
+    instructions character varying,
+    challenge_phase integer,
+    comments_required boolean DEFAULT false,
+    weighted_scoring boolean DEFAULT false,
+    closing_date date,
+    challenge_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: evaluation_forms_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.evaluation_forms_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: evaluation_forms_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.evaluation_forms_id_seq OWNED BY public.evaluation_forms.id;
 
 
 --
@@ -1089,6 +1138,13 @@ ALTER TABLE ONLY public.dap_reports ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: evaluation_forms id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_forms ALTER COLUMN id SET DEFAULT nextval('public.evaluation_forms_id_seq'::regclass);
+
+
+--
 -- Name: federal_partners id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1238,6 +1294,14 @@ ALTER TABLE ONLY public.agency_members
 
 
 --
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
 -- Name: certification_log certification_log_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1267,6 +1331,14 @@ ALTER TABLE ONLY public.challenges
 
 ALTER TABLE ONLY public.dap_reports
     ADD CONSTRAINT dap_reports_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evaluation_forms evaluation_forms_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_forms
+    ADD CONSTRAINT evaluation_forms_pkey PRIMARY KEY (id);
 
 
 --
@@ -1460,6 +1532,20 @@ CREATE UNIQUE INDEX challenges_custom_url_index ON public.challenges USING btree
 
 
 --
+-- Name: index_evaluation_forms_on_challenge_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluation_forms_on_challenge_id ON public.evaluation_forms USING btree (challenge_id);
+
+
+--
+-- Name: index_evaluation_forms_on_challenge_id_and_challenge_phase; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_evaluation_forms_on_challenge_id_and_challenge_phase ON public.evaluation_forms USING btree (challenge_id, challenge_phase);
+
+
+--
 -- Name: message_contexts_context_context_id_audience_parent_id_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1617,6 +1703,14 @@ ALTER TABLE ONLY public.federal_partners
 
 ALTER TABLE ONLY public.federal_partners
     ADD CONSTRAINT federal_partners_sub_agency_id_fkey FOREIGN KEY (sub_agency_id) REFERENCES public.agencies(id);
+
+
+--
+-- Name: evaluation_forms fk_rails_28ad57fb81; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_forms
+    ADD CONSTRAINT fk_rails_28ad57fb81 FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
 
 
 --
@@ -1826,6 +1920,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20240917010803),
 (20231112151027),
 (20231112151017),
 (20231112151006),

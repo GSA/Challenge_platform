@@ -17,6 +17,13 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
+def log_in_user(user)
+  code = "ABC123"
+  mock_login_gov(user, code)
+
+  get "/auth/result", params: { code: }
+end
+
 def create_and_log_in_user(user_attrs = {})
   user = create_user(user_attrs)
   code = "ABC123"
@@ -26,11 +33,25 @@ def create_and_log_in_user(user_attrs = {})
   user
 end
 
-def create_user(user_attrs = {})
+def create_user(attrs = {})
   email = "testsolver@example.gov"
   token = SecureRandom.uuid
-  user_attrs = { email:, token: }.merge(user_attrs)
-  User.create!(user_attrs)
+  attrs = { email:, token: }.merge(attrs)
+  User.create!(attrs)
+end
+
+def create_challenge(attrs = {})
+  user = attrs[:user] || create_user(role: :challenge_manager)
+  agency = attrs[:agency] || create_agency
+  title = attrs[:title] || "test challenge"
+  challenge_manager_users = attrs[:challenge_manager_users] || [user]
+  Challenge.create!(user:, agency:, title:, challenge_manager_users:)
+end
+
+def create_agency(attrs = {})
+  name = attrs[:name] || "Test Agency"
+  acronym = attrs[:acronym] || "FAA"
+  Agency.create!(name:, acronym:)
 end
 
 def mock_login_gov(user, code = "ABC123") # rubocop:disable Metrics/AbcSize
