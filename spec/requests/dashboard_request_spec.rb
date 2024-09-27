@@ -9,6 +9,24 @@ RSpec.describe "DashboardController" do
     it_behaves_like "a page with footer content"
     it_behaves_like "a page with header content"
 
+    context "when logged in as super admin on the root url" do
+      before do
+        user.update(role: "super_admin")
+        get "/"
+      end
+
+      it_behaves_like "a page with dashboard content for a super admin"
+    end
+
+    context "when logged in as admin on the root url" do
+      before do
+        user.update(role: "admin")
+        get "/"
+      end
+
+      it_behaves_like "a page with dashboard content for an admin"
+    end
+
     context "when logged in as public solver on the root url" do
       before do
         user.update(role: "solver")
@@ -46,6 +64,24 @@ RSpec.describe "DashboardController" do
 
     it_behaves_like "a page with footer content"
     it_behaves_like "a page with header content"
+
+    context "when logged in as a super admin on the dashboard" do
+      before do
+        user.update(role: "super_admin")
+        get "/dashboard"
+      end
+
+      it_behaves_like "a page with dashboard content for a super admin"
+    end
+
+    context "when logged in as an admin on the dashboard" do
+      before do
+        user.update(role: "admin")
+        get "/dashboard"
+      end
+
+      it_behaves_like "a page with dashboard content for an admin"
+    end
 
     context "when logged in as a public solver on the dashboard" do
       before do
