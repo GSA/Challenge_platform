@@ -16,8 +16,8 @@ module DashboardHelper
           alt: 'help', title: 'Help', subtitle: 'Get support on the Challenge.Gov platform.' }
       ],
       evaluator: [
-        { image_path: 'content_copy', href: 'manage_submissions',
-          alt: 'submissions', title: 'Submissions', subtitle: 'Evaluate my assigned submissions.' },
+        { image_path: 'content_copy', href: 'evaluations',
+          alt: 'evaluations', title: 'Evaluations', subtitle: 'Evaluate my assigned submissions.' },
         { image_path: 'map', href: 'user_guide',
           alt: 'user guides', title: 'Resources', subtitle: 'Learn how to make the most of the platform.' },
         { image_path: 'support_agent', href: 'federal-agency-faqs',

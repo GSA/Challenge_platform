@@ -1,14 +1,39 @@
 require 'rails_helper'
 
 RSpec.describe "EvaluationForms" do
-  let(:user) { create_user(role: "challenge_manager") }
+  describe "GET /evaluation_forms" do
+    context "when logged in as a super admin" do
+      before do
+        create_and_log_in_user(role: "super_admin")
+      end
 
-  context "when a challenge_manager is logged in" do
-    before { log_in_user(user) }
+      it "redirects to the phoenix app" do
+        get evaluation_forms_path
 
-    describe "GET /evaluation_forms" do
+        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+      end
+    end
+
+    context "when logged in as a admin" do
+      before do
+        create_and_log_in_user(role: "admin")
+      end
+
+      it "redirects to the phoenix app" do
+        get evaluation_forms_path
+
+        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+      end
+    end
+
+    context "when logged in as a challenge manager" do
+      let(:user) { create_user(role: "challenge_manager") }
+
+      before { log_in_user(user) }
+
       it "renders the index view with the correct header" do
         get evaluation_forms_path
+
         expect(response).to have_http_status(:success)
         expect(response.body).to include("Evaluation Forms")
       end
@@ -49,6 +74,30 @@ RSpec.describe "EvaluationForms" do
         expect(response.body).to include("Fiona")
         expect(response.body).not_to include("Donkey")
         expect(response.body).not_to include("Farquad")
+      end
+    end
+
+    context "when logged in as an evaluator" do
+      before do
+        create_and_log_in_user(role: "evaluator")
+      end
+
+      it "redirects to the dashboard" do
+        get evaluation_forms_path
+
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    context "when logged in as a solver" do
+      before do
+        create_and_log_in_user(role: "solver")
+      end
+
+      it "redirects to the phoenix app" do
+        get evaluation_forms_path
+
+        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
   end

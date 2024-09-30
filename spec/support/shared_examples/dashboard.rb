@@ -1,3 +1,15 @@
+RSpec.shared_examples "a page with dashboard content for a super admin" do
+  it "redirects to the phoenix app" do
+    expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+  end
+end
+
+RSpec.shared_examples "a page with dashboard content for an admin" do
+  it "redirects to the phoenix app" do
+    expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+  end
+end
+
 RSpec.shared_examples "a page with dashboard content for a challenge manager" do
   it "has the right subtitles for a challenge manager" do
     expect(response.body).to include("Create and manage evaluation forms.")
@@ -12,5 +24,11 @@ RSpec.shared_examples "a page with dashboard content for an evaluator" do
     expect(response.body).to include("Evaluate my assigned submissions.")
     expect(response.body).to include("Learn how to make the most of the platform.")
     expect(response.body).to include("Get support on the Challenge.Gov platform.")
+  end
+end
+
+RSpec.shared_examples "a page with dashboard content for a public solver" do
+  it "redirects to the phoenix app" do
+    expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
   end
 end

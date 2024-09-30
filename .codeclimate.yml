@@ -16,3 +16,4 @@ exclude_patterns:
 - vendor/
 -  "**/vendor/**/*"
 - app/assets/images/
+- spec/**/*

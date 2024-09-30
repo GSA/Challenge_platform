@@ -38,26 +38,42 @@ RSpec.describe User do
   let(:gov_userinfo) do
     [{
       "email" => "test@example.gov",
-      "sub" => SecureRandom.uuid
+      "sub" => SecureRandom.uuid,
+      "role" => "challenge_manager"
     }]
   end
 
   let(:mil_userinfo) do
     [{
       "email" => "test@example.mil",
-      "sub" => SecureRandom.uuid
+      "sub" => SecureRandom.uuid,
+      "role" => "challenge_manager"
     }]
   end
 
   let(:non_gov_userinfo) do
     [{
       "email" => "test@example.com",
-      "sub" => SecureRandom.uuid
+      "sub" => SecureRandom.uuid,
+      "role" => "challenge_manager"
     }]
   end
 
   describe 'validations' do
     it_behaves_like 'a model with required attributes', [:email]
+
+    it "is valid with a valid role" do
+      User::ROLES.each do |role|
+        user = User.new(email: "test@example.com", role:)
+        expect(user).to be_valid
+      end
+    end
+
+    it "is invalid with an invalid role" do
+      user = described_class.new(email: "test@example.com", role: "invalid_role")
+      expect(user).not_to be_valid
+      expect(user.errors[:role]).to include("is not included in the list")
+    end
   end
 
   describe 'default values' do
@@ -71,8 +87,9 @@ RSpec.describe User do
     it 'properly sets inserted_at and updated_at' do
       email = gov_userinfo[0]["email"]
       token = gov_userinfo[0]["sub"]
+      role = gov_userinfo[0]["role"]
 
-      user = described_class.create!(email:, token:)
+      user = described_class.create!(email:, token:, role:)
 
       expect(user.inserted_at).not_to be_nil
       expect(user.updated_at).not_to be_nil
@@ -97,8 +114,9 @@ RSpec.describe User do
     it 'finds user if one matches token' do
       email = gov_userinfo[0]["email"]
       token = gov_userinfo[0]["sub"]
+      role = gov_userinfo[0]["role"]
 
-      user = described_class.create!(email:, token:)
+      user = described_class.create!(email:, token:, role:)
 
       found_user = described_class.user_from_userinfo(gov_userinfo)
 
@@ -144,8 +162,9 @@ RSpec.describe User do
     it 'update user with token if matching email but no token set (from admin creation)' do
       email = gov_userinfo[0]["email"]
       token = gov_userinfo[0]["sub"]
+      role = gov_userinfo[0]["role"]
 
-      user = described_class.create!(email:)
+      user = described_class.create!(email:, role:)
       expect(user.token).to be_nil
 
       updated_user = described_class.user_from_userinfo(gov_userinfo)

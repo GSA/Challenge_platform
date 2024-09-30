@@ -36,7 +36,8 @@ end
 def create_user(attrs = {})
   email = "testsolver@example.gov"
   token = SecureRandom.uuid
-  attrs = { email:, token: }.merge(attrs)
+  role = "challenge_manager"
+  attrs = { email:, token:, role: }.merge(attrs)
   User.create!(attrs)
 end
 
