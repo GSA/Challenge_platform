@@ -28,6 +28,7 @@ RSpec.describe "EvaluationForms" do
 
     context "when logged in as a challenge manager" do
       let(:user) { create_user(role: "challenge_manager") }
+
       before { log_in_user(user) }
 
       it "renders the index view with the correct header" do
@@ -36,6 +37,7 @@ RSpec.describe "EvaluationForms" do
         expect(response).to have_http_status(:success)
         expect(response.body).to include("Evaluation Forms")
       end
+
       it "renders an empty list" do
         get evaluation_forms_path
         expect(response.body).to include("You currently do not have any evaluation forms.")
