@@ -45,7 +45,7 @@ RSpec.describe "SessionsController" do
     email = "test@example.gov"
     token = SecureRandom.uuid
 
-    user = User.create!({ email:, token: })
+    user = User.create!({ email:, token:, role: "challenge_manager" })
 
     code = "ABC123"
     mock_login_gov(user, code)

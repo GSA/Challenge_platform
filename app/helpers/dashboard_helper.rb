@@ -18,7 +18,7 @@ module DashboardHelper
           alt: 'resources', title: 'Resources', subtitle: 'Learn how to make the most of the platform.' }
       ],
       evaluator: [
-        { image_path: 'star_half', href: 'manage_submissions',
+        { image_path: 'star_half', href: 'evaluations',
           alt: 'submissions', title: 'Submissions',
           subtitle: 'View submissions assigned to me and provide evaluations.' },
         { image_path: 'support', href: 'https://www.challenge.gov/cm-user-guide/',

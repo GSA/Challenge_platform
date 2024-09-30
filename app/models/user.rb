@@ -82,6 +82,9 @@ class User < ApplicationRecord
 
   validates :email, presence: true
 
+  ROLES = %w[super_admin admin challenge_manager evaluator solver].freeze
+  validates :role, inclusion: { in: ROLES }
+
   # Finds, creates, or updates user from userinfo
   # Find in case of user with existing token matching userinfo["sub"]
   # Create in case of no token or email matching in userinfo

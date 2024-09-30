@@ -71,6 +71,9 @@ jobs:
   rspec:
     executor:
       name: test_executor
+    
+    environment:
+      PHOENIX_URI: http://localhost:4000
 
     parallelism: 1
 

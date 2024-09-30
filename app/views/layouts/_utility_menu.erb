@@ -1,15 +1,22 @@
 <!-- Utility Menu -->
 <div class="bg-primary-darker w-full display-flex flex-justify-center desktop:flex-justify-end padding-1 font-body-3xs desktop:font-body-2xs text-white">
-    <%= utility_menu_link('grid_view', 'dashboard', 'dashboard', 'Dashboard') %>
+    <%= utility_menu_link('grid_view', dashboard_path, 'dashboard', 'Dashboard') %>
     <% if current_user.role == "challenge_manager" %>
-        <%= utility_menu_link('emoji_events', Rails.configuration.phx_interop[:phx_uri], 'challenges', 'Challenges') %>
-        <%= utility_menu_link('check_circle_outline', 'evaluation_forms', 'Evaluation Forms', 'Evaluation Forms') %>
+      <%= utility_menu_link('emoji_events', Rails.configuration.phx_interop[:phx_uri], 'challenges', 'Challenges') %>
+      <%= utility_menu_link('content_copy', evaluation_forms_path, 'Evaluation Forms', 'Evaluations') %>
+      <%= utility_menu_link('folder_open', manage_submissions_path, 'Manage Submissions', 'Submissions') %>
     <% end %>
-    <%= utility_menu_link('star_half', 'manage_submissions', 'Manage Submissions', 'Submissions') %>
-    <%= utility_menu_link('support', 'https://www.challenge.gov/cm-user-guide/', 'resources', 'Resources') %>
+    <% if current_user.role == "evaluator" %>
+      <%= utility_menu_link('content_copy', evaluations_path, 'Evaluate Submissions', 'Evaluations') %>
+    <% end %>  
+    <% if current_user.role == "solver" %>
+      <%= utility_menu_link('folder_open', 'submissions', 'submissions', 'Submissions') %>
+    <% end %>
+    <%= utility_menu_link('map', 'user_guide', 'user guides', 'User Guides') %>
+    <%= utility_menu_link('support_agent', 'federal-agency-faqs', 'help', 'Help') %>
     <div class="display-none desktop:display-flex flex-align-center margin-x-1 margin-top-1">
-        |
-        <%= image_tag('images/usa-icons/account_circle.svg', class: "usa-icon--size-3 icon-white margin-x-2", alt: "Help") %>    
-        <%= current_user.email %>
+      |
+      <%= image_tag('images/usa-icons/account_circle.svg', class: "usa-icon--size-3 icon-white margin-x-2", alt: "Help") %>
+      <%= current_user.email %>
     </div>
 </div>

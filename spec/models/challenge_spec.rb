@@ -9,7 +9,7 @@
 #  description                    :text
 #  inserted_at                    :datetime         not null
 #  updated_at                     :datetime         not null
-#  status                         :string(255)      default("pending"), not null
+#  status                         :string(255)      default("draft"), not null
 #  captured_on                    :date
 #  published_on                   :date
 #  title                          :string(255)
