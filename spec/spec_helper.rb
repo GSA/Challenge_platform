@@ -25,9 +25,6 @@ def log_in_user(user)
 end
 
 def create_and_log_in_user(user_attrs = {})
-  defaults = { email: "test@example.com", role: "challenge_manager" }
-  user_attrs = defaults.merge(user_attrs)
-
   user = create_user(user_attrs)
   code = "ABC123"
   mock_login_gov(user, code)
@@ -39,7 +36,8 @@ end
 def create_user(attrs = {})
   email = "testsolver@example.gov"
   token = SecureRandom.uuid
-  attrs = { email:, token:, role: "challenge_manager" }.merge(attrs)
+  role = "challenge_manager"
+  attrs = { email:, token:, role: }.merge(attrs)
   User.create!(attrs)
 end
 
