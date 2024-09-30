@@ -1,0 +1,9 @@
+<main class="grid-container flex-justify-center width-full padding-bottom-4">
+    <h1><%= dashboard_title[role] %></h1>
+    <% dashboard_cards_by_role[role].each_slice(2) do |card1, card2| %>
+        <div class="grid-row grid-gap-2">
+            <%= render partial: "dashboard_card", locals: { card: card1 } %>
+            <%= render partial: "dashboard_card", locals: { card: card2 } if card2 %>
+        </div>
+    <% end %>    
+</main>

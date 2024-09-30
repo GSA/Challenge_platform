@@ -5,9 +5,12 @@ USWDS with settings overrides
 Add a list of changed settings in the form $setting: value.
 ----------------------------------------
 */
-
-@use "uswds-core" with ($theme-image-path: "images",
-  $theme-font-path: "fonts"
+@use "uswds-core" with (
+  $theme-image-path: "images",
+  $theme-font-path: "fonts",
+  $flex-direction-settings: (
+    responsive: true
+  )
 );
 
 @use "uswds" as *;
@@ -48,6 +51,10 @@ Add a list of changed settings in the form $setting: value.
    * source: https://codepen.io/sosuke/pen/Pjoqqp
    */
   filter: invert(14%) sepia(17%) saturate(4304%) hue-rotate(190deg) brightness(94%) contrast(92%);
+}
+
+.icon-white {
+  filter: invert(99%) sepia(2%) saturate(3661%) hue-rotate(191deg) brightness(117%) contrast(80%);
 }
 
 .usa-social-link {

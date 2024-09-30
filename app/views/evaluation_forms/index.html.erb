@@ -1,7 +1,27 @@
-<div class="usa-card__container custom-card col-md-6">
-  <div class="usa-card__body">
-    <h1>Evaluation Forms</h1>
+<div class="usa-card__body">
+  <h1>Evaluation Forms</h1>
+  <p class="text-normal">Manage existing evaluation forms and create new evaluation forms.</p>
 
-    <p>Placeholder text for Evaluation Forms.</p>
-  </div>
+  <p>
+    <%= link_to new_evaluation_form_path, class: "width-full tablet:width-auto" do %>
+      <button class="usa-button font-body-2xs text-no-wrap" style="background-color: #4d8055">
+        <%= image_tag(
+          "images/usa-icons/content_copy.svg",
+          class: "usa-icon icon-white",
+          alt: "evaluation forms"
+        )%>
+        Create New Evaluation Form
+      </button>
+    <% end %>
+  </p>
+
+  <% if @evaluation_forms.empty? %>
+    <div class="text-normal">
+      <p>You currently do not have any evaluation forms.<br/>
+      Please create an evaluation form for your challenge before it is published.</p>
+    </div>
+  <% else %>
+    <%= render partial: "table", locals: { evaluation_forms: @evaluation_forms } %>
+  <% end %>  
+
 </div>

@@ -41,6 +41,12 @@ module RailsNew
       private_key_path: ENV.fetch("LOGIN_PRIVATE_KEY_PATH", "config/private.pem"),
     }
 
+    config.phx_interop = {
+      phx_uri: ENV.fetch("PHOENIX_URI", nil),
+      login_secret: ENV.fetch("LOGIN_SECRET", "login_secret_123"),
+      jwt_secret: ENV.fetch("JWT_SECRET", "jwt_secret_123")
+    }
+
     config.assets.initialize_on_precompile = false
   end
 end

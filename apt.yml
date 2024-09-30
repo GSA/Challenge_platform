@@ -1,3 +1,6 @@
 ---
 packages:
 - imagemagick
+# SWAKS is an SMTP testing tool 
+# https://manpages.ubuntu.com/manpages/jammy/man1/swaks.1.html
+- swaks
