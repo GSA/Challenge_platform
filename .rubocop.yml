@@ -3,6 +3,7 @@ require:
   - rubocop-rails
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-capybara
 
 AllCops:
   NewCops: enable
@@ -45,6 +46,7 @@ Metrics/BlockLength:
     # By default, exclude the `#refine` method, as it tends to have larger
     # associated blocks.
     - refine
+    - dashboard_cards_by_role
   Exclude:
     # Specs by nature tend to have lengthy, nested blocks
     - '*.gemspec'
@@ -57,6 +59,7 @@ Metrics/ClassLength:
     - heredoc
 
 Metrics/MethodLength:
+  Max: 20
   CountAsOne:
     - array
     - hash

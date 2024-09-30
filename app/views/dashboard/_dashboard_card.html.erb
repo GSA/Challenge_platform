@@ -1,0 +1,15 @@
+<div class="desktop:grid-col-6 margin-y-1">
+    <%= link_to(card[:href],
+        class: "display-flex bg-primary-darker text-white flex-align-center height-card text-no-underline"
+        ) do %>
+        <%= image_tag(
+            "images/usa-icons/#{card[:image_path]}.svg",
+            class: "usa-icon--size-7 icon-white margin-x-2",
+            alt: card[:alt]
+        )%>
+        <div class="margin-right-2" >
+            <h2><%= card[:title] %></h2>
+            <p style="max-width: 250px;"><%= card[:subtitle] %></p>
+        </div>    
+    <% end %>    
+</div>

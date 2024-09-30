@@ -11,7 +11,8 @@ Rails.application.routes.draw do
   get '/dashboard', to: "dashboard#index"
 
   resources :evaluations, only: [:index]
-  resources :evaluation_forms, only: [:index]
+  resources :evaluation_forms
+  post '/evaluation_forms/clone', to: 'evaluation_forms#create_from_existing'
   resources :manage_submissions, only: [:index]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

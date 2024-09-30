@@ -20,7 +20,7 @@ gem "faraday"
 gem "jwt"
 
 # Use simple asset pipeline
-gem "propshaft", "~> 0.9.0"
+gem "propshaft", "~> 0.9.1"
 gem "cssbundling-rails", "~> 1.4"
 gem "jsbundling-rails", "~> 1.3"
 
@@ -57,6 +57,8 @@ group :development, :test do
 
   gem "rspec-rails"
 
+  gem 'pry'
+
   # add the Ruby LSP package so it's bundled with the rest of the gems and available to VS Code
   gem "ruby-lsp"
 
@@ -64,8 +66,9 @@ group :development, :test do
   gem "rubocop", ">= 1.66.0"
   gem "rubocop-performance", require: false
   gem "rubocop-rake", require: false
-  gem "rubocop-rails", require: false
+  gem "rubocop-rails", ">= 2.26.0", require: false
   gem "rubocop-rspec", require: false
+  gem "rubocop-capybara", require: false
 
   gem "codeclimate-test-reporter"
 end
@@ -85,11 +88,15 @@ group :development do
 end
 
 group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "webmock"
-  gem "capybara"
-  gem "selenium-webdriver"
   gem "rspec_junit_formatter"
   gem 'simplecov', '~> 0.17.0', require: false
   gem "rails-controller-testing"
+end
+
+# Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+group :system_tests, :test do
+  gem "axe-core-rspec"
+  gem "capybara"
+  gem "selenium-webdriver", ">= 4.24.0"
 end

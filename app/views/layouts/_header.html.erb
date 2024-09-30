@@ -1,18 +1,198 @@
-<header class="usa-header usa-header--basic margin-bottom-2">
-  <div class="usa-nav-container">
-    <div class="usa-navbar">
-      <div class="usa-logo">
-        <em class="usa-logo__text">
-          <a href="/" title="Challenge Platform">Challenge Platform</a>
-        </em>
+<section
+class="usa-banner"
+aria-label="Official website of the United States government"
+>
+  <div class="usa-accordion">
+    <header class="usa-banner__header">
+      <div class="usa-banner__inner">
+        <div class="grid-col-auto">
+          <img
+            aria-hidden="true"
+            class="usa-banner__header-flag"
+            src="<%= image_path('images/us_flag_small.png') %>"
+            alt=""
+          />
+        </div>
+        <div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
+          <p class="usa-banner__header-text">
+            An official website of the United States government
+          </p>
+          <p class="usa-banner__header-action">Here’s how you know</p>
+        </div>
+        <button
+          type="button"
+          class="usa-accordion__button usa-banner__button"
+          aria-expanded="false"
+          aria-controls="gov-banner-default"
+        >
+          <span class="usa-banner__button-text">Here’s how you know</span>
+        </button>
+      </div>
+    </header>
+    <div
+      class="usa-banner__content usa-accordion__content"
+      id="gov-banner-default"
+    >
+      <div class="grid-row grid-gap-lg">
+        <div class="usa-banner__guidance tablet:grid-col-6">
+          <img
+            class="usa-banner__icon usa-media-block__img"
+            src="<%= image_path('images/icon-dot-gov.svg') %>"
+            role="img"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="usa-media-block__body">
+            <p>
+              <strong>Official websites use .gov</strong><br />A
+              <strong>.gov</strong> website belongs to an official government
+              organization in the United States.
+            </p>
+          </div>
+        </div>
+        <div class="usa-banner__guidance tablet:grid-col-6">
+          <img
+            class="usa-banner__icon usa-media-block__img"
+            src="<%= image_path('images/icon-https.svg') %>"
+            role="img"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="usa-media-block__body">
+            <p>
+              <strong>Secure .gov websites use HTTPS</strong><br />A
+              <strong>lock</strong> (
+              <span class="icon-lock"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="52"
+                  height="64"
+                  viewBox="0 0 52 64"
+                  class="usa-banner__lock-image"
+                  role="img"
+                  aria-labelledby="banner-lock-description-default"
+                  focusable="false"
+                >
+                  <title id="banner-lock-title-default">Lock</title>
+                  <desc id="banner-lock-description-default">Locked padlock icon</desc>
+                  <path
+                    fill="#000000"
+                    fill-rule="evenodd"
+                    d="M26 0c10.493 0 19 8.507 19 19v9h3a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h3v-9C7 8.507 15.507 0 26 0zm0 8c-5.979 0-10.843 4.77-10.996 10.712L15 19v9h22v-9c0-6.075-4.925-11-11-11z"
+                  />
+                </svg> </span
+              >) or <strong>https://</strong> means you’ve safely connected to
+              the .gov website. Share sensitive information only on official,
+              secure websites.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+  <div class="usa-overlay"></div>
+</section> 
+<header class="usa-header usa-header--basic site-header">
+  <div class="desktop:display-flex desktop:width-full">
+    <div class="usa-navbar">
+      <div class="usa-logo">
+        <em class="usa-logo__text"
+          ><a href="/" title="challenge.gov">
+          <span class="site-title--long">
+            <img width="300" class="usa-header__logo-img margin-left-4 desktop:margin-left-2 desktop:margin-bottom-2" src="<%= image_path("challenge-logo.svg") %>" alt="challenge logo" />
+          </span>  
+          </a></em
+        >
+      </div>
+      <button type="button" class="usa-menu-btn">Menu</button>
+    </div>
     <nav aria-label="Primary navigation" class="usa-nav">
-      <% if logged_in? %>
-        <%= button_to("Logout", session_path, method: :delete, class: "usa-button usa-nav-link", type: "button") %>
-      <% else %>
-        <%= button_to("Login", new_session_path, method: :get, class: "usa-button usa-nav-link", type: "button") %>
-      <% end %>
+      <button type="button" class="usa-nav__close">
+        <img src="<%= image_path('images/usa-icons/close.svg') %>" role="img" alt="Close" />
+      </button>
+      <ul class="usa-nav__primary usa-accordion flex-align-start">
+        <li class="usa-nav__primary-item">
+          <a href="/#active-challenges" class="usa-nav-link text-no-wrap"
+            ><span>Find a Challenge</span></a
+          >
+        </li>
+        <li class="usa-nav__primary-item">
+          <a href="/resources" class="usa-nav-link"
+            ><span>Resources</span></a
+          >
+        </li>
+        <li class="usa-nav__primary-item">
+          <a href="/events" class="usa-nav-link"
+            ><span>Events</span></a
+          >
+        </li>
+        <li class="usa-nav__primary-item">
+          <a href="/contact" class="usa-nav-link"
+            ><span>Contact</span></a
+          >
+        </li>
+      </ul>
+      <!-- Desktop search and login area --> 
+      <section class="display-none desktop:display-flex">
+        <section aria-label="Search component">
+          <form class="usa-search usa-search--small" role="search">
+            <label class="usa-sr-only" for="search-field-desktop">Search</label>
+            <input
+              class="usa-input"
+              id="search-field-desktop"
+              type="search"
+              name="search"
+              style="width: 140px"
+            />
+            <button class="usa-button" type="submit">
+              <img
+                src="<%= image_path('images/usa-icons-bg/search--white.svg') %>"
+                class="usa-search__submit-icon"
+                alt="Search"
+              />
+            </button>
+          </form>
+        </section>
+        <% if logged_in? %>
+          <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1", type: "button") %>
+          <button class="usa-button font-body-2xs text-no-wrap">Switch Task</button> 
+        <% else %>
+          <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1", type: "button") %>
+          <button class="usa-button font-body-2xs text-no-wrap">Create Account</button> 
+        <% end %>
+      </section>
+      <!-- mobile search and login area --> 
+      <section class="desktop:display-none order-3">
+        <section aria-label="Search component">
+          <form class="usa-search usa-search--small margin-y-1" role="search">
+            <label class="usa-sr-only" for="search-field">Search</label>
+            <input
+              class="usa-input"
+              id="search-field"
+              type="search"
+              name="search"
+              style="width: 170px"
+            />
+            <button class="usa-button" type="submit">
+              <img
+                src="<%= image_path('images/usa-icons-bg/search--white.svg') %>"
+                class="usa-search__submit-icon"
+                alt="Search"
+              />
+            </button>
+          </form>
+        </section>
+        <% if logged_in? %>
+          <div class="text-primary font-body-2xs margin-y-1 padding-top-1">
+            <%= current_user.email %>
+          </div>  
+          <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
+          <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Switch Task</button> 
+        <% else %>
+          <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
+          <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Create Account</button> 
+        <% end %>
+      </section>
     </nav>
   </div>
 </header>
