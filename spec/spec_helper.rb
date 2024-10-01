@@ -49,6 +49,14 @@ def create_challenge(attrs = {})
   Challenge.create!(user:, agency:, title:, challenge_manager_users:)
 end
 
+def create_evaluation_form(attrs = {})
+  title = attrs[:title] || "test challenge"
+  challenge_id = attrs[:challenge_id] || create_challenge.id
+  challenge_phase = attrs[:challenge_phase] || 1
+  EvaluationForm.create!(title:, challenge_id:, challenge_phase:, instructions: "test instructions",
+                         closing_date: Date.tomorrow)
+end
+
 def create_agency(attrs = {})
   name = attrs[:name] || "Test Agency"
   acronym = attrs[:acronym] || "FAA"

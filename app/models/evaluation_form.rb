@@ -16,10 +16,16 @@
 #  updated_at        :datetime         not null
 #
 class EvaluationForm < ApplicationRecord
-  belongs_to :challenge, optional: true
+  belongs_to :challenge
 
   scope :by_user, lambda { |user|
     joins(challenge: :challenge_manager_users).
       where(challenge_manager_users: { id: user.id })
   }
+
+  validates :title, presence: true
+  validates :instructions, presence: true
+  validates :closing_date, presence: true
+  validates :challenge_phase, presence: true
+  validates :challenge_phase, uniqueness: { scope: :challenge_id }
 end
