@@ -22,4 +22,9 @@ class EvaluationForm < ApplicationRecord
     joins(challenge: :challenge_manager_users).
       where(challenge_manager_users: { id: user.id })
   }
+
+  validates :title, presence: true
+  validates :instructions, presence: true
+  validates :closing_date, presence: true
+  validates :challenge_phase, presence: true
 end

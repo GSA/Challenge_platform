@@ -17,9 +17,28 @@ require 'rails_helper'
 
 RSpec.describe EvaluationForm do
   describe 'validations' do
-    it 'validates nothing' do
-      evaluation_form = described_class.new
-      expect(evaluation_form).to be_valid
+    it 'validates presence of title' do
+      evaluation_form = described_class.new(title: nil)
+      expect(evaluation_form).not_to be_valid
+      expect(evaluation_form.errors[:title]).to include("can't be blank")
+    end
+
+    it 'validates presence of instructions' do
+      evaluation_form = described_class.new(instructions: nil)
+      expect(evaluation_form).not_to be_valid
+      expect(evaluation_form.errors[:instructions]).to include("can't be blank")
+    end
+
+    it 'validates presence of challenge phase' do
+      evaluation_form = described_class.new(challenge_phase: nil)
+      expect(evaluation_form).not_to be_valid
+      expect(evaluation_form.errors[:challenge_phase]).to include("can't be blank")
+    end
+        
+    it 'validates presence of closing date' do
+      evaluation_form = described_class.new(closing_date: nil)
+      expect(evaluation_form).not_to be_valid
+      expect(evaluation_form.errors[:closing_date]).to include("can't be blank")
     end
   end
 
