@@ -34,7 +34,7 @@ RSpec.describe EvaluationForm do
       expect(evaluation_form).not_to be_valid
       expect(evaluation_form.errors[:challenge_phase]).to include("can't be blank")
     end
-        
+
     it 'validates presence of closing date' do
       evaluation_form = described_class.new(closing_date: nil)
       expect(evaluation_form).not_to be_valid
