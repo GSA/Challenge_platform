@@ -27,4 +27,5 @@ class EvaluationForm < ApplicationRecord
   validates :instructions, presence: true
   validates :closing_date, presence: true
   validates :challenge_phase, presence: true
+  validates :challenge_phase, uniqueness: { scope: :challenge_id }
 end
