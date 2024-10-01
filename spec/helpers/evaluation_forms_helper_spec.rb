@@ -16,7 +16,7 @@ RSpec.describe EvaluationFormsHelper do
       user = create_user
       agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
       challenge = create_challenge(user:, agency:, title: "Pushing a boulder up a hill")
-      form = EvaluationForm.create!(challenge_id: challenge.id, challenge_phase: 1)
+      form = create_evaluation_form(challenge_id: challenge.id, challenge_phase: 1)
 
       expect(helper.challenge_with_phase(form)).to eq("Pushing a boulder up a hill - Phase 1")
     end

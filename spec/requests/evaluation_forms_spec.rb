@@ -48,8 +48,8 @@ RSpec.describe "EvaluationForms" do
         challenge = Challenge.create!(user:, agency:, title: "Turning red bull into water")
         ChallengeManager.create(user:, challenge:)
 
-        EvaluationForm.create!(title: "Frodo", challenge_id: challenge.id)
-        EvaluationForm.create!(title: "Sam", challenge_id: challenge.id)
+        create_evaluation_form(title: "Frodo", challenge_id: challenge.id, challenge_phase: 1)
+        create_evaluation_form(title: "Sam", challenge_id: challenge.id, challenge_phase: 2)
         get evaluation_forms_path
         expect(response.body).to include("Sam")
         expect(response.body).to include("Frodo")
@@ -64,10 +64,10 @@ RSpec.describe "EvaluationForms" do
         challenge2 = Challenge.create!(user: user2, agency:, title: "Turning frogs into princes")
         ChallengeManager.create(user: user2, challenge:)
 
-        EvaluationForm.create!(title: "Shrek", challenge_id: challenge.id)
-        EvaluationForm.create!(title: "Fiona", challenge_id: challenge.id)
-        EvaluationForm.create!(title: "Donkey", challenge_id: challenge2.id)
-        EvaluationForm.create!(title: "Farquad", challenge_id: challenge2.id)
+        create_evaluation_form(title: "Shrek", challenge_id: challenge.id, challenge_phase: 1)
+        create_evaluation_form(title: "Fiona", challenge_id: challenge.id, challenge_phase: 2)
+        create_evaluation_form(title: "Donkey", challenge_id: challenge2.id, challenge_phase: 1)
+        create_evaluation_form(title: "Farquad", challenge_id: challenge2.id, challenge_phase: 2)
 
         get evaluation_forms_path
         expect(response.body).to include("Shrek")

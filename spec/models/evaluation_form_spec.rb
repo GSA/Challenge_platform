@@ -33,7 +33,7 @@ RSpec.describe EvaluationForm do
       it 'returns the form for the user' do
         user = create_user(role: :challenge_manager)
         challenge = create_challenge(user:)
-        evaluation_form = described_class.create!(challenge:, challenge_phase: 1)
+        evaluation_form = create_evaluation_form(challenge_id: challenge.id, challenge_phase: 1)
         expect(challenge.challenge_manager_users).to include(user)
         expect(described_class.by_user(user)).to include(evaluation_form)
       end
@@ -42,7 +42,7 @@ RSpec.describe EvaluationForm do
         challenge_user = create_user(role: :challenge_manager, email: "user1@example.com")
         different_user = create_user(role: :challenge_manager, email: "user2@example.com")
         challenge = create_challenge(user: challenge_user)
-        evaluation_form = described_class.create!(challenge:, challenge_phase: 1)
+        evaluation_form = create_evaluation_form(challenge_id: challenge.id, challenge_phase: 1)
         expect(challenge.challenge_manager_users).not_to include(different_user)
         expect(described_class.by_user(different_user)).not_to include(evaluation_form)
       end
