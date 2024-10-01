@@ -328,13 +328,13 @@ ALTER SEQUENCE public.dap_reports_id_seq OWNED BY public.dap_reports.id;
 
 CREATE TABLE public.evaluation_forms (
     id bigint NOT NULL,
-    title character varying,
-    instructions character varying,
-    challenge_phase integer,
+    title character varying NOT NULL,
+    instructions character varying NOT NULL,
+    challenge_phase integer NOT NULL,
     comments_required boolean DEFAULT false,
     weighted_scoring boolean DEFAULT false,
-    closing_date date,
-    challenge_id bigint,
+    closing_date date NOT NULL,
+    challenge_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -1920,6 +1920,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241001143033),
 (20240917010803),
 (20231112151027),
 (20231112151017),
