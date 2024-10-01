@@ -51,7 +51,7 @@ end
 
 def create_evaluation_form(attrs = {})
   title = attrs[:title] || "test challenge"
-  challenge_id = attrs[:challenge_id] || Challenge.first.id
+  challenge_id = attrs[:challenge_id] || create_challenge.id
   challenge_phase = attrs[:challenge_phase] || 1
   EvaluationForm.create!(title:, challenge_id:, challenge_phase:, instructions: "test instructions",
                          closing_date: Date.tomorrow)
