@@ -28,8 +28,10 @@
     <% end %>  
     <%= render "shared/flash" %>
 
-    <%= yield %>
-
+    <main class="grid-container">
+      <%= yield %>
+    </main>
+    
     <%= render "layouts/footer" %>
     <%= render "modals/renew_session" %>
     <%= javascript_include_tag 'uswds', async: true %>
