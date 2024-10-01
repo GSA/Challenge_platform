@@ -63,7 +63,7 @@ group :development, :test do
   gem "ruby-lsp"
 
   # rubocop and specific extensions used by VS Code
-  gem "rubocop", ">= 1.65.1"
+  gem "rubocop", ">= 1.66.0"
   gem "rubocop-performance", require: false
   gem "rubocop-rake", require: false
   gem "rubocop-rails", ">= 2.26.0", require: false
@@ -98,5 +98,5 @@ end
 group :system_tests, :test do
   gem "axe-core-rspec"
   gem "capybara"
-  gem "selenium-webdriver"
+  gem "selenium-webdriver", ">= 4.24.0"
 end
