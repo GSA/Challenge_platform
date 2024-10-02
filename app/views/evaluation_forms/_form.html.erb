@@ -1,3 +1,6 @@
+<% content_for :head do %>
+  <%= javascript_include_tag('evaluation_form') %>
+<% end %>  
 <%= form_with(model: evaluation_form) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: red">
@@ -35,8 +38,9 @@
 
       <div>
         <%= form.label :instructions, style: "display: block" %>
-        <%= form.text_field :instructions %>
+        <%= form.text_area :instructions, style: "height: 150px;" %>
       </div>
+      <span id="character_counter">3000</span> Characters Allowed
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Criteria</h4>
