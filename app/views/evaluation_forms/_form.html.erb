@@ -1,4 +1,4 @@
-<%= form_with(model: evaluation_form) do |form| %>
+<%= form_with(model: evaluation_form, data: { form_validation_target: "form" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
@@ -20,7 +20,7 @@
       </p>
       <div>
         <%= form.label :title, style: "display: block" %>
-        <%= form.text_field :title %>
+        <%= form.text_field :title, data: { action: "form-validation#handleChange" } %>
       </div>
 
       <div>
@@ -70,6 +70,6 @@
   
 
   <div>
-    <%= form.submit %>
+    <%= form.submit disabled: evaluation_form.errors.any? %>
   </div>
 <% end %>
