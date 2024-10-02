@@ -1,7 +1,7 @@
 <%= form_with(model: evaluation_form) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation_form from being saved:</h2>
+      <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
 
       <ul>
         <% evaluation_form.errors.each do |error| %>
@@ -11,40 +11,63 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
-  </div>
+  <ol class="usa-process-list">
+    <li class="usa-process-list__item">
+      <h4 class="usa-process-list__heading">Evaluation Information</h4>
+      <p class="margin-top-05">
+        Create an evaluation form title, assign it to your challenge and
+        provide instructions that will be shared with your evaluators. 
+      </p>
+      <div>
+        <%= form.label :title, style: "display: block" %>
+        <%= form.text_field :title %>
+      </div>
 
-  <div>
-    <%= form.label :instructions, style: "display: block" %>
-    <%= form.text_field :instructions %>
-  </div>
+      <div>
+        <%= form.label :challenge_phase, style: "display: block" %>
+        <%= form.number_field :challenge_phase %>
+      </div>
 
-  <div>
-    <%= form.label :challenge_phase, style: "display: block" %>
-    <%= form.number_field :challenge_phase %>
-  </div>
+      <div>
+        <%= form.label :challenge_id, style: "display: block" %>
+        <%= form.text_field :challenge_id %>
+      </div>
 
-  <div>
-    <%= form.label :comments_required, style: "display: block" %>
-    <%= form.check_box :comments_required %>
-  </div>
+      <div>
+        <%= form.label :instructions, style: "display: block" %>
+        <%= form.text_field :instructions %>
+      </div>
+    </li>
+    <li class="usa-process-list__item">
+      <h4 class="usa-process-list__heading">Evaluation Criteria</h4>
+      <p>
+        Create your evaluation criteria and scoring options.
+      </p>
+      <div>
+        <%= form.label :comments_required, style: "display: block" %>
+        <%= form.check_box :comments_required %>
+      </div>
 
-  <div>
-    <%= form.label :weighted_scoring, style: "display: block" %>
-    <%= form.check_box :weighted_scoring %>
-  </div>
+      <div>
+        <%= form.label :weighted_scoring, style: "display: block" %>
+        <%= form.check_box :weighted_scoring %>
+      </div>
+    </li>
+    <li class="usa-process-list__item">
+      <h4 class="usa-process-list__heading">Evaluation Period</h4>
+      <p>
+        Set the end date of your evaluation period.
+        Your evaluation start date is the end date of your challenge.
+      </p>
+      <div>
+        <%= form.label :closing_date, style: "display: block" %>
+        <%= form.date_field :closing_date %>
+      </div>
+    </li>
+  </ol>
 
-  <div>
-    <%= form.label :closing_date, style: "display: block" %>
-    <%= form.date_field :closing_date %>
-  </div>
 
-  <div>
-    <%= form.label :challenge_id, style: "display: block" %>
-    <%= form.text_field :challenge_id %>
-  </div>
+  
 
   <div>
     <%= form.submit %>
