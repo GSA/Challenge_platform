@@ -90,7 +90,7 @@ end
 group :test do
   gem "webmock"
   gem "rspec_junit_formatter"
-  gem 'simplecov'
+  gem 'simplecov', '~> 0.17.0', require: false
   gem "rails-controller-testing"
 end
 
