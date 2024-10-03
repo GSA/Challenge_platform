@@ -323,6 +323,44 @@ ALTER SEQUENCE public.dap_reports_id_seq OWNED BY public.dap_reports.id;
 
 
 --
+-- Name: evaluation_criteria; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.evaluation_criteria (
+    id bigint NOT NULL,
+    evaluation_form_id bigint NOT NULL,
+    title character varying NOT NULL,
+    description character varying NOT NULL,
+    points_or_weight integer NOT NULL,
+    scoring_type integer NOT NULL,
+    option_range_start integer DEFAULT 0 NOT NULL,
+    option_range_end integer DEFAULT 4 NOT NULL,
+    option_labels json DEFAULT '[]'::json,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: evaluation_criteria_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.evaluation_criteria_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: evaluation_criteria_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.evaluation_criteria_id_seq OWNED BY public.evaluation_criteria.id;
+
+
+--
 -- Name: evaluation_forms; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1138,6 +1176,13 @@ ALTER TABLE ONLY public.dap_reports ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: evaluation_criteria id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_criteria ALTER COLUMN id SET DEFAULT nextval('public.evaluation_criteria_id_seq'::regclass);
+
+
+--
 -- Name: evaluation_forms id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1331,6 +1376,14 @@ ALTER TABLE ONLY public.challenges
 
 ALTER TABLE ONLY public.dap_reports
     ADD CONSTRAINT dap_reports_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evaluation_criteria evaluation_criteria_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_criteria
+    ADD CONSTRAINT evaluation_criteria_pkey PRIMARY KEY (id);
 
 
 --
@@ -1532,6 +1585,20 @@ CREATE UNIQUE INDEX challenges_custom_url_index ON public.challenges USING btree
 
 
 --
+-- Name: index_evaluation_criteria_on_evaluation_form_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluation_criteria_on_evaluation_form_id ON public.evaluation_criteria USING btree (evaluation_form_id);
+
+
+--
+-- Name: index_evaluation_criteria_on_evaluation_form_id_and_title; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_evaluation_criteria_on_evaluation_form_id_and_title ON public.evaluation_criteria USING btree (evaluation_form_id, title);
+
+
+--
 -- Name: index_evaluation_forms_on_challenge_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1711,6 +1778,14 @@ ALTER TABLE ONLY public.federal_partners
 
 ALTER TABLE ONLY public.evaluation_forms
     ADD CONSTRAINT fk_rails_28ad57fb81 FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: evaluation_criteria fk_rails_a39b8fa483; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_criteria
+    ADD CONSTRAINT fk_rails_a39b8fa483 FOREIGN KEY (evaluation_form_id) REFERENCES public.evaluation_forms(id);
 
 
 --
@@ -1921,6 +1996,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 (20241001143033),
+(20240927010020),
 (20240917010803),
 (20231112151027),
 (20231112151017),

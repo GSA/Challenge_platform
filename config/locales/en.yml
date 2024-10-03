@@ -35,3 +35,4 @@ en:
   login_error: "There was an issue with logging in. Please try again."
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
+  evaluation_criterion_unique_title_in_form: "must be unique within the same form."

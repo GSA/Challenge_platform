@@ -90,7 +90,7 @@ end
 group :test do
   gem "webmock"
   gem "rspec_junit_formatter"
-  gem 'simplecov', '~> 0.17.0', require: false
+  gem 'simplecov'
   gem "rails-controller-testing"
 end
 
@@ -100,3 +100,7 @@ group :system_tests, :test do
   gem "capybara"
   gem "selenium-webdriver", ">= 4.24.0"
 end
+
+gem "factory_bot", "~> 6.5"
+
+gem "faker", "~> 3.4"

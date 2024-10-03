@@ -17,6 +17,7 @@
 #
 class EvaluationForm < ApplicationRecord
   belongs_to :challenge
+  has_many :evaluation_criteria, dependent: nil
 
   scope :by_user, lambda { |user|
     joins(challenge: :challenge_manager_users).
