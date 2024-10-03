@@ -1,7 +1,4 @@
-<% content_for :head do %>
-  <%= javascript_include_tag('evaluation_form') %>
-<% end %>  
-<%= form_with(model: evaluation_form) do |form| %>
+<%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
