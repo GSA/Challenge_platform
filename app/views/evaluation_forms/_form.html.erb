@@ -23,17 +23,10 @@
         <%= form.text_field :title %>
       </div>
 
-      <div>
-        <%= form.label :challenge_phase, style: "display: block" %>
-        <%= form.number_field :challenge_phase %>
-      </div>
+      <%= form.hidden_field :challenge_phase, {data: { "evaluation-form-target": 'challengePhase'}} %>
+      <%= form.hidden_field :challenge_id, {data: { "evaluation-form-target": 'challengeID'}} %>
 
-      <div>
-        <%= form.label :challenge_id, style: "display: block" %>
-        <%= form.text_field :challenge_id %>
-      </div>
-
-      <%= form.select :challenge_id, Challenge.all, {}, {data: { action: 'evaluation-form#handleChallengeSelect'}} %>
+      <%= form.select :challenge_id, challenges_with_phase_for_select(current_user), {}, {data: { action: 'evaluation-form#handleChallengeSelect'}} %>
 
       <div class="usa-character-count">
         <div class="usa-form-group">

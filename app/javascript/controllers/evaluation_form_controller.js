@@ -2,11 +2,16 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="evaluation-form"
 export default class extends Controller {
+  static targets = ["challengeID", "challengePhase"];
+
   connect() {
-    console.log("hello")
+    console.log("connected")
   }
 
   handleChallengeSelect(e) {
-    console.log(e.target.value)
+    let id, phase
+    [id, phase] = e.target.value.split(".")
+    this.challengeIDTarget.value = id
+    this.challengePhaseTarget.value = phase
   }
 }
