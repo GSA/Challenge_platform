@@ -1,11 +1,19 @@
 <% content_for :title, "Create Evaluation Form" %>
 
+  <div data-controller="hello">
+    <input data-hello-target="name" type="text">
+    <button data-action="click->hello#greet">Greet</button>
+    <div data-hello-target="output"></div>
+  </div>
+
 <h1>Create Evaluation Form</h1>
 
-<%= render "form", evaluation_form: @evaluation_form %>
+<div data-controller="form-validation" data-form-validation-target="output" data-form-validation-url-value="<%= form_validations_evaluation_forms_path %>">
+  <%= render "form", evaluation_form: @evaluation_form %>
+</div>  
 
 <br>
 
-<div data-controller="form-validation" data-form-validation-target="output" data-form-validation-url-value="<%= form_validations_evaluation_forms_path %>">
+<div >
   <%= link_to "Back to evaluation forms", evaluation_forms_path %>
 </div>

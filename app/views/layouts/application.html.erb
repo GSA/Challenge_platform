@@ -8,7 +8,7 @@
 
     <%= stylesheet_link_tag "styles" %>
     <%= stylesheet_link_tag "application" %>
-    <%= javascript_include_tag 'application' %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
 
     <% if logged_in? %>
       <script>
@@ -17,7 +17,7 @@
         }
       </script>
 
-      <%= javascript_include_tag 'session_timeout' %>
+      <%= javascript_include_tag 'session_timeout', "data-turbo-track": "reload", type: "module" %>
     <% end %>
   </head>
 
@@ -31,7 +31,7 @@
     <main class="grid-container">
       <%= yield %>
     </main>
-    
+
     <%= render "layouts/footer" %>
     <%= render "modals/renew_session" %>
     <%= javascript_include_tag 'uswds', async: true %>

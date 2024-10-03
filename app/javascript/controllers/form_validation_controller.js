@@ -1,6 +1,6 @@
 import Rails from "@rails/ujs";
 window.Rails = Rails
-Rails.start()
+// Rails.start()
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
