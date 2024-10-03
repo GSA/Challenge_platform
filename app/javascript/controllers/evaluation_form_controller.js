@@ -5,4 +5,8 @@ export default class extends Controller {
   connect() {
     console.log("hello")
   }
+
+  handleChallengeSelect(e) {
+    console.log(e.target.value)
+  }
 }

@@ -33,6 +33,8 @@
         <%= form.text_field :challenge_id %>
       </div>
 
+      <%= form.select :challenge_id, Challenge.all, {}, {data: { action: 'evaluation-form#handleChallengeSelect'}} %>
+
       <div class="usa-character-count">
         <div class="usa-form-group">
           <%= form.label :instructions, class: "usa-label" %>
