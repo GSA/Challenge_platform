@@ -36,11 +36,14 @@
         <%= form.text_field :challenge_id %>
       </div>
 
-      <div>
-        <%= form.label :instructions, style: "display: block" %>
-        <%= form.text_area :instructions, style: "height: 150px;" %>
+      <div class="usa-character-count">
+        <div class="usa-form-group">
+          <%= form.label :instructions, class: "usa-label" %>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7" %>
+        </div>
+        <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
       </div>
-      <span id="character_counter">3000</span> Characters Allowed
+
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Criteria</h4>
