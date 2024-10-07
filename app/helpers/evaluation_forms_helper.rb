@@ -20,5 +20,10 @@ module EvaluationFormsHelper
       phase = 1
       [ c.title, "#{c.id}.#{phase}" ] 
     }
+  end
+  
+  def inline_error(evaluation_form, field)
+    error = if evaluation_form.errors[field].present? then evaluation_form.errors[field].first else "" end
+    tag.span(error, class: "text-secondary font-body-2xs", id:"evaluation_form_#{field}_error")
   end  
 end

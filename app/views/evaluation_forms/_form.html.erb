@@ -21,10 +21,12 @@
       <div>
         <%= form.label :title, class: "usa-label" %>
         <%= form.text_field :title, class: "usa-input", data: {"action": "focusout->evaluation-form#validatePresence"} %>
+        <for>
       </div>
 
       <%= form.hidden_field :challenge_phase, {data: { "evaluation-form-target": 'challengePhase'}} %>
       <%= form.hidden_field :challenge_id, {data: { "evaluation-form-target": 'challengeID'}} %>
+      <%= inline_error(evaluation_form, :title) %>
 
       <label class="usa-label" for="challenge-select">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
@@ -48,10 +50,11 @@
       <div class="usa-character-count">
         <div class="usa-form-group">
           <%= form.label :instructions, class: "usa-label" %>
-          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7" %>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "focusout->evaluation-form#validatePresence"} %>
         </div>
         <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
       </div>
+      <%= inline_error(evaluation_form, :instructions) %>
 
     </li>
     <li class="usa-process-list__item">
@@ -80,9 +83,11 @@
             name="evaluation_form[closing_date]"
             aria-labelledby="evaluation_form_closing_date_label"
             aria-describedby="evaluation_form_closing_date_hint"
+            data-action="focusout->evaluation-form#validatePresence"
           />
         </div>
       </div>
+      <%= inline_error(evaluation_form, :closing_date) %>
     </li>
   </ol>
 

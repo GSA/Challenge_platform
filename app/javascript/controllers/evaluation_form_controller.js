@@ -14,11 +14,16 @@ export default class extends Controller {
     this.challengeIDTarget.value = id
     this.challengePhaseTarget.value = phase
     this.startDateTarget.innerHTML = end_date || "mm/dd/yyyy"
+    this.validatePresence(e)
   }
 
   validatePresence(e) {
     if (!e.target.value) {
-      console.log("error must be present")
+      e.target.classList.add("border-secondary")
+      document.getElementById(e.target.id + "_error").innerHTML = "can't be blank"
+    } else {
+      e.target.classList.remove("border-secondary")
+      document.getElementById(e.target.id + "_error").innerHTML = ""
     }
   }
 }
