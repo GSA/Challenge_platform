@@ -19,8 +19,8 @@
         provide instructions that will be shared with your evaluators. 
       </p>
       <div>
-        <%= form.label :title, style: "display: block" %>
-        <%= form.text_field :title %>
+        <%= form.label :title, class: "usa-label" %>
+        <%= form.text_field :title, class: "usa-input" %>
       </div>
 
       <%= form.hidden_field :challenge_phase, {data: { "evaluation-form-target": 'challengePhase'}} %>
@@ -66,7 +66,7 @@
         Your evaluation start date is the end date of your challenge.
       </p>
       <label>Evaluation Start Date:</label>
-      <div data-evaluation-form-target="startDate"></div>
+      <div class="usa-hint" data-evaluation-form-target="startDate">mm/dd/yyyy</div>
       <div class="usa-form-group">
         <label class="usa-label" id="evaluation_form_closing_date_label" for="evaluation_form_closing_date"
           >Evaluation End Date:</label

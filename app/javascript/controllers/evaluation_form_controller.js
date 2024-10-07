@@ -13,6 +13,6 @@ export default class extends Controller {
     [id, phase, end_date] = e.target.value.split(".")
     this.challengeIDTarget.value = id
     this.challengePhaseTarget.value = phase
-    this.startDateTarget.innerHTML = end_date || ""
+    this.startDateTarget.innerHTML = end_date || "mm/dd/yyyy"
   }
 }
