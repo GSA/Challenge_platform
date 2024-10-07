@@ -26,9 +26,10 @@
       <%= form.hidden_field :challenge_phase, {data: { "evaluation-form-target": 'challengePhase'}} %>
       <%= form.hidden_field :challenge_id, {data: { "evaluation-form-target": 'challengeID'}} %>
 
-      <label class="usa-label" for="fruit">Select a challenge</label>
+      <label class="usa-label" for="challenge-select">Select a challenge</label>
+      <div class="usa-hint">Choose the challenge this form will evaluate.</div>
         <div class="usa-combo-box">
-          <select class="usa-select" name="fruit" id="fruit" data-action="evaluation-form#handleChallengeSelect">
+          <select class="usa-select" name="challenge-select" id="challenge-select" data-action="evaluation-form#handleChallengeSelect">
             <% current_user.challenge_manager_challenges.each do |challenge| %>
               <% if challenge.is_multi_phase %>
                 <%# in the future this should loop over the challenge's phases and render an option for each phase.
