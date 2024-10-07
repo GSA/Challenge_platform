@@ -58,15 +58,6 @@
       <p>
         Create your evaluation criteria and scoring options.
       </p>
-      <div>
-        <%= form.label :comments_required, style: "display: block" %>
-        <%= form.check_box :comments_required %>
-      </div>
-
-      <div>
-        <%= form.label :weighted_scoring, style: "display: block" %>
-        <%= form.check_box :weighted_scoring %>
-      </div>
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Period</h4>
@@ -76,9 +67,20 @@
       </p>
       <label>Evaluation Start Date:</label>
       <div data-evaluation-form-target="startDate"></div>
-      <div>
-        <%= form.label :closing_date, style: "display: block" %>
-        <%= form.date_field :closing_date %>
+      <div class="usa-form-group">
+        <label class="usa-label" id="evaluation_form_closing_date_label" for="evaluation_form_closing_date"
+          >Evaluation End Date:</label
+        >
+        <div class="usa-hint" id="evaluation_form_closing_date_hint">mm/dd/yyyy</div>
+        <div class="usa-date-picker">
+          <input
+            class="usa-input"
+            id="evaluation_form_closing_date"
+            name="evaluation_form[closing_date]"
+            aria-labelledby="evaluation_form_closing_date_label"
+            aria-describedby="evaluation_form_closing_date_hint"
+          />
+        </div>
       </div>
     </li>
   </ol>
