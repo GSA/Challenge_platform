@@ -41,16 +41,33 @@
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Criteria</h4>
       <p>
-        Create your evaluation criteria and scoring options.
+        Build your evaluation criteria and scoring options.
       </p>
-      <div>
-        <%= form.label :comments_required, style: "display: block" %>
-        <%= form.check_box :comments_required %>
+      <div class="usa-checkbox">
+        <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required" %>
+        <label class="usa-checkbox__label" for="evaluation_form_comments_required">
+          Require evaluators to provide comments on their scores. (optional)
+          <%= image_tag 'help_outline.svg', alt: 'Help for comments required' %>
+        </label>
       </div>
 
       <div>
-        <%= form.label :weighted_scoring, style: "display: block" %>
-        <%= form.check_box :weighted_scoring %>
+        <fieldset class="usa-fieldset">
+          <legend class="usa-legend usa-process-list__heading eval-scale-heading">
+            Scale Type <span style="color: red;">*</span>
+            <%= image_tag 'help_outline.svg', alt: 'Help for scale type' %>
+          </legend>
+          <div class="radio-group">
+            <div class="usa-radio radio-item">
+              <input class="usa-radio__input eval-radio-input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label eval-radio-label" for="point_scale">Point Scale</label>
+            </div>
+            <div class="usa-radio radio-item">
+              <input class="usa-radio__input eval-radio-input" id="weighted_scale" type="radio" name="evaluation_form[weighted_scoring]" value="true" <%= 'checked' if evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label eval-radio-label" for="weighted_scale">Weighted Scale (%)</label>
+            </div>
+          </div>
+        </fieldset>
       </div>
     </li>
     <li class="usa-process-list__item">

@@ -40,6 +40,28 @@ RSpec.describe EvaluationForm do
       expect(evaluation_form).not_to be_valid
       expect(evaluation_form.errors[:closing_date]).to include("can't be blank")
     end
+
+    it 'has a default value of false for comments_required' do
+      evaluation_form = described_class.new
+      expect(evaluation_form.comments_required).to be_falsey
+    end
+
+    it 'has a default value of false for weighted_scoring' do
+      evaluation_form = described_class.new
+      expect(evaluation_form.weighted_scoring).to be_falsey
+    end
+  end
+
+  describe 'behavior' do
+    it 'can set comments_required to true' do
+      evaluation_form = described_class.new(comments_required: true)
+      expect(evaluation_form.comments_required).to be_truthy
+    end
+
+    it 'can set weighted_scoring to true' do
+      evaluation_form = described_class.new(weighted_scoring: true)
+      expect(evaluation_form.weighted_scoring).to be_truthy
+    end
   end
 
   describe "scope" do
