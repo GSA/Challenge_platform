@@ -26,7 +26,23 @@
       <%= form.hidden_field :challenge_phase, {data: { "evaluation-form-target": 'challengePhase'}} %>
       <%= form.hidden_field :challenge_id, {data: { "evaluation-form-target": 'challengeID'}} %>
 
-      <%= form.select :challenge_id, challenges_with_phase_for_select(current_user), {}, {data: { action: 'evaluation-form#handleChallengeSelect'}} %>
+      <label class="usa-label" for="fruit">Select a challenge</label>
+        <div class="usa-combo-box">
+          <select class="usa-select" name="fruit" id="fruit" data-action="evaluation-form#handleChallengeSelect">
+            <% current_user.challenge_manager_challenges.each do |challenge| %>
+              <% if challenge.is_multi_phase %>
+                <%# in the future this should loop over the challenge's phases and render an option for each phase.
+                right now we don't have a model for a challenge phase in the app. we need to decide either to include the phase
+                objects or to just index on the challenge's number_of_phases property. The number_of_phases is not currently
+                populated in our sample data so I'm unsure if we can rely on that in production.  %>
+                <% challenge_phase = 1 %>
+                <option value="<%= "#{challenge.id}.#{challenge_phase}.#{challenge.end_date.to_date}" %>"><%= challenge.title %></option>
+              <% else %>
+                <option value="<%= "#{challenge.id}.1.#{challenge.end_date.to_date}" %>"><%= challenge.title %></option>
+              <% end %>
+            <% end %>
+          </select>
+        </div>
 
       <div class="usa-character-count">
         <div class="usa-form-group">

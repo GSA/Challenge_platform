@@ -9,8 +9,8 @@ export default class extends Controller {
   }
 
   handleChallengeSelect(e) {
-    let id, phase
-    [id, phase] = e.target.value.split(".")
+    let id, phase, end_date
+    [id, phase, end_date] = e.target.value.split(".")
     this.challengeIDTarget.value = id
     this.challengePhaseTarget.value = phase
   }
