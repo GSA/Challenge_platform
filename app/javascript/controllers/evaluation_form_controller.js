@@ -15,4 +15,10 @@ export default class extends Controller {
     this.challengePhaseTarget.value = phase
     this.startDateTarget.innerHTML = end_date || "mm/dd/yyyy"
   }
+
+  validatePresence(e) {
+    if (!e.target.value) {
+      console.log("error must be present")
+    }
+  }
 }
