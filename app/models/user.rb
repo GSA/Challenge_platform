@@ -33,6 +33,8 @@
 #  recertification_expired_at :datetime
 #
 class User < ApplicationRecord
+  belongs_to :agency, optional: true
+
   has_many :challenges, dependent: :destroy
   has_many :challenge_managers, dependent: :destroy
   has_many :challenge_manager_challenges, through: :challenge_managers, source: :challenge, dependent: :destroy
