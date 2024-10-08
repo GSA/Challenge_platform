@@ -6,8 +6,8 @@ class CreateEvaluationCriteria < ActiveRecord::Migration[6.1]
       t.string :description, null: false
       t.integer :points_or_weight, null: false
       t.integer :scoring_type, default: :numeric, null: false 
-      t.integer :option_range_start, default: 0, null: false
-      t.integer :option_range_end, default: 4, null: false 
+      t.integer :option_range_start
+      t.integer :option_range_end
       t.json :option_labels, default: []
 
       t.timestamps

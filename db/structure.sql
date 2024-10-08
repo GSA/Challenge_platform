@@ -333,8 +333,8 @@ CREATE TABLE public.evaluation_criteria (
     description character varying NOT NULL,
     points_or_weight integer NOT NULL,
     scoring_type integer NOT NULL,
-    option_range_start integer DEFAULT 0 NOT NULL,
-    option_range_end integer DEFAULT 4 NOT NULL,
+    option_range_start integer,
+    option_range_end integer,
     option_labels json DEFAULT '[]'::json,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL

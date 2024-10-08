@@ -7,9 +7,9 @@ FactoryBot.define do
     title { "Criterion #{Faker::Lorem.word}" }
     description { Faker::Lorem.sentence }
     points_or_weight { rand(0..100) }
-    scoring_type { :numeric }
-    option_range_start { 0 }
-    option_range_end { 4 }
+    scoring_type { [:numeric, :rating, :binary].sample }
+    option_range_start { nil }
+    option_range_end { nil }
     option_labels { [] }
 
     # Factory options
@@ -23,6 +23,20 @@ FactoryBot.define do
 
     trait :binary do
       scoring_type { :binary }
+    end
+
+    after(:build) do |criterion|
+      case criterion.scoring_type
+      when "numeric"
+      # All nil
+      when "rating"
+        criterion.option_range_start = 0
+        criterion.option_range_end = 4
+      when "binary"
+        criterion.option_range_start = 0
+        criterion.option_range_end = 1
+        criterion.option_labels = %w[no yes]
+      end
     end
   end
 end
