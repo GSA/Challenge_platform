@@ -4,17 +4,20 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["challengeID", "challengePhase", "startDate"];
 
-  connect() {
-    console.log("connected")
-  }
-
   handleChallengeSelect(e) {
     let id, phase, end_date
     [id, phase, end_date] = e.target.value.split(".")
+    if (id) {
+
+    }
+
+    // set values of hidden form fields 
     this.challengeIDTarget.value = id
     this.challengePhaseTarget.value = phase
+
+    // set the start date of the evaluation form 
+    // to be the challenge's end date
     this.startDateTarget.innerHTML = end_date || "mm/dd/yyyy"
-    this.validatePresence(e)
   }
 
   validatePresence(e) {

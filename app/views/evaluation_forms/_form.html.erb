@@ -1,15 +1,4 @@
 <%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
-  <% if evaluation_form.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
-
-      <ul>
-        <% evaluation_form.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
 
   <ol class="usa-process-list">
     <li class="usa-process-list__item">
@@ -20,7 +9,7 @@
       </p>
       <div>
         <%= form.label :title, class: "usa-label" %>
-        <%= form.text_field :title, class: "usa-input", data: {"action": "focusout->evaluation-form#validatePresence"} %>
+        <%= form.text_field :title, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
         <for>
       </div>
 
@@ -30,27 +19,29 @@
 
       <label class="usa-label" for="challenge-select">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
-        <div class="usa-combo-box">
-          <select class="usa-select" name="challenge-select" id="challenge-select" data-action="evaluation-form#handleChallengeSelect">
-            <% current_user.challenge_manager_challenges.each do |challenge| %>
-              <% if challenge.is_multi_phase %>
-                <%# in the future this should loop over the challenge's phases and render an option for each phase.
-                right now we don't have a model for a challenge phase in the app. we need to decide either to include the phase
-                objects or to just index on the challenge's number_of_phases property. The number_of_phases is not currently
-                populated in our sample data so I'm unsure if we can rely on that in production.  %>
-                <% challenge_phase = 1 %>
-                <option value="<%= "#{challenge.id}.#{challenge_phase}.#{challenge.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %></option>
-              <% else %>
-                <option value="<%= "#{challenge.id}.1.#{challenge.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %></option>
-              <% end %>
+      <div class="usa-combo-box">
+        <select class="usa-select" name="challenge-select" id="challenge-select" data-action="evaluation-form#handleChallengeSelect">
+          <% current_user.challenge_manager_challenges.each do |challenge| %>
+            <% if challenge.is_multi_phase %>
+              <%# in the future this should loop over the challenge's phases and render an option for each phase.
+              right now we don't have a model for a challenge phase in the app. we need to decide either to include the phase
+              objects or to just index on the challenge's number_of_phases property. The number_of_phases is not currently
+              populated in our sample data so I'm unsure if we can rely on that in production.  %>
+              <% challenge_phase = 1 %>
+              <option value="<%= "#{challenge.id}.#{challenge_phase}.#{challenge.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %></option>
+            <% else %>
+              <option value="<%= "#{challenge.id}.1.#{challenge.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %></option>
             <% end %>
-          </select>
-        </div>
+          <% end %>
+        </select>
+      </div>
+      <%= inline_error(evaluation_form, :challenge_id) %>
+      <%= inline_error(evaluation_form, :challenge_phase) %>
 
       <div class="usa-character-count">
         <div class="usa-form-group">
           <%= form.label :instructions, class: "usa-label" %>
-          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "focusout->evaluation-form#validatePresence"} %>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
         </div>
         <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
       </div>
@@ -83,7 +74,7 @@
             name="evaluation_form[closing_date]"
             aria-labelledby="evaluation_form_closing_date_label"
             aria-describedby="evaluation_form_closing_date_hint"
-            data-action="focusout->evaluation-form#validatePresence"
+            data-action="evaluation-form#validatePresence focusout->evaluation-form#validatePresence"
           />
         </div>
       </div>
@@ -94,7 +85,17 @@
 
   
 
-  <div>
-    <%= form.submit %>
+  <div class="display-flex flex-wrap">
+    <button type="submit" name="commit" class="mobile-lg:width-mobile usa-button font-body-2xs text-no-wrap mobile-lg:margin-left-2 mobile-lg:margin-bottom-4" style="background-color: #4d8055">
+      <%= image_tag(
+        "images/usa-icons/check_circle.svg",
+        class: "usa-icon icon-white",
+        alt: "evaluation forms"
+      )%>
+      Save
+    </button>
+    <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
+      <%= link_to "Cancel", evaluation_forms_path %>
+    </div>  
   </div>
 <% end %>
