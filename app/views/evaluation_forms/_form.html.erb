@@ -52,19 +52,19 @@
       </div>
 
       <div>
-        <fieldset class="usa-fieldset">
-          <legend class="usa-legend usa-process-list__heading eval-scale-heading">
+        <fieldset class="usa-fieldset margin-top-205">
+          <legend class="usa-legend usa-process-list__heading font-sans-md text-bold">
             Scale Type <span style="color: red;">*</span>
             <%= image_tag 'help_outline.svg', alt: 'Help for scale type' %>
           </legend>
-          <div class="radio-group">
-            <div class="usa-radio radio-item">
-              <input class="usa-radio__input eval-radio-input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %>>
-              <label class="usa-radio__label eval-radio-label" for="point_scale">Point Scale</label>
+          <div class="display-flex flex-row">
+            <div class="usa-radio margin-right-205">
+              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
             </div>
-            <div class="usa-radio radio-item">
-              <input class="usa-radio__input eval-radio-input" id="weighted_scale" type="radio" name="evaluation_form[weighted_scoring]" value="true" <%= 'checked' if evaluation_form.weighted_scoring %>>
-              <label class="usa-radio__label eval-radio-label" for="weighted_scale">Weighted Scale (%)</label>
+            <div class="usa-radio">
+              <input class="usa-radio__input" id="weighted_scale" type="radio" name="evaluation_form[weighted_scoring]" value="true" <%= 'checked' if evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weighted Scale (%)</label>
             </div>
           </div>
         </fieldset>
