@@ -7,5 +7,3 @@ import { application } from "./application"
 import EvaluationFormController from "./evaluation_form_controller"
 application.register("evaluation-form", EvaluationFormController)
 
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
