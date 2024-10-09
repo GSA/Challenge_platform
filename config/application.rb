@@ -29,6 +29,8 @@ module RailsNew
     # Use the Postgresql-specific syntax for DB dumps
     config.active_record.schema_format = :sql
 
+    config.app_domain = ENV.fetch("SESSION_COOKIE_DOMAIN", nil)
+
     # Shared login.gov config with ENV overrides
     config.login_gov_oidc = {
       idp_host: ENV.fetch("LOGIN_IDP_HOST", "https://idp.int.identitysandbox.gov"),

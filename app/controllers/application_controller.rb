@@ -125,7 +125,8 @@ class ApplicationController < ActionController::Base
       value: phoenix_cookie[:value],
       secure: true,
       httponly: true,
-      same_site: :lax
+      same_site: :lax,
+      domain: Rails.configuration.app_domain
     }
   end
   # :nocov:
