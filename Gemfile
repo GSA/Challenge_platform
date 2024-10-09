@@ -100,3 +100,7 @@ group :system_tests, :test do
   gem "capybara"
   gem "selenium-webdriver", ">= 4.24.0"
 end
+
+gem "factory_bot", "~> 6.5"
+
+gem "faker", "~> 3.4"
