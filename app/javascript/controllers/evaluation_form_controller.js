@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="evaluation-form"
 export default class extends Controller {
-  static targets = ["challengeID", "challengePhase", "startDate"];
+  static targets = ["challengeID", "challengePhase", "startDate", "datePicker"];
 
   handleChallengeSelect(e) {
     let id, phase, end_date
@@ -15,6 +15,9 @@ export default class extends Controller {
       // set the start date of the evaluation form 
       // to be the challenge's end date
       this.startDateTarget.innerHTML = end_date || "mm/dd/yyyy"
+      let day, month, year
+      [month, day, year] = end_date.split("/")
+      this.datePickerTarget.setAttribute("data-min-date", `${year}-${month}-${day}`)
 
       this.updateErrorMessage("evaluation_form_challenge_id", "")
       this.updateErrorMessage("evaluation_form_challenge_phase", "")
