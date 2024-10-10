@@ -101,4 +101,28 @@ RSpec.describe "EvaluationForms" do
       end
     end
   end
+
+  describe "PATCH /evaluation_forms/:id" do
+    let(:challenge_user) { create_user(role: "challenge_manager") }
+    let(:challenge) { create_challenge(user: challenge_user) }
+    let(:evaluation_form) { create_evaluation_form(challenge_id: challenge.id, challenge_phase: 1) }
+
+    before { log_in_user(challenge_user) }
+
+    context "when requiring evaluator comments on scores" do
+      it "updates the comments_required attribute" do
+        patch evaluation_form_path(evaluation_form), params: { evaluation_form: { comments_required: true } }
+        evaluation_form.reload
+        expect(evaluation_form.comments_required).to be_truthy
+      end
+    end
+
+    context "when updating weighted scoring in scale type" do
+      it "updates the weighted_scoring attribute" do
+        patch evaluation_form_path(evaluation_form), params: { evaluation_form: { weighted_scoring: true } }
+        evaluation_form.reload
+        expect(evaluation_form.weighted_scoring).to be_truthy
+      end
+    end
+  end
 end

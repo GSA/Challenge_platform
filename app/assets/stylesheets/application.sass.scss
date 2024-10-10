@@ -4,3 +4,8 @@
 dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
 }
+
+.usa-radio__input:checked + .usa-radio__label::before {
+  background-color: black;
+  border-color: black;
+}

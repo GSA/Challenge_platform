@@ -41,16 +41,33 @@
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Criteria</h4>
       <p>
-        Create your evaluation criteria and scoring options.
+        Build your evaluation criteria and scoring options.
       </p>
-      <div>
-        <%= form.label :comments_required, style: "display: block" %>
-        <%= form.check_box :comments_required %>
+      <div class="usa-checkbox">
+        <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required" %>
+        <label class="usa-checkbox__label" for="evaluation_form_comments_required">
+          Require evaluators to provide comments on their scores. (optional)
+          <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for comments required' %>
+        </label>
       </div>
 
       <div>
-        <%= form.label :weighted_scoring, style: "display: block" %>
-        <%= form.check_box :weighted_scoring %>
+        <fieldset class="usa-fieldset margin-top-205">
+          <legend class="usa-legend usa-process-list__heading font-sans-md text-bold">
+            Scale Type <span style="color: red;">*</span>
+            <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for scale type' %>
+          </legend>
+          <div class="display-flex flex-row">
+            <div class="usa-radio margin-right-205">
+              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
+            </div>
+            <div class="usa-radio">
+              <input class="usa-radio__input" id="weighted_scale" type="radio" name="evaluation_form[weighted_scoring]" value="true" <%= 'checked' if evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weighted Scale (%)</label>
+            </div>
+          </div>
+        </fieldset>
       </div>
     </li>
     <li class="usa-process-list__item">
