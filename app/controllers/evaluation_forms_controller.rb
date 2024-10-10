@@ -74,7 +74,21 @@ class EvaluationFormsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def evaluation_form_params
-    params.require(:evaluation_form).permit(:title, :instructions, :challenge_phase, :status, :comments_required,
-                                            :weighted_scoring, :publication_date, :closing_date, :challenge_id)
+    permitted = params.require(:evaluation_form).
+      permit(:title, :instructions, :challenge_phase, :status, :comments_required,
+             :weighted_scoring, :publication_date, :closing_date, :challenge_id)
+    closing_date = parse_closing_date(permitted[:closing_date])
+    permitted.merge({ closing_date: })
+  end
+
+  def parse_closing_date(input_date)
+    case input_date
+    when %r{\A\d\d?/\d\d?/\d\d\d\d\z} # mm/dd/yyyy, also accepts single digit month/day
+      (month, day, year) = input_date.split("/")
+      # nicely formatted iso8601 with 2 digit day and month
+      "#{year}-#{month.rjust(2, '0')}-#{day.rjust(2, '0')}"
+    else
+      input_date
+    end
   end
 end
