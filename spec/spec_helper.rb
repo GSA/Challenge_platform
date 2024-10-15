@@ -45,8 +45,9 @@ def create_challenge(attrs = {})
   user = attrs[:user] || create_user(role: :challenge_manager)
   agency = attrs[:agency] || create_agency
   title = attrs[:title] || "test challenge"
+  end_date = attrs[:end_date] || Date.tomorrow
   challenge_manager_users = attrs[:challenge_manager_users] || [user]
-  Challenge.create!(user:, agency:, title:, challenge_manager_users:)
+  Challenge.create!(user:, agency:, title:, end_date:, challenge_manager_users:)
 end
 
 def create_evaluation_form(attrs = {})
