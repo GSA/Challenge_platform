@@ -75,7 +75,7 @@ class EvaluationFormsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def evaluation_form_params
     permitted = params.require(:evaluation_form).
-      permit(:title, :instructions, :challenge_phase, :status, :comments_required,
+      permit(:title, :instructions, :phase_id, :status, :comments_required,
              :weighted_scoring, :publication_date, :closing_date, :challenge_id)
     closing_date = parse_closing_date(permitted[:closing_date])
     permitted.merge({ closing_date: })

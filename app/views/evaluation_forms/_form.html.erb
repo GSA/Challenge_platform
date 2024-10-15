@@ -22,7 +22,7 @@
           <% current_user.challenge_manager_challenges.each do |challenge| %>
             <% if challenge.is_multi_phase %>
               <% challenge.phases.each.with_index(1) do |phase, index| %>
-                <option value="<%= "#{challenge.id}.#{index}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %> - Phase <%= index %></option>              
+                <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %> - Phase <%= index %></option>              
               <% end %>
             <% else %>
               <option value="<%= "#{challenge.id}.1.#{challenge.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %></option>
@@ -32,9 +32,9 @@
       </div>
       
       <%= inline_error(evaluation_form, :challenge_id) %>
-      <%= inline_error(evaluation_form, :challenge_phase) %>
+      <%= inline_error(evaluation_form, :phase_id) %>
 
-      <%= form.hidden_field :challenge_phase, {data: { "evaluation-form-target": 'challengePhase'}} %>
+      <%= form.hidden_field :phase_id, {data: { "evaluation-form-target": 'phaseID'}} %>
       <%= form.hidden_field :challenge_id, {data: { "evaluation-form-target": 'challengeID'}} %>
 
       <div class="usa-character-count">

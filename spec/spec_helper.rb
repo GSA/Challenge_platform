@@ -50,11 +50,20 @@ def create_challenge(attrs = {})
   Challenge.create!(user:, agency:, title:, end_date:, challenge_manager_users:)
 end
 
+def create_phase(attrs = {})
+  title = attrs[:title] || "test challenge"
+  end_date = attrs[:end_date] || Date.tomorrow
+  start_date = attrs[:start_date] || Date.today
+  challenge_id = attrs[:challenge_id] || create_challenge.id
+  uuid = attrs[:uuid] || SecureRandom.uuid
+  Phase.create!(title:, challenge_id:, start_date:, end_date:, uuid:)
+end
+
 def create_evaluation_form(attrs = {})
   title = attrs[:title] || "test challenge"
   challenge_id = attrs[:challenge_id] || create_challenge.id
-  challenge_phase = attrs[:challenge_phase] || 1
-  EvaluationForm.create!(title:, challenge_id:, challenge_phase:, instructions: "test instructions",
+  phase_id = attrs[:phase_id] || create_phase.id
+  EvaluationForm.create!(title:, challenge_id:, phase_id:, instructions: "test instructions",
                          closing_date: Date.tomorrow)
 end
 

@@ -2,15 +2,15 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="evaluation-form"
 export default class extends Controller {
-  static targets = ["challengeID", "challengePhase", "startDate", "datePicker"];
+  static targets = ["challengeID", "phaseID", "startDate", "datePicker"];
 
   handleChallengeSelect(e) {
-    let id, phase, end_date
-    [id, phase, end_date] = e.target.value.split(".")
+    let id, phase_id, end_date
+    [id, phase_id, end_date] = e.target.value.split(".")
     if (id) {
       // set values of hidden form fields 
       this.challengeIDTarget.value = id
-      this.challengePhaseTarget.value = phase
+      this.phaseIDTarget.value = phase_id
 
       // set the start date of the evaluation form 
       // to be the challenge's end date
@@ -20,7 +20,7 @@ export default class extends Controller {
       this.datePickerTarget.setAttribute("data-min-date", `${year}-${month}-${day}`)
 
       this.updateErrorMessage("evaluation_form_challenge_id", "")
-      this.updateErrorMessage("evaluation_form_challenge_phase", "")
+      this.updateErrorMessage("evaluation_form_phase_id", "")
     } else {
       this.updateErrorMessage("evaluation_form_challenge_id", "can't be blank")
       this.startDateTarget.innerHTML = "mm/dd/yyyy"
