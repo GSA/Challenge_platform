@@ -99,6 +99,9 @@ class Challenge < ApplicationRecord
   has_many :phases, -> { order(:start_date) }, inverse_of: :challenge, dependent: :destroy
   has_many :submissions, dependent: :destroy
   has_many :submission_exports, dependent: :destroy
+  has_many :evaluator_invitations, dependent: :destroy
+  has_many :challenge_phases_evaluators, dependent: :destroy
+  has_many :evaluators, through: :challenge_phases_evaluators, source: :user
 
   # JSON fields
   attribute :types, :jsonb
