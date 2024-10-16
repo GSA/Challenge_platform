@@ -20,12 +20,8 @@
       <div class="usa-combo-box">
         <select class="usa-select" name="challenge-select" id="challenge-select" data-action="evaluation-form#handleChallengeSelect">
           <% current_user.challenge_manager_challenges.each do |challenge| %>
-            <% if challenge.is_multi_phase %>
-              <% challenge.phases.each.with_index(1) do |phase, index| %>
-                <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %> - Phase <%= index %></option>              
-              <% end %>
-            <% else %>
-              <option value="<%= "#{challenge.id}.1.#{challenge.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge.title %></option>
+            <% challenge.phases.each do |phase| %>
+              <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
             <% end %>
           <% end %>
         </select>

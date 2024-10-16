@@ -2,7 +2,11 @@
 
 module EvaluationFormsHelper
   def challenge_with_phase(evaluation_form)
-    "#{evaluation_form.challenge.title} - Phase #{evaluation_form.phase.id}"
+    challenge_phase_title(evaluation_form.challenge, evaluation_form.phase)
+  end
+
+  def challenge_phase_title(challenge, phase)
+    "#{challenge.title} - Phase #{phase_number(phase)}"
   end
 
   def inline_error(evaluation_form, field)

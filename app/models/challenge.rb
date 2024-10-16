@@ -96,14 +96,13 @@ class Challenge < ApplicationRecord
   has_many :federal_partners, dependent: :delete_all
   has_many :federal_partner_agencies, through: :federal_partners, source: :agency
   has_many :non_federal_partners, dependent: :delete_all
-  has_many :phases, dependent: :destroy
+  has_many :phases, -> { order(:start_date) }, dependent: :destroy
   has_many :submissions, dependent: :destroy
   has_many :submission_exports, dependent: :destroy
 
   # JSON fields
   attribute :types, :jsonb
   attribute :timeline_events, :jsonb
-  attribute :phases, :jsonb
 
   attribute :status, :string, default: "draft"
   attribute :prize_total, :integer, default: 0
