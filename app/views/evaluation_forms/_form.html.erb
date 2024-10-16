@@ -1,5 +1,11 @@
 <%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
-
+  <%
+    if evaluation_form.challenge && evaluation_form.phase
+      challenge = evaluation_form.challenge
+      phase = evaluation_form.phase
+      combo_box_default_value = "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}"
+    end
+  %>
   <ol class="usa-process-list">
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Information</h4>
@@ -17,7 +23,7 @@
 
       <label class="usa-label" for="challenge-select">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
-      <div class="usa-combo-box">
+      <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
         <select class="usa-select" name="challenge-select" id="challenge-select" data-action="evaluation-form#handleChallengeSelect">
           <% current_user.challenge_manager_challenges.each do |challenge| %>
             <% challenge.phases.each do |phase| %>
