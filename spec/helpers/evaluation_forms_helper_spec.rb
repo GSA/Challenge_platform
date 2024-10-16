@@ -11,14 +11,26 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe EvaluationFormsHelper do
-  describe "challenge with phase" do
+  describe "#challenge_with_phase" do
     it "concats challenge name with challenge phase" do
       user = create_user
       agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
       challenge = create_challenge(user:, agency:, title: "Pushing a boulder up a hill")
-      form = create_evaluation_form(challenge_id: challenge.id, challenge_phase: 1)
+      phase = create_phase(challenge_id: challenge.id)
+      form = create_evaluation_form(challenge_id: challenge.id, phase_id: phase.id)
 
       expect(helper.challenge_with_phase(form)).to eq("Pushing a boulder up a hill - Phase 1")
+    end
+  end
+
+  describe "#challenge_phase_title" do
+    it "concats challenge name with challenge phase" do
+      user = create_user
+      agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
+      challenge = create_challenge(user:, agency:, title: "Pushing a boulder up a hill")
+      phase = create_phase(challenge_id: challenge.id)
+
+      expect(helper.challenge_phase_title(challenge, phase)).to eq("Pushing a boulder up a hill - Phase 1")
     end
   end
 end
