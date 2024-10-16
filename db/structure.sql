@@ -408,13 +408,13 @@ CREATE TABLE public.evaluation_forms (
     id bigint NOT NULL,
     title character varying NOT NULL,
     instructions character varying NOT NULL,
-    challenge_phase integer NOT NULL,
     comments_required boolean DEFAULT false,
     weighted_scoring boolean DEFAULT false,
     closing_date date NOT NULL,
     challenge_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    phase_id bigint NOT NULL
 );
 
 
@@ -1740,10 +1740,10 @@ CREATE INDEX index_evaluation_forms_on_challenge_id ON public.evaluation_forms U
 
 
 --
--- Name: index_evaluation_forms_on_challenge_id_and_challenge_phase; Type: INDEX; Schema: public; Owner: -
+-- Name: index_evaluation_forms_on_phase_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_evaluation_forms_on_challenge_id_and_challenge_phase ON public.evaluation_forms USING btree (challenge_id, challenge_phase);
+CREATE INDEX index_evaluation_forms_on_phase_id ON public.evaluation_forms USING btree (phase_id);
 
 
 --
@@ -1926,6 +1926,14 @@ ALTER TABLE ONLY public.federal_partners
 
 ALTER TABLE ONLY public.challenge_phases_evaluators
     ADD CONSTRAINT fk_rails_252b3aeac2 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: evaluation_forms fk_rails_1c5ee6cafd; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_forms
+    ADD CONSTRAINT fk_rails_1c5ee6cafd FOREIGN KEY (phase_id) REFERENCES public.phases(id);
 
 
 --
@@ -2183,6 +2191,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241015140056),
 (20241014214843),
 (20241014210800),
 (20241001143033),
