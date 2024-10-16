@@ -16,15 +16,14 @@
       <div>
         <%= form.label :title, class: "usa-label" %>
         <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
-        <for>
       </div>
 
       <%= inline_error(evaluation_form, :title) %>
 
-      <label class="usa-label" for="challenge-select">Select a challenge</label>
+      <label class="usa-label" for="challenge-combo">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-        <select class="usa-select" name="challenge-select" id="challenge-select" data-action="evaluation-form#handleChallengeSelect">
+        <select class="usa-select" name="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
           <% current_user.challenge_manager_challenges.each do |challenge| %>
             <% challenge.phases.each do |phase| %>
               <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
@@ -65,7 +64,7 @@
       <div>
         <fieldset class="usa-fieldset margin-top-205">
           <legend class="usa-legend usa-process-list__heading font-sans-md text-bold">
-            Scale Type <span style="color: red;">*</span>
+            Scale Type <span style="color: darkred;">*</span>
             <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for scale type' %>
           </legend>
           <div class="display-flex flex-row">
@@ -87,7 +86,7 @@
         Set the end date of your evaluation period.
         Your evaluation start date is the end date of your challenge.
       </p>
-      <label>Evaluation Start Date:</label>
+      <div class="usa-label">Evaluation Start Date:</div>
       <div class="usa-hint" data-evaluation-form-target="startDate">mm/dd/yyyy</div>
       <div class="usa-form-group">
         <label class="usa-label" id="evaluation_form_closing_date_label" for="evaluation_form_closing_date"
