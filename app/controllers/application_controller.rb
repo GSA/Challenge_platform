@@ -125,7 +125,7 @@ class ApplicationController < ActionController::Base
       value: phoenix_cookie[:value],
       domain: Rails.configuration.app_domain,
       same_site: :lax,
-      secure: !Rails.env.development?,
+      secure: Rails.env.production?,
       httponly: true
     }
   end
@@ -133,6 +133,6 @@ class ApplicationController < ActionController::Base
 
   def delete_phoenix_session_cookie
     cookies.delete(:_challenge_gov_key, domain: Rails.configuration.app_domain,
-                                        secure: !Rails.env.development?)
+                                        secure: Rails.env.production?)
   end
 end
