@@ -34,7 +34,7 @@ def create_and_log_in_user(user_attrs = {})
 end
 
 def create_user(attrs = {})
-  email = "testsolver@example.gov"
+  email = SecureRandom.hex + "@example.gov"
   token = SecureRandom.uuid
   role = "challenge_manager"
   attrs = { email:, token:, role: }.merge(attrs)
