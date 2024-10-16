@@ -29,7 +29,7 @@ module RailsNew
     # Use the Postgresql-specific syntax for DB dumps
     config.active_record.schema_format = :sql
 
-    config.session_cookie_domain = ENV.fetch("SESSION_COOKIE_DOMAIN", nil)
+    config.app_domain = ENV.fetch("APP_DOMAIN", nil)
 
     # Shared login.gov config with ENV overrides
     config.login_gov_oidc = {

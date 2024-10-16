@@ -123,7 +123,7 @@ class ApplicationController < ActionController::Base
   def phoenix_session_cookie(phoenix_cookie)
     cookies[:_challenge_gov_key] = {
       value: phoenix_cookie[:value],
-      domain: Rails.configuration.session_cookie_domain,
+      domain: Rails.configuration.app_domain,
       same_site: :lax,
       secure: !Rails.env.development?,
       httponly: true
@@ -132,7 +132,7 @@ class ApplicationController < ActionController::Base
   # :nocov:
 
   def delete_phoenix_session_cookie
-    cookies.delete(:_challenge_gov_key, domain: Rails.configuration.session_cookie_domain,
+    cookies.delete(:_challenge_gov_key, domain: Rails.configuration.app_domain,
                                         secure: !Rails.env.development?)
   end
 end
