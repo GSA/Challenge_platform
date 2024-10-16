@@ -78,7 +78,7 @@ class EvaluationFormsController < ApplicationController
       permit(:title, :instructions, :phase_id, :status, :comments_required,
              :weighted_scoring, :publication_date, :closing_date, :challenge_id)
     closing_date = parse_closing_date(permitted[:closing_date])
-    if closing_date then permitted.merge({ closing_date: }) else permitted end    
+    closing_date ? permitted.merge({ closing_date: }) : permitted
   end
 
   def parse_closing_date(input_date)

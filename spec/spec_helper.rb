@@ -34,7 +34,7 @@ def create_and_log_in_user(user_attrs = {})
 end
 
 def create_user(attrs = {})
-  email = SecureRandom.hex + "@example.gov"
+  email = "#{SecureRandom.hex}@example.gov"
   token = SecureRandom.uuid
   role = "challenge_manager"
   attrs = { email:, token:, role: }.merge(attrs)
@@ -53,7 +53,7 @@ end
 def create_phase(attrs = {})
   title = attrs[:title] || "test challenge"
   end_date = attrs[:end_date] || Date.tomorrow
-  start_date = attrs[:start_date] || Date.today
+  start_date = attrs[:start_date] || Time.zone.today
   challenge_id = attrs[:challenge_id] || create_challenge.id
   uuid = attrs[:uuid] || SecureRandom.uuid
   Phase.create!(title:, challenge_id:, start_date:, end_date:, uuid:)
