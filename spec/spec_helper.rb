@@ -34,7 +34,7 @@ def create_and_log_in_user(user_attrs = {})
 end
 
 def create_user(attrs = {})
-  email = "testsolver@example.gov"
+  email = "#{SecureRandom.hex}@example.gov"
   token = SecureRandom.uuid
   role = "challenge_manager"
   attrs = { email:, token:, role: }.merge(attrs)
@@ -45,15 +45,25 @@ def create_challenge(attrs = {})
   user = attrs[:user] || create_user(role: :challenge_manager)
   agency = attrs[:agency] || create_agency
   title = attrs[:title] || "test challenge"
+  end_date = attrs[:end_date] || Date.tomorrow
   challenge_manager_users = attrs[:challenge_manager_users] || [user]
-  Challenge.create!(user:, agency:, title:, challenge_manager_users:)
+  Challenge.create!(user:, agency:, title:, end_date:, challenge_manager_users:)
+end
+
+def create_phase(attrs = {})
+  title = attrs[:title] || "test challenge"
+  end_date = attrs[:end_date] || Date.tomorrow
+  start_date = attrs[:start_date] || Time.zone.today
+  challenge_id = attrs[:challenge_id] || create_challenge.id
+  uuid = attrs[:uuid] || SecureRandom.uuid
+  Phase.create!(title:, challenge_id:, start_date:, end_date:, uuid:)
 end
 
 def create_evaluation_form(attrs = {})
   title = attrs[:title] || "test challenge"
   challenge_id = attrs[:challenge_id] || create_challenge.id
-  challenge_phase = attrs[:challenge_phase] || 1
-  EvaluationForm.create!(title:, challenge_id:, challenge_phase:, instructions: "test instructions",
+  phase_id = attrs[:phase_id] || create_phase.id
+  EvaluationForm.create!(title:, challenge_id:, phase_id:, instructions: "test instructions",
                          closing_date: Date.tomorrow)
 end
 

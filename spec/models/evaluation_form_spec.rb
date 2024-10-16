@@ -5,7 +5,7 @@
 #  id                :bigint           not null, primary key
 #  title             :string
 #  instructions      :string
-#  challenge_phase   :integer
+#  phase_id          :integer
 #  comments_required :boolean          default(FALSE)
 #  weighted_scoring  :boolean          default(FALSE)
 #  closing_date      :date
@@ -29,12 +29,6 @@ RSpec.describe EvaluationForm do
       expect(evaluation_form.errors[:instructions]).to include("can't be blank")
     end
 
-    it 'validates presence of challenge phase' do
-      evaluation_form = described_class.new(challenge_phase: nil)
-      expect(evaluation_form).not_to be_valid
-      expect(evaluation_form.errors[:challenge_phase]).to include("can't be blank")
-    end
-
     it 'validates presence of closing date' do
       evaluation_form = described_class.new(closing_date: nil)
       expect(evaluation_form).not_to be_valid
@@ -52,7 +46,8 @@ RSpec.describe EvaluationForm do
       it 'returns the form for the user' do
         user = create_user(role: :challenge_manager)
         challenge = create_challenge(user:)
-        evaluation_form = create_evaluation_form(challenge_id: challenge.id, challenge_phase: 1)
+        phase = create_phase(challenge:)
+        evaluation_form = create_evaluation_form(challenge_id: challenge.id, phase_id: phase.id)
         expect(challenge.challenge_manager_users).to include(user)
         expect(described_class.by_user(user)).to include(evaluation_form)
       end

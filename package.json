@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
     "@uswds/uswds": "3.8.1",
     "esbuild": "^0.23.0",
     "sass": "^1.77.8"

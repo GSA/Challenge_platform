@@ -35,7 +35,7 @@ class Phase < ApplicationRecord
   attribute :open_to_submissions, :boolean
   attribute :judging_criteria, :text
   attribute :how_to_enter, :text
-  attribute :challenge_id, :uuid
+  attribute :challenge_uuid, :uuid
 
   # Virtual fields
   attribute :judging_criteria_length, :integer, default: 0
