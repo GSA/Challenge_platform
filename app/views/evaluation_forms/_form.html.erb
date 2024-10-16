@@ -9,7 +9,7 @@
       </p>
       <div>
         <%= form.label :title, class: "usa-label" %>
-        <%= form.text_field :title, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
+        <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
         <for>
       </div>
 
