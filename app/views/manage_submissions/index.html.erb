@@ -1,7 +1,10 @@
-<div class="usa-card__container col-md-6">
-  <div class="usa-card__body">
-    <h1>Manage Submissions</h1>
+<h1>Manage Submissions</h1>
+<p class="text-normal">View challenge submissions and manage your list of evaluators for each challenge.</p>
 
-    <p>Placeholder text for Manage Submissions.</p>
+<% if @challenges.empty? %>
+  <div class="text-normal">
+    <p>You currently do not have any challenges.</p>
   </div>
-</div>
+<% else %>
+  <%= render partial: "table", locals: { challenges: @challenges } %>
+<% end %>  
