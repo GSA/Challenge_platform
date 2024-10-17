@@ -19,5 +19,5 @@ class Submission < ApplicationRecord
 
 
   # Validations
-  validates :title, :start_date, :end_date, presence: true
+  validates :title, presence: true
 end
