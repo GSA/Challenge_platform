@@ -11,7 +11,6 @@ class Submission < ApplicationRecord
   attribute :title, :string
   attribute :brief_description, :string
   attribute :description, :string
-  attribute :description_delta, :string
   attribute :external_url, :string
   attribute :status, :string
   attribute :judging_status, :string, default: "not_selected"
