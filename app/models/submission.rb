@@ -10,7 +10,6 @@ class Submission < ApplicationRecord
   # Fields
   attribute :title, :string
   attribute :brief_description, :string
-  attribute :brief_description_delta, :string
   attribute :description, :string
   attribute :description_delta, :string
   attribute :external_url, :string
