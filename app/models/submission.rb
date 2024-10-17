@@ -19,8 +19,6 @@ class Submission < ApplicationRecord
   attribute :terms_accepted, :boolean, default: nil
   attribute :review_verified, :boolean, default: nil
 
-  # Virtual Fields
-  attribute :brief_description_length, :integer
 
   # Validations
   validates :title, :start_date, :end_date, presence: true
