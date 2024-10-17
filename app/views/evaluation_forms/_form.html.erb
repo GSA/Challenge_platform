@@ -1,16 +1,11 @@
-<%= form_with(model: evaluation_form) do |form| %>
-  <% if evaluation_form.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
-
-      <ul>
-        <% evaluation_form.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
+  <%
+    if evaluation_form.challenge && evaluation_form.phase
+      challenge = evaluation_form.challenge
+      phase = evaluation_form.phase
+      combo_box_default_value = "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}"
+    end
+  %>
   <ol class="usa-process-list">
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Information</h4>
@@ -19,38 +14,70 @@
         provide instructions that will be shared with your evaluators. 
       </p>
       <div>
-        <%= form.label :title, style: "display: block" %>
-        <%= form.text_field :title %>
+        <%= form.label :title, class: "usa-label" %>
+        <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
       </div>
 
-      <div>
-        <%= form.label :challenge_phase, style: "display: block" %>
-        <%= form.number_field :challenge_phase %>
-      </div>
+      <%= inline_error(evaluation_form, :title) %>
 
-      <div>
-        <%= form.label :challenge_id, style: "display: block" %>
-        <%= form.text_field :challenge_id %>
+      <label class="usa-label" for="challenge-combo">Select a challenge</label>
+      <div class="usa-hint">Choose the challenge this form will evaluate.</div>
+      <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
+        <select class="usa-select" name="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
+          <% current_user.challenge_manager_challenges.each do |challenge| %>
+            <% challenge.phases.each do |phase| %>
+              <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
+            <% end %>
+          <% end %>
+        </select>
       </div>
+      
+      <%= inline_error(evaluation_form, :challenge_id) %>
+      <%= inline_error(evaluation_form, :phase_id) %>
 
-      <div>
-        <%= form.label :instructions, style: "display: block" %>
-        <%= form.text_field :instructions %>
+      <%= form.hidden_field :phase_id, {data: { "evaluation-form-target": 'phaseID'}} %>
+      <%= form.hidden_field :challenge_id, {data: { "evaluation-form-target": 'challengeID'}} %>
+
+      <div class="usa-character-count">
+        <div class="usa-form-group">
+          <%= form.label :instructions, class: "usa-label" %>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
+        </div>
+        <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
       </div>
+      <%= inline_error(evaluation_form, :instructions) %>
+
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Criteria</h4>
       <p>
-        Create your evaluation criteria and scoring options.
+        Build your evaluation criteria and scoring options.
       </p>
-      <div>
-        <%= form.label :comments_required, style: "display: block" %>
-        <%= form.check_box :comments_required %>
+      <div class="usa-checkbox">
+        <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required" %>
+        <label class="usa-checkbox__label" for="evaluation_form_comments_required">
+          Require evaluators to provide comments on their scores. (optional)
+          <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for comments required' %>
+        </label>
       </div>
 
       <div>
-        <%= form.label :weighted_scoring, style: "display: block" %>
-        <%= form.check_box :weighted_scoring %>
+        <fieldset class="usa-fieldset margin-top-205">
+          <legend class="usa-legend usa-process-list__heading font-sans-md text-bold">
+            Scale Type <span style="color: darkred;">*</span>
+            <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for scale type' %>
+          </legend>
+          <div class="display-flex flex-row">
+            <div class="usa-radio margin-right-205">
+              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
+            </div>
+            <div class="usa-radio">
+              <input class="usa-radio__input" id="weighted_scale" type="radio" name="evaluation_form[weighted_scoring]" value="true" <%= 'checked' if evaluation_form.weighted_scoring %>>
+              <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weighted Scale (%)</label>
+            </div>
+          </div>
+        </fieldset>
       </div>
     </li>
     <li class="usa-process-list__item">
@@ -59,17 +86,42 @@
         Set the end date of your evaluation period.
         Your evaluation start date is the end date of your challenge.
       </p>
-      <div>
-        <%= form.label :closing_date, style: "display: block" %>
-        <%= form.date_field :closing_date %>
+      <div class="usa-label">Evaluation Start Date:</div>
+      <div class="usa-hint" data-evaluation-form-target="startDate">mm/dd/yyyy</div>
+      <div class="usa-form-group">
+        <label class="usa-label" id="evaluation_form_closing_date_label" for="evaluation_form_closing_date"
+          >Evaluation End Date:</label
+        >
+        <div class="usa-hint" id="evaluation_form_closing_date_hint">mm/dd/yyyy</div>
+        <div data-evaluation-form-target="datePicker" class="usa-date-picker" data-default-value="<%= evaluation_form.closing_date %>" data-min-date="<%= if evaluation_form.challenge then evaluation_form.challenge.end_date end %>">
+          <input
+            class="usa-input"
+            id="evaluation_form_closing_date"
+            name="evaluation_form[closing_date]"
+            aria-labelledby="evaluation_form_closing_date_label"
+            aria-describedby="evaluation_form_closing_date_hint"
+            data-action="evaluation-form#validatePresence focusout->evaluation-form#validatePresence"
+          />
+        </div>
       </div>
+      <%= inline_error(evaluation_form, :closing_date) %>
     </li>
   </ol>
 
 
   
 
-  <div>
-    <%= form.submit %>
+  <div class="display-flex flex-wrap">
+    <button type="submit" name="commit" class="mobile-lg:width-mobile usa-button font-body-2xs text-no-wrap mobile-lg:margin-left-2 mobile-lg:margin-bottom-4" style="background-color: #4d8055">
+      <%= image_tag(
+        "images/usa-icons/check_circle.svg",
+        class: "usa-icon icon-white",
+        alt: "evaluation forms"
+      )%>
+      Save
+    </button>
+    <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
+      <%= link_to "Cancel", evaluation_forms_path %>
+    </div>  
   </div>
 <% end %>

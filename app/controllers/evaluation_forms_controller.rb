@@ -26,7 +26,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.save
         format.html do
-          redirect_to evaluation_form_url(@evaluation_form), notice: I18n.t("evaluation_form_saved")
+          redirect_to evaluation_forms_url, notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :created, location: @evaluation_form }
       else
@@ -74,7 +74,21 @@ class EvaluationFormsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def evaluation_form_params
-    params.require(:evaluation_form).permit(:title, :instructions, :challenge_phase, :status, :comments_required,
-                                            :weighted_scoring, :publication_date, :closing_date, :challenge_id)
+    permitted = params.require(:evaluation_form).
+      permit(:title, :instructions, :phase_id, :status, :comments_required,
+             :weighted_scoring, :publication_date, :closing_date, :challenge_id)
+    closing_date = parse_closing_date(permitted[:closing_date])
+    closing_date ? permitted.merge({ closing_date: }) : permitted
+  end
+
+  def parse_closing_date(input_date)
+    case input_date
+    when %r{\A\d\d?/\d\d?/\d\d\d\d\z} # mm/dd/yyyy, also accepts single digit month/day
+      (month, day, year) = input_date.split("/")
+      # nicely formatted iso8601 with 2 digit day and month
+      "#{year}-#{month.rjust(2, '0')}-#{day.rjust(2, '0')}"
+    else
+      input_date
+    end
   end
 end

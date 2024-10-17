@@ -8,7 +8,7 @@
 
     <%= stylesheet_link_tag "styles" %>
     <%= stylesheet_link_tag "application" %>
-    <%= javascript_include_tag 'application' %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
 
     <% if logged_in? %>
       <script>
