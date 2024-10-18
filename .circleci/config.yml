@@ -98,6 +98,7 @@ jobs:
       - run:
           name: Run Tests
           command: |
+            export CC_TEST_REPORTER_ID="${CC_TEST_REPORTER_ID}"
             mkdir /tmp/test-results
             ./cc-test-reporter before-build
 
