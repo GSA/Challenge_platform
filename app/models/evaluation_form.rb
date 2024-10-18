@@ -7,7 +7,7 @@
 #  id                :bigint           not null, primary key
 #  title             :string
 #  instructions      :string
-#  challenge_phase   :integer
+#  phase_id   :integer
 #  comments_required :boolean          default(FALSE)
 #  weighted_scoring  :boolean          default(FALSE)
 #  closing_date      :date
@@ -17,6 +17,7 @@
 #
 class EvaluationForm < ApplicationRecord
   belongs_to :challenge
+  belongs_to :phase
   has_many :evaluation_criteria, lambda {
     order(:created_at)
   }, class_name: 'EvaluationCriterion', dependent: :destroy, inverse_of: :evaluation_form
@@ -27,11 +28,9 @@ class EvaluationForm < ApplicationRecord
       where(challenge_manager_users: { id: user.id })
   }
 
-  validates :title, presence: true
+  validates :title, presence: true, length: { maximum: 150 }
   validates :instructions, presence: true
   validates :closing_date, presence: true
-  validates :challenge_phase, presence: true
-  validates :challenge_phase, uniqueness: { scope: :challenge_id }
 
   validate :criteria_weights_must_sum_to_one_hundred, if: :weighted_scoring?
   validate :validate_unique_criteria_titles
