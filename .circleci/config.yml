@@ -74,7 +74,6 @@ jobs:
     
     environment:
       PHOENIX_URI: http://localhost:4000
-      CC_TEST_REPORTER_ID: {{ .Environment.CC_TEST_REPORTER_ID }}
 
     parallelism: 1
 
@@ -96,6 +95,7 @@ jobs:
           command: |
             mkdir /tmp/test-results
             ./cc-test-reporter before-build
+            echo ${CC_TEST_REPORTER_ID}
 
             # Run Rspec tests
             bundle exec rspec --format progress \
@@ -124,9 +124,6 @@ jobs:
     executor:
       name: test_executor
 
-    environment:
-      CC_TEST_REPORTER_ID: {{ .Environment.CC_TEST_REPORTER_ID }}
-
     steps:
       - restore_cache:
           key: repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -137,6 +134,7 @@ jobs:
       - run:
           name: Report coverage to Code Climate
           command: |
+            echo ${CC_TEST_REPORTER_ID}
             ./cc-test-reporter sum-coverage \
               coverage/codeclimate.*.json \
               --output coverage/codeclimate_full_report.json
