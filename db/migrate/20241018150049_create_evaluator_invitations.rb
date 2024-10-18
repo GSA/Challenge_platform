@@ -6,7 +6,7 @@ class CreateEvaluatorInvitations < ActiveRecord::Migration[7.2]
       t.string :first_name, null: false
       t.string :last_name, null: false
       t.string :email, null: false
-      t.datetime :last_invite_sent, null: false
+      t.datetime :last_invite_sent
 
       t.timestamps
     end

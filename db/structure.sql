@@ -448,7 +448,7 @@ CREATE TABLE public.evaluator_invitations (
     first_name character varying NOT NULL,
     last_name character varying NOT NULL,
     email character varying NOT NULL,
-    last_invite_sent timestamp(6) without time zone NOT NULL,
+    last_invite_sent timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -1921,19 +1921,19 @@ ALTER TABLE ONLY public.federal_partners
 
 
 --
--- Name: challenge_phases_evaluators fk_rails_252b3aeac2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.challenge_phases_evaluators
-    ADD CONSTRAINT fk_rails_252b3aeac2 FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- Name: evaluation_forms fk_rails_1c5ee6cafd; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.evaluation_forms
     ADD CONSTRAINT fk_rails_1c5ee6cafd FOREIGN KEY (phase_id) REFERENCES public.phases(id);
+
+
+--
+-- Name: challenge_phases_evaluators fk_rails_252b3aeac2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_phases_evaluators
+    ADD CONSTRAINT fk_rails_252b3aeac2 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -2191,9 +2191,9 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241018150049),
 (20241015140056),
 (20241014214843),
-(20241014210800),
 (20241001143033),
 (20240927010020),
 (20240917010803),
