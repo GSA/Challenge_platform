@@ -17,7 +17,10 @@
 #
 class EvaluationForm < ApplicationRecord
   belongs_to :challenge
-  has_many :evaluation_criteria, dependent: :destroy
+  has_many :evaluation_criteria, lambda {
+    order(:created_at)
+  }, class_name: 'EvaluationCriterion', dependent: :destroy, inverse_of: :evaluation_form
+  accepts_nested_attributes_for :evaluation_criteria, allow_destroy: true
 
   scope :by_user, lambda { |user|
     joins(challenge: :challenge_manager_users).
@@ -29,4 +32,23 @@ class EvaluationForm < ApplicationRecord
   validates :closing_date, presence: true
   validates :challenge_phase, presence: true
   validates :challenge_phase, uniqueness: { scope: :challenge_id }
+
+  validate :criteria_weights_must_sum_to_one_hundred, if: :weighted_scoring?
+  validate :validate_unique_criteria_titles
+
+  def validate_unique_criteria_titles
+    titles = evaluation_criteria.reject(&:marked_for_destruction?).map(&:title)
+
+    return unless titles.uniq.length != titles.length
+
+    errors.add(:base, I18n.t("evaluation_criterion_unique_title_in_form_error"))
+  end
+
+  def criteria_weights_must_sum_to_one_hundred
+    total_weight = evaluation_criteria.reject(&:marked_for_destruction?).sum(&:points_or_weight)
+
+    return unless total_weight != 100
+
+    errors.add(:base, I18n.t("evaluation_form_criteria_weight_total_error"))
+  end
 end

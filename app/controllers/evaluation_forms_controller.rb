@@ -75,6 +75,10 @@ class EvaluationFormsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def evaluation_form_params
     params.require(:evaluation_form).permit(:title, :instructions, :challenge_phase, :status, :comments_required,
-                                            :weighted_scoring, :publication_date, :closing_date, :challenge_id)
+                                            :weighted_scoring, :publication_date, :closing_date, :challenge_id,
+                                            evaluation_criteria_attributes: %i[
+                                              id title description points_or_weight scoring_type
+                                              option_range_start option_range_end option_labels _destroy
+                                            ])
   end
 end

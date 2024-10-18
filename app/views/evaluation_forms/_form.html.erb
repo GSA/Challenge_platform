@@ -69,6 +69,32 @@
           </div>
         </fieldset>
       </div>
+
+      <div id="criteria-list" class="margin-top-4">
+        <% if evaluation_form.evaluation_criteria.empty? %>
+          <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+            <div class="criteria-row">
+              <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
+            <div class="criteria-row" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>">
+              <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div id="criteria-template" class="criteria-row display-none">
+        <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+          <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: true} %>
+        <% end %>
+      </div>
+
+      <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria" do %>
+        Add Another Criteria
+      <% end %>
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Period</h4>
@@ -82,9 +108,6 @@
       </div>
     </li>
   </ol>
-
-
-  
 
   <div>
     <%= form.submit %>
