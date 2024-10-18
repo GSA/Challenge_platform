@@ -74,6 +74,7 @@ jobs:
     
     environment:
       PHOENIX_URI: http://localhost:4000
+      CC_TEST_REPORTER_ID: {{ .Environment.CC_TEST_REPORTER_ID }}
 
     parallelism: 1
 
@@ -122,6 +123,9 @@ jobs:
   report_coverage:
     executor:
       name: test_executor
+
+    environment:
+      CC_TEST_REPORTER_ID: {{ .Environment.CC_TEST_REPORTER_ID }}
 
     steps:
       - restore_cache:
