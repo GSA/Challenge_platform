@@ -91,15 +91,9 @@ jobs:
       - install_chrome
 
       - run:
-          name: Echo Reporter ID
-          command: |
-            echo "CC_TEST_REPORTER_ID:"
-            echo ${CC_TEST_REPORTER_ID}
-
-      - run:
           name: Run Tests
           command: |
-            export CC_TEST_REPORTER_ID="b475739d2c6928493ff5ab31fc503ead9b63f4c1d331de11117a27c9403f112f"
+            export CC_TEST_REPORTER_ID=b475739d2c6928493ff5ab31fc503ead9b63f4c1d331de11117a27c9403f112f
             mkdir /tmp/test-results
             ./cc-test-reporter before-build
 
