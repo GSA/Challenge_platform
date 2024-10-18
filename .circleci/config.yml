@@ -91,11 +91,15 @@ jobs:
       - install_chrome
 
       - run:
+          name: Echo Reporter ID
+          command: |
+            echo "CC_TEST_REPORTER_ID:"
+            echo ${CC_TEST_REPORTER_ID}
+      - run:
           name: Run Tests
           command: |
             mkdir /tmp/test-results
             ./cc-test-reporter before-build
-            echo ${CC_TEST_REPORTER_ID}
 
             # Run Rspec tests
             bundle exec rspec --format progress \
