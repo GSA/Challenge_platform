@@ -35,4 +35,6 @@ en:
   login_error: "There was an issue with logging in. Please try again."
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
-  evaluation_criterion_unique_title_in_form: "must be unique within the same form."
+  evaluation_criterion_unique_title_in_form_error: "Evaluation criteria title must be unique within the same form."
+  evaluation_form_criteria_weight_total_error: "The total weight of all evaluation criteria must add up to 100 when weighted scoring is enabled."
+  evaluation_criteria_form_title_placeholder: "Add criteria title here"
