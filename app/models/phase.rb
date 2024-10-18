@@ -26,6 +26,9 @@ class Phase < ApplicationRecord
   # More relations from phoenix app
   # has_many :submissions
   # has_one :winner, class_name: 'PhaseWinner'
+  has_many :evaluator_invitations, dependent: :destroy
+  has_many :challenge_phases_evaluators, dependent: :destroy
+  has_many :evaluators, through: :challenge_phases_evaluators, source: :user
 
   # Attributes
   attribute :uuid, :uuid

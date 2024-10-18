@@ -22,7 +22,7 @@ FactoryBot.define do
     end_date { 3.months.from_now }
     auto_publish_date { 1.week.from_now }
     published_on { 2.weeks.from_now }
-    custom_url { Faker::Internet.url(host: "example.com", path: "/custom") }
+    custom_url { Faker::Internet.url(host: "example.com", path: "/custom/#{SecureRandom.hex(8)}") }
     external_url { Faker::Internet.url(host: "example.com", path: "/external") }
     agency_name { Faker::Company.name }
     fiscal_year { "2024" }

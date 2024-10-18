@@ -10,6 +10,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
 -- Name: oban_job_state; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -181,6 +188,39 @@ CREATE SEQUENCE public.challenge_owners_id_seq
 --
 
 ALTER SEQUENCE public.challenge_owners_id_seq OWNED BY public.challenge_managers.id;
+
+
+--
+-- Name: challenge_phases_evaluators; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.challenge_phases_evaluators (
+    id bigint NOT NULL,
+    challenge_id bigint NOT NULL,
+    phase_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: challenge_phases_evaluators_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.challenge_phases_evaluators_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: challenge_phases_evaluators_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.challenge_phases_evaluators_id_seq OWNED BY public.challenge_phases_evaluators.id;
 
 
 --
@@ -395,6 +435,42 @@ CREATE SEQUENCE public.evaluation_forms_id_seq
 --
 
 ALTER SEQUENCE public.evaluation_forms_id_seq OWNED BY public.evaluation_forms.id;
+
+
+--
+-- Name: evaluator_invitations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.evaluator_invitations (
+    id bigint NOT NULL,
+    challenge_id bigint NOT NULL,
+    phase_id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    email character varying NOT NULL,
+    last_invite_sent timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: evaluator_invitations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.evaluator_invitations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: evaluator_invitations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.evaluator_invitations_id_seq OWNED BY public.evaluator_invitations.id;
 
 
 --
@@ -1162,6 +1238,13 @@ ALTER TABLE ONLY public.challenge_managers ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: challenge_phases_evaluators id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_phases_evaluators ALTER COLUMN id SET DEFAULT nextval('public.challenge_phases_evaluators_id_seq'::regclass);
+
+
+--
 -- Name: challenges id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1187,6 +1270,13 @@ ALTER TABLE ONLY public.evaluation_criteria ALTER COLUMN id SET DEFAULT nextval(
 --
 
 ALTER TABLE ONLY public.evaluation_forms ALTER COLUMN id SET DEFAULT nextval('public.evaluation_forms_id_seq'::regclass);
+
+
+--
+-- Name: evaluator_invitations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_invitations ALTER COLUMN id SET DEFAULT nextval('public.evaluator_invitations_id_seq'::regclass);
 
 
 --
@@ -1363,6 +1453,14 @@ ALTER TABLE ONLY public.challenge_managers
 
 
 --
+-- Name: challenge_phases_evaluators challenge_phases_evaluators_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_phases_evaluators
+    ADD CONSTRAINT challenge_phases_evaluators_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: challenges challenges_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1392,6 +1490,14 @@ ALTER TABLE ONLY public.evaluation_criteria
 
 ALTER TABLE ONLY public.evaluation_forms
     ADD CONSTRAINT evaluation_forms_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evaluator_invitations evaluator_invitations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_invitations
+    ADD CONSTRAINT evaluator_invitations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1585,6 +1691,34 @@ CREATE UNIQUE INDEX challenges_custom_url_index ON public.challenges USING btree
 
 
 --
+-- Name: idx_on_challenge_id_phase_id_email_b0ae3723d2; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_on_challenge_id_phase_id_email_b0ae3723d2 ON public.evaluator_invitations USING btree (challenge_id, phase_id, email);
+
+
+--
+-- Name: index_challenge_phases_evaluators_on_challenge_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_phases_evaluators_on_challenge_id ON public.challenge_phases_evaluators USING btree (challenge_id);
+
+
+--
+-- Name: index_challenge_phases_evaluators_on_phase_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_phases_evaluators_on_phase_id ON public.challenge_phases_evaluators USING btree (phase_id);
+
+
+--
+-- Name: index_challenge_phases_evaluators_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_challenge_phases_evaluators_on_user_id ON public.challenge_phases_evaluators USING btree (user_id);
+
+
+--
 -- Name: index_evaluation_criteria_on_evaluation_form_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1610,6 +1744,20 @@ CREATE INDEX index_evaluation_forms_on_challenge_id ON public.evaluation_forms U
 --
 
 CREATE INDEX index_evaluation_forms_on_phase_id ON public.evaluation_forms USING btree (phase_id);
+
+
+--
+-- Name: index_evaluator_invitations_on_challenge_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluator_invitations_on_challenge_id ON public.evaluator_invitations USING btree (challenge_id);
+
+
+--
+-- Name: index_evaluator_invitations_on_phase_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluator_invitations_on_phase_id ON public.evaluator_invitations USING btree (phase_id);
 
 
 --
@@ -1781,6 +1929,14 @@ ALTER TABLE ONLY public.evaluation_forms
 
 
 --
+-- Name: challenge_phases_evaluators fk_rails_252b3aeac2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_phases_evaluators
+    ADD CONSTRAINT fk_rails_252b3aeac2 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: evaluation_forms fk_rails_28ad57fb81; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1794,6 +1950,38 @@ ALTER TABLE ONLY public.evaluation_forms
 
 ALTER TABLE ONLY public.evaluation_criteria
     ADD CONSTRAINT fk_rails_a39b8fa483 FOREIGN KEY (evaluation_form_id) REFERENCES public.evaluation_forms(id);
+
+
+--
+-- Name: challenge_phases_evaluators fk_rails_ba136003c3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_phases_evaluators
+    ADD CONSTRAINT fk_rails_ba136003c3 FOREIGN KEY (phase_id) REFERENCES public.phases(id);
+
+
+--
+-- Name: evaluator_invitations fk_rails_c4f5e767a9; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_invitations
+    ADD CONSTRAINT fk_rails_c4f5e767a9 FOREIGN KEY (phase_id) REFERENCES public.phases(id);
+
+
+--
+-- Name: evaluator_invitations fk_rails_d623dba270; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_invitations
+    ADD CONSTRAINT fk_rails_d623dba270 FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: challenge_phases_evaluators fk_rails_e27fcb2d4d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.challenge_phases_evaluators
+    ADD CONSTRAINT fk_rails_e27fcb2d4d FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
 
 
 --
@@ -2003,7 +2191,9 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241018150049),
 (20241015140056),
+(20241014214843),
 (20241001143033),
 (20240927010020),
 (20240917010803),
