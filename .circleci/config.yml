@@ -93,6 +93,7 @@ jobs:
       - run:
           name: Run Tests
           command: |
+            export CC_TEST_REPORTER_ID=b475739d2c6928493ff5ab31fc503ead9b63f4c1d331de11117a27c9403f112f
             mkdir /tmp/test-results
             ./cc-test-reporter before-build
 
@@ -133,6 +134,7 @@ jobs:
       - run:
           name: Report coverage to Code Climate
           command: |
+            echo ${CC_TEST_REPORTER_ID}
             ./cc-test-reporter sum-coverage \
               coverage/codeclimate.*.json \
               --output coverage/codeclimate_full_report.json
