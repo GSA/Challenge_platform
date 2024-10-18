@@ -73,27 +73,27 @@
       <div id="criteria-list" class="margin-top-4">
         <% if evaluation_form.evaluation_criteria.empty? %>
           <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
-            <div class="criteria-row">
+            <div class="criteria-row bg-primary-lighter margin-bottom-2 padding-2">
               <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
             </div>
           <% end %>
         <% else %>
           <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
-            <div class="criteria-row" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>">
+            <div class="criteria-row bg-primary-lighter margin-bottom-2 padding-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>">
               <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
             </div>
           <% end %>
         <% end %>
       </div>
 
-      <div id="criteria-template" class="criteria-row display-none">
+      <div id="criteria-template" class="criteria-row bg-primary-lighter margin-bottom-2 padding-2 display-none">
         <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
           <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: true} %>
         <% end %>
       </div>
 
       <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria" do %>
-        Add Another Criteria
+        Add another criteria
       <% end %>
     </li>
     <li class="usa-process-list__item">

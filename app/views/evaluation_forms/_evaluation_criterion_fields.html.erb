@@ -3,47 +3,69 @@
   <%= f.hidden_field :_destroy, class: "destroy-evaluation-criteria" %>
 <% end %>
 
-<%= f.text_field :title, 
-  id: criteria_field_id(f, "title", is_template),
-  name: criteria_field_name(f, "title", is_template),
-  class: 'usa-input', 
-  placeholder: 'Add criteria title here', 
-  required: true, 
-  disabled: is_template
-%>
+<div class="criteria-header">
+  <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template) %>
 
-<%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria" do %>
-  X
-<% end %>
+  <div class="display-inline">
+    <%= f.text_field :title, 
+      id: criteria_field_id(f, "title", is_template),
+      name: criteria_field_name(f, "title", is_template),
+      class: 'usa-input', 
+      placeholder: 'Add criteria title here', 
+      required: true, 
+      disabled: is_template
+    %>
+  </div>
+</div>
 
-<%= f.text_area :description, 
-  id: criteria_field_id(f, "description", is_template),
-  name: criteria_field_name(f, "description", is_template),
-  class: 'usa-textarea', 
-  placeholder: 'Description', 
-  required: true, 
-  disabled: is_template 
-%>
+<div class="margin-top-2">
+  <%= f.label :description, "Criteria description", for: criteria_field_id(f, "description", is_template) %>
+  <%= f.text_area :description, 
+    id: criteria_field_id(f, "description", is_template),
+    name: criteria_field_name(f, "description", is_template),
+    class: 'usa-textarea', 
+    placeholder: 'Add criteria description here', 
+    required: true, 
+    disabled: is_template 
+  %>
+</div>
 
-<%= f.number_field :points_or_weight, 
-  id: criteria_field_id(f, "points_or_weight", is_template),
-  name: criteria_field_name(f, "points_or_weight", is_template),
-  class: 'usa-input', 
-  min: 1, 
-  step: 1, 
-  required: true, 
-  disabled: is_template 
-%>
+<div class="margin-top-2">
+  <%= f.label :points_or_weight, "Criteria Points/Weight", for: criteria_field_id(f, "points_or_weight", is_template) %>
+  <%= f.number_field :points_or_weight, 
+    id: criteria_field_id(f, "points_or_weight", is_template),
+    name: criteria_field_name(f, "points_or_weight", is_template),
+    class: 'usa-input', 
+    min: 1, 
+    step: 1, 
+    placeholder: "Add criteria points/weight here",
+    required: true, 
+    disabled: is_template 
+  %>
+</div>
 
-<% scoring_types = { "numeric" => "Numeric", "rating" => "Rating", "binary" => "Binary" } %>
-<% scoring_types.each do |value, label| %>
-  <%= f.radio_button :scoring_type, value, 
-      id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
-      name: criteria_field_name(f, :scoring_type, is_template),
-      class: "usa-radio",
-      checked: (value == "numeric"), 
-      # TODO: Remove when adding other scoring_types
-      disabled: (value != "numeric")  %>
+<div class="margin-top-2">
+  <%= f.label :scoring_type, "Scoring Type", for: criteria_field_id(f, "scoring_type", is_template) %>
+  <% scoring_types = { "numeric" => "Numeric", "rating" => "Rating", "binary" => "Binary" } %>
+  <div>
+    <% scoring_types.each do |value, label| %>
+      <div>
+        <%= f.radio_button :scoring_type, value, 
+            id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
+            name: criteria_field_name(f, :scoring_type, is_template),
+            class: "usa-radio",
+            checked: (value == "numeric"), 
+            # TODO: Remove when adding other scoring_types
+            disabled: (value != "numeric")  %>
 
-  <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label %>
-<% end %>
+        <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="margin-top-2">
+  <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria" do %>
+    Remove criteria
+  <% end %>
+</div>
