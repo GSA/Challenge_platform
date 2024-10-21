@@ -11,7 +11,7 @@ gem "rails", "~> 7.2.1", ">= 7.2.1.1"
 gem "pg"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
+gem "puma", ">= 6.4.3"
 
 # Use the popular Faraday HTTP library
 gem "faraday"
@@ -58,9 +58,6 @@ group :development, :test do
   gem "rspec-rails"
 
   gem 'pry'
-
-  # add the Ruby LSP package so it's bundled with the rest of the gems and available to VS Code
-  gem "ruby-lsp"
 
   # rubocop and specific extensions used by VS Code
   gem "rubocop", ">= 1.66.0"
