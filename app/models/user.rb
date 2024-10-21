@@ -48,6 +48,8 @@ class User < ApplicationRecord
            dependent: :destroy
   has_many :submission_documents, class_name: 'Submissions::Document', dependent: :destroy
   has_many :message_context_statuses, dependent: :destroy
+  has_many :challenge_phases_evaluators, dependent: :destroy
+  has_many :evaluated_phases, through: :challenge_phases_evaluators, source: :phase
 
   attribute :role, :string
   attribute :status, :string, default: 'pending'

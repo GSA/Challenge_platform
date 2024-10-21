@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Submission < ApplicationRecord
-  enum :status, { draft: 0, submitted: 1 }
-  enum :judging_status, { not_selected: 0, selected: 1, qualified: 2, winner: 3 }
+  enum :status, { draft: "draft", submitted: "submitted" }
+  enum :judging_status, { not_selected: "not_selected", selected: "selected", qualified: "qualified", winner: "winner" }
 
   # Associations
   belongs_to :submitter, class_name: 'User'
