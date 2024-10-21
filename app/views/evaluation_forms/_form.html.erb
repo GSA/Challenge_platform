@@ -23,7 +23,7 @@
       <label class="usa-label" for="challenge-combo">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-        <select class="usa-select" name="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
+        <select class="usa-select" id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
           <% current_user.challenge_manager_challenges.each do |challenge| %>
             <% challenge.phases.each do |phase| %>
               <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
