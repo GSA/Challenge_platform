@@ -74,6 +74,7 @@ jobs:
 
     environment:
       PHOENIX_URI: http://localhost:4000
+      CC_TEST_REPORTER_ID: a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703
 
     parallelism: 1
 
@@ -124,7 +125,7 @@ jobs:
       name: test_executor
 
     environment:
-      - CC_TEST_REPORTER_ID: "a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703"
+      - CC_TEST_REPORTER_ID: a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703
 
     steps:
       - restore_cache:
