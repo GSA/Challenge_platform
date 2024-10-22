@@ -1,0 +1,52 @@
+<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+    <thead>
+      <tr>
+        <th scope="col">Challenge</th>
+        <th scope="col">Number of Submissions</th>
+        <th scope="col">Evaluation Form</th>
+        <th scope="col">Evaluations are due by</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @challenges.each do |challenge| %>
+        <% challenge.phases.each do |phase| %>
+          <tr>
+            <th data-label="Form Title" scope="row">
+              <%= challenge_phase_title(challenge, phase) %>
+              </th>
+            <td data-label="Number of Submissions">
+              <%= phase.submissions.length %>
+            </td>
+            <td data-label="Evaluation Form">
+              <% if phase.evaluation_form %>
+                <%= link_to phase.evaluation_form do %>
+                  <%= phase.evaluation_form.title %>
+              <% end %>    
+              <% else %>
+                N/A  
+              <% end %>  
+            </td>
+            <td data-label="Evaluations are due by">
+              <% if phase.evaluation_form %>
+                <%= phase.evaluation_form.closing_date %>
+              <% else %>
+                N/A  
+              <% end %>  
+            </td>
+            <td>
+              <div class="display-flex flex-no-wrap grid-row grid-gap-1">
+                <button class="usa-button font-body-2xs text-no-wrap">
+                  Manage Evaluators
+                </button>
+                <% unless phase.submissions.empty? %>
+                  <button class="usa-button font-body-2xs text-no-wrap">
+                    View Submissions
+                  </button>
+                <% end %>  
+              </div>  
+            </td>  
+          </tr>
+        <% end %>  
+      <% end %>  
+    </tbody>
+  </table>
