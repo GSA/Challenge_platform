@@ -19,6 +19,7 @@ if ENV['CIRCLECI']
 end
 
 SimpleCov.start 'rails' do
+  puts "SimpleCov formatter=#{self.formatter}"
 
   add_filter '/vendor/'
   add_filter '/.bundler/'
