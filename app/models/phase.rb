@@ -24,7 +24,8 @@
 class Phase < ApplicationRecord
   belongs_to :challenge
   # More relations from phoenix app
-  # has_many :submissions
+  has_many :submissions, dependent: :destroy
+  has_one :evaluation_form, dependent: :destroy
   # has_one :winner, class_name: 'PhaseWinner'
   has_many :evaluator_invitations, dependent: :destroy
   has_many :challenge_phases_evaluators, dependent: :destroy
