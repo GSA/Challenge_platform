@@ -5,6 +5,10 @@
       phase = evaluation_form.phase
       combo_box_default_value = "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}"
     end
+
+    if evaluation_form.valid?
+      disabled = phase.end_date < Date.today
+    end
   %>
   <ol class="usa-process-list">
     <li class="usa-process-list__item">
@@ -15,7 +19,7 @@
       </p>
       <div>
         <%= form.label :title, class: "usa-label" %>
-        <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
+        <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, disabled: disabled %>
       </div>
 
       <%= inline_error(evaluation_form, :title) %>
@@ -23,7 +27,7 @@
       <label class="usa-label" for="challenge-combo">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-        <select class="usa-select" id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
+        <select class="usa-select" <%= if disabled then "disabled" end %> id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
           <% current_user.challenge_manager_challenges.each do |challenge| %>
             <% challenge.phases.each do |phase| %>
               <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
@@ -41,7 +45,7 @@
       <div class="usa-character-count">
         <div class="usa-form-group">
           <%= form.label :instructions, class: "usa-label" %>
-          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, disabled: disabled%>
         </div>
         <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
       </div>
@@ -54,7 +58,7 @@
         Build your evaluation criteria and scoring options.
       </p>
       <div class="usa-checkbox">
-        <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required" %>
+        <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
         <label class="usa-checkbox__label" for="evaluation_form_comments_required">
           Require evaluators to provide comments on their scores. (optional)
           <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for comments required' %>
@@ -69,11 +73,11 @@
           </legend>
           <div class="display-flex flex-row">
             <div class="usa-radio margin-right-205">
-              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %>>
+              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %> <%= 'disabled' unless !disabled %>>
               <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
             </div>
             <div class="usa-radio">
-              <input class="usa-radio__input" id="weighted_scale" type="radio" name="evaluation_form[weighted_scoring]" value="true" <%= 'checked' if evaluation_form.weighted_scoring %>>
+              <input class="usa-radio__input" id="weighted_scale" type="radio" name="evaluation_form[weighted_scoring]" value="true" <%= 'checked' if evaluation_form.weighted_scoring %> <%= 'disabled' unless !disabled %>>
               <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weighted Scale (%)</label>
             </div>
           </div>
