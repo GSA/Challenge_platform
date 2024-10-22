@@ -6,7 +6,7 @@ if ENV['CIRCLECI']
 
   SimpleCov.at_exit do
     result_hash = SimpleCov.result.to_hash
-    puts "result_hash=#{result_hash.inspect}"
+    puts "result_hash=#{result_hash.keys.inspect}"
 
     if result_hash.keys == ['Cucumber, RSpec']
       if SimpleCov.result.covered_percent < 100
@@ -21,6 +21,7 @@ end
 
 SimpleCov.start 'rails' do
   puts "SimpleCov formatter=#{self.formatter}"
+  puts "CC_TEST_REPORTER_ID=#{ENV["CC_TEST_REPORTER_ID"]}"
 
   add_filter '/vendor/'
   add_filter '/.bundler/'
