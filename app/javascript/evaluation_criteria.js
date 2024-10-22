@@ -46,25 +46,24 @@ document.addEventListener("DOMContentLoaded", function () {
       label.setAttribute("for", newFor);
     });
 
-    newCriteria.querySelectorAll("input, textarea").forEach(function (input) {
-      let id = input.getAttribute("id");
-      let name = input.getAttribute("name");
+    newCriteria
+      .querySelectorAll("input, textarea, select")
+      .forEach(function (input) {
+        let id = input.getAttribute("id");
+        let name = input.getAttribute("name");
 
-      // TODO: Remove condition when adding other scoring types
-      if (input.type !== "radio") {
         input.disabled = false;
-      }
 
-      if (id) {
-        let newId = id.replace("NEW_CRITERIA", criteriaCounter);
-        input.setAttribute("id", newId);
-      }
+        if (id) {
+          let newId = id.replace("NEW_CRITERIA", criteriaCounter);
+          input.setAttribute("id", newId);
+        }
 
-      if (name) {
-        let newName = name.replace("NEW_CRITERIA", criteriaCounter);
-        input.setAttribute("name", newName);
-      }
-    });
+        if (name) {
+          let newName = name.replace("NEW_CRITERIA", criteriaCounter);
+          input.setAttribute("name", newName);
+        }
+      });
 
     document.getElementById("criteria-list").appendChild(newCriteria);
   }
