@@ -6,6 +6,7 @@ if ENV['CIRCLECI']
 
   SimpleCov.at_exit do
     result_hash = SimpleCov.result.to_hash
+    puts "result_hash=#{result_hash.inspect}"
 
     if result_hash.keys == ['Cucumber, RSpec']
       if SimpleCov.result.covered_percent < 100
