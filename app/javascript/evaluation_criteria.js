@@ -155,6 +155,13 @@ document.addEventListener("DOMContentLoaded", function () {
       ratingOptions.querySelectorAll("input, select").forEach(function (input) {
         input.disabled = true;
       });
+
+      let criteriaOptionLabelRows = criteriaRow.querySelectorAll(
+        ".criteria-option-label-row input"
+      );
+      criteriaOptionLabelRows.forEach(function (input) {
+        input.disabled = true;
+      });
     }
   }
 
@@ -183,8 +190,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     criteriaOptionLabelRows.forEach(function (row, index) {
       row.querySelectorAll("input").forEach(function (input) {
-        let inputIndex = input.dataset.index;
-
         if (index < optionRangeStart || index > optionRangeEnd) {
           row.style.display = "none";
           input.disabled = true;
