@@ -77,9 +77,10 @@ class EvaluationFormsController < ApplicationController
     permitted = params.require(:evaluation_form).
       permit(:title, :instructions, :phase_id, :status, :comments_required,
              :weighted_scoring, :publication_date, :closing_date, :challenge_id,
-             evaluation_criteria_attributes: %i[
-               id title description points_or_weight scoring_type
-               option_range_start option_range_end option_labels _destroy
+             evaluation_criteria_attributes: [
+               :id, :title, :description, :points_or_weight, :scoring_type,
+               :option_range_start, :option_range_end, :_destroy,
+               { option_labels: {} }
              ])
     closing_date = parse_closing_date(permitted[:closing_date])
     closing_date ? permitted.merge({ closing_date: }) : permitted
