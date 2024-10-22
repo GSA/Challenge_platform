@@ -1,4 +1,9 @@
+puts '.simplecov config init'
+require 'simplecov_json_formatter'
+SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
+
 if ENV['CIRCLECI']
+
   SimpleCov.at_exit do
     result_hash = SimpleCov.result.to_hash
 
@@ -14,6 +19,7 @@ if ENV['CIRCLECI']
 end
 
 SimpleCov.start 'rails' do
+
   add_filter '/vendor/'
   add_filter '/.bundler/'
   add_filter '/.nix-bundler/'

@@ -26,7 +26,7 @@ Before submitting a contribution, you’ll just need to create a GitHub account 
 
 Fork this repo into your GitHub account. Read more about forking a repo on [GitHub](https://help.github.com/articles/fork-a-repo/).
 Create a branch from `production` and name it in a way that lightly defines what you’re working on (for example, `add-styles`).
-Once you’re ready to submit a pull request, fill out the [pull request template (https://github.com/GSA/Challenge_gov/compare)
+Once you’re ready to submit a pull request, fill out the [pull request template (https://github.com/GSA/Challenge_platform/compare)
 Submit your pull request against the `main` branch. 
 
 If the pull request is accepted, we will merge the pull request for you. 
