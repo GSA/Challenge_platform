@@ -46,21 +46,53 @@
 
 <div class="margin-top-2">
   <%= f.label :scoring_type, "Scoring Type", for: criteria_field_id(f, "scoring_type", is_template) %>
-  <% scoring_types = { "numeric" => "Numeric", "rating" => "Rating", "binary" => "Binary" } %>
+  <% scoring_types = { "numeric" => "Numeric score / points", "rating" => "Rating scale", "binary" => "Binary scale" } %>
   <div>
     <% scoring_types.each do |value, label| %>
       <div>
         <%= f.radio_button :scoring_type, value, 
             id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
             name: criteria_field_name(f, :scoring_type, is_template),
-            class: "usa-radio",
-            checked: (value == "numeric"), 
-            # TODO: Remove when adding other scoring_types
-            disabled: (value != "numeric")  %>
+            class: "usa-radio scoring-type-radio",
+            checked: f.object.scoring_type == value %>
 
         <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label %>
       </div>
     <% end %>
+  </div>
+</div>
+
+<div class="margin-top-2 criteria-scale-options">
+  <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template) %>
+  <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>">
+    <%= f.hidden_field :option_range_start, 
+      id: criteria_field_id(f, "option_range_start", is_template), 
+      name: criteria_field_name(f, "option_range_start", is_template), 
+      value: 0 %>
+    <%= f.hidden_field :option_range_end, 
+      id: criteria_field_id(f, "option_range_end", is_template), 
+      name: criteria_field_name(f, "option_range_end", is_template), 
+      value: 1 %>
+
+    <% (0..1).each do |index| %>
+      <div class="display-flex flex-align-center margin-top-2">
+        <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index,
+          class: "margin-right-1" %>
+
+        <%= f.text_field "option_labels", 
+          id: criteria_field_id(f, "option_labels", is_template) ++ "_#{index}",
+          name: criteria_field_name(f, "option_labels", is_template) ++ "[#{index}]",
+          class: "usa-input margin-0",
+          value: f.object.option_labels[index.to_s],
+          required: true, 
+          disabled: is_template
+        %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="criteria-rating-options" style="<%= f.object.rating? ? '' : 'display: none;' %>">
+    Rating options
   </div>
 </div>
 

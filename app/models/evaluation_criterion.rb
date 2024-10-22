@@ -29,7 +29,7 @@ class EvaluationCriterion < ApplicationRecord
   enum :scoring_type, { numeric: 0, rating: 1, binary: 2 }
   attribute :option_range_start, :integer
   attribute :option_range_end, :integer
-  attribute :option_labels, :json, default: -> { [] }
+  attribute :option_labels, :json, default: -> { {} }
   attribute :evaluation_form_id, :integer
 
   # Validations
