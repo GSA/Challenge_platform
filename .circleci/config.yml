@@ -92,18 +92,18 @@ jobs:
 
       - run:
           name: Run Tests
+          env:
+            CC_TEST_REPORTER_ID: a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703
           command: |
             mkdir /tmp/test-results
             ./cc-test-reporter before-build
 
             # Run Rspec tests
-            bundle exec rspec --format progress \
-                              --format RspecJunitFormatter \
-                              --out /tmp/test-results/rspec.xml \
-                              --format progress \
-                              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            echo "Run Rspec tests"
+            CC_TEST_REPORTER_ID=a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703 bundle exec rspec
 
-            ./cc-test-reporter format-coverage \
+            echo "cc-test-reporter format-coverage"
+            CC_TEST_REPORTER_ID=a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703 ./cc-test-reporter format-coverage \
               --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json
 
       - persist_to_workspace:
@@ -124,7 +124,7 @@ jobs:
       name: test_executor
 
     environment:
-      - CC_TEST_REPORTER_ID: "a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703"
+      - CC_TEST_REPORTER_ID: a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703
 
     steps:
       - restore_cache:
