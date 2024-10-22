@@ -100,7 +100,8 @@
 
   <div class="criteria-scale-option-labels">
     <% (0..10).each do |index| %>
-      <% disabledOptionLabel = is_template || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
+      <% disabledOptionLabel = is_template || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
+
       <div class="display-flex flex-align-center flex-justify margin-top-2 criteria-option-label-row" 
         style="<%= disabledOptionLabel ? 'display: none;' : '' %>">
         <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index %>
