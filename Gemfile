@@ -5,13 +5,13 @@ source "https://rubygems.org"
 ruby "3.2.4"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.2.0"
+gem "rails", "~> 7.2.1", ">= 7.2.1.1"
 
 # Use postgresql as the database for Active Record
 gem "pg"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
+gem "puma", ">= 6.4.3"
 
 # Use the popular Faraday HTTP library
 gem "faraday"
@@ -20,7 +20,7 @@ gem "faraday"
 gem "jwt"
 
 # Use simple asset pipeline
-gem "propshaft", "~> 0.9.1"
+gem "propshaft", "~> 1.1.0"
 gem "cssbundling-rails", "~> 1.4"
 gem "jsbundling-rails", "~> 1.3"
 
@@ -58,9 +58,6 @@ group :development, :test do
   gem "rspec-rails"
 
   gem 'pry'
-
-  # add the Ruby LSP package so it's bundled with the rest of the gems and available to VS Code
-  gem "ruby-lsp"
 
   # rubocop and specific extensions used by VS Code
   gem "rubocop", ">= 1.66.0"
