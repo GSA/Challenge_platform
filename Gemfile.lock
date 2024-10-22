@@ -319,7 +319,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    simplecov (0.22.0)
+    simplecov (0.21.2)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
@@ -398,7 +398,7 @@ DEPENDENCIES
   rubocop-rake
   rubocop-rspec
   selenium-webdriver (>= 4.24.0)
-  simplecov (~> 0.22.0)
+  simplecov (~> 0.21.0)
   simplecov_json_formatter
   stimulus-rails
   turbo-rails

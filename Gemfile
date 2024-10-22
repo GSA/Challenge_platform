@@ -86,7 +86,7 @@ end
 
 group :test do
   gem "webmock"
-  gem 'simplecov', '~> 0.22.0', require: false
+  gem 'simplecov', '~> 0.21.0', require: false
   gem 'simplecov_json_formatter', require: false
   gem "rails-controller-testing"
 end
