@@ -95,6 +95,7 @@ jobs:
           env:
             CC_TEST_REPORTER_ID: a561562e78b6f0b3e346d4811eef2b020f977cd089bf459f102f6229dd100703
           command: |
+            echo "REPORTER_ID=$CC_TEST_REPORTER_ID"
             mkdir /tmp/test-results
             ./cc-test-reporter before-build
 
