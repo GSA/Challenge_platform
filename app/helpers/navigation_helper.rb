@@ -8,7 +8,7 @@ module NavigationHelper
       image_tag(
         "images/usa-icons/#{image_path}.svg",
         class: "usa-icon--size-4 desktop:usa-icon--size-3 icon-white desktop:margin-right-1",
-        alt:
+        alt: ""
       ) +
         tag.span(button_label, class: "display-none desktop:display-block") +
         tag.span(button_label, class: "desktop:display-none", style: "font-size: 0.7rem")
