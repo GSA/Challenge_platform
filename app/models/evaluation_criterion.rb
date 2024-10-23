@@ -35,6 +35,4 @@ class EvaluationCriterion < ApplicationRecord
   # Validations
   validates :title, :description, :points_or_weight, presence: true
   validates :points_or_weight, numericality: { only_integer: true }
-  validates :title,
-            uniqueness: { scope: :evaluation_form_id, message: I18n.t("evaluation_criterion_unique_title_in_form") }
 end

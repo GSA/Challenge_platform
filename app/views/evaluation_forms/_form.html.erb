@@ -1,4 +1,15 @@
 <%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
+  <% if evaluation_form.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
+
+      <ul>
+        <% evaluation_form.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%
     if evaluation_form.challenge && evaluation_form.phase
       challenge = evaluation_form.challenge
@@ -23,7 +34,7 @@
       <label class="usa-label" for="challenge-combo">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-        <select class="usa-select" id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
+        <select id="challenge-combo" class="usa-select" name="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
           <% current_user.challenge_manager_challenges.each do |challenge| %>
             <% challenge.phases.each do |phase| %>
               <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
@@ -79,6 +90,32 @@
           </div>
         </fieldset>
       </div>
+
+      <div id="criteria-list" class="margin-top-4">
+        <% if evaluation_form.evaluation_criteria.empty? %>
+          <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+            <div class="criteria-row bg-primary-lighter margin-bottom-2 padding-2">
+              <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
+            <div class="criteria-row bg-primary-lighter margin-bottom-2 padding-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>">
+              <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div id="criteria-template" class="criteria-row bg-primary-lighter margin-bottom-2 padding-2 display-none">
+        <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+          <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: true} %>
+        <% end %>
+      </div>
+
+      <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria" do %>
+        Add another criteria
+      <% end %>
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Period</h4>
@@ -107,9 +144,6 @@
       <%= inline_error(evaluation_form, :closing_date) %>
     </li>
   </ol>
-
-
-  
 
   <div class="display-flex flex-wrap">
     <button type="submit" name="commit" class="mobile-lg:width-mobile usa-button font-body-2xs text-no-wrap mobile-lg:margin-left-2 mobile-lg:margin-bottom-4" style="background-color: #4d8055">

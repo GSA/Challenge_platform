@@ -1719,13 +1719,6 @@ CREATE INDEX index_evaluation_criteria_on_evaluation_form_id ON public.evaluatio
 
 
 --
--- Name: index_evaluation_criteria_on_evaluation_form_id_and_title; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_evaluation_criteria_on_evaluation_form_id_and_title ON public.evaluation_criteria USING btree (evaluation_form_id, title);
-
-
---
 -- Name: index_evaluation_forms_on_challenge_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2185,6 +2178,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 (20241018150049),
+(20241017172408),
 (20241015140056),
 (20241014214843),
 (20241001143033),
