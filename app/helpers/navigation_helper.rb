@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module NavigationHelper
-  def utility_menu_link(image_path, href, alt, button_label)
+  def utility_menu_link(image_path, href, _alt, button_label)
     link_to(href,
             class: "display-flex flex-align-center flex-column desktop:flex-row " \
                    "margin-x-1 desktop:margin-x-3 text-white text-no-wrap") do
