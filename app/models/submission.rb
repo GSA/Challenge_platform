@@ -9,6 +9,8 @@ class Submission < ApplicationRecord
   belongs_to :challenge
   belongs_to :phase
   belongs_to :manager, class_name: 'User'
+  has_many :evaluator_submission_assignments
+  has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
 
   # Fields
   attribute :title, :string
