@@ -652,7 +652,7 @@ CREATE TABLE public.oban_jobs (
     attempted_by text[],
     discarded_at timestamp without time zone,
     priority integer DEFAULT 0 NOT NULL,
-    tags character varying(255)[] DEFAULT ARRAY[]::character varying[],
+    tags text[] DEFAULT ARRAY[]::text[],
     meta jsonb DEFAULT '{}'::jsonb,
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
