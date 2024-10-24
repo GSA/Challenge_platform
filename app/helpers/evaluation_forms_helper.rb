@@ -15,6 +15,6 @@ module EvaluationFormsHelper
   end
 
   def eval_form_disabled?(evaluation_form)
-    evaluation_form.valid? && evaluation_form.phase.end_date < Date.today
+    evaluation_form.valid? && evaluation_form.phase.end_date < Time.zone.today
   end
 end
