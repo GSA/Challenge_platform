@@ -1,5 +1,5 @@
 <% content_for :title, "Editing evaluation form" %>
 
-<h1><%= if @evaluation_form.phase.end_date < Date.today then "View" else "Editing" end %> evaluation form</h1>
+<h1><%= if eval_form_disabled?(@evaluation_form) then "View" else "Editing" end %> evaluation form</h1>
 
 <%= render "form", evaluation_form: @evaluation_form %>

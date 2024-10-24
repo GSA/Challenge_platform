@@ -4,10 +4,7 @@
       challenge = evaluation_form.challenge
       phase = evaluation_form.phase
       combo_box_default_value = "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}"
-    end
-
-    if evaluation_form.valid?
-      disabled = phase.end_date < Date.today
+      disabled = eval_form_disabled?(evaluation_form)
     end
   %>
   <ol class="usa-process-list">

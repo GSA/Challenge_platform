@@ -13,4 +13,8 @@ module EvaluationFormsHelper
     error = evaluation_form.errors[field].present? ? evaluation_form.errors[field].first : ""
     tag.span(error, class: "text-secondary font-body-2xs", id: "evaluation_form_#{field}_error")
   end
+
+  def eval_form_disabled?(evaluation_form)
+    evaluation_form.valid? && evaluation_form.phase.end_date < Date.today
+  end
 end
