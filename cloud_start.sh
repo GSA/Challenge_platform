@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 echo "------ Starting APP ------ Instance $CF_INSTANCE_INDEX -----"
 echo "------ Booting Instance ------ Instance $CF_INSTANCE_INDEX -----"
 if [ "$CF_INSTANCE_INDEX" == "0" ]; then
