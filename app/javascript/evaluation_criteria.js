@@ -40,6 +40,16 @@ document.addEventListener("DOMContentLoaded", function () {
     newCriteria.style.display = "block";
     newCriteria.removeAttribute("id");
 
+    let accordionButton = newCriteria.querySelector(".usa-accordion__button");
+    let accordionContent = newCriteria.querySelector(".usa-accordion__content");
+
+    let accordionId = accordionContent
+      .getAttribute("id")
+      .replace("NEW_CRITERIA", criteriaCounter);
+
+    accordionButton.setAttribute("aria-controls", accordionId);
+    accordionContent.setAttribute("id", accordionId);
+
     newCriteria.querySelectorAll("label").forEach(function (label) {
       let oldFor = label.getAttribute("for");
       let newFor = oldFor.replace("NEW_CRITERIA", criteriaCounter);
@@ -66,6 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
     document.getElementById("criteria-list").appendChild(newCriteria);
+
+    updateCriteriaRowTitles();
   }
 
   function destroyCriteriaRow(criteriaRow) {
@@ -90,6 +102,23 @@ document.addEventListener("DOMContentLoaded", function () {
       // Otherwise remove row entirely
       criteriaRow.remove();
     }
+
+    updateCriteriaRowTitles();
+  }
+
+  function updateCriteriaRowTitles() {
+    let visibleCriteriaRows = Array.from(criteriaList.children).filter(
+      (row) => row.style.display !== "none"
+    );
+
+    visibleCriteriaRows.forEach(function (row, index) {
+      // Find the span with the class 'criteria-number' inside this row
+      let span = row.querySelector(".criteria-number");
+      if (span) {
+        // Update the inner text of the span with the new index
+        span.innerHTML = index + 1;
+      }
+    });
   }
 
   // Toggle Binary/Rating Scale Options
@@ -198,5 +227,42 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     });
+  }
+
+  // Accordion Buttons
+  if (criteriaList) {
+    criteriaList.addEventListener("click", function (event) {
+      let accordionButton = event.target.closest(".usa-accordion__button");
+
+      if (accordionButton) {
+        const sectionId = accordionButton.getAttribute("aria-controls");
+
+        if (
+          !accordionButton.getAttribute("aria-expanded") ||
+          accordionButton.getAttribute("aria-expanded") === "true"
+        ) {
+          const isValid = validateAccordionSection(sectionId);
+          if (!isValid) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }
+      }
+    });
+  }
+
+  function validateAccordionSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    const requiredFields = section.querySelectorAll("[required]");
+
+    for (let field of requiredFields) {
+      if (!field.checkValidity()) {
+        if (!field.reportValidity()) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 });
