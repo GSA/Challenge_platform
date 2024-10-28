@@ -33,4 +33,8 @@ module EvaluationFormsHelper
       "#{prefix}[#{form.options[:child_index]}][#{attribute}]"
     end
   end
+
+  def eval_form_disabled?(evaluation_form)
+    evaluation_form.valid? && evaluation_form.phase.end_date < Time.zone.today
+  end
 end

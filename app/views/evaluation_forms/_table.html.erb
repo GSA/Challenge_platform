@@ -10,7 +10,7 @@
       <% @evaluation_forms.each do |evaluation_form| %>
         <tr>
           <th data-label="Form Title" scope="row">
-            <%= link_to evaluation_form do %>
+            <%= link_to edit_evaluation_form_path(evaluation_form) do %>
                 <%= evaluation_form.title %>
             <% end %>    
             </th>
