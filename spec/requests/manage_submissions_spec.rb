@@ -35,7 +35,7 @@ RSpec.describe "ManageSubmissions" do
         get manage_submissions_path
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include("Manage Submissions")
+        expect(response.body).to include("Submissions & Evaluations")
         expect(response.body).to include("View challenge submissions")
       end
 

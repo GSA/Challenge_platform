@@ -19,7 +19,7 @@
             </td>
             <td data-label="Evaluation Form">
               <% if phase.evaluation_form %>
-                <%= link_to phase.evaluation_form do %>
+                <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
                   <%= phase.evaluation_form.title %>
               <% end %>    
               <% else %>

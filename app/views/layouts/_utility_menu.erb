@@ -3,11 +3,11 @@
     <%= utility_menu_link('grid_view', dashboard_path, 'dashboard', 'Dashboard') %>
     <% if current_user.role == "challenge_manager" %>
       <%= utility_menu_link('emoji_events', Rails.configuration.phx_interop[:phx_uri], 'challenges', 'Challenges') %>
-      <%= utility_menu_link('star_half', manage_submissions_path, 'Manage Submissions', 'Submissions') %>
+      <%= utility_menu_link('star_half', manage_submissions_path, 'Manage Submissions and Evaluations', 'Submissions & Evaluations') %>
       <%= utility_menu_link('check_circle_outline', evaluation_forms_path, 'Evaluation Forms', 'Evaluation Forms') %>
     <% end %>
     <% if current_user.role == "evaluator" %>
-      <%= utility_menu_link('star_half', evaluations_path, 'Evaluate Submissions', 'Submissions') %>
+      <%= utility_menu_link('star_half', evaluations_path, 'Evaluate Submissions', 'Submissions & Evaluations') %>
     <% end %>  
     <%= utility_menu_link('support', 'https://www.challenge.gov/cm-user-guide/', 'Resources', 'Resources') %>
     <div class="display-none desktop:display-flex flex-align-center margin-x-1 margin-top-1">
