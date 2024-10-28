@@ -467,6 +467,39 @@ ALTER SEQUENCE public.evaluator_invitations_id_seq OWNED BY public.evaluator_inv
 
 
 --
+-- Name: evaluator_submission_assignments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.evaluator_submission_assignments (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    submission_id bigint NOT NULL,
+    status integer NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: evaluator_submission_assignments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.evaluator_submission_assignments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: evaluator_submission_assignments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.evaluator_submission_assignments_id_seq OWNED BY public.evaluator_submission_assignments.id;
+
+
+--
 -- Name: federal_partners; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1273,6 +1306,13 @@ ALTER TABLE ONLY public.evaluator_invitations ALTER COLUMN id SET DEFAULT nextva
 
 
 --
+-- Name: evaluator_submission_assignments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_submission_assignments ALTER COLUMN id SET DEFAULT nextval('public.evaluator_submission_assignments_id_seq'::regclass);
+
+
+--
 -- Name: federal_partners id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1491,6 +1531,14 @@ ALTER TABLE ONLY public.evaluation_forms
 
 ALTER TABLE ONLY public.evaluator_invitations
     ADD CONSTRAINT evaluator_invitations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evaluator_submission_assignments evaluator_submission_assignments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_submission_assignments
+    ADD CONSTRAINT evaluator_submission_assignments_pkey PRIMARY KEY (id);
 
 
 --
@@ -1754,6 +1802,20 @@ CREATE INDEX index_evaluator_invitations_on_phase_id ON public.evaluator_invitat
 
 
 --
+-- Name: index_evaluator_submission_assignments_on_submission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluator_submission_assignments_on_submission_id ON public.evaluator_submission_assignments USING btree (submission_id);
+
+
+--
+-- Name: index_evaluator_submission_assignments_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluator_submission_assignments_on_user_id ON public.evaluator_submission_assignments USING btree (user_id);
+
+
+--
 -- Name: message_contexts_context_context_id_audience_parent_id_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1935,6 +1997,22 @@ ALTER TABLE ONLY public.challenge_phases_evaluators
 
 ALTER TABLE ONLY public.evaluation_forms
     ADD CONSTRAINT fk_rails_28ad57fb81 FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: evaluator_submission_assignments fk_rails_3b40ec8e27; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_submission_assignments
+    ADD CONSTRAINT fk_rails_3b40ec8e27 FOREIGN KEY (submission_id) REFERENCES public.submissions(id);
+
+
+--
+-- Name: evaluator_submission_assignments fk_rails_67111ac897; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluator_submission_assignments
+    ADD CONSTRAINT fk_rails_67111ac897 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -2184,6 +2262,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241023195356),
 (20241018150049),
 (20241015140056),
 (20241014214843),
