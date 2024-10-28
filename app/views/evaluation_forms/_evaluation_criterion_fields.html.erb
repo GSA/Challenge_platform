@@ -1,12 +1,23 @@
-<% if f.object.persisted? %>
-  <%= f.hidden_field :id, value: f.object.id %>
-  <%= f.hidden_field :_destroy, class: "destroy-evaluation-criteria" %>
-<% end %>
+<h4 class="usa-accordion__heading">
+  <button
+    type="button"
+    class="usa-accordion__button"
+    aria-expanded="<%= f.object.persisted? ? false : true %>"
+    aria-controls="<%= criteria_field_id(f, "accordion", is_template) %>"
+  >
+    <div>Criteria <span class="criteria-number"><%= f.options[:child_index] + 1 %></span></div>
+  </button>
+</h4>
 
-<div class="criteria-header">
-  <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template) %>
+<div id="<%= criteria_field_id(f, "accordion", is_template) %>" class="usa-accordion__content">
+  <% if f.object.persisted? %>
+    <%= f.hidden_field :id, value: f.object.id %>
+    <%= f.hidden_field :_destroy, class: "destroy-evaluation-criteria" %>
+  <% end %>
 
-  <div class="display-inline">
+  <div>
+    <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template) %>
+
     <%= f.text_field :title, 
       id: criteria_field_id(f, "title", is_template),
       name: criteria_field_name(f, "title", is_template),
@@ -16,56 +27,111 @@
       disabled: is_template
     %>
   </div>
-</div>
 
-<div class="margin-top-2">
-  <%= f.label :description, "Criteria description", for: criteria_field_id(f, "description", is_template) %>
-  <%= f.text_area :description, 
-    id: criteria_field_id(f, "description", is_template),
-    name: criteria_field_name(f, "description", is_template),
-    class: 'usa-textarea', 
-    placeholder: 'Add criteria description here', 
-    required: true, 
-    disabled: is_template 
-  %>
-</div>
+  <div class="margin-top-2">
+    <%= f.label :description, "Criteria description", for: criteria_field_id(f, "description", is_template) %>
+    <%= f.text_area :description, 
+      id: criteria_field_id(f, "description", is_template),
+      name: criteria_field_name(f, "description", is_template),
+      class: 'usa-textarea', 
+      placeholder: 'Add criteria description here', 
+      required: true, 
+      disabled: is_template 
+    %>
+  </div>
 
-<div class="margin-top-2">
-  <%= f.label :points_or_weight, "Criteria Points/Weight", for: criteria_field_id(f, "points_or_weight", is_template) %>
-  <%= f.number_field :points_or_weight, 
-    id: criteria_field_id(f, "points_or_weight", is_template),
-    name: criteria_field_name(f, "points_or_weight", is_template),
-    class: 'usa-input', 
-    min: 1, 
-    step: 1, 
-    placeholder: "Add criteria points/weight here",
-    required: true, 
-    disabled: is_template 
-  %>
-</div>
+  <div class="margin-top-2">
+    <%= f.label :points_or_weight, "Criteria Points/Weight", for: criteria_field_id(f, "points_or_weight", is_template) %>
+    <%= f.number_field :points_or_weight, 
+      id: criteria_field_id(f, "points_or_weight", is_template),
+      name: criteria_field_name(f, "points_or_weight", is_template),
+      class: 'usa-input', 
+      min: 1, 
+      step: 1, 
+      placeholder: "Add criteria points/weight here",
+      required: true, 
+      disabled: is_template 
+    %>
+  </div>
 
-<div class="margin-top-2">
-  <%= f.label :scoring_type, "Scoring Type", for: criteria_field_id(f, "scoring_type", is_template) %>
-  <% scoring_types = { "numeric" => "Numeric", "rating" => "Rating", "binary" => "Binary" } %>
-  <div>
-    <% scoring_types.each do |value, label| %>
-      <div>
-        <%= f.radio_button :scoring_type, value, 
-            id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
-            name: criteria_field_name(f, :scoring_type, is_template),
-            class: "usa-radio",
-            checked: (value == "numeric"), 
-            # TODO: Remove when adding other scoring_types
-            disabled: (value != "numeric")  %>
+  <div class="margin-top-2">
+    <%= f.label :scoring_type, "Scoring Type", for: criteria_field_id(f, "scoring_type", is_template) %>
+    <% scoring_types = { "numeric" => "Numeric score / points", "rating" => "Rating scale", "binary" => "Binary scale" } %>
+    <div>
+      <% scoring_types.each do |value, label| %>
+        <div>
+          <%= f.radio_button :scoring_type, value, 
+              id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
+              name: criteria_field_name(f, :scoring_type, is_template),
+              class: "usa-radio scoring-type-radio",
+              checked: f.object.scoring_type == value %>
 
-        <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label %>
+          <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="margin-top-2 criteria-scale-options" style="<%= f.object.numeric? || is_template ? 'display: none;' : '' %>">
+    <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template) %>
+
+    <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>">
+      <%= f.hidden_field :option_range_start, 
+        id: criteria_field_id(f, "option_range_start", is_template), 
+        name: criteria_field_name(f, "option_range_start", is_template), 
+        class: "option-range-start",
+        disabled: !f.object.binary?,
+        value: 0 %>
+      <%= f.hidden_field :option_range_end, 
+        id: criteria_field_id(f, "option_range_end", is_template), 
+        name: criteria_field_name(f, "option_range_end", is_template), 
+        class: "option-range-end",
+        disabled: !f.object.binary?,
+        value: 1 %>
+    </div>
+
+    <div class="criteria-rating-options" style="<%= f.object.rating? ? '' : 'display: none;' %>">
+      <div class="display-flex flex-align-center margin-top-2">
+        <%= f.select :option_range_start, options_for_select((0..1).to_a, f.object.option_range_start), {},
+          id: criteria_field_id(f, "option_range_start", is_template), 
+          name: criteria_field_name(f, "option_range_start", is_template), 
+          class: "usa-select margin-0 option-range-select option-range-start",
+          disabled: !f.object.rating?,
+          include_blank: true %>
+        <span class="margin-x-2">to</span>
+        <%= f.select :option_range_end, options_for_select((2..10).to_a, f.object.option_range_end), {},
+          id: criteria_field_id(f, "option_range_end", is_template), 
+          name: criteria_field_name(f, "option_range_end", is_template), 
+          class: "usa-select margin-0 option-range-select option-range-end",
+          disabled: !f.object.rating?,
+          include_blank: true %>
       </div>
+    </div>
+
+    <div class="criteria-scale-option-labels">
+      <% (0..10).each do |index| %>
+        <% disabledOptionLabel = is_template || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
+
+        <div class="display-flex flex-align-center flex-justify margin-top-2 criteria-option-label-row" 
+          style="<%= disabledOptionLabel ? 'display: none;' : '' %>">
+          <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index %>
+
+          <%= f.text_field "option_labels", 
+            id: criteria_field_id(f, "option_labels", is_template) ++ "_#{index}",
+            name: criteria_field_name(f, "option_labels", is_template) ++ "[#{index}]",
+            class: "usa-input margin-0",
+            value: f.object.option_labels[index.to_s],
+            required: true, 
+            disabled: disabledOptionLabel,
+            data: {index: index} %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="margin-top-2">
+    <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria" do %>
+      Remove criteria
     <% end %>
   </div>
-</div>
-
-<div class="margin-top-2">
-  <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria" do %>
-    Remove criteria
-  <% end %>
 </div>
