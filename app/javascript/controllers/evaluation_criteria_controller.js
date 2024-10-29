@@ -111,47 +111,59 @@ export default class extends Controller {
   }
 
   updateScoringOptions(row, scoringType) {
-    const scaleOptions = row.querySelector(".criteria-scale-options");
-    const binaryOptions = row.querySelector(".criteria-binary-options");
-    const ratingOptions = row.querySelector(".criteria-rating-options");
-    const scaleOptionLabels = row.querySelector(
-      ".criteria-scale-option-labels"
-    );
+    const options = {
+      scaleOptions: row.querySelector(".criteria-scale-options"),
+      binaryOptions: row.querySelector(".criteria-binary-options"),
+      ratingOptions: row.querySelector(".criteria-rating-options"),
+      scaleOptionLabels: row.querySelector(".criteria-scale-option-labels"),
+    };
 
-    if (scoringType === "binary") {
-      scaleOptions.style.display = "block";
-      binaryOptions.style.display = "block";
-      ratingOptions.style.display = "none";
+    console.log(options);
 
-      this.enableInputs(binaryOptions);
-      this.disableInputs(ratingOptions);
-
-      this.toggleOptionLabels(row, 0, 1);
-    } else if (scoringType === "rating") {
-      scaleOptions.style.display = "block";
-      binaryOptions.style.display = "none";
-      ratingOptions.style.display = "block";
-
-      this.enableInputs(ratingOptions);
-      this.disableInputs(binaryOptions);
-
-      const start = parseInt(
-        row.querySelector(".option-range-select.option-range-start").value
-      );
-      const end = parseInt(
-        row.querySelector(".option-range-select.option-range-end").value
-      );
-
-      this.toggleOptionLabels(row, start, end);
-    } else {
-      scaleOptions.style.display = "none";
-      binaryOptions.style.display = "none";
-      ratingOptions.style.display = "none";
-
-      this.disableInputs(binaryOptions);
-      this.disableInputs(ratingOptions);
-      this.disableInputs(scaleOptionLabels);
+    switch (scoringType) {
+      case "binary":
+        this.showBinaryOptions(options);
+        this.toggleOptionLabels(row, 0, 1);
+        break;
+      case "rating":
+        this.showRatingOptions(row, options);
+        break;
+      default:
+        this.hideAllOptions(options);
+        break;
     }
+  }
+
+  showBinaryOptions(options) {
+    options.scaleOptions.style.display = "block";
+    options.binaryOptions.style.display = "block";
+    options.ratingOptions.style.display = "none";
+    this.enableInputs(options.binaryOptions);
+    this.disableInputs(options.ratingOptions);
+  }
+
+  showRatingOptions(row, options) {
+    options.scaleOptions.style.display = "block";
+    options.binaryOptions.style.display = "none";
+    options.ratingOptions.style.display = "block";
+    this.enableInputs(options.ratingOptions);
+    this.disableInputs(options.binaryOptions);
+    const start = parseInt(
+      row.querySelector(".option-range-select.option-range-start").value
+    );
+    const end = parseInt(
+      row.querySelector(".option-range-select.option-range-end").value
+    );
+    this.toggleOptionLabels(row, start, end);
+  }
+
+  hideAllOptions(options) {
+    options.scaleOptions.style.display = "none";
+    options.binaryOptions.style.display = "none";
+    options.ratingOptions.style.display = "none";
+    this.disableInputs(options.binaryOptions);
+    this.disableInputs(options.ratingOptions);
+    this.disableInputs(options.scaleOptionLabels);
   }
 
   toggleOptionLabels(row, start, end) {
@@ -186,21 +198,24 @@ export default class extends Controller {
   }
 
   validateInputs(event) {
-    let accordionButton = event.target.closest(".usa-accordion__button");
-    let sectionId = accordionButton.getAttribute("aria-controls");
-    let section = document.getElementById(sectionId);
-    let requiredFields = section.querySelectorAll("[required]");
+    const section = document.getElementById(
+      event.target
+        .closest(".usa-accordion__button")
+        .getAttribute("aria-controls")
+    );
 
-    for (let field of requiredFields) {
-      if (!field.checkValidity()) {
-        if (!field.reportValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-
-          return false;
-        }
-      }
+    if (this.checkRequiredFields(section)) {
+      return true;
+    } else {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
     }
-    return true;
+  }
+
+  checkRequiredFields(section) {
+    return Array.from(section.querySelectorAll("[required]")).every((field) =>
+      field.checkValidity() ? true : field.reportValidity()
+    );
   }
 }
