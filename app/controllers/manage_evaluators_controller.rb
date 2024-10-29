@@ -11,16 +11,9 @@ class ManageEvaluatorsController < ApplicationController
     @phases = @challenge.phases.order(:start_date)
 
     if @phases.empty?
-      flash.now[:alert] = t('.no_phases_alert')
-      @evaluator_invitations = []
-      @existing_evaluators = []
+      handle_empty_phases
     else
-      @phase = params[:phase_id] ? @phases.find(params[:phase_id]) : @phases.first
-      @evaluator_invitations = @challenge.evaluator_invitations.where(phase: @phase)
-      @existing_evaluators = @challenge.evaluators.
-        joins(:challenge_phases_evaluators).
-        where(challenge_phases_evaluators: { phase: @phase }).
-        distinct
+      handle_existing_phases
     end
   end
 
@@ -29,15 +22,9 @@ class ManageEvaluatorsController < ApplicationController
     result = process_evaluator_invitation(evaluator_invitation_params[:email])
 
     if result[:success]
-      redirect_to challenge_manage_evaluators_path(@challenge, phase_id: @phase.id),
-                  notice: result[:message]
+      handle_successful_creation(result)
     else
-      @evaluator_invitations = @challenge.evaluator_invitations.where(phase: @phase)
-      @existing_evaluators = @challenge.evaluators.
-        joins(:challenge_phases_evaluators).
-        where(challenge_phases_evaluators: { phase: @phase }).
-        distinct
-      render :index
+      handle_failed_creation
     end
   end
 
@@ -45,15 +32,15 @@ class ManageEvaluatorsController < ApplicationController
     @phase = @challenge.phases.find(params[:phase_id])
     result = process_evaluator_removal(params[:evaluator_type], params[:evaluator_id])
 
-    if result[:success]
-      flash[:notice] = result[:message]
-      render json: { success: true, message: result[:message] }
-    else
-      render json: { success: false, message: result[:message] }, status: :unprocessable_entity
-    end
+    render_json_response(result)
   end
 
   private
+
+  # Setup methods
+  def set_challenge
+    @challenge = Challenge.find(params[:challenge_id])
+  end
 
   def evaluator_invitation_params
     params.require(:evaluator_invitation).permit(
@@ -61,11 +48,35 @@ class ManageEvaluatorsController < ApplicationController
     )
   end
 
-  def set_challenge
-    @challenge = Challenge.find(params[:challenge_id])
+  # Index action helpers
+  def handle_empty_phases
+    flash.now[:alert] = t('.no_phases_alert')
+    @evaluator_invitations = []
+    @existing_evaluators = []
   end
 
-  # Inviting evaluators
+  def handle_existing_phases
+    @phase = select_phase
+    @evaluator_invitations = fetch_evaluator_invitations
+    @existing_evaluators = fetch_existing_evaluators
+  end
+
+  def select_phase
+    params[:phase_id] ? @phases.find(params[:phase_id]) : @phases.first
+  end
+
+  def fetch_evaluator_invitations
+    @challenge.evaluator_invitations.where(phase: @phase)
+  end
+
+  def fetch_existing_evaluators
+    @challenge.evaluators
+      .joins(:challenge_phases_evaluators)
+      .where(challenge_phases_evaluators: { phase: @phase })
+      .distinct
+  end
+
+  # Create action helpers
   def process_evaluator_invitation(email)
     existing_invitation = @challenge.evaluator_invitations.find_by(email:, phase: @phase)
     user = User.find_by(email:)
@@ -85,7 +96,7 @@ class ManageEvaluatorsController < ApplicationController
     {
       success: true,
       message: "An invitation to this challenge has already been sent to " \
-              "#{invitation.email}. Invitation has been resent."
+               "#{invitation.email}. Invitation has been resent."
     }
   end
 
@@ -111,7 +122,18 @@ class ManageEvaluatorsController < ApplicationController
     end
   end
 
-  # Removing an evaluator from a challenge
+  def handle_successful_creation(result)
+    redirect_to challenge_manage_evaluators_path(@challenge, phase_id: @phase.id),
+                notice: result[:message]
+  end
+
+  def handle_failed_creation
+    @evaluator_invitations = fetch_evaluator_invitations
+    @existing_evaluators = fetch_existing_evaluators
+    render :index
+  end
+
+  # Destroy action helpers
   def process_evaluator_removal(evaluator_type, evaluator_id)
     case evaluator_type
     when 'user'
@@ -143,6 +165,15 @@ class ManageEvaluatorsController < ApplicationController
       { success: true, message: t('manage_evaluators.remove_evaluator_invitation.success') }
     else
       { success: false, message: t('manage_evaluators.remove_evaluator_invitation.failure') }
+    end
+  end
+
+  def render_json_response(result)
+    if result[:success]
+      flash[:notice] = result[:message]
+      render json: { success: true, message: result[:message] }
+    else
+      render json: { success: false, message: result[:message] }, status: :unprocessable_entity
     end
   end
 end
