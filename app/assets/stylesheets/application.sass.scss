@@ -9,3 +9,11 @@ dialog::backdrop {
   background-color: black;
   border-color: black;
 }
+
+.usa-table.usa-table--borderless.gray-header {
+  thead {
+    th {
+      background-color: #dfe1e2 !important;
+    }
+  }
+}
