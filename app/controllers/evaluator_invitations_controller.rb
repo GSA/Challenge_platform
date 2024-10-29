@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EvaluatorInvitationsController < ApplicationController
   before_action :set_challenge
   before_action :set_evaluator_invitation
@@ -6,9 +8,11 @@ class EvaluatorInvitationsController < ApplicationController
   def resend_invitation
     if @evaluator_invitation.update(last_invite_sent: Time.current)
       # TODO: Implement sending the actual invitation email here
-      redirect_to challenge_manage_evaluators_path(@challenge), notice: 'Invitation resent successfully.'
+      redirect_to challenge_manage_evaluators_path(@challenge),
+                  notice: t('evaluator_invitations.resend_invitation.success')
     else
-      redirect_to challenge_manage_evaluators_path(@challenge), alert: 'Failed to resend invitation.'
+      redirect_to challenge_manage_evaluators_path(@challenge),
+                  alert: t('evaluator_invitations.resend_invitation.failure')
     end
   end
 

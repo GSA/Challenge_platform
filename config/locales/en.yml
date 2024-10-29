@@ -36,3 +36,17 @@ en:
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
   evaluation_criterion_unique_title_in_form: "must be unique within the same form."
+  manage_evaluators:
+    index:
+      no_phases_alert: "This challenge has no phases. Please add at least one phase before managing evaluators."
+    remove_user_evaluator:
+      evaluator_not_found: "Evaluator not found"
+      success: "Evaluator successfully removed from this phase."
+      failure: "Failed to remove evaluator from this phase."
+    remove_evaluator_invitation:
+      success: "Evaluator invitation successfully removed from the challenge."
+      failure: "Failed to remove evaluator invitation."      
+  evaluator_invitations:
+    resend_invitation:
+      success: "Invitation resent successfully."
+      failure: "Failed to resend invitation."      
