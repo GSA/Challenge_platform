@@ -1,0 +1,36 @@
+<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+    <thead>
+      <tr>
+        <th scope="col">Submission ID</th>
+        <th scope="col">Eligible for Evaluation</th>
+        <th scope="col">Selected to Advance</th>
+        <th scope="col">Assigned Evaluators</th>
+        <th scope="col">Average Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @submissions.each do |submission| %>
+          <tr>
+            <th data-label="Submission ID" scope="row">
+              <%= submission.id %>
+              </th>
+            <td data-label="Eligible for Evaluation">
+              no
+            </td>
+            <td data-label="Selected to Advance">
+              yes
+            </td>
+            <td data-label="Assigned Evaluators">
+              nothing
+            </td>
+            <td>
+              <div class="display-flex flex-no-wrap grid-row grid-gap-1">
+                <button class="usa-button font-body-2xs text-no-wrap">
+                  Manage Evaluators
+                </button>
+              </div>  
+            </td>  
+          </tr>
+      <% end %>  
+    </tbody>
+  </table>
