@@ -23,5 +23,5 @@ class EvaluatorInvitation < ApplicationRecord
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :last_invite_sent, presence: true
 
-  validates :email, uniqueness: { scope: [:challenge_id, :phase_id], message: "has already been invited for this challenge phase" }
+  validates :email, uniqueness: { scope: [:challenge_id, :phase_id] }
 end
