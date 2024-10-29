@@ -10,6 +10,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
 -- Name: oban_job_state; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -685,7 +692,7 @@ CREATE TABLE public.oban_jobs (
     attempted_by text[],
     discarded_at timestamp without time zone,
     priority integer DEFAULT 0 NOT NULL,
-    tags text[] DEFAULT ARRAY[]::text[],
+    tags character varying(255)[] DEFAULT ARRAY[]::character varying[],
     meta jsonb DEFAULT '{}'::jsonb,
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),

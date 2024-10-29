@@ -24,4 +24,19 @@ Rails.application.routes.draw do
   if Rails.env.development? || Rails.env.dev?
     get "/sandbox", to: "sandbox#index"
   end
+
+  resources :challenges do
+    resource :manage_evaluators, only: [] do
+      collection do
+        get :index
+        post :create
+        delete :destroy
+      end
+    end
+    resources :evaluator_invitations, only: [] do
+      member do
+        post 'resend_invitation'
+      end
+    end
+  end
 end

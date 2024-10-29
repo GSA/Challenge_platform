@@ -51,4 +51,15 @@ RSpec.describe ChallengePhasesEvaluator, type: :model do
     expect(evaluator2).to be_valid
     expect { evaluator2.save! }.not_to raise_error
   end
+
+  it "associates a user as an evaluator for a specific challenge phase" do
+    challenge = create(:challenge)
+    phase = create(:phase, challenge: challenge)
+    user = create(:user, role: 'evaluator')
+    cpe = create(:challenge_phases_evaluator, challenge: challenge, phase: phase, user: user)
+
+    expect(challenge.evaluators).to include(user)
+    expect(phase.evaluators).to include(user)
+    expect(user.evaluated_phases).to include(phase)
+  end
 end
