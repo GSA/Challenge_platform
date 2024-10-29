@@ -11,7 +11,7 @@ class ManageEvaluatorsController < ApplicationController
     @phases = @challenge.phases.order(:start_date)
 
     if @phases.empty?
-      flash.now[:alert] = t('manage_evaluators.index.no_phases_alert')
+      flash.now[:alert] = t('.no_phases_alert')
       @evaluator_invitations = []
       @existing_evaluators = []
     else
@@ -79,22 +79,22 @@ class ManageEvaluatorsController < ApplicationController
     end
   end
 
-# prevent duplicate evaluator invitations
-def resend_invitation(invitation)
-  invitation.update(last_invite_sent: Time.current) # only update last_invite_sent for now
-  {
-    success: true,
-    message: "An invitation to this challenge has already been sent to " \
-             "#{invitation.email}. Invitation has been resent."
-  }
-end
+  # prevent duplicate evaluator invitations
+  def resend_invitation(invitation)
+    invitation.update(last_invite_sent: Time.current) # only update last_invite_sent for now
+    {
+      success: true,
+      message: "An invitation to this challenge has already been sent to " \
+              "#{invitation.email}. Invitation has been resent."
+    }
+  end
 
   def valid_evaluator_role?(user)
     VALID_EVALUATOR_ROLES.include?(user.role)
   end
 
   def add_user_as_evaluator(user)
-    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user: user)
+    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
     if cpe.persisted?
       { success: true, message: "#{user.email} has been added as an evaluator for this phase." }
     else
