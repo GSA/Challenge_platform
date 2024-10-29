@@ -1,30 +1,34 @@
 <h4 class="usa-accordion__heading">
   <button
     type="button"
-    class="usa-accordion__button"
+    class="usa-accordion__button display-flex flex-justify"
     aria-expanded="<%= f.object.persisted? ? false : true %>"
     aria-controls="<%= criteria_field_id(f, "accordion", is_template) %>"
+    data-evaluation-criteria-target="accordionButton"
+    data-action="click->evaluation-criteria#validateInputs"
   >
-    <div>Criteria <span class="criteria-number"><%= f.options[:child_index] + 1 %></span></div>
+    <div>Criteria <span class="criteria-number" data-evaluation-criteria-target="criteriaNumber"><%= f.options[:child_index] + 1 %></span></div>
+
+    <div class="delete-criteria-button" title="Delete criteria", data-action="click->evaluation-criteria#removeCriteria">X</div>
   </button>
 </h4>
 
-<div id="<%= criteria_field_id(f, "accordion", is_template) %>" class="usa-accordion__content">
+<div id="<%= criteria_field_id(f, "accordion", is_template) %>" class="usa-accordion__content" data-evaluation-criteria-target="accordionContent">
   <% if f.object.persisted? %>
     <%= f.hidden_field :id, value: f.object.id %>
-    <%= f.hidden_field :_destroy, class: "destroy-evaluation-criteria" %>
+    <%= f.hidden_field :_destroy, class: "destroy-evaluation-criteria", data: {"evaluation-criteria-target": "destroyField"} %>
   <% end %>
 
   <div>
     <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template) %>
-
     <%= f.text_field :title, 
       id: criteria_field_id(f, "title", is_template),
       name: criteria_field_name(f, "title", is_template),
       class: 'usa-input', 
       placeholder: 'Add criteria title here', 
       required: true, 
-      disabled: is_template
+      disabled: is_template,
+      data: {"evaluation-criteria-target": "titleField"}
     %>
   </div>
 
@@ -36,7 +40,8 @@
       class: 'usa-textarea', 
       placeholder: 'Add criteria description here', 
       required: true, 
-      disabled: is_template 
+      disabled: is_template,
+      data: {"evaluation-criteria-target": "descriptionField"}
     %>
   </div>
 
@@ -50,7 +55,8 @@
       step: 1, 
       placeholder: "Add criteria points/weight here",
       required: true, 
-      disabled: is_template 
+      disabled: is_template,
+      data: {"evaluation-criteria-target": "pointsOrWeightField"}
     %>
   </div>
 
@@ -64,7 +70,14 @@
               id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
               name: criteria_field_name(f, :scoring_type, is_template),
               class: "usa-radio scoring-type-radio",
-              checked: f.object.scoring_type == value %>
+              checked: f.object.scoring_type == value,
+              required: true,
+              disabled: is_template,
+              data: {
+                "evaluation-criteria-target": "scoringTypeRadio",
+                action: "click->evaluation-criteria#toggleScoringType"
+              }
+          %>
 
           <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label %>
         </div>
@@ -72,48 +85,62 @@
     </div>
   </div>
 
-  <div class="margin-top-2 criteria-scale-options" style="<%= f.object.numeric? || is_template ? 'display: none;' : '' %>">
+  <div class="margin-top-2 criteria-scale-options" style="<%= f.object.numeric? || is_template ? 'display: none;' : '' %>" data-evaluation-criteria-target="scaleOptions">
     <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template) %>
 
-    <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>">
+    <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>" data-evaluation-criteria-target="binaryOptions">
       <%= f.hidden_field :option_range_start, 
         id: criteria_field_id(f, "option_range_start", is_template), 
         name: criteria_field_name(f, "option_range_start", is_template), 
         class: "option-range-start",
         disabled: !f.object.binary?,
-        value: 0 %>
+        value: 0,
+        data: {"evaluation-criteria-target": "hiddenOptionRangeStart"}
+      %>
       <%= f.hidden_field :option_range_end, 
         id: criteria_field_id(f, "option_range_end", is_template), 
         name: criteria_field_name(f, "option_range_end", is_template), 
         class: "option-range-end",
         disabled: !f.object.binary?,
-        value: 1 %>
+        value: 1,
+        data: {"evaluation-criteria-target": "hiddenOptionRangeEnd"}
+      %>
     </div>
 
-    <div class="criteria-rating-options" style="<%= f.object.rating? ? '' : 'display: none;' %>">
+    <div class="criteria-rating-options" style="<%= f.object.rating? ? '' : 'display: none;' %>" data-evaluation-criteria-target="ratingOptions">
       <div class="display-flex flex-align-center margin-top-2">
         <%= f.select :option_range_start, options_for_select((0..1).to_a, f.object.option_range_start), {},
           id: criteria_field_id(f, "option_range_start", is_template), 
           name: criteria_field_name(f, "option_range_start", is_template), 
           class: "usa-select margin-0 option-range-select option-range-start",
           disabled: !f.object.rating?,
-          include_blank: true %>
+          include_blank: true,
+          data: {
+            "evaluation-criteria-target": "selectOptionRangeStart",
+            action: "change->evaluation-criteria#toggleOptionRange"
+          }
+        %>
         <span class="margin-x-2">to</span>
         <%= f.select :option_range_end, options_for_select((2..10).to_a, f.object.option_range_end), {},
           id: criteria_field_id(f, "option_range_end", is_template), 
           name: criteria_field_name(f, "option_range_end", is_template), 
           class: "usa-select margin-0 option-range-select option-range-end",
           disabled: !f.object.rating?,
-          include_blank: true %>
+          include_blank: true,
+          data: {
+            "evaluation-criteria-target": "selectOptionRangeEnd",
+            action: "change->evaluation-criteria#toggleOptionRange"
+          }
+        %>
       </div>
     </div>
 
-    <div class="criteria-scale-option-labels">
+    <div class="criteria-scale-option-labels" data-evaluation-criteria-target="optionLabels">
       <% (0..10).each do |index| %>
         <% disabledOptionLabel = is_template || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
 
         <div class="display-flex flex-align-center flex-justify margin-top-2 criteria-option-label-row" 
-          style="<%= disabledOptionLabel ? 'display: none;' : '' %>">
+          style="<%= disabledOptionLabel ? 'display: none;' : '' %>" data-evaluation-criteria-target="optionLabelRow">
           <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index %>
 
           <%= f.text_field "option_labels", 
@@ -123,14 +150,15 @@
             value: f.object.option_labels[index.to_s],
             required: true, 
             disabled: disabledOptionLabel,
-            data: {index: index} %>
+            data: {"evaluation-criteria-target": "optionLabelInput"}
+          %>
         </div>
       <% end %>
     </div>
   </div>
 
   <div class="margin-top-2">
-    <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria" do %>
+    <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria", data: {action: "click->evaluation-criteria#removeCriteria"} do %>
       Remove criteria
     <% end %>
   </div>

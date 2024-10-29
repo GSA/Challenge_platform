@@ -92,33 +92,35 @@
         </fieldset>
       </div>
 
-      <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion--bordered usa-accordion__multiselectable" data-allow-multiple>
-        <% if evaluation_form.evaluation_criteria.empty? %>
-          <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
-            <div class="criteria-row margin-bottom-2">
-              <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
-            </div>
-          <% end %>
-        <% else %>
-          <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
-            <div class="criteria-row margin-bottom-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>">
-              <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: false} %>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-
-      <div class="usa-accordion">
-        <div id="criteria-template" class="criteria-row margin-bottom-2 display-none">
-          <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
-            <%= render partial: 'evaluation_criterion_fields', locals: {f: ec, is_template: true} %>
+      <div data-controller="evaluation-criteria">
+        <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion--bordered usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
+          <% if evaluation_form.evaluation_criteria.empty? %>
+            <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+              <div class="criteria-row margin-bottom-2" data-evaluation-criteria-target="criteriaRow">
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false } %>
+              </div>
+            <% end %>
+          <% else %>
+            <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
+              <div class="criteria-row margin-bottom-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>" data-evaluation-criteria-target="criteriaRow">
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false } %>
+              </div>
+            <% end %>
           <% end %>
         </div>
-      </div>
 
-      <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria" do %>
-        Add another criteria
-      <% end %>
+        <div class="usa-accordion">
+          <div id="criteria-template" class="criteria-row margin-bottom-2 display-none" data-evaluation-criteria-target="template">
+            <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+              <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: true } %>
+            <% end %>
+          </div>
+        </div>
+      
+        <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria", data: {action:"click->evaluation-criteria#addCriteria"} do %>
+          Add another criteria
+        <% end %>
+      </div>
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Period</h4>
