@@ -70,10 +70,10 @@ class ManageEvaluatorsController < ApplicationController
   end
 
   def fetch_existing_evaluators
-    @challenge.evaluators
-      .joins(:challenge_phases_evaluators)
-      .where(challenge_phases_evaluators: { phase: @phase })
-      .distinct
+    @challenge.evaluators.
+      joins(:challenge_phases_evaluators).
+      where(challenge_phases_evaluators: { phase: @phase }).
+      distinct
   end
 
   # Create action helpers
