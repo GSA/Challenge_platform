@@ -25,7 +25,7 @@
       class: 'usa-input', 
       placeholder: 'Add criteria title here', 
       required: true, 
-      disabled: is_template,
+      disabled: is_template || form_disabled,
       data: {"evaluation-criteria-target": "titleField"}
     %>
   </div>
@@ -38,7 +38,7 @@
       class: 'usa-textarea', 
       placeholder: 'Add criteria description here', 
       required: true, 
-      disabled: is_template,
+      disabled: is_template || form_disabled,
       data: {"evaluation-criteria-target": "descriptionField"}
     %>
   </div>
@@ -53,7 +53,7 @@
       step: 1, 
       placeholder: "Add criteria points/weight here",
       required: true, 
-      disabled: is_template,
+      disabled: is_template || form_disabled,
       data: {"evaluation-criteria-target": "pointsOrWeightField"}
     %>
   </div>
@@ -70,7 +70,7 @@
               class: "usa-radio scoring-type-radio",
               checked: f.object.scoring_type == value,
               required: true,
-              disabled: is_template,
+              disabled: is_template || form_disabled,
               data: {
                 "evaluation-criteria-target": "scoringTypeRadio",
                 action: "click->evaluation-criteria#toggleScoringType"
@@ -83,7 +83,7 @@
     </div>
   </div>
 
-  <div class="margin-top-2 criteria-scale-options" style="<%= f.object.numeric? || is_template ? 'display: none;' : '' %>" data-evaluation-criteria-target="scaleOptions">
+  <div class="margin-top-2 criteria-scale-options" style="<%= f.object.numeric? || !f.object.persisted? || is_template ? 'display: none;' : '' %>" data-evaluation-criteria-target="scaleOptions">
     <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template) %>
 
     <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>" data-evaluation-criteria-target="binaryOptions">
@@ -91,7 +91,7 @@
         id: criteria_field_id(f, "option_range_start", is_template), 
         name: criteria_field_name(f, "option_range_start", is_template), 
         class: "option-range-start",
-        disabled: !f.object.binary?,
+        disabled: !f.object.binary? || form_disabled,
         value: 0,
         data: {"evaluation-criteria-target": "hiddenOptionRangeStart"}
       %>
@@ -99,7 +99,7 @@
         id: criteria_field_id(f, "option_range_end", is_template), 
         name: criteria_field_name(f, "option_range_end", is_template), 
         class: "option-range-end",
-        disabled: !f.object.binary?,
+        disabled: !f.object.binary? || form_disabled,
         value: 1,
         data: {"evaluation-criteria-target": "hiddenOptionRangeEnd"}
       %>
@@ -111,7 +111,7 @@
           id: criteria_field_id(f, "option_range_start", is_template), 
           name: criteria_field_name(f, "option_range_start", is_template), 
           class: "usa-select margin-0 option-range-select option-range-start",
-          disabled: !f.object.rating?,
+          disabled: !f.object.rating? || form_disabled,
           include_blank: true,
           data: {
             "evaluation-criteria-target": "selectOptionRangeStart",
@@ -123,7 +123,7 @@
           id: criteria_field_id(f, "option_range_end", is_template), 
           name: criteria_field_name(f, "option_range_end", is_template), 
           class: "usa-select margin-0 option-range-select option-range-end",
-          disabled: !f.object.rating?,
+          disabled: !f.object.rating? || form_disabled,
           include_blank: true,
           data: {
             "evaluation-criteria-target": "selectOptionRangeEnd",
@@ -147,7 +147,7 @@
             class: "usa-input margin-0",
             value: f.object.option_labels[index.to_s],
             required: true, 
-            disabled: disabledOptionLabel,
+            disabled: disabledOptionLabel || form_disabled,
             data: {"evaluation-criteria-target": "optionLabelInput"}
           %>
         </div>
@@ -155,9 +155,11 @@
     </div>
   </div>
 
-  <div class="margin-top-2">
-    <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria", data: {action: "click->evaluation-criteria#removeCriteria"} do %>
-      Remove criteria
-    <% end %>
-  </div>
+  <% if !form_disabled %>
+    <div class="margin-top-2">
+      <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria", data: {action: "click->evaluation-criteria#removeCriteria"} do %>
+        Remove criteria
+      <% end %>
+    </div>
+  <% end %>
 </div>

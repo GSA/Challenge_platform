@@ -97,28 +97,30 @@
           <% if evaluation_form.evaluation_criteria.empty? %>
             <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
               <div class="criteria-row margin-bottom-2" data-evaluation-criteria-target="criteriaRow">
-                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false } %>
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false, form_disabled: false } %>
               </div>
             <% end %>
           <% else %>
             <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
               <div class="criteria-row margin-bottom-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>" data-evaluation-criteria-target="criteriaRow">
-                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false } %>
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false, form_disabled: disabled } %>
               </div>
             <% end %>
           <% end %>
         </div>
 
-        <div class="usa-accordion">
-          <div id="criteria-template" class="criteria-row margin-bottom-2 display-none" data-evaluation-criteria-target="template">
-            <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
-              <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: true } %>
-            <% end %>
+        <% if !disabled %>
+          <div class="usa-accordion">
+            <div id="criteria-template" class="criteria-row margin-bottom-2 display-none" data-evaluation-criteria-target="template">
+              <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: true, form_disabled: disabled } %>
+              <% end %>
+            </div>
           </div>
-        </div>
-      
-        <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria", data: {action:"click->evaluation-criteria#addCriteria"} do %>
-          Add another criteria
+        
+          <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria", data: {action: "click->evaluation-criteria#addCriteria"} do %>
+            Add another criteria
+          <% end %>
         <% end %>
       </div>
     </li>
