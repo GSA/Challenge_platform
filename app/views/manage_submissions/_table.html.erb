@@ -1,23 +1,25 @@
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+<table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
     <thead>
       <tr>
         <th scope="col">Challenge</th>
         <th scope="col">Number of Submissions</th>
         <th scope="col">Evaluation Form</th>
         <th scope="col">Evaluations are due by</th>
+        <th scope="col" aria-label="Actions"></th>
       </tr>
     </thead>
     <tbody>
       <% @challenges.each do |challenge| %>
         <% challenge.phases.each do |phase| %>
           <tr>
-            <th data-label="Form Title" scope="row">
-              <%= challenge_phase_title(challenge, phase) %>
-              </th>
-            <td data-label="Number of Submissions">
+            <th data-label="Form Title" scope="row" class="text-top">
+              <strong><%= challenge_phase_title(challenge, phase) %></strong>
+              <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
+            </th>
+            <td data-label="Number of Submissions" class="text-top">
               <%= phase.submissions.length %>
             </td>
-            <td data-label="Evaluation Form">
+            <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
                 <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
                   <%= phase.evaluation_form.title %>
@@ -26,24 +28,25 @@
                 N/A  
               <% end %>  
             </td>
-            <td data-label="Evaluations are due by">
+            <td data-label="Evaluations are due by" class="text-top">
               <% if phase.evaluation_form %>
                 <%= phase.evaluation_form.closing_date %>
               <% else %>
                 N/A  
-              <% end %>  
+              <% end %>
             </td>
             <td>
-              <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-                <button class="usa-button font-body-2xs text-no-wrap">
+              <div class="display-flex flex-column grid-row grid-gap-4">
+                <%= link_to challenge_manage_evaluators_path(challenge, phase_id: phase.id), class: "usa-button font-body-2xs text-no-wrap margin-bottom-105" do %>
                   Manage Evaluators
-                </button>
+                <% end %>
                 <% unless phase.submissions.empty? %>
                   <button class="usa-button font-body-2xs text-no-wrap">
                     View Submissions
                   </button>
                 <% end %>  
               </div>  
+            </td>
             </td>  
           </tr>
         <% end %>  
