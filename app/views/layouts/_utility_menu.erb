@@ -1,5 +1,5 @@
 <!-- Utility Menu -->
-<div class="bg-primary-darker w-full display-flex flex-justify-center desktop:flex-justify-end padding-1 font-body-3xs desktop:font-body-2xs text-white">
+<nav aria-label="Utility navigation" class="bg-primary-darker w-full display-flex flex-justify-center desktop:flex-justify-end padding-1 font-body-3xs desktop:font-body-2xs text-white">
     <%= utility_menu_link('grid_view', dashboard_path, 'dashboard', 'Dashboard') %>
     <% if current_user.role == "challenge_manager" %>
       <%= utility_menu_link('emoji_events', Rails.configuration.phx_interop[:phx_uri], 'challenges', 'Challenges') %>
@@ -15,4 +15,4 @@
       <%= image_tag('images/usa-icons/account_circle.svg', class: "usa-icon--size-3 icon-white margin-x-2", alt: "Help") %>
       <%= current_user.email %>
     </div>
-</div>
+</nav>
