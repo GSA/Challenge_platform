@@ -34,5 +34,7 @@ class EvaluationCriterion < ApplicationRecord
 
   # Validations
   validates :title, :description, :points_or_weight, presence: true
+  validates :title, length: { maximum: 150 }
+  validates :description, length: { maximum: 1000 }
   validates :points_or_weight, numericality: { only_integer: true }
 end
