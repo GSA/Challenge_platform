@@ -93,7 +93,7 @@
       </div>
 
       <div data-controller="evaluation-criteria">
-        <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion--bordered usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
+        <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
           <% if evaluation_form.evaluation_criteria.empty? %>
             <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
               <div class="criteria-row margin-bottom-2" data-evaluation-criteria-target="criteriaRow">
