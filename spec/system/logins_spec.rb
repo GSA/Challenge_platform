@@ -3,6 +3,12 @@
 require 'rails_helper'
 
 describe "A11y", :js do
+  let(:user) { nil }
+
+  before do
+    system_login_user(user) if user
+  end
+
   describe "Logged-out" do
     it "web root page is accessible" do
       visit "/"
@@ -19,7 +25,6 @@ describe "A11y", :js do
     let(:user) { create_user(role: "challenge_manager") }
 
     it "dashboard index page is accessible" do
-      system_login_user(user)
       visit dashboard_path
       expect(user.role).to eq("challenge_manager")
       expect(page).to(be_axe_clean)
@@ -30,7 +35,6 @@ describe "A11y", :js do
     let(:user) { create_user(role: "evaluator") }
 
     it "dashboard index page is accessible" do
-      system_login_user(user)
       visit dashboard_path
       expect(user.role).to eq("evaluator")
       expect(page).to(be_axe_clean)
