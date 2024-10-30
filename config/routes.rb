@@ -21,7 +21,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  if Rails.env.development? || Rails.env.dev?
-    get "/sandbox", to: "sandbox#index"
+  if Rails.env.development? || Rails.env.dev? || Rails.env.test?
+    namespace :dev do
+      get "/sandbox", to: "sandbox#index"
+      get "/accounts", to: "accounts#index"
+      post "/login", to: "accounts#login"
+    end
   end
 end
