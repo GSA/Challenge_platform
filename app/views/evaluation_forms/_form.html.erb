@@ -16,7 +16,6 @@
       phase = evaluation_form.phase
       combo_box_default_value = "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}"
       disabled = eval_form_disabled?(evaluation_form)
-      disabled = false
     end
   %>
   <ol class="usa-process-list">
@@ -119,8 +118,13 @@
             </div>
           </div>
         
-          <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--unstyled", title: "Add another criteria", data: {action: "click->evaluation-criteria#addCriteria"} do %>
-            Add another criteria
+          <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button width-full display-flex flex-column", title: "Add another criteria", data: {action: "click->evaluation-criteria#addCriteria"} do %>
+            <%= image_tag(
+              "images/usa-icons/add_circle.svg",
+              class: "usa-icon icon-white circle-4 margin-bottom-1",
+              alt: "Add criteria plus icon"
+            )%>
+            <div class="font-sans-xs">Add another criteria</div>
           <% end %>
         <% end %>
       </div>
