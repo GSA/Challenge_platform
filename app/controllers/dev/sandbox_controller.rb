@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-class Dev::SandboxController < ApplicationController
-  def index; end
+module Dev
+  class SandboxController < ApplicationController
+    def index; end
+  end
 end
