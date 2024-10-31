@@ -1,4 +1,4 @@
-<h1><%= @phase.title %></h1>
+<h1><%= challenge_phase_title(@phase.challenge, @phase) %></h1>
 <p class="text-normal">View challenge submissions and manage evaluation progress.</p>
 
 <% if @submissions.empty? %>
