@@ -2,21 +2,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = [
-    "criteriaList",
-    "template",
-    "addButton",
-    "criteriaRow",
-    "scoringRadio",
-    "binaryOptions",
-    "ratingOptions",
-    "scaleOptions",
-    "hiddenOptionRangeStart",
-    "hiddenOptionRangeEnd",
-    "selectOptionRangeStart",
-    "selectOptionRangeEnd",
-    "criteriaLabelRow",
-  ];
+  static targets = ["criteriaList", "template", "criteriaRow"];
 
   connect() {
     this.counter = this.criteriaRowTargets.length;
@@ -118,8 +104,6 @@ export default class extends Controller {
       scaleOptionLabels: row.querySelector(".criteria-scale-option-labels"),
     };
 
-    console.log(options);
-
     switch (scoringType) {
       case "binary":
         this.showBinaryOptions(options);
@@ -173,7 +157,7 @@ export default class extends Controller {
         labelRow.style.display =
           index >= start && index <= end ? "flex" : "none";
         const input = labelRow.querySelector("input");
-        input.disabled = !(index >= start && index <= end);
+        input.disabled = index < start || index > end;
       });
   }
 
@@ -215,7 +199,7 @@ export default class extends Controller {
 
   checkRequiredFields(section) {
     return Array.from(section.querySelectorAll("[required]")).every((field) =>
-      field.checkValidity() ? true : field.reportValidity()
+      field.reportValidity()
     );
   }
 }

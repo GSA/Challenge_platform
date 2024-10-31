@@ -110,17 +110,16 @@
     </div>
   </div>
 
-  <div class="criteria-scale-options usa-form-group" style="<%= f.object.numeric? || !f.object.persisted? || is_template ? 'display: none;' : '' %>" data-evaluation-criteria-target="scaleOptions">
+  <div class="criteria-scale-options usa-form-group" style="<%= f.object.numeric? || !f.object.persisted? || is_template ? 'display: none;' : '' %>">
     <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template), class: "text-bold" %>
 
-    <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>" data-evaluation-criteria-target="binaryOptions">
+    <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>">
       <%= f.hidden_field :option_range_start, 
         id: criteria_field_id(f, "option_range_start", is_template), 
         name: criteria_field_name(f, "option_range_start", is_template), 
         class: "option-range-start",
         disabled: !f.object.binary? || form_disabled,
-        value: 0,
-        data: {"evaluation-criteria-target": "hiddenOptionRangeStart"}
+        value: 0
       %>
       <%= f.hidden_field :option_range_end, 
         id: criteria_field_id(f, "option_range_end", is_template), 
@@ -132,7 +131,7 @@
       %>
     </div>
 
-    <div class="criteria-rating-options" style="<%= f.object.rating? ? '' : 'display: none;' %>" data-evaluation-criteria-target="ratingOptions">
+    <div class="criteria-rating-options" style="<%= f.object.rating? ? '' : 'display: none;' %>">
       <div class="display-flex flex-align-center margin-top-2">
         <%= f.select :option_range_start, options_for_select((0..1).to_a, f.object.option_range_start), {},
           id: criteria_field_id(f, "option_range_start", is_template), 
@@ -140,10 +139,7 @@
           class: "usa-select margin-0 height-auto width-auto font-sans-md text-bold option-range-select option-range-start",
           disabled: !f.object.rating? || form_disabled,
           include_blank: true,
-          data: {
-            "evaluation-criteria-target": "selectOptionRangeStart",
-            action: "change->evaluation-criteria#toggleOptionRange"
-          }
+          data: { action: "change->evaluation-criteria#toggleOptionRange" }
         %>
         <span class="margin-x-2 text-bold font-sans-md">to</span>
         <%= f.select :option_range_end, options_for_select((2..10).to_a, f.object.option_range_end), {},
@@ -152,10 +148,7 @@
           class: "usa-select margin-0 height-auto width-auto font-sans-md text-bold option-range-select option-range-end",
           disabled: !f.object.rating? || form_disabled,
           include_blank: true,
-          data: {
-            "evaluation-criteria-target": "selectOptionRangeEnd",
-            action: "change->evaluation-criteria#toggleOptionRange"
-          }
+          data: { action: "change->evaluation-criteria#toggleOptionRange" }
         %>
       </div>
     </div>
