@@ -30,8 +30,8 @@ commands:
     description: 'Install yarn modules and build assets'
     steps:
       - node/install:
-          node-version: 20.15.1
           install-yarn: true
+          node-version: 20.18.0
       - node/install-packages:
           pkg-manager: yarn
       - run: npx gulp copyAssets
