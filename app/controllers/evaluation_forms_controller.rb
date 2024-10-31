@@ -26,7 +26,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.save
         format.html do
-          redirect_to evaluation_forms_url, notice: I18n.t("evaluation_form_saved")
+          redirect_to evaluation_forms_confirmation_path, notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :created, location: @evaluation_form }
       else
@@ -41,7 +41,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
         format.html do
-          redirect_to evaluation_forms_url, notice: I18n.t("evaluation_form_saved")
+          redirect_to evaluation_forms_confirmation_path, notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -60,6 +60,9 @@ class EvaluationFormsController < ApplicationController
       format.json { head(:no_content) }
     end
   end
+
+  # GET /evaluation_forms/confirmation
+  def confirmation; end
 
   private
 
