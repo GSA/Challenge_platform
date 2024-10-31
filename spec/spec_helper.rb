@@ -33,6 +33,12 @@ def create_and_log_in_user(user_attrs = {})
   user
 end
 
+def system_login_user(user)
+  visit "/dev/accounts"
+  fill_in "Email", with: user.email
+  click_on "Dev Login"
+end
+
 def create_user(attrs = {})
   email = "#{SecureRandom.hex}@example.gov"
   token = SecureRandom.uuid
