@@ -1,0 +1,60 @@
+<div class="grid-container">
+  <div>
+    <h1>By Email</h1>
+    <%= form_with url: "/dev/login" do |form| %>
+      <%= form.label :email %>
+      <%= form.text_field :email %>
+      <%= form.submit "Dev Login" %>
+    <% end %>
+  </div>
+  <div>
+    <h1>Super Admin Accounts</h1>
+    <%= button_to("Active", dev_login_path(email: "super_admin_active@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Pending", dev_login_path(email: "super_admin_pending@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Suspended", dev_login_path(email: "super_admin_suspended@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Revoked", dev_login_path(email: "super_admin_revoked@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Deactivated", dev_login_path(email: "super_admin_deactivated@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Decertified", dev_login_path(email: "super_admin_decertified@example.com"), method: :post, class: "usa-button") %>
+  </div>
+  <br/>
+  <div>
+    <h1>Admin Accounts</h1>
+    <%= button_to("Active", dev_login_path(email: "admin_active@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Pending", dev_login_path(email: "admin_pending@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Suspended", dev_login_path(email: "admin_suspended@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Revoked", dev_login_path(email: "admin_revoked@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Deactivated", dev_login_path(email: "admin_deactivated@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Decertified", dev_login_path(email: "admin_decertified@example.com"), method: :post, class: "usa-button") %>
+  </div>
+  <br/>
+  <div>
+    <h1>Challenge Manager Accounts</h1>
+    <%= button_to("Active", dev_login_path(email: "challenge_manager_active@example.gov"), method: :post, class: "usa-button") %>
+    <%= button_to("Pending", dev_login_path(email: "challenge_manager_pending@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Suspended", dev_login_path(email: "challenge_manager_suspended@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Revoked", dev_login_path(email: "challenge_manager_revoked@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Deactivated", dev_login_path(email: "challenge_manager_deactivated@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Decertified", dev_login_path(email: "challenge_manager_decertified@example.com"), method: :post, class: "usa-button") %>
+  </div>
+  <br/>
+  <div>
+    <h1>Evaluator Accounts</h1>
+    <%= button_to("Active (.gov)", dev_login_path(email: "evaluator_active@example.gov"), method: :post, class: "usa-button") %>
+    <%= button_to("Active", dev_login_path(email: "evaluator_active@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Pending", dev_login_path(email: "evaluator_pending@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Suspended", dev_login_path(email: "evaluator_suspended@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Revoked", dev_login_path(email: "evaluator_revoked@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Deactivated", dev_login_path(email: "evaluator_deactivated@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Decertified", dev_login_path(email: "evaluator_decertified@example.com"), method: :post, class: "usa-button") %>
+  </div>
+  <br/>
+  <div>
+    <h1>Solver Accounts</h1>
+    <%= button_to("Solver Active", dev_login_path(email: "solver_active@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Pending", dev_login_path(email: "solver_pending@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Suspended", dev_login_path(email: "solver_suspended@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Revoked", dev_login_path(email: "solver_revoked@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Deactivated", dev_login_path(email: "solver_deactivated@example.com"), method: :post, class: "usa-button") %>
+    <%= button_to("Decertified", dev_login_path(email: "solver_decertified@example.com"), method: :post, class: "usa-button") %>
+  </div>
+<div>
