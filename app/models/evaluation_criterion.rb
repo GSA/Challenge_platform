@@ -29,12 +29,12 @@ class EvaluationCriterion < ApplicationRecord
   enum :scoring_type, { numeric: 0, rating: 1, binary: 2 }
   attribute :option_range_start, :integer
   attribute :option_range_end, :integer
-  attribute :option_labels, :json, default: -> { [] }
+  attribute :option_labels, :json, default: -> { {} }
   attribute :evaluation_form_id, :integer
 
   # Validations
   validates :title, :description, :points_or_weight, presence: true
+  validates :title, length: { maximum: 150 }
+  validates :description, length: { maximum: 1000 }
   validates :points_or_weight, numericality: { only_integer: true }
-  validates :title,
-            uniqueness: { scope: :evaluation_form_id, message: I18n.t("evaluation_criterion_unique_title_in_form") }
 end

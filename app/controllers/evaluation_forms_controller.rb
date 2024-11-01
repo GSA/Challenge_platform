@@ -26,7 +26,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.save
         format.html do
-          redirect_to evaluation_forms_url, notice: I18n.t("evaluation_form_saved")
+          redirect_to evaluation_forms_confirmation_path, notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :created, location: @evaluation_form }
       else
@@ -41,7 +41,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
         format.html do
-          redirect_to evaluation_forms_url, notice: I18n.t("evaluation_form_saved")
+          redirect_to evaluation_forms_confirmation_path, notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -61,6 +61,9 @@ class EvaluationFormsController < ApplicationController
     end
   end
 
+  # GET /evaluation_forms/confirmation
+  def confirmation; end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -76,7 +79,12 @@ class EvaluationFormsController < ApplicationController
   def evaluation_form_params
     permitted = params.require(:evaluation_form).
       permit(:title, :instructions, :phase_id, :status, :comments_required,
-             :weighted_scoring, :publication_date, :closing_date, :challenge_id)
+             :weighted_scoring, :publication_date, :closing_date, :challenge_id,
+             evaluation_criteria_attributes: [
+               :id, :title, :description, :points_or_weight, :scoring_type,
+               :option_range_start, :option_range_end, :_destroy,
+               { option_labels: {} }
+             ])
     closing_date = parse_closing_date(permitted[:closing_date])
     closing_date ? permitted.merge({ closing_date: }) : permitted
   end
