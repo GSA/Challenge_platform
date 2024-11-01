@@ -15,18 +15,21 @@
               <%= submission.id %>
               </th>
             <td data-label="Eligible for Evaluation">
-              no
+              <%= eligible_for_evaluation?(submission) %>
             </td>
             <td data-label="Selected to Advance">
-              yes
+              <%= selected_to_advance?(submission) %>
             </td>
             <td data-label="Assigned Evaluators">
-              nothing
+                No evaluators assigned to this submission.
+            </td>
+            <td>
+                <%# average score goes here %>
             </td>
             <td>
               <div class="display-flex flex-no-wrap grid-row grid-gap-1">
                 <button class="usa-button font-body-2xs text-no-wrap">
-                  Manage Evaluators
+                  View Submission
                 </button>
               </div>  
             </td>  
