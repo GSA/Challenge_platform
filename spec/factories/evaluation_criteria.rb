@@ -10,7 +10,7 @@ FactoryBot.define do
     scoring_type { [:numeric, :rating, :binary].sample }
     option_range_start { nil }
     option_range_end { nil }
-    option_labels { [] }
+    option_labels { {} }
 
     # Factory options
     trait :numeric do
@@ -32,10 +32,20 @@ FactoryBot.define do
       when "rating"
         criterion.option_range_start = 0
         criterion.option_range_end = 4
+        criterion.option_labels = {
+          "0" => "Option 1",
+          "1" => "Option 2",
+          "2" => "Option 3",
+          "3" => "Option 4",
+          "4" => "Option 5"
+        }
       when "binary"
         criterion.option_range_start = 0
         criterion.option_range_end = 1
-        criterion.option_labels = %w[no yes]
+        criterion.option_labels = {
+          "0" => "No",
+          "1" => "Yes"
+        }
       end
     end
   end
