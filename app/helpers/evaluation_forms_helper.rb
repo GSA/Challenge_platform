@@ -9,9 +9,36 @@ module EvaluationFormsHelper
     "#{challenge.title} - Phase #{phase_number(phase)}"
   end
 
+  def evaluation_period(evaluation_form)
+    start_date = evaluation_form.phase.end_date.strftime("%m/%d/%Y")
+    end_date = evaluation_form.closing_date.strftime("%m/%d/%Y")
+
+    "#{start_date} - #{end_date}"
+  end
+
   def inline_error(evaluation_form, field)
     error = evaluation_form.errors[field].present? ? evaluation_form.errors[field].first : ""
     tag.span(error, class: "text-secondary font-body-2xs", id: "evaluation_form_#{field}_error")
+  end
+
+  def criteria_field_id(form, attribute, is_template)
+    prefix = "evaluation_form_evaluation_criteria_attributes"
+
+    if is_template
+      "#{prefix}_NEW_CRITERIA_#{attribute}"
+    else
+      "#{prefix}_#{form.options[:child_index]}_#{attribute}"
+    end
+  end
+
+  def criteria_field_name(form, attribute, is_template)
+    prefix = "evaluation_form[evaluation_criteria_attributes]"
+
+    if is_template
+      "#{prefix}[NEW_CRITERIA][#{attribute}]"
+    else
+      "#{prefix}[#{form.options[:child_index]}][#{attribute}]"
+    end
   end
 
   def eval_form_disabled?(evaluation_form)
