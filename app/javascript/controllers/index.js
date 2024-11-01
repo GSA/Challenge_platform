@@ -7,3 +7,5 @@ import { application } from "./application"
 import EvaluationFormController from "./evaluation_form_controller"
 application.register("evaluation-form", EvaluationFormController)
 
+import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller"
+application.register("delete-evaluator-modal", DeleteEvaluatorModalController)

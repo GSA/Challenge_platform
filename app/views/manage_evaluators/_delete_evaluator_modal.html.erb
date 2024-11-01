@@ -1,23 +1,24 @@
-<div
-  class="usa-modal"
+<dialog
   id="delete-evaluator-modal"
+  data-delete-evaluator-modal-target="modal"
   aria-labelledby="modal-1-heading"
   aria-describedby="modal-1-description"
+  class="radius-lg"
 >
-  <div class="usa-modal__content">
+  <div class="usa-modal__content maxw-mobile-lg">
     <div class="usa-modal__main">
       <h2 class="usa-modal__heading" id="modal-1-heading">
         Are you sure you want to delete an evaluator from this challenge?
       </h2>
       <div class="usa-prose">
-        <p id="modal-1-description">
+        <p id="modal-1-description" data-delete-evaluator-modal-target="modalDescription">
           Deleting an evaluator from the challenge will remove the evaluator from any submissions of this challenge that the evaluator is assigned to. It will also delete any of their completed or in progress evaluations for those submissions.
         </p>
       </div>
       <div class="usa-modal__footer">
         <ul class="usa-button-group">
           <li class="usa-button-group__item">
-            <button type="button" class="usa-button" id="confirmDelete">
+            <button type="button" class="usa-button" data-delete-evaluator-modal-target="confirmButton" data-action="click->delete-evaluator-modal#confirm">
               Yes
             </button>
           </li>
@@ -25,7 +26,7 @@
             <a
               href="#"
               class="usa-link"
-              data-close-modal
+              data-action="click->delete-evaluator-modal#close"
             >
               Back
             </a>
@@ -37,10 +38,11 @@
       type="button"
       class="usa-button usa-modal__close"
       aria-label="Close this window"
-      data-close-modal
+      data-action="click->delete-evaluator-modal#close"
     >
       <svg class="usa-icon" aria-hidden="true" focusable="false" role="img">
         <use xlink:href="/assets/img/sprite.svg#close"></use>
       </svg>
     </button>
   </div>
+</dialog>
