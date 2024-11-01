@@ -4,7 +4,7 @@ class EvaluatorInvitationsController < ApplicationController
   before_action :set_challenge
   before_action :set_evaluator_invitation
 
-  def resend_invitation
+  def resend
     if @evaluator_invitation.update(last_invite_sent: Time.current)
       # TODO: Implement sending the actual invitation email here
       redirect_to challenge_manage_evaluators_path(@challenge),

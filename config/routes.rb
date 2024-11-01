@@ -30,16 +30,14 @@ Rails.application.routes.draw do
   end
 
   resources :challenges do
-    resource :manage_evaluators, only: [] do
+    resources :manage_evaluators, only: [:index, :create] do
       collection do
-        get :index
-        post :create
         delete :destroy
       end
     end
     resources :evaluator_invitations, only: [] do
       member do
-        post 'resend_invitation'
+        post 'resend'
       end
     end
   end

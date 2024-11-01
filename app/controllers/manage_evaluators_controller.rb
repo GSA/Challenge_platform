@@ -29,7 +29,7 @@ class ManageEvaluatorsController < ApplicationController
   end
 
   def destroy
-    @phase = @challenge.phases.find(params[:phase_id])
+    @phase = Phase.find(params[:phase_id])
     result = process_evaluator_removal(params[:evaluator_type], params[:evaluator_id])
 
     render_json_response(result)
@@ -66,14 +66,11 @@ class ManageEvaluatorsController < ApplicationController
   end
 
   def fetch_evaluator_invitations
-    @challenge.evaluator_invitations.where(phase: @phase)
+    @phase.evaluator_invitations
   end
 
   def fetch_existing_evaluators
-    @challenge.evaluators.
-      joins(:challenge_phases_evaluators).
-      where(challenge_phases_evaluators: { phase: @phase }).
-      distinct
+    @phase.evaluators
   end
 
   # Create action helpers
@@ -146,26 +143,30 @@ class ManageEvaluatorsController < ApplicationController
   end
 
   def remove_user_evaluator(evaluator_id)
-    evaluator = @challenge.evaluators.find_by(id: evaluator_id)
-    return { success: false, message: 'Evaluator not found' } unless evaluator
-
-    cpe = ChallengePhasesEvaluator.find_by(challenge: @challenge, phase: @phase, user: evaluator)
-    if cpe&.destroy
+    evaluator = @challenge.evaluators.find(evaluator_id)
+    cpe = ChallengePhasesEvaluator.find_by!(challenge: @challenge, phase: @phase, user: evaluator)
+    if cpe.destroy
       { success: true, message: t('manage_evaluators.remove_user_evaluator.success') }
     else
       { success: false, message: t('manage_evaluators.remove_user_evaluator.failure') }
     end
+  rescue ActiveRecord::RecordNotFound
+    { success: false, message: 'Evaluator not found' }
   rescue StandardError => e
     { success: false, message: "Error: #{e.message}" }
   end
 
   def remove_evaluator_invitation(invitation_id)
-    invitation = @challenge.evaluator_invitations.find_by(id: invitation_id, phase: @phase)
-    if invitation&.destroy
+    invitation = @challenge.evaluator_invitations.find_by!(id: invitation_id, phase: @phase)
+    if invitation.destroy
       { success: true, message: t('manage_evaluators.remove_evaluator_invitation.success') }
     else
       { success: false, message: t('manage_evaluators.remove_evaluator_invitation.failure') }
     end
+  rescue ActiveRecord::RecordNotFound
+    { success: false, message: 'Invitation not found' }
+  rescue StandardError => e
+    { success: false, message: "Error: #{e.message}" }
   end
 
   def render_json_response(result)

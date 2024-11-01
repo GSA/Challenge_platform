@@ -47,6 +47,6 @@ en:
       success: "Evaluator invitation successfully removed from the challenge."
       failure: "Failed to remove evaluator invitation."      
   evaluator_invitations:
-    resend_invitation:
+    resend:
       success: "Invitation resent successfully."
       failure: "Failed to resend invitation."      
