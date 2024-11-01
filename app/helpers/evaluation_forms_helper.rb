@@ -10,7 +10,7 @@ module EvaluationFormsHelper
   end
 
   def evaluation_period(evaluation_form)
-    start_date = evaluation_form.closing_date.strftime("%m/%d/%Y")
+    start_date = evaluation_form.phase.end_date.strftime("%m/%d/%Y")
     end_date = evaluation_form.closing_date.strftime("%m/%d/%Y")
 
     "#{start_date} - #{end_date}"
