@@ -15,16 +15,48 @@
               <%= submission.id %>
               </th>
             <td data-label="Eligible for Evaluation">
-              <%= eligible_for_evaluation?(submission) %>
+              <div class="display-flex flex-align-center">  
+                <% if eligible_for_evaluation?(submission) %>
+                    <%= image_tag(
+                        "images/usa-icons/verified.svg",
+                        class: "usa-icon--size-3",
+                        alt: ""
+                    )%>
+                    Eligible for Evaluation
+                <% else  %>
+                    <%= image_tag(
+                        "images/usa-icons/highlight_off.svg",
+                        class: "usa-icon--size-3",
+                        alt: ""
+                    )%>
+                    Not Eligible for Evaluation
+                <% end %>
+              </div>  
             </td>
             <td data-label="Selected to Advance">
-              <%= selected_to_advance?(submission) %>
+              <div class="display-flex flex-align-center">  
+                <% if selected_to_advance?(submission) %>
+                    <%= image_tag(
+                        "images/usa-icons/star.svg",
+                        class: "usa-icon--size-7 icon-white margin-x-2",
+                        alt: ""
+                    )%>
+                    Selected to Advance
+                <% else  %>
+                    <%= image_tag(
+                        "images/usa-icons/star_outline.svg",
+                        class: "usa-icon--size-2",
+                        alt: ""
+                    )%>
+                    Not Selected to Advance
+                <% end %>
+              </div>  
             </td>
             <td data-label="Assigned Evaluators">
                 No evaluators assigned to this submission.
             </td>
             <td>
-                <%# average score goes here %>
+                N/A
             </td>
             <td>
               <div class="display-flex flex-no-wrap grid-row grid-gap-1">
