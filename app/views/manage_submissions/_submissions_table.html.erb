@@ -12,8 +12,8 @@
       <% @submissions.each do |submission| %>
           <tr>
             <th data-label="Submission ID" scope="row">
-              <%= submission.id %>
-              </th>
+              <span class="mobile-lg:display-none">Submission ID </span><%= submission.id %>
+            </th>
             <td data-label="Eligible for Evaluation">
               <div class="display-flex flex-align-center">  
                 <% if eligible_for_evaluation?(submission) %>
