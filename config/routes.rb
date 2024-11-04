@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get '/dashboard', to: "dashboard#index"
 
   resources :evaluations, only: [:index]
+  get '/evaluation_forms/confirmation', to: 'evaluation_forms#confirmation'
   resources :evaluation_forms
   post '/evaluation_forms/clone', to: 'evaluation_forms#create_from_existing'
   resources :manage_submissions, only: [:index]

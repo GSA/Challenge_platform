@@ -1,4 +1,15 @@
 <%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
+  <% if evaluation_form.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
+
+      <ul>
+        <% evaluation_form.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%
     if evaluation_form.challenge && evaluation_form.phase
       challenge = evaluation_form.challenge
@@ -80,6 +91,43 @@
           </div>
         </fieldset>
       </div>
+
+      <div data-controller="evaluation-criteria">
+        <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
+          <% if evaluation_form.evaluation_criteria.empty? %>
+            <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+              <div class="criteria-row margin-bottom-2" data-evaluation-criteria-target="criteriaRow">
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false, form_disabled: false } %>
+              </div>
+            <% end %>
+          <% else %>
+            <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
+              <div class="criteria-row margin-bottom-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>" data-evaluation-criteria-target="criteriaRow">
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false, form_disabled: disabled } %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+
+        <% if !disabled %>
+          <div class="usa-accordion">
+            <div id="criteria-template" class="criteria-row margin-bottom-2 display-none" data-evaluation-criteria-target="template">
+              <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
+                <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: true, form_disabled: disabled } %>
+              <% end %>
+            </div>
+          </div>
+        
+          <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button width-full display-flex flex-column", title: "Add another criteria", data: {action: "click->evaluation-criteria#addCriteria"} do %>
+            <%= image_tag(
+              "images/usa-icons/add_circle.svg",
+              class: "usa-icon icon-white circle-4 margin-bottom-1",
+              alt: "Add criteria plus icon"
+            )%>
+            <div class="font-sans-xs">Add another criteria</div>
+          <% end %>
+        <% end %>
+      </div>
     </li>
     <li class="usa-process-list__item">
       <h4 class="usa-process-list__heading">Evaluation Period</h4>
@@ -108,9 +156,6 @@
       <%= inline_error(evaluation_form, :closing_date) %>
     </li>
   </ol>
-
-
-  
 
   <div class="display-flex flex-wrap">
     <button type="submit" name="commit" class="mobile-lg:width-mobile usa-button font-body-2xs text-no-wrap mobile-lg:margin-left-2 mobile-lg:margin-bottom-4" style="background-color: #4d8055">

@@ -2,8 +2,9 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "./application";
 
-import EvaluationFormController from "./evaluation_form_controller"
-application.register("evaluation-form", EvaluationFormController)
-
+import EvaluationFormController from "./evaluation_form_controller";
+import EvaluationCriteriaController from "./evaluation_criteria_controller";
+application.register("evaluation-form", EvaluationFormController);
+application.register("evaluation-criteria", EvaluationCriteriaController);
