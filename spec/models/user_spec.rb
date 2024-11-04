@@ -147,7 +147,7 @@ RSpec.describe User do
       expect(created_user.status).to eq("pending")
     end
 
-    it 'creates active solver user if no matching token or email and non .gov email' do
+    it 'creates pending evaluator user if no matching token or email and non .gov email' do
       email = non_gov_userinfo[0]["email"]
       token = non_gov_userinfo[0]["sub"]
 
@@ -155,8 +155,8 @@ RSpec.describe User do
 
       expect(created_user.email).to eq(email)
       expect(created_user.token).to eq(token)
-      expect(created_user.role).to eq("solver")
-      expect(created_user.status).to eq("active")
+      expect(created_user.role).to eq("evaluator")
+      expect(created_user.status).to eq("pending")
     end
 
     it 'update user with token if matching email but no token set (from admin creation)' do

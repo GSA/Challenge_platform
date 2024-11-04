@@ -66,7 +66,7 @@ RSpec.describe ManageEvaluatorsController, type: :request do
     end
 
     context 'when inviting an existing user' do
-      let(:existing_user) { create(:user, role: 'evaluator') }
+      let(:existing_user) { create(:user, role: 'evaluator', status: 'pending') }
 
       it 'adds the user as an evaluator without creating a new invitation' do
         expect {
@@ -84,27 +84,64 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       end
     end
 
-    context 'when inviting a new user' do
-      let(:new_user_params) do
-        {
-          evaluator_invitation: {
-            email: 'new_evaluator@example.com',
-            phase_id: phase.id,
-            first_name: 'New',
-            last_name: 'Evaluator',
-            last_invite_sent: Time.current
-          }
-        }
-      end
+    context 'when inviting an existing user with an invitation' do
+      let(:existing_user) { create(:user, role: 'evaluator', status: 'pending') }
+      let!(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase, email: existing_user.email) }
 
-      it 'creates a new evaluator invitation' do
+      it 'adds the user as an evaluator and deletes only the specific invitation' do
         expect {
-          post challenge_manage_evaluators_path(challenge), params: new_user_params
-        }.to change(EvaluatorInvitation, :count).by(1)
+          post challenge_manage_evaluators_path(challenge), params: {
+            evaluator_invitation: {
+              email: existing_user.email,
+              phase_id: phase.id
+            }
+          }
+        }.to change(ChallengePhasesEvaluator, :count).by(1)
+          .and change(EvaluatorInvitation, :count).by(-1)
 
-        expect(ChallengePhasesEvaluator.count).to eq(0)
+        expect(EvaluatorInvitation.find_by(id: invitation.id)).to be_nil
         expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
-        expect(flash[:notice]).to include("Invitation sent to")
+        expect(flash[:notice]).to include("has been added as an evaluator for this phase")
+      end
+    end
+
+    context 'when adding an existing user with a non-evaluator role' do
+      let(:existing_user) { create(:user, role: 'solver', status: 'pending') }
+
+      it 'adds the user as an evaluator without changing their role' do
+        expect {
+          post challenge_manage_evaluators_path(challenge), params: {
+            evaluator_invitation: {
+              email: existing_user.email,
+              phase_id: phase.id
+            }
+          }
+        }.to change(ChallengePhasesEvaluator, :count).by(1)
+
+        existing_user.reload
+        expect(existing_user.role).to eq('solver')
+        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        expect(flash[:notice]).to include("has been added as an evaluator for this phase")
+      end
+    end
+
+    context 'when adding a new user with default evaluator role' do
+      let(:existing_evaluator) { create(:user, role: 'evaluator', status: 'pending') }
+
+      it 'adds the user without changing their role' do
+        expect {
+          post challenge_manage_evaluators_path(challenge), params: {
+            evaluator_invitation: {
+              email: existing_evaluator.email,
+              phase_id: phase.id
+            }
+          }
+        }.to change(ChallengePhasesEvaluator, :count).by(1)
+
+        existing_evaluator.reload
+        expect(existing_evaluator.role).to eq('evaluator')
+        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        expect(flash[:notice]).to include("has been added as an evaluator for this phase")
       end
     end
   end

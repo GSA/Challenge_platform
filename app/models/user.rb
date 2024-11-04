@@ -133,7 +133,7 @@ class User < ApplicationRecord
     if default_challenge_manager?(email)
       %w[challenge_manager pending]
     else
-      %w[solver active]
+      %w[evaluator pending]
     end
   end
 

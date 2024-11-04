@@ -78,13 +78,15 @@ class ManageEvaluatorsController < ApplicationController
 
   # Create action helpers
   def process_evaluator_invitation(email)
-    existing_invitation = @challenge.evaluator_invitations.find_by(email:, phase: @phase)
-    user = User.find_by(email:)
+    user = User.find_by(email: email)
+    existing_invitation = @challenge.evaluator_invitations.find_by(email: email, phase: @phase)
 
-    if existing_invitation
+    if user
+      result = add_user_as_evaluator(user)
+      existing_invitation&.destroy if result[:success]
+      result
+    elsif existing_invitation
       resend_invitation(existing_invitation)
-    elsif user && valid_evaluator_role?(user)
-      add_user_as_evaluator(user)
     else
       create_new_invitation(email)
     end
@@ -105,8 +107,11 @@ class ManageEvaluatorsController < ApplicationController
   end
 
   def add_user_as_evaluator(user)
-    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
+    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user: user)
+    invitation = @challenge.evaluator_invitations.find_by(email: user.email, phase: @phase)
+
     if cpe.persisted?
+      invitation&.destroy
       { success: true, message: "#{user.email} has been added as an evaluator for this phase." }
     else
       { success: false, message: "Failed to add #{user.email} as an evaluator." }
