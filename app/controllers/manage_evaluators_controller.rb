@@ -4,12 +4,11 @@ class ManageEvaluatorsController < ApplicationController
   include ManageEvaluatorsHelper
 
   before_action :set_challenge
+  before_action :set_phases, only: [:index]
 
   VALID_EVALUATOR_ROLES = %w[evaluator solver challenge_manager].freeze
 
   def index
-    @phases = @challenge.phases.order(:start_date)
-
     if @phases.empty?
       handle_empty_phases
     else
@@ -29,7 +28,7 @@ class ManageEvaluatorsController < ApplicationController
   end
 
   def destroy
-    @phase = Phase.find(params[:phase_id])
+    @phase = @challenge.phases.find(params[:phase_id])
     result = process_evaluator_removal(params[:evaluator_type], params[:evaluator_id])
 
     render_json_response(result)
@@ -39,7 +38,11 @@ class ManageEvaluatorsController < ApplicationController
 
   # Setup methods
   def set_challenge
-    @challenge = Challenge.find(params[:challenge_id])
+    @challenge = current_user.challenge_manager_challenges.find(params[:challenge_id])
+  end
+
+  def set_phases
+    @phases = @challenge.phases.order(:start_date)
   end
 
   def evaluator_invitation_params
