@@ -62,4 +62,29 @@ RSpec.describe ChallengePhasesEvaluator, type: :model do
     expect(phase.evaluators).to include(user)
     expect(user.evaluated_phases).to include(phase)
   end
+
+  context "with invalid user role" do
+    let(:invalid_user) { create(:user, role: User::VALID_EVALUATOR_ROLES.first) }
+
+    before do
+      invalid_user.update_column(:role, 'admin')
+    end
+
+    it "is invalid" do
+      evaluator = build(:challenge_phases_evaluator, challenge:, phase:, user: invalid_user)
+      expect(evaluator).not_to be_valid
+      expect(evaluator.errors[:user]).to include("must have a valid evaluator role")
+    end
+  end
+
+  User::VALID_EVALUATOR_ROLES.each do |role|
+    context "with #{role} role" do
+      let(:valid_user) { create(:user, role: role) }
+
+      it "is valid" do
+        evaluator = build(:challenge_phases_evaluator, challenge:, phase:, user: valid_user)
+        expect(evaluator).to be_valid
+      end
+    end
+  end
 end
