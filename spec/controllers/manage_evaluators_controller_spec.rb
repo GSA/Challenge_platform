@@ -88,7 +88,11 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       let(:existing_user) { create(:user, role: 'evaluator', status: 'pending') }
       let!(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase, email: existing_user.email) }
 
-      it 'adds the user as an evaluator and deletes only the specific invitation' do
+      before do
+        ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: existing_user)
+      end
+
+      it 'adds the user as an evaluator without creating a new ChallengePhasesEvaluator' do
         expect {
           post challenge_manage_evaluators_path(challenge), params: {
             evaluator_invitation: {
@@ -96,12 +100,12 @@ RSpec.describe ManageEvaluatorsController, type: :request do
               phase_id: phase.id
             }
           }
-        }.to change(ChallengePhasesEvaluator, :count).by(1)
-          .and change(EvaluatorInvitation, :count).by(-1)
+        }.not_to change(ChallengePhasesEvaluator, :count)
 
-        expect(EvaluatorInvitation.find_by(id: invitation.id)).to be_nil
+        expect(ChallengePhasesEvaluator.where(challenge: challenge, phase: phase, user: existing_user).count).to eq(1)
+        expect(EvaluatorInvitation.find_by(id: invitation.id)).to be_present
         expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
-        expect(flash[:notice]).to include("has been added as an evaluator for this phase")
+        expect(flash[:notice]).to include("has already been added as an evaluator for this phase")
       end
     end
 
@@ -142,6 +146,29 @@ RSpec.describe ManageEvaluatorsController, type: :request do
         expect(existing_evaluator.role).to eq('evaluator')
         expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
         expect(flash[:notice]).to include("has been added as an evaluator for this phase")
+      end
+    end
+
+    context 'when adding an existing user with an invalid role' do
+      let(:existing_user) { create(:user, role: 'evaluator', status: 'pending') }
+
+      before do
+        existing_user.update_column(:role, 'admin') # invalid evaluator role
+      end
+
+      it 'does not add the user as an evaluator and returns an error' do
+        initial_count = ChallengePhasesEvaluator.count
+
+        post challenge_manage_evaluators_path(challenge), params: {
+          evaluator_invitation: {
+            email: existing_user.email,
+            phase_id: phase.id
+          }
+        }
+
+        expect(ChallengePhasesEvaluator.count).to eq(initial_count)
+        expect(response).to render_template(:index)
+        expect(flash[:alert]).to include("does not have a valid evaluator role")
       end
     end
   end

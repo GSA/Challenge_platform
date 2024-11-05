@@ -6,8 +6,6 @@ class ManageEvaluatorsController < ApplicationController
   before_action :set_challenge
   before_action :set_phases, only: [:index]
 
-  VALID_EVALUATOR_ROLES = %w[evaluator solver challenge_manager].freeze
-
   def index
     if @phases.empty?
       handle_empty_phases
@@ -18,12 +16,12 @@ class ManageEvaluatorsController < ApplicationController
 
   def create
     @phase = @challenge.phases.find(evaluator_invitation_params[:phase_id])
-    result = process_evaluator_invitation(evaluator_invitation_params[:email])
+    user = User.find_by(email: evaluator_invitation_params[:email])
 
-    if result[:success]
-      handle_successful_creation(result)
+    if existing_evaluator?(user)
+      handle_existing_evaluator(user)
     else
-      handle_failed_creation
+      process_new_evaluator
     end
   end
 
@@ -45,6 +43,10 @@ class ManageEvaluatorsController < ApplicationController
     @phases = @challenge.phases.order(:start_date)
   end
 
+  def existing_evaluator?(user)
+    user && ChallengePhasesEvaluator.exists?(challenge: @challenge, phase: @phase, user: user)
+  end
+
   def evaluator_invitation_params
     params.require(:evaluator_invitation).permit(
       :first_name, :last_name, :email, :challenge_id, :phase_id, :last_invite_sent
@@ -60,61 +62,44 @@ class ManageEvaluatorsController < ApplicationController
 
   def handle_existing_phases
     @phase = select_phase
-    @evaluator_invitations = fetch_evaluator_invitations
-    @existing_evaluators = fetch_existing_evaluators
+    fetch_evaluators_and_invitations
   end
 
   def select_phase
     params[:phase_id] ? @phases.find(params[:phase_id]) : @phases.first
   end
 
-  def fetch_evaluator_invitations
-    @phase.evaluator_invitations
-  end
-
-  def fetch_existing_evaluators
-    @phase.evaluators
+  def fetch_evaluators_and_invitations
+    @evaluator_invitations = @phase.evaluator_invitations
+    @existing_evaluators = @phase.evaluators
   end
 
   # Create action helpers
+  def process_new_evaluator
+    result = process_evaluator_invitation(evaluator_invitation_params[:email])
+    result[:success] ? handle_successful_creation(result) : handle_failed_creation(result[:message])
+  end
+
   def process_evaluator_invitation(email)
     user = User.find_by(email: email)
-    existing_invitation = @challenge.evaluator_invitations.find_by(email: email, phase: @phase)
-
     if user
-      result = add_user_as_evaluator(user)
-      existing_invitation&.destroy if result[:success]
-      result
-    elsif existing_invitation
-      resend_invitation(existing_invitation)
+      add_user_as_evaluator(user)
     else
-      create_new_invitation(email)
+      existing_invitation = @challenge.evaluator_invitations.find_by(email: email, phase: @phase)
+      existing_invitation ? resend_invitation(existing_invitation) : create_new_invitation(email)
     end
   end
 
-  # prevent duplicate evaluator invitations
-  def resend_invitation(invitation)
-    invitation.update(last_invite_sent: Time.current) # only update last_invite_sent for now
-    {
-      success: true,
-      message: "An invitation to this challenge has already been sent to " \
-               "#{invitation.email}. Invitation has been resent."
-    }
-  end
-
-  def valid_evaluator_role?(user)
-    VALID_EVALUATOR_ROLES.include?(user.role)
-  end
-
   def add_user_as_evaluator(user)
-    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user: user)
-    invitation = @challenge.evaluator_invitations.find_by(email: user.email, phase: @phase)
-
-    if cpe.persisted?
-      invitation&.destroy
-      { success: true, message: "#{user.email} has been added as an evaluator for this phase." }
+    if User::VALID_EVALUATOR_ROLES.include?(user.role)
+      cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user: user)
+      if cpe.persisted?
+        { success: true, message: "#{user.email} has been added as an evaluator for this phase." }
+      else
+        { success: false, message: "Failed to add #{user.email} as an evaluator." }
+      end
     else
-      { success: false, message: "Failed to add #{user.email} as an evaluator." }
+      { success: false, message: "#{user.email} does not have a valid evaluator role." }
     end
   end
 
@@ -132,10 +117,25 @@ class ManageEvaluatorsController < ApplicationController
                 notice: result[:message]
   end
 
-  def handle_failed_creation
-    @evaluator_invitations = fetch_evaluator_invitations
-    @existing_evaluators = fetch_existing_evaluators
+  def handle_failed_creation(error_message)
+    flash.now[:alert] = error_message
+    fetch_evaluators_and_invitations
     render :index
+  end
+
+  # prevent duplicate evaluators or evauator invitations
+  def handle_existing_evaluator(user)
+    flash[:notice] = "#{user.email} has already been added as an evaluator for this phase."
+    redirect_to challenge_manage_evaluators_path(@challenge, phase_id: @phase.id)
+  end
+
+  def resend_invitation(invitation)
+    invitation.update(last_invite_sent: Time.current) # only update last_invite_sent for now
+    {
+      success: true,
+      message: "An invitation to this challenge has already been sent to " \
+               "#{invitation.email}. Invitation has been resent."
+    }
   end
 
   # Destroy action helpers
@@ -179,7 +179,6 @@ class ManageEvaluatorsController < ApplicationController
 
   def render_json_response(result)
     if result[:success]
-      flash[:notice] = result[:message]
       render json: { success: true, message: result[:message] }
     else
       render json: { success: false, message: result[:message] }, status: :unprocessable_entity
