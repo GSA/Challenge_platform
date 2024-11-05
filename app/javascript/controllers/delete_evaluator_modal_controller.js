@@ -44,14 +44,13 @@ export default class extends Controller {
   deleteEvaluator(forceDelete = false) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content
   
-    fetch(`/challenges/${this.challengeIdValue}/manage_evaluators`, {
+    fetch(`/challenges/${this.challengeIdValue}/manage_evaluators/${this.evaluatorIdValue}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': csrfToken
       },
       body: JSON.stringify({
-        evaluator_id: this.evaluatorIdValue,
         evaluator_type: this.evaluatorTypeValue,
         phase_id: this.phaseIdValue,
         force_delete: forceDelete
