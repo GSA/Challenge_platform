@@ -7,7 +7,7 @@ class ManageSubmissionsController < ApplicationController
   end
 
   def by_challenge_phase
-    @phase = Phase.find(params[:phase_id])
+    @phase = current_user.challenge_manager_challenges.phases.find(params[:phase_id])
     @submissions = @phase.submissions
   end   
 end
