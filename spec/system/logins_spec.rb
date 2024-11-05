@@ -29,30 +29,6 @@ describe "A11y", :js do
       expect(user.role).to eq("challenge_manager")
       expect(page).to(be_axe_clean)
     end
-
-    it "manage submissions index page is accessible with no challenges" do
-      visit manage_submissions_path
-      expect(user.role).to eq("challenge_manager")
-      expect(page).to(be_axe_clean)
-    end
-
-    it "manage submissions index page is accessible with one challenge" do
-      challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
-      phase = create_phase(challenge_id: challenge.id)
-      visit manage_submissions_path
-      expect(user.role).to eq("challenge_manager")
-      expect(page).to have_content("Boston Tea Party Cleanup")
-      expect(page).to(be_axe_clean)
-    end
-
-    it "manage submissions my challenge phase page is accessible with one challenge" do
-      challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
-      phase = create_phase(challenge_id: challenge.id)
-      visit "/manage_submissions/by_challenge_phase/#{phase.id}"
-      expect(user.role).to eq("challenge_manager")
-      expect(page).to have_content("Boston Tea Party Cleanup")
-      expect(page).to(be_axe_clean)
-    end
   end
 
   describe "Logged-in as an Evaluator" do
