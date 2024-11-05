@@ -179,6 +179,7 @@ class ManageEvaluatorsController < ApplicationController
 
   def render_json_response(result)
     if result[:success]
+      flash[:notice] = result[:message]
       render json: { success: true, message: result[:message] }
     else
       render json: { success: false, message: result[:message] }, status: :unprocessable_entity
