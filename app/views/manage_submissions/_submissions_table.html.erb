@@ -72,9 +72,11 @@
             </td>
             <td>
               <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-                <button class="usa-button font-body-2xs text-no-wrap">
-                  View Submission
-                </button>
+                <%= link_to manage_submission_path(submission) do %>
+                    <button class="usa-button font-body-2xs text-no-wrap">
+                        View Submission
+                    </button>
+                <% end %>    
               </div>  
             </td>  
           </tr>
