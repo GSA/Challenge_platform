@@ -5,7 +5,7 @@ RSpec.describe ManageEvaluatorsController, type: :request do
   let(:challenge) { create(:challenge) }
   let(:phase) { create(:phase, challenge: challenge) }
   let(:evaluator) { create(:user, role: 'evaluator') }
-  let(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase) }
+  let(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase, email: 'invitation@example.com') }
 
   before do
     ChallengeManager.create(user: user, challenge: challenge)
@@ -84,15 +84,14 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       end
     end
 
-    context 'when inviting an existing user with an invitation' do
+    context 'when inviting a user who is already an evaluator for the challenge phase' do
       let(:existing_user) { create(:user, role: 'evaluator', status: 'pending') }
-      let!(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase, email: existing_user.email) }
 
       before do
         ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: existing_user)
       end
 
-      it 'adds the user as an evaluator without creating a new ChallengePhasesEvaluator' do
+      it 'it does not create an additional ChallengePhaseEvaluator' do
         expect {
           post challenge_manage_evaluators_path(challenge), params: {
             evaluator_invitation: {
@@ -100,12 +99,29 @@ RSpec.describe ManageEvaluatorsController, type: :request do
               phase_id: phase.id
             }
           }
-        }.not_to change(ChallengePhasesEvaluator, :count)
+        }.to_not change(ChallengePhasesEvaluator, :count)
 
         expect(ChallengePhasesEvaluator.where(challenge: challenge, phase: phase, user: existing_user).count).to eq(1)
-        expect(EvaluatorInvitation.find_by(id: invitation.id)).to be_present
         expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
         expect(flash[:notice]).to include("has already been added as an evaluator for this phase")
+      end
+    end
+
+    context 'when inviting a user who already has an invitation for the challenge phase' do
+      it 'does not create an additional EvaluatorInvitation' do
+        invitation # create existing invitation
+
+        expect {
+          post challenge_manage_evaluators_path(challenge), params: {
+            evaluator_invitation: {
+              email: invitation.email,
+              phase_id: phase.id
+            }
+          }
+        }.not_to change(EvaluatorInvitation, :count)
+
+        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        expect(flash[:notice]).to include("An invitation to this challenge has already been sent to #{invitation.email}. Invitation has been resent.")
       end
     end
 
@@ -150,11 +166,7 @@ RSpec.describe ManageEvaluatorsController, type: :request do
     end
 
     context 'when adding an existing user with an invalid role' do
-      let(:existing_user) { create(:user, role: 'evaluator', status: 'pending') }
-
-      before do
-        existing_user.update_column(:role, 'admin') # invalid evaluator role
-      end
+      let(:existing_user) { create(:user, role: 'admin') }
 
       it 'does not add the user as an evaluator and returns an error' do
         initial_count = ChallengePhasesEvaluator.count

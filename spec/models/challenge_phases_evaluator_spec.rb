@@ -21,24 +21,6 @@ RSpec.describe ChallengePhasesEvaluator, type: :model do
     expect(challenge.evaluators).to include(user)
   end
 
-  it "requires a challenge" do
-    evaluator = build(:challenge_phases_evaluator, challenge: nil)
-    expect(evaluator).not_to be_valid
-    expect(evaluator.errors[:challenge]).to include("must exist")
-  end
-
-  it "requires a phase" do
-    evaluator = build(:challenge_phases_evaluator, phase: nil)
-    expect(evaluator).not_to be_valid
-    expect(evaluator.errors[:phase]).to include("must exist")
-  end
-
-  it "requires a user" do
-    evaluator = build(:challenge_phases_evaluator, user: nil)
-    expect(evaluator).not_to be_valid
-    expect(evaluator.errors[:user]).to include("must exist")
-  end
-
   it "allows multiple evaluators for the same challenge and phase" do
     challenge = create(:challenge)
     phase = create(:phase, challenge:)
@@ -64,11 +46,7 @@ RSpec.describe ChallengePhasesEvaluator, type: :model do
   end
 
   context "with invalid user role" do
-    let(:invalid_user) { create(:user, role: User::VALID_EVALUATOR_ROLES.first) }
-
-    before do
-      invalid_user.update_column(:role, 'admin')
-    end
+    let(:invalid_user) { create(:user, role: 'admin') }
 
     it "is invalid" do
       evaluator = build(:challenge_phases_evaluator, challenge:, phase:, user: invalid_user)

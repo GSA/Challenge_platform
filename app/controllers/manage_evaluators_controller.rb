@@ -123,7 +123,7 @@ class ManageEvaluatorsController < ApplicationController
     render :index
   end
 
-  # prevent duplicate evaluators or evauator invitations
+  # prevent duplicate evaluators or evaluator invitations
   def handle_existing_evaluator(user)
     flash[:notice] = "#{user.email} has already been added as an evaluator for this phase."
     redirect_to challenge_manage_evaluators_path(@challenge, phase_id: @phase.id)

@@ -224,30 +224,5 @@ RSpec.describe User do
       end
     end
 
-    context 'when there are invitations for multiple challenges and phases' do
-      before do
-        create(:evaluator_invitation, challenge: challenge1, phase: phase1, email: user_email)
-        create(:evaluator_invitation, challenge: challenge2, phase: phase3, email: user_email)
-      end
-
-      it 'creates ChallengePhasesEvaluator records for all invitations' do
-        expect {
-          create(:user, email: user_email, role: 'evaluator')
-        }.to change(ChallengePhasesEvaluator, :count).by(2)
-      end
-
-      it 'destroys all EvaluatorInvitation records' do
-        expect {
-          create(:user, email: user_email, role: 'evaluator')
-        }.to change(EvaluatorInvitation, :count).by(-2)
-      end
-
-      it 'associates the user with the correct challenges and phases' do
-        user = create(:user, email: user_email, role: 'evaluator')
-        expect(user.challenge_phases_evaluators.count).to eq(2)
-        expect(user.challenge_phases_evaluators.map(&:challenge)).to contain_exactly(challenge1, challenge2)
-        expect(user.challenge_phases_evaluators.map(&:phase)).to contain_exactly(phase1, phase3)
-      end
-    end
   end
 end

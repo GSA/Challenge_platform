@@ -16,7 +16,7 @@ class ChallengePhasesEvaluator < ApplicationRecord
   belongs_to :phase
   belongs_to :user
 
-  validate :user_has_valid_role, if: -> { user.present? }
+  validate :user_has_valid_role
 
   private
 
