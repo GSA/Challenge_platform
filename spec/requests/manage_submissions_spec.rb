@@ -63,7 +63,7 @@ RSpec.describe "ManageSubmissions" do
 
         get "/manage_submissions/by_challenge_phase/#{phase.id}"
         expect(response.body).to include("Boston Tea Party Cleanup")
-        
+
         expect(response.body).to include("This challenge phase does not currently have any submissions.")
       end
 
@@ -74,9 +74,9 @@ RSpec.describe "ManageSubmissions" do
 
         get "/manage_submissions/by_challenge_phase/#{phase.id}"
         expect(response.body).to include("Boston Tea Party Cleanup")
-        expect(response.body).to include("#{submission.id}")
+        expect(response.body).to include(submission.id.to_s)
       end
-      
+
       it "does not render submissions for a challenge the user is not assigned to" do
         challenge = create_challenge(title: "Star Spangled Banister")
         phase = create_phase(challenge_id: challenge.id)

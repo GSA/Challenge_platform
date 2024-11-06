@@ -9,7 +9,6 @@ class ManageSubmissionsController < ApplicationController
   def by_challenge_phase
     @phase = Phase.where(id: params[:phase_id],
                          challenge_id: current_user.challenge_manager_challenges.collect(&:id)).first
-    @submissions = if @phase then @phase.submissions else [] end
+    @submissions = @phase ? @phase.submissions : []
   end
 end
- 
