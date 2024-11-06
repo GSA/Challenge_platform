@@ -174,4 +174,55 @@ RSpec.describe User do
       expect(updated_user.token).to eq(token)
     end
   end
+
+  describe '#accept_evaluator_invitation' do
+    let(:challenge1) { create(:challenge) }
+    let(:challenge2) { create(:challenge) }
+    let(:phase1) { create(:phase, challenge: challenge1) }
+    let(:phase2) { create(:phase, challenge: challenge1) }
+    let(:phase3) { create(:phase, challenge: challenge2) }
+    let(:user_email) { 'test@example.com' }
+
+    context 'when there are existing evaluator invitations' do
+      before do
+        create(:evaluator_invitation, challenge: challenge1, phase: phase1, email: user_email)
+        create(:evaluator_invitation, challenge: challenge1, phase: phase2, email: user_email)
+        create(:evaluator_invitation, challenge: challenge2, phase: phase3, email: user_email)
+      end
+
+      it 'creates ChallengePhasesEvaluator records for all invitations when user is created' do
+        expect {
+          create(:user, email: user_email, role: 'evaluator')
+        }.to change(ChallengePhasesEvaluator, :count).by(3)
+      end
+
+      it 'destroys all EvaluatorInvitation records when user is created' do
+        expect {
+          create(:user, email: user_email, role: 'evaluator')
+        }.to change(EvaluatorInvitation, :count).by(-3)
+      end
+
+      it 'associates the new user with the correct challenges and phases' do
+        user = create(:user, email: user_email, role: 'evaluator')
+        expect(user.challenge_phases_evaluators.count).to eq(3)
+        expect(user.challenge_phases_evaluators.map(&:challenge)).to contain_exactly(challenge1, challenge1, challenge2)
+        expect(user.challenge_phases_evaluators.map(&:phase)).to contain_exactly(phase1, phase2, phase3)
+      end
+    end
+
+    context 'when there are no existing evaluator invitations' do
+      it 'does not create any ChallengePhasesEvaluator records' do
+        expect {
+          create(:user, email: user_email)
+        }.not_to change(ChallengePhasesEvaluator, :count)
+      end
+
+      it 'does not destroy any EvaluatorInvitation records' do
+        expect {
+          create(:user, email: user_email)
+        }.not_to change(EvaluatorInvitation, :count)
+      end
+    end
+
+  end
 end

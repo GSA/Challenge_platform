@@ -3,7 +3,7 @@
 module ManageEvaluatorsHelper
   def user_status(evaluator, challenge)
     if evaluator.is_a?(User)
-      user_status_for_existing_user(evaluator, challenge)
+      evaluator.status == 'active' ? "Available" : "Awaiting Approval"
     else
       "Invite Sent"
     end
@@ -17,16 +17,6 @@ module ManageEvaluatorsHelper
         count
     else
       0
-    end
-  end
-
-  private
-
-  def user_status_for_existing_user(user, challenge)
-    if challenge.challenge_phases_evaluators.exists?(user_id: user.id)
-      user.status == 'active' ? "Available" : "Awaiting Approval"
-    else
-      "Invite Sent"
     end
   end
 end

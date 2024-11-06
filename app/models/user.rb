@@ -33,6 +33,10 @@
 #  recertification_expired_at :datetime
 #
 class User < ApplicationRecord
+  after_create :accept_evaluator_invitation
+
+  VALID_EVALUATOR_ROLES = %w[evaluator solver challenge_manager].freeze
+
   belongs_to :agency, optional: true
 
   has_many :challenges, dependent: :destroy
@@ -130,7 +134,9 @@ class User < ApplicationRecord
   end
 
   def self.default_role_and_status_for_email(email)
-    if default_challenge_manager?(email)
+    if EvaluatorInvitation.exists?(email: email)
+      %w[evaluator pending]
+    elsif default_challenge_manager?(email)
       %w[challenge_manager pending]
     else
       %w[solver active]
@@ -139,5 +145,14 @@ class User < ApplicationRecord
 
   def self.default_challenge_manager?(email)
     /\.(gov|mil)$/.match?(email)
+  end
+
+  private
+
+  def accept_evaluator_invitation
+    EvaluatorInvitation.where(email: self.email).each do |invite|
+      ChallengePhasesEvaluator.create(challenge: invite.challenge, phase: invite.phase, user: self)
+      invite.destroy
+    end
   end
 end
