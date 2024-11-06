@@ -56,6 +56,34 @@ RSpec.describe "ManageSubmissions" do
         expect(response.body).to include("Turning monster energy into pepto bismol")
         expect(response.body).to include("Frodo")
       end
+
+      it "renders an empty list of submissions for a user's challenge" do
+        challenge = create_challenge(user: challenge_user, title: "Boston Tea Party Cleanup")
+        phase = create_phase(challenge_id: challenge.id)
+
+        get challenge_manage_submission_path(challenge, phase)
+        expect(response.body).to include("Boston Tea Party Cleanup")
+
+        expect(response.body).to include("This challenge phase does not currently have any submissions.")
+      end
+
+      it "renders a list of submissions for a user's challenge" do
+        challenge = create_challenge(user: challenge_user, title: "Boston Tea Party Cleanup")
+        phase = create_phase(challenge_id: challenge.id)
+        submission = create(:submission, challenge: challenge)
+
+        get challenge_manage_submission_path(challenge, phase)
+        expect(response.body).to include("Boston Tea Party Cleanup")
+        expect(response.body).to include(submission.id.to_s)
+      end
+
+      it "does not render submissions for a challenge the user is not assigned to" do
+        challenge = create_challenge(title: "Star Spangled Banister")
+        phase = create_phase(challenge_id: challenge.id)
+
+        get challenge_manage_submission_path(challenge, phase)
+        expect(response).to have_http_status(:not_found)
+      end
     end
 
     context "when logged in as an evaluator" do
