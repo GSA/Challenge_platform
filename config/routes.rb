@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   resources :evaluation_forms
   post '/evaluation_forms/clone', to: 'evaluation_forms#create_from_existing'
   resources :manage_submissions, only: [:index]
+  resources :challenges, only: [] do
+    resources :manage_submissions, only: [:show]
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

@@ -41,9 +41,11 @@
                   Manage Evaluators
                 <% end %>
                 <% unless phase.submissions.empty? %>
-                  <button class="usa-button font-body-2xs text-no-wrap">
-                    View Submissions
-                  </button>
+                  <%= link_to(challenge_manage_submission_path(challenge, phase)) do %>
+                    <button class="usa-button font-body-2xs text-no-wrap">
+                      View Submissions
+                    </button>
+                  <% end %>
                 <% end %>  
               </div>  
             </td>
