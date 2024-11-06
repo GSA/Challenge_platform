@@ -71,7 +71,7 @@
                 </th>
                 <td data-label="Email address" class="text-top"><%= evaluator.email %></td>
                 <td data-label="User role" class="text-top"><%= evaluator.role.titleize %></td>
-                <td data-label="User status" class="text-top"><%= user_status(evaluator, @challenge) %></td>
+                <td data-label="User status" class="text-top"><%= user_status(evaluator) %></td>
                 <td data-label="Assigned submissions" class="text-top"><%= assigned_submissions_count(evaluator, @challenge, @phase) %></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
