@@ -30,7 +30,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :challenges do
+  resources :challenges, only: [] do
     resources :manage_evaluators, only: [:index, :create, :destroy]
     resources :evaluator_invitations, only: [] do
       member do
