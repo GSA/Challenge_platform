@@ -61,7 +61,7 @@ RSpec.describe "ManageSubmissions" do
         challenge = create_challenge(user: challenge_user, title: "Boston Tea Party Cleanup")
         phase = create_phase(challenge_id: challenge.id)
 
-        get "/manage_submissions/by_challenge_phase/#{phase.id}"
+        get challenge_manage_submission_path(challenge, phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
 
         expect(response.body).to include("This challenge phase does not currently have any submissions.")
@@ -72,7 +72,7 @@ RSpec.describe "ManageSubmissions" do
         phase = create_phase(challenge_id: challenge.id)
         submission = create(:submission, challenge: challenge)
 
-        get "/manage_submissions/by_challenge_phase/#{phase.id}"
+        get challenge_manage_submission_path(challenge, phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
         expect(response.body).to include(submission.id.to_s)
       end
@@ -81,9 +81,8 @@ RSpec.describe "ManageSubmissions" do
         challenge = create_challenge(title: "Star Spangled Banister")
         phase = create_phase(challenge_id: challenge.id)
 
-        get "/manage_submissions/by_challenge_phase/#{phase.id}"
-        expect(response.body).not_to include("Star Spangled Banister")
-        expect(response.body).to include("You are not assigned to this challenge.")
+        get challenge_manage_submission_path(challenge, phase)
+        expect(response).to have_http_status(:not_found)
       end
     end
 

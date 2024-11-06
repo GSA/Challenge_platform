@@ -6,9 +6,9 @@ class ManageSubmissionsController < ApplicationController
     @challenges = current_user.challenge_manager_challenges
   end
 
-  def by_challenge_phase
-    @phase = Phase.where(id: params[:phase_id],
-                         challenge_id: current_user.challenge_manager_challenges.collect(&:id)).first
-    @submissions = @phase ? @phase.submissions : []
+  def show
+    @challenge = current_user.challenge_manager_challenges.find(params[:challenge_id])
+    @phase = @challenge.phases.find(params[:id])
+    @submissions = @phase.submissions
   end
 end
