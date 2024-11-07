@@ -85,6 +85,26 @@ RSpec.describe "ManageSubmissions" do
         expect(response.body).not_to include("Star Spangled Banister")
         expect(response.body).to include("You are not assigned to this challenge.")
       end
+
+      it "renders a details page for an individual submission" do
+        challenge = create_challenge(user: challenge_user)
+        phase = create_phase(challenge_id: challenge.id)
+        submission = create(:submission, challenge: phase.challenge, brief_description: "This submission has legs.")
+
+        get manage_submission_path(submission)
+        expect(response.body).to include(submission.id.to_s)
+        expect(response.body).to include(submission.brief_description)
+      end
+      
+      it "does not render submission details for a challenge the user is not assigned to" do
+        challenge = create_challenge()
+        phase = create_phase(challenge_id: challenge.id)
+        submission = create(:submission, challenge: phase.challenge, brief_description: "This submission has teeth.")
+
+        get manage_submission_path(submission)
+        expect(response.body).not_to include(submission.brief_description)
+        expect(response.body).to include("You are not assigned to manage this submission.")
+      end  
     end
 
     context "when logged in as an evaluator" do

@@ -2,29 +2,31 @@
     <h1>Submission ID <%= @submission.id %></h1>
     <p class="text-normal">View submission information and assign evaluators to evaluate the submission.</p>
 
-    <h3>Brief Description:</h3>
-    <p class="text-normal"><%= @submission.brief_description %></p>
+    <div class="usa-accordion">
+        <h3>Brief Description:</h3>
+        <p class="text-normal"><%= @submission.brief_description %></p>
 
-    <h3>Description:</h3>
-    <p class="text-normal"><%= @submission.description %></p>
+        <h3>Description:</h3>
+        <p class="text-normal"><%= @submission.description %></p>
 
-    <h3>External URL:</h3>
-    <a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
+        <h3>External URL:</h3>
+        <a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
 
-    <h3>Status:</h3>
-    <p class="text-normal"><%= @submission.status.capitalize %></p>
+        <h3>Status:</h3>
+        <p class="text-normal"><%= @submission.status.capitalize %></p>
 
-    <h3>Submitter:</h3>
-    <p class="text-normal"><%= @submission.submitter.email %></p>
+        <h3>Submitter:</h3>
+        <p class="text-normal"><%= @submission.submitter.email %></p>
 
-    <h3>Last Updated Date:</h3>
-    <p class="text-normal"><%= @submission.updated_at %></p>
+        <h3>Last Updated Date:</h3>
+        <p class="text-normal"><%= @submission.updated_at %></p>
 
-    <h3>Submission ID:</h3>
-    <p class="text-normal"><%= @submission.id %></p>
+        <h3>Submission ID:</h3>
+        <p class="text-normal"><%= @submission.id %></p>
 
-    <h3>Title:</h3>
-    <p class="text-normal"><%= @submission.title %></p>
+        <h3>Title:</h3>
+        <p class="text-normal"><%= @submission.title %></p>
+    </div>    
 <% else %>
     <p class="text-normal">You are not assigned to manage this submission.</p>
 <% end %>        
