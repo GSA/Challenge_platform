@@ -15,6 +15,24 @@ Rails.application.routes.draw do
   resources :evaluation_forms
   post '/evaluation_forms/clone', to: 'evaluation_forms#create_from_existing'
   resources :manage_submissions, only: [:index]
+  resources :challenges, only: [] do
+    resources :manage_submissions, only: [:show]
+    resources :manage_evaluators, only: [:index, :create, :destroy]
+    resources :evaluator_invitations, only: [] do
+      member do
+        post 'resend'
+      end
+    end
+    resources :phases, only: [] do
+      resources :evaluator_submissions, only: [:index] do
+        member do
+          post 'unassign'
+          post 'reassign'
+        end
+      end
+      get 'evaluator_submissions/:evaluator_id', to: 'evaluator_submissions#index', as: :evaluator_submissions_for_evaluator
+    end
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -27,19 +45,6 @@ Rails.application.routes.draw do
       get "/sandbox", to: "sandbox#index"
       get "/accounts", to: "accounts#index"
       post "/login", to: "accounts#login"
-    end
-  end
-
-  resources :challenges do
-    resources :manage_evaluators, only: [:index, :create] do
-      collection do
-        delete :destroy
-      end
-    end
-    resources :evaluator_invitations, only: [] do
-      member do
-        post 'resend'
-      end
     end
   end
 end
