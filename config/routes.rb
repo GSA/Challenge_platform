@@ -17,6 +17,12 @@ Rails.application.routes.draw do
   resources :manage_submissions, only: [:index]
   resources :challenges, only: [] do
     resources :manage_submissions, only: [:show]
+    resources :manage_evaluators, only: [:index, :create, :destroy]
+    resources :evaluator_invitations, only: [] do
+      member do
+        post 'resend'
+      end
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -30,15 +36,6 @@ Rails.application.routes.draw do
       get "/sandbox", to: "sandbox#index"
       get "/accounts", to: "accounts#index"
       post "/login", to: "accounts#login"
-    end
-  end
-
-  resources :challenges, only: [] do
-    resources :manage_evaluators, only: [:index, :create, :destroy]
-    resources :evaluator_invitations, only: [] do
-      member do
-        post 'resend'
-      end
     end
   end
 end
