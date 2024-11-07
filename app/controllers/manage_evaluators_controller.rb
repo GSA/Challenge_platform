@@ -27,7 +27,7 @@ class ManageEvaluatorsController < ApplicationController
 
   def destroy
     @phase = @challenge.phases.find(params[:phase_id])
-    result = process_evaluator_removal(params[:evaluator_type], params[:evaluator_id])
+    result = process_evaluator_removal(params[:evaluator_type], params[:id])
 
     render_json_response(result)
   end

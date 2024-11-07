@@ -198,7 +198,7 @@ RSpec.describe ManageEvaluatorsController, type: :request do
 
       it 'removes the evaluator from their associated phase' do
         expect {
-          delete challenge_manage_evaluators_path(challenge), params: { evaluator_id: evaluator.id, evaluator_type: 'user', phase_id: phase1.id }
+          delete challenge_manage_evaluator_path(challenge, evaluator), params: { evaluator_type: 'user', phase_id: phase1.id }
         }.to change { challenge.challenge_phases_evaluators.where(phase: phase1).count }.by(-1)
 
         expect(response).to have_http_status(:success)
@@ -212,7 +212,7 @@ RSpec.describe ManageEvaluatorsController, type: :request do
 
       it 'removes the evaluator invitation' do
         expect {
-          delete challenge_manage_evaluators_path(challenge), params: { evaluator_id: invitation.id, evaluator_type: 'invitation', phase_id: phase1.id }
+          delete challenge_manage_evaluator_path(challenge, invitation), params: { evaluator_type: 'invitation', phase_id: phase1.id }
         }.to change(EvaluatorInvitation, :count).by(-1)
 
         expect(response).to have_http_status(:success)
@@ -222,7 +222,7 @@ RSpec.describe ManageEvaluatorsController, type: :request do
 
     context 'with invalid evaluator type' do
       it 'returns an error JSON response' do
-        delete challenge_manage_evaluators_path(challenge), params: { evaluator_id: 1, evaluator_type: 'invalid', phase_id: phase.id }
+        delete challenge_manage_evaluator_path(challenge, 1), params: { evaluator_type: 'invalid', phase_id: phase1.id }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({
