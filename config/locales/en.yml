@@ -59,4 +59,8 @@ en:
       failure: "Failed to unassign evaluator"
     reassign:
       success: "Evaluator reassigned successfully"
-      failure: "Failed to reassign evaluator"  
+      failure: "Failed to reassign evaluator"
+  alerts:
+    recused_submission:
+      heading: "Recused"
+      text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."      

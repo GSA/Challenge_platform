@@ -19,7 +19,7 @@
   <p>A list of submissions assigned to the user.</p>
 
   <div
-    class="usa-summary-box bg-base-lightest border-1px border-base-dark radius-0"
+    class="usa-summary-box bg-base-lightest border-1px border-base-dark radius-0 margin-bottom-2"
     role="region"
     aria-labelledby="summary-box-key-information"
   >
@@ -61,6 +61,10 @@
     </div>
   </div>
 
+  <% if @assigned_submissions.any? { |assignment| assignment.status == "recused" } %>
+    <%= render 'shared/recused_submission_alert' %>
+  <% end %>  
+
   <% if @assigned_submissions.any? %>
     <div class="usa-table-container--scrollable width-full margin-bottom-10" tabindex="0">
       <table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
@@ -75,7 +79,12 @@
         <tbody>
           <% @assigned_submissions.each do |assignment| %>
             <tr data-evaluator-id="<%= @evaluator.id %>" data-evaluator-type="user">
-              <td data-label="Submission ID" class="text-top text-bold" style="font-weight: bold;"><%= assignment.submission.id %></td>
+              <td data-label="Submission ID" class="text-top text-bold" style="font-weight: bold;">
+                <% if assignment.status == "recused" %>
+                  <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
+                <% end %>
+                <%= assignment.submission.id %>
+              </td>
               <td data-label="Evaluation status">
                 <span class="text-top text-bold <%= evaluation_status(assignment.status) %>" style="font-weight: bold;"><%= assignment.status.titleize %></span>
               </td>
@@ -124,7 +133,12 @@
         <tbody>
           <% @unassigned_submissions.each do |assignment| %>
             <tr data-evaluator-id="<%= @evaluator.id %>" data-evaluator-type="user">
-              <td data-label="Submission ID" class="text-top text-bold" style="font-weight: bold;"><%= assignment.submission.id %></td>
+              <td data-label="Submission ID" class="text-top text-bold" style="font-weight: bold;">
+                <% if assignment.status == "recused" %>
+                  <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
+                <% end %>
+                <%= assignment.submission.id %>
+              </td>
               <td data-label="Evaluation status">
                 <span class="text-top text-bold <%= evaluation_status(assignment.status) %>" style="font-weight: bold;"><%= assignment.status.titleize %></span>
               </td>
