@@ -685,7 +685,7 @@ CREATE TABLE public.oban_jobs (
     attempted_by text[],
     discarded_at timestamp without time zone,
     priority integer DEFAULT 0 NOT NULL,
-    tags text[] DEFAULT ARRAY[]::text[],
+    tags character varying(255)[] DEFAULT ARRAY[]::character varying[],
     meta jsonb DEFAULT '{}'::jsonb,
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
@@ -1033,7 +1033,8 @@ CREATE TABLE public.submissions (
     review_verified boolean,
     description_delta text,
     brief_description_delta text,
-    pdf_reference character varying(255)
+    pdf_reference character varying(255),
+    comments character varying
 );
 
 
@@ -2255,6 +2256,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241107161811),
 (20241023195356),
 (20241018150049),
 (20241017172408),

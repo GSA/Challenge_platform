@@ -4,7 +4,8 @@ FactoryBot.define do
     association :challenge
     association :phase
     association :submitter, factory: :user
-    association :manager, factory: :user
+    # don't think we need this anymore? 
+    # association :manager, factory: :user
 
     title { Faker::Lorem.sentence }
     status { "draft" }

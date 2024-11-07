@@ -8,7 +8,8 @@ class Submission < ApplicationRecord
   belongs_to :submitter, class_name: 'User'
   belongs_to :challenge
   belongs_to :phase
-  belongs_to :manager, class_name: 'User'
+  # I don't think we need this belongs_to anymore?
+  # belongs_to :manager, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
 
