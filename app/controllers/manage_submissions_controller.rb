@@ -5,4 +5,10 @@ class ManageSubmissionsController < ApplicationController
   def index
     @challenges = current_user.challenge_manager_challenges
   end
+
+  def show
+    @challenge = current_user.challenge_manager_challenges.find(params[:challenge_id])
+    @phase = @challenge.phases.find(params[:id])
+    @submissions = @phase.submissions
+  end
 end
