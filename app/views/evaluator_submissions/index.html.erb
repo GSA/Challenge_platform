@@ -1,0 +1,145 @@
+<div data-controller="unassign-evaluator-submission-modal"
+     data-unassign-evaluator-submission-modal-challenge-id-value="<%= @challenge.id %>"
+     data-unassign-evaluator-submission-modal-phase-id-value="<%= @phase.id %>"
+     data-page="evaluator-submissions">
+     
+  <div class="margin-bottom-2 margin-top-3">
+    <%= link_to challenge_manage_evaluators_path, class: "usa-link display-inline-flex flex-align-center" do %>
+      <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3", alt: "Back to previous page") %>
+      <span class="margin-left-05 text-primary">Back</span>
+    <% end %>
+  </div>
+  
+  <h1><%= @challenge.title %> - <%= @phase.title %></h1>
+  <p>View submissions assigned to an evalutor.</p>
+
+  <h2 class="text-primary font-body-md padding-top-1">Evaluator: <%= "#{@evaluator.first_name} #{@evaluator.last_name}" %></h2>
+
+  <h3 class="font-body-lg">Assigned Submissions</h3>
+  <p>A list of submissions assigned to the user.</p>
+
+  <div
+    class="usa-summary-box bg-base-lightest border-1px border-base-dark radius-0"
+    role="region"
+    aria-labelledby="summary-box-key-information"
+  >
+    <div class="usa-summary-box__body">
+      <div class="display-flex flex-column tablet:flex-row tablet:flex-align-center">
+        <div class="tablet:flex-fill">
+          <div class="display-flex flex-align-center margin-bottom-2 tablet:margin-bottom-0">
+            <div class="margin-right-2">
+              <span class="font-sans-3xl text-primary text-bold"><%= @assigned_submissions.count %></span>
+            </div>
+            <div>
+              <h3 class="usa-summary-box__heading text-primary margin-bottom-05" id="summary-box-key-information">
+                Assigned Submissions
+              </h3>
+              <p class="usa-summary-box__text text-primary-darker text-bold">
+                Evaluations due by <%= @phase.end_date.strftime('%m/%d/%Y') %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-top border-base-dark margin-y-2 tablet:display-none"></div>
+
+        <div class="display-flex flex-row tablet:margin-left-auto">
+          <div class="text-center margin-right-5">
+            <span class="font-sans-xl text-green text-bold"><%= @submissions_count["completed"] || 0 %></span><br>
+            <span class="text-base-sm text-green text-bold">Completed</span>
+          </div>
+          <div class="text-center margin-right-5">
+            <span class="font-sans-xl text-orange text-bold"><%= @submissions_count["in_progress"] || 0 %></span><br>
+            <span class="text-base-sm text-orange text-bold">In Progress</span>
+          </div>
+          <div class="text-center margin-right-2">
+            <span class="font-sans-xl text-secondary-dark text-bold"><%= @submissions_count["not_started"] || 0 %></span><br>
+            <span class="text-base-sm text-secondary-dark text-bold">Not Started</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @assigned_submissions.any? %>
+    <div class="usa-table-container--scrollable width-full margin-bottom-10" tabindex="0">
+      <table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
+        <thead>
+          <tr>
+            <th scope="col">Submission ID</th>
+            <th scope="col" class="text-black">Evaluation status</th>
+            <th scope="col">Score</th>
+            <th scope="col" aria-label="Actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @assigned_submissions.each do |assignment| %>
+            <tr data-evaluator-id="<%= @evaluator.id %>" data-evaluator-type="user">
+              <td data-label="Submission ID" class="text-top text-bold" style="font-weight: bold;"><%= assignment.submission.id %></td>
+              <td data-label="Evaluation status">
+                <span class="text-top text-bold <%= evaluation_status(assignment.status) %>" style="font-weight: bold;"><%= assignment.status.titleize %></span>
+              </td>
+              <td data-label="Score" class="text-top text-normal">80<%# assignment.score || 'N/A' %></td>
+              <td data-label="">
+                <div class="display-flex flex-justify-end">
+                  <% if assignment.status == "completed" %>
+                    <%= link_to manage_submissions_path(@challenge), class: 'usa-button font-body-3xs margin-right-1', style: 'white-space: nowrap;' do %>
+                      View Evaluation
+                    <% end %>
+                  <% end %>
+                  <%= button_tag "Unassign", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
+                    action: "click->unassign-evaluator-submission-modal#open",
+                    submission_id: assignment.submission.id,
+                    evaluator_id: @evaluator.id,
+                    challenge_id: @challenge.id,
+                    phase_id: @phase.id
+                  } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="text-normal margin-bottom-10">
+      <p>There currently are no assigned submissions to this evaluator. Please assigned submissions to this evaluator to view.</p>
+    </div>    
+  <% end %>
+
+  <% if @unassigned_submissions.any? %>
+    <h3 class="font-body-lg">Unassigned Submissions</h3>
+    <p>A list of recused and unassigned submissions. Reassigning a user to a submission will make the submission available for the user to evaluate.</p>
+
+    <div class="usa-table-container--scrollable width-full margin-bottom-10" tabindex="0">
+      <table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
+        <thead>
+          <tr>
+            <th scope="col">Submission ID</th>
+            <th scope="col" class="text-black">Evaluation status</th>
+            <th scope="col">Score</th>
+            <th scope="col" aria-label="Actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @unassigned_submissions.each do |assignment| %>
+            <tr data-evaluator-id="<%= @evaluator.id %>" data-evaluator-type="user">
+              <td data-label="Submission ID" class="text-top text-bold" style="font-weight: bold;"><%= assignment.submission.id %></td>
+              <td data-label="Evaluation status">
+                <span class="text-top text-bold <%= evaluation_status(assignment.status) %>" style="font-weight: bold;"><%= assignment.status.titleize %></span>
+              </td>
+              <td data-label="Score" class="text-top text-light">80<%# assignment.score || 'N/A' %></td>
+              <td data-label="">
+                <div class="display-flex flex-justify-end">        
+                  <%= button_to "Reassign", reassign_challenge_phase_evaluator_submission_path(@challenge, @phase, assignment.submission, evaluator_id: @evaluator.id), method: :post, class: 'usa-button usa-button--outline font-body-3xs', data: { turbo: false } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <%= render 'unassign_evaluator_submission_modal' %>
+</div>

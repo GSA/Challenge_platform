@@ -75,7 +75,7 @@
                 <td data-label="Assigned submissions" class="text-top"><%= assigned_submissions_count(evaluator, @challenge, @phase) %></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
-                    <%= link_to manage_submissions_path(@challenge), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
+                    <%= link_to challenge_phase_evaluator_submissions_path(@challenge, @phase, evaluator_id: evaluator.id), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
                       View Submissions
                     <% end %>
                     <%= button_tag "Delete", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
