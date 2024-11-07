@@ -1,0 +1,48 @@
+<dialog
+  id="unassign-evaluator-submission-modal"
+  data-unassign-evaluator-submission-modal-target="modal"
+  aria-labelledby="modal-1-heading"
+  aria-describedby="modal-1-description"
+  class="radius-lg"
+>
+  <div class="usa-modal__content maxw-mobile-lg">
+    <div class="usa-modal__main">
+      <h2 class="usa-modal__heading" id="modal-1-heading">
+        Are you sure you want to unassign an evaluator from this submission?
+      </h2>
+      <div class="usa-prose">
+        <p id="modal-1-description" data-unassign-evaluator-submission-modal-target="modalDescription">
+          Unassigning an evaluator will delete any completed or in progress evaluations of this evaluator for this submission. Any other submissions that the evaluator is assigned will not be affected.
+        </p>
+      </div>
+      <div class="usa-modal__footer">
+        <ul class="usa-button-group">
+          <li class="usa-button-group__item">
+          <button type="button" class="usa-button" data-unassign-evaluator-submission-modal-target="confirmButton" data-action="click->unassign-evaluator-submission-modal#confirm">
+            Yes
+          </button>
+          </li>
+          <li class="usa-button-group__item padding-top-1 text-center">
+          <a
+            href="#"
+            class="usa-link"
+            data-action="click->unassign-evaluator-submission-modal#close"
+          >
+            Back
+          </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="usa-button usa-modal__close"
+      aria-label="Close this window"
+      data-action="click->unassign-evaluator-submission-modal#close"
+    >
+      <svg class="usa-icon" aria-hidden="true" focusable="false" role="img">
+        <use xlink:href="/assets/img/sprite.svg#close"></use>
+      </svg>
+    </button>
+  </div>
+</dialog>

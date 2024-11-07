@@ -11,3 +11,6 @@ application.register("evaluation-criteria", EvaluationCriteriaController);
 
 import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller"
 application.register("delete-evaluator-modal", DeleteEvaluatorModalController)
+
+import UnassignEvaluatorSubmissionModalController from "./unassign_evaluator_submission_modal_controller"
+application.register("unassign-evaluator-submission-modal", UnassignEvaluatorSubmissionModalController)

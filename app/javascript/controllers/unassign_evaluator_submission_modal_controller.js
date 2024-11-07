@@ -1,12 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "confirmButton", "modalDescription"]
+  static targets = ["modal", "confirmButton"]
   static values = {
     challengeId: String,
-    evaluatorId: String,
-    evaluatorType: String,
-    phaseId: String
+    phaseId: String,
+    submissionId: String,
+    evaluatorId: String
   }
 
   connect() {
@@ -19,8 +19,8 @@ export default class extends Controller {
 
   open(event) {
     event.preventDefault()
+    this.submissionIdValue = event.currentTarget.dataset.submissionId
     this.evaluatorIdValue = event.currentTarget.dataset.evaluatorId
-    this.evaluatorTypeValue = event.currentTarget.dataset.evaluatorType
     this.challengeIdValue = event.currentTarget.dataset.challengeId
     this.phaseIdValue = event.currentTarget.dataset.phaseId
     this.modalTarget.showModal()
@@ -28,7 +28,6 @@ export default class extends Controller {
 
   close() {
     this.modalTarget.close()
-    this.resetModal()
   }
 
   handleOutsideClick(event) {
@@ -38,22 +37,20 @@ export default class extends Controller {
   }
 
   confirm() {
-    this.deleteEvaluator()
+    this.unassignEvaluatorSubmission()
   }
 
-  deleteEvaluator(forceDelete = false) {
+  unassignEvaluatorSubmission() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content
-  
-    fetch(`/challenges/${this.challengeIdValue}/manage_evaluators/${this.evaluatorIdValue}`, {
-      method: 'DELETE',
+
+    fetch(`/challenges/${this.challengeIdValue}/phases/${this.phaseIdValue}/evaluator_submissions/${this.submissionIdValue}/unassign`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': csrfToken
       },
       body: JSON.stringify({
-        evaluator_type: this.evaluatorTypeValue,
-        phase_id: this.phaseIdValue,
-        force_delete: forceDelete
+        evaluator_id: this.evaluatorIdValue
       })
     })
     .then(response => {
@@ -67,16 +64,12 @@ export default class extends Controller {
         this.close()
         window.location.reload()
       } else {
-        throw new Error(data.message || 'Failed to remove evaluator')
+        throw new Error(data.message || 'Failed to unassign evaluator from submission')
       }
     })
     .catch(error => {
-      alert(error.message || 'An error occurred while removing the evaluator')
+      console.error('Error:', error)
+      alert(error.message || 'An error occurred while unassigning the evaluator from the submission')
     })
-  }
-
-  resetModal() {
-    this.modalDescriptionTarget.textContent = 'Deleting an evaluator from the challenge will remove the evaluator from any submissions of this challenge that the evaluator is assigned to. It will also delete any of their completed or in progress evaluations for those submissions.'
-    this.confirmButtonTarget.textContent = 'Yes'
   }
 }
