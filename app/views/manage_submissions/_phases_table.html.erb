@@ -5,7 +5,7 @@
         <th scope="col">Number of Submissions</th>
         <th scope="col">Evaluation Form</th>
         <th scope="col">Evaluations are due by</th>
-        <th scope="col" aria-label="Actions"></th>
+        <th scope="col"><span class="usa-sr-only">Actions</span></th>
       </tr>
     </thead>
     <tbody>
@@ -36,15 +36,16 @@
               <% end %>
             </td>
             <td>
-              <div class="display-flex flex-column grid-row grid-gap-4">
-                <%= link_to challenge_manage_evaluators_path(challenge, phase_id: phase.id), class: "usa-button font-body-2xs text-no-wrap margin-bottom-105" do %>
+              <div class="display-flex flex-column grid-row grid-gap-1">
+                <%= link_to challenge_manage_evaluators_path(challenge, phase_id: phase.id), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
                   Manage Evaluators
                 <% end %>
                 <% unless phase.submissions.empty? %>
-                  <button class="usa-button font-body-2xs text-no-wrap">
+                  <%= link_to challenge_manage_submission_path(challenge, phase), class: "usa-button font-body-2xs text-no-wrap width-full" do %>
                     View Submissions
-                  </button>
-                <% end %>  
+                  <% end %>
+                <% end %>
+              </div>
               </div>  
             </td>
             </td>  
@@ -53,3 +54,4 @@
       <% end %>  
     </tbody>
   </table>
+  

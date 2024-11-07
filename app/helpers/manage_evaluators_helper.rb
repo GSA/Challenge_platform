@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ManageEvaluatorsHelper
-  def user_status(evaluator, challenge)
+  def user_status(evaluator)
     if evaluator.is_a?(User)
       evaluator.status == 'active' ? "Available" : "Awaiting Approval"
     else

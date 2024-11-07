@@ -150,7 +150,7 @@ class User < ApplicationRecord
   private
 
   def accept_evaluator_invitation
-    EvaluatorInvitation.where(email: self.email).each do |invite|
+    EvaluatorInvitation.where(email: email).find_each do |invite|
       ChallengePhasesEvaluator.create(challenge: invite.challenge, phase: invite.phase, user: self)
       invite.destroy
     end
