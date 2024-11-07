@@ -1,3 +1,11 @@
+<% if @phase.evaluation_form.nil? %>
+  <%= render 'shared/no_evaluation_form_alert' %>
+<% end %>
+
+<% if phase_has_recused_evaluator?(@phase) %>
+  <%= render 'shared/recused_evaluator_alert' %>
+<% end %>
+
 <table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
     <thead>
       <tr>

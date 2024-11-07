@@ -8,4 +8,8 @@ module ManageSubmissionsHelper
   def selected_to_advance?(submission)
     submission.judging_status.in?(%w[winner])
   end
+
+  def phase_has_recused_evaluator?(phase)
+    EvaluatorSubmissionAssignment.where(submission: phase.submissions).exists?(status: :recused)
+  end
 end
