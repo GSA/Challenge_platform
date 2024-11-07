@@ -1,4 +1,4 @@
-<h4 class="usa-accordion__heading">
+<h2 class="usa-accordion__heading">
   <button
     type="button"
     class="usa-accordion__button display-flex flex-justify icon-white"
@@ -9,7 +9,7 @@
   >
     <div>Criteria <span class="criteria-number" data-evaluation-criteria-target="criteriaNumber"><%= f.options[:child_index] + 1 %></span></div>
   </button>
-</h4>
+</h2>
 
 <div id="<%= criteria_field_id(f, "accordion", is_template) %>" class="usa-accordion__content" data-evaluation-criteria-target="accordionContent">
   <% if f.object.persisted? %>
