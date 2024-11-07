@@ -19,4 +19,21 @@ module ManageEvaluatorsHelper
       0
     end
   end
+
+  def evaluation_status(status)
+    case status.to_sym
+    when :recused
+      'text-accent-warm-dark'
+    when :not_started
+      'text-secondary-dark'
+    when :in_progress
+      'text-orange'
+    when :completed
+      'text-green'
+    when :unassigned
+      'text-accent-cool-darker'
+    else
+      'text-base'
+    end
+  end
 end
