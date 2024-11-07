@@ -8,7 +8,16 @@ class ManageSubmissionsController < ApplicationController
 
   def show
     @submission = Submission.find(params[:id])
-    @assigned = @submission.challenge_id.in?(current_user.challenge_manager_challenges.collect(&:id))
+  end
+  
+  def update
+    @submission = Submission.find(params[:id])
+
+    if @submission.update(comments: params[:submission][:comments])
+      render :show, notice: "comments saved", submission: @submission
+    else
+      render :show, status: :unprocessable_entity, submission: @submission
+    end
   end  
 
   def by_challenge_phase

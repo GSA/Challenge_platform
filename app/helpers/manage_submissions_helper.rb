@@ -8,4 +8,8 @@ module ManageSubmissionsHelper
   def selected_to_advance?(submission)
     submission.judging_status.in?(%w[selected winner])
   end
+
+  def assigned_to_user?(user, submission)
+    submission.challenge_id.in?(user.challenge_manager_challenges.collect(&:id))
+  end 
 end
