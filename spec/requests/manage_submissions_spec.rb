@@ -70,7 +70,7 @@ RSpec.describe "ManageSubmissions" do
       it "renders a list of submissions for a user's challenge" do
         challenge = create_challenge(user: challenge_user, title: "Boston Tea Party Cleanup")
         phase = create_phase(challenge_id: challenge.id)
-        submission = create(:submission, challenge: challenge)
+        submission = create(:submission, challenge: challenge, phase: phase)
 
         get challenge_manage_submission_path(challenge, phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
