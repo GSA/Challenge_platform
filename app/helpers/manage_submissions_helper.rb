@@ -11,5 +11,5 @@ module ManageSubmissionsHelper
 
   def assigned_to_user?(user, submission)
     submission.challenge_id.in?(user.challenge_manager_challenges.collect(&:id))
-  end 
+  end
 end

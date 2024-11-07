@@ -9,18 +9,17 @@ class ManageSubmissionsController < ApplicationController
   def show
     @submission = Submission.find(params[:id])
   end
-  
+
   def update
     @submission = Submission.find(params[:id])
 
     if @submission.update!(submission_params)
-      flash.now[:success] = "Comments saved."
+      flash.now[:success] = I18n.t("comments_saved")
       render :show, submission: @submission
     else
-      flash.now[:error] = "Unable to save comments."
       render :show, status: :unprocessable_entity, submission: @submission
     end
-  end  
+  end
 
   def by_challenge_phase
     @phase = Phase.where(id: params[:phase_id],
