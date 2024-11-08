@@ -1,7 +1,7 @@
-<%= form_with(model: submission, url: manage_submission_path(submission), class: "width-mobile-lg") do |form| %>
+<%= form_with(model: @submission, url: challenge_manage_submission_path(@challenge, @submission, phase_id: @phase.id), class: "width-mobile-lg") do |form| %>
     <div class="usa-form-group">
         <%= form.label :comments, class: "usa-label" %>
-        <%= form.text_area :comments, class: "usa-textarea", default: submission.comments %>
+        <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments %>
     </div>
     <button type="submit" name="commit" class="usa-button font-body-2xs text-no-wrap margin-y-2">
         Save
