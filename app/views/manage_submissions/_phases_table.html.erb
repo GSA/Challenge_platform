@@ -39,11 +39,11 @@
                   Manage Evaluators
                 </button>
                 <% unless phase.submissions.empty? %>
-                  <a href=<%= "/manage_submissions/by_challenge_phase/#{phase.id}" %>>
+                  <%= link_to(challenge_manage_submission_path(challenge, phase)) do %>
                     <button class="usa-button font-body-2xs text-no-wrap">
                       View Submissions
                     </button>
-                  </a>
+                  <% end %>
                 <% end %>  
               </div>  
             </td>  

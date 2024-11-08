@@ -1,11 +1,5 @@
-<% if assigned_to_user?(current_user, @submission) %>
-    <h1>Submission ID <%= @submission.id %></h1>
-    <p class="text-normal">View submission information and assign evaluators to evaluate the submission.</p>
+<h1>Submission ID <%= @submission.id %></h1>
+<p class="text-normal">View submission information and assign evaluators to evaluate the submission.</p>
 
-    <%= render partial: "submission_materials", locals: { submission: @submission } %>
-
-    <%= render partial: "comment_form", locals: { submission: @submission } %>
-
-<% else %>
-    <p class="text-normal">You are not assigned to manage this submission.</p>
-<% end %>        
+<%= render partial: "submission_materials", locals: { submission: @submission } %>
+<%= render partial: "comment_form", locals: { submission: @submission } %>

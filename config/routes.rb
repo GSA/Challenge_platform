@@ -14,8 +14,14 @@ Rails.application.routes.draw do
   get '/evaluation_forms/confirmation', to: 'evaluation_forms#confirmation'
   resources :evaluation_forms
   post '/evaluation_forms/clone', to: 'evaluation_forms#create_from_existing'
-  resources :manage_submissions, only: [:index, :show, :update]
-  get '/manage_submissions/by_challenge_phase/:phase_id', to: 'manage_submissions#by_challenge_phase'
+  resources :manage_submissions, only: [:index]
+  resources :challenges, only: [] do
+    resources :manage_submissions, only: [:show, :update] do
+      member do
+        get 'by_challenge_phase'
+      end
+    end
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

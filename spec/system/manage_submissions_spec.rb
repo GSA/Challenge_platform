@@ -21,6 +21,7 @@ describe "A11y", :js do
     it "manage submissions index page is accessible with one challenge" do
       challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
       create_phase(challenge_id: challenge.id)
+
       visit manage_submissions_path
       expect(user.role).to eq("challenge_manager")
       expect(page).to have_content("Boston Tea Party Cleanup")
@@ -30,7 +31,8 @@ describe "A11y", :js do
     it "manage submissions by challenge phase page is accessible with one challenge" do
       challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
       phase = create_phase(challenge_id: challenge.id)
-      visit "/manage_submissions/by_challenge_phase/#{phase.id}"
+
+      visit by_challenge_phase_challenge_manage_submission_path(challenge, phase)
       expect(user.role).to eq("challenge_manager")
       expect(page).to have_content("Boston Tea Party Cleanup")
       expect(page).to(be_axe_clean)
