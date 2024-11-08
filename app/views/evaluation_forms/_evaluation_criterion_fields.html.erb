@@ -89,14 +89,14 @@
 
     <% scoring_types = { "numeric" => "Numeric score / points", "rating" => "Rating scale", "binary" => "Binary scale" } %>
     <div>
-      <% scoring_types.each do |value, label| %>
+      <% scoring_types.each_with_index do |(value, label), index| %>
         <div class="usa-radio">
           <%= f.radio_button :scoring_type, value, 
               id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
               name: criteria_field_name(f, :scoring_type, is_template),
               class: "usa-radio__input scoring-type-radio",
               checked: f.object.scoring_type == value,
-              required: true,
+              required: index == 0,
               disabled: is_template || form_disabled,
               data: {
                 "evaluation-criteria-target": "scoringTypeRadio",
@@ -155,7 +155,7 @@
 
     <div class="criteria-scale-option-labels" data-evaluation-criteria-target="optionLabels">
       <% (0..10).each do |index| %>
-        <% disabledOptionLabel = is_template || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
+        <% disabledOptionLabel = is_template || !f.object.persisted? || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
 
         <div class="display-flex flex-align-center flex-justify margin-top-2 criteria-option-label-row" 
           style="<%= disabledOptionLabel ? 'display: none;' : '' %>" data-evaluation-criteria-target="optionLabelRow">

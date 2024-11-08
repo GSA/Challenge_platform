@@ -27,7 +27,7 @@
       </p>
       <div>
         <%= form.label :title, class: "usa-label" %>
-        <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, disabled: disabled %>
+        <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, required: true, disabled: disabled %>
       </div>
 
       <%= inline_error(evaluation_form, :title) %>
@@ -35,7 +35,7 @@
       <label class="usa-label" for="challenge-combo">Select a challenge</label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-        <select class="usa-select" <%= if disabled then "disabled" end %> id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
+        <select class="usa-select" required <%= if disabled then "disabled" end %> id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
           <% current_user.challenge_manager_challenges.each do |challenge| %>
             <% challenge.phases.each do |phase| %>
               <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
@@ -53,7 +53,7 @@
       <div class="usa-character-count">
         <div class="usa-form-group">
           <%= form.label :instructions, class: "usa-label" %>
-          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, disabled: disabled%>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, required: true, disabled: disabled%>
         </div>
         <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
       </div>
@@ -81,7 +81,7 @@
           </legend>
           <div class="display-flex flex-row">
             <div class="usa-radio margin-right-205">
-              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring %> <%= 'disabled' unless !disabled %>>
+              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' if evaluation_form.weighted_scoring %> required <%= 'disabled' unless !disabled %>>
               <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
             </div>
             <div class="usa-radio">

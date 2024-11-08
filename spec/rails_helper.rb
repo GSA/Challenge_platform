@@ -74,6 +74,9 @@ RSpec.configure do |config|
 
   config.include ActiveSupport::Testing::TimeHelpers
 
+  config.include EvaluationFormsHelper, type: :system
+  config.include PhasesHelper, type: :system
+
   config.include FactoryBot::Syntax::Methods
   config.before(:suite) do
     FactoryBot.reload
