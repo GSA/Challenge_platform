@@ -50,6 +50,20 @@ FactoryBot.define do
     #   create_list(:phase, 1, challenge: challenge)
     # end
 
+    after(:create) do |challenge, _evaluator|
+      # Create challenge_manager
+      create(:challenge_manager, challenge: challenge, user: challenge.user)
+
+      # Create phases
+      if challenge.is_multi_phase && challenge.phases.empty?
+        3.times do
+          create(:phase, challenge: challenge)
+        end
+      else
+        create(:phase, challenge: challenge)
+      end
+    end
+
     factory :published_challenge do
       status { "published" }
     end
