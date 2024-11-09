@@ -2,19 +2,11 @@
 
 class ManageSubmissionsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
-  def index
-    @challenges = current_user.challenge_manager_challenges
-  end
+  before_action :set_submission, only: [:show, :update]
 
-  def show
-    @challenge = current_user.challenge_manager_challenges.find(params[:challenge_id])
-    @phase = @challenge.phases.find(params[:phase_id])
-    @submission = @phase.submissions.find(params[:id])
-  end
+  def show; end
 
   def update
-    @submission = Submission.find(params[:id])
-
     if @submission.update!(submission_params)
       flash.now[:success] = I18n.t("comments_saved")
       render :show, submission: @submission
@@ -23,13 +15,14 @@ class ManageSubmissionsController < ApplicationController
     end
   end
 
-  def by_challenge_phase
-    @challenge = current_user.challenge_manager_challenges.find(params[:challenge_id])
-    @phase = @challenge.phases.find(params[:id])
-    @submissions = @phase.submissions
-  end
+  private
 
   def submission_params
     params.require(:submission).permit(:comments)
+  end
+
+  # User access enforced through their assigned challenge_manager_challenges
+  def set_submission
+    @submission = Submission.where(challenge: current_user.challenge_manager_challenges).find(params[:id])
   end
 end

@@ -16,7 +16,7 @@
             </th>
             <td data-label="Eligible for Evaluation">
               <div class="display-flex flex-align-center">  
-                <% if eligible_for_evaluation?(submission) %>
+                <% if submission.eligible_for_evaluation? %>
                     <input type="checkbox" disabled checked class="display-none mobile-lg:display-block">
                     <div class="mobile-lg:display-none">
                         <%= image_tag(
@@ -41,7 +41,7 @@
             </td>
             <td data-label="Selected to Advance">
               <div class="display-flex flex-align-center">  
-                <% if selected_to_advance?(submission) %>
+                <% if submission.selected_to_advance? %>
                     <input type="checkbox" disabled checked class="display-none mobile-lg:display-block">
                     <div class="mobile-lg:display-none">
                         <%= image_tag(
@@ -72,7 +72,7 @@
             </td>
             <td>
               <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-                <%= link_to challenge_manage_submission_path(@challenge, submission, phase_id: @phase.id) do %>
+                <%= link_to manage_submission_path(submission) do %>
                     <button class="usa-button font-body-2xs text-no-wrap">
                         View Submission
                     </button>

@@ -13,7 +13,7 @@ describe "A11y", :js do
     let(:user) { create_user(role: "challenge_manager") }
 
     it "manage submissions index page is accessible with no challenges" do
-      visit manage_submissions_path
+      visit manage_phases_path
       expect(user.role).to eq("challenge_manager")
       expect(page).to(be_axe_clean)
     end
@@ -22,7 +22,7 @@ describe "A11y", :js do
       challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
       create_phase(challenge_id: challenge.id)
 
-      visit manage_submissions_path
+      visit manage_phases_path
       expect(user.role).to eq("challenge_manager")
       expect(page).to have_content("Boston Tea Party Cleanup")
       expect(page).to(be_axe_clean)
@@ -32,7 +32,7 @@ describe "A11y", :js do
       challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
       phase = create_phase(challenge_id: challenge.id)
 
-      visit by_challenge_phase_challenge_manage_submission_path(challenge, phase)
+      visit submissions_manage_phase_path(phase)
       expect(user.role).to eq("challenge_manager")
       expect(page).to have_content("Boston Tea Party Cleanup")
       expect(page).to(be_axe_clean)

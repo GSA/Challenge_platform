@@ -8,7 +8,7 @@ RSpec.describe "ManageSubmissions" do
       end
 
       it "redirects to the phoenix app" do
-        get manage_submissions_path
+        get manage_phases_path
 
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
@@ -20,7 +20,7 @@ RSpec.describe "ManageSubmissions" do
       end
 
       it "redirects to the phoenix app" do
-        get manage_submissions_path
+        get manage_phases_path
 
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
@@ -32,7 +32,7 @@ RSpec.describe "ManageSubmissions" do
       before { log_in_user(challenge_user) }
 
       it "renders the index view with the correct header" do
-        get manage_submissions_path
+        get manage_phases_path
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include("Submissions & Evaluations")
@@ -40,7 +40,7 @@ RSpec.describe "ManageSubmissions" do
       end
 
       it "renders an empty list" do
-        get manage_submissions_path
+        get manage_phases_path
 
         expect(response.body).to include("You currently do not have any challenges.")
       end
@@ -52,7 +52,7 @@ RSpec.describe "ManageSubmissions" do
         ChallengeManager.create(user: challenge_user, challenge:)
         create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: phase.id)
 
-        get manage_submissions_path
+        get manage_phases_path
         expect(response.body).to include("Turning monster energy into pepto bismol")
         expect(response.body).to include("Frodo")
       end
@@ -61,7 +61,7 @@ RSpec.describe "ManageSubmissions" do
         challenge = create_challenge(user: challenge_user, title: "Boston Tea Party Cleanup")
         phase = create_phase(challenge_id: challenge.id)
 
-        get by_challenge_phase_challenge_manage_submission_path(challenge, phase)
+        get submissions_manage_phase_path(phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
 
         expect(response.body).to include("This challenge phase does not currently have any submissions.")
@@ -72,7 +72,7 @@ RSpec.describe "ManageSubmissions" do
         phase = create_phase(challenge_id: challenge.id)
         submission = create(:submission, challenge: challenge, phase: phase)
 
-        get by_challenge_phase_challenge_manage_submission_path(challenge, phase)
+        get submissions_manage_phase_path(phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
         expect(response.body).to include(submission.id.to_s)
       end
@@ -81,7 +81,7 @@ RSpec.describe "ManageSubmissions" do
         challenge = create_challenge(title: "Star Spangled Banister")
         phase = create_phase(challenge_id: challenge.id)
 
-        get by_challenge_phase_challenge_manage_submission_path(challenge, phase)
+        get submissions_manage_phase_path(phase)
         expect(response).to have_http_status(:not_found)
       end
 
@@ -90,7 +90,7 @@ RSpec.describe "ManageSubmissions" do
         phase = create_phase(challenge_id: challenge.id)
         submission = create(:submission, challenge: phase.challenge, brief_description: "This submission has legs.")
 
-        get challenge_manage_submission_path(challenge, submission, phase_id: phase.id)
+        get manage_submission_path(submission)
         expect(response.body).to include(submission.id.to_s)
         expect(response.body).to include(submission.brief_description)
       end
@@ -100,7 +100,7 @@ RSpec.describe "ManageSubmissions" do
         phase = create_phase(challenge_id: challenge.id)
         submission = create(:submission, challenge: phase.challenge, brief_description: "This submission has teeth.")
 
-        get challenge_manage_submission_path(challenge, submission, phase_id: phase.id)
+        get manage_submission_path(submission)
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -111,7 +111,7 @@ RSpec.describe "ManageSubmissions" do
       end
 
       it "redirects to the dashboard" do
-        get manage_submissions_path
+        get manage_phases_path
 
         expect(response).to redirect_to(dashboard_path)
       end
@@ -123,7 +123,7 @@ RSpec.describe "ManageSubmissions" do
       end
 
       it "redirects to the phoenix app" do
-        get manage_submissions_path
+        get manage_phases_path
 
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end

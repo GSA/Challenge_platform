@@ -23,4 +23,12 @@ class Submission < ApplicationRecord
 
   # Validations
   validates :title, presence: true
+
+  def eligible_for_evaluation?
+    selected? or winner?
+  end
+
+  def selected_to_advance?
+    winner?
+  end
 end
