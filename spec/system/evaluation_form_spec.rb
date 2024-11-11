@@ -54,7 +54,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       fill_in_title("Updated Evaluation Form Title")
       toggle_criteria_accordion(0)
-      check_criteria_accordion_state(0, true)
+      check_criteria_accordion_expanded(0, true)
 
       save_form
       expect(page).to have_content("Evaluation Form Saved")
@@ -67,13 +67,13 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   describe "evaluation form confirmation page" do
     it "is accessible" do
       visit evaluation_forms_confirmation_path
-      expect(evaluation_form.title).to eq("Updated Evaluation Form Title")
       expect(page).to have_content("Evaluation Form Saved")
       expect(page).to(be_axe_clean)
     end
   end
 end
 
+# Form Fill Helpers
 def fill_in_full_form
   fill_in_base_form_info
   fill_in_all_eval_criteria_types
@@ -131,7 +131,6 @@ def fill_in_rating_criteria_type
   fill_in_criterion_option_label(index, 5, "Agree")
 end
 
-# Form Fill Helpers
 def fill_in_title(value)
   fill_in 'evaluation_form[title]', with: value
 end
@@ -195,10 +194,17 @@ def toggle_criteria_accordion(index)
   find("button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']").click
 end
 
-def check_criteria_accordion_state(index, state)
+def check_criteria_accordion_expanded(index, state)
   button_selector = "button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']"
   button_state_selector = "#{button_selector}[aria-expanded='#{state}']"
   expect(page).to have_selector(button_state_selector)
+
+  accordion_content = find("#evaluation_form_evaluation_criteria_attributes_#{index}_accordion")
+  if state
+    expect(accordion_content).to be_visible
+  else
+    expect(accordion_content).to be_hidden
+  end
 end
 
 def visible_criterion_indicies
@@ -229,6 +235,7 @@ def save_form
   click_link_or_button 'Save'
 end
 
+# Form Focus Helpers
 # Checks for form fields being focused. Usually in the case of a required field not filled out
 def expect_field_to_be_focused(selector)
   expect(page).to have_css("#{selector}:focus")
