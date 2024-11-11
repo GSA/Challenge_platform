@@ -25,7 +25,18 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_full_form
 
       save_form
-      expect(page).to have_content('Evaluation Form Saved')
+      expect(page).to have_content("Evaluation Form Saved")
+
+      click_link_or_button "Manage Evaluation Forms"
+
+      # Should be on evaluation index view
+      evaluation_form = EvaluationForm.first
+      expect(page).to have_content("Evaluation Forms")
+      expect(page).to have_content(evaluation_form.title)
+      phase = evaluation_form.phase
+      challenge_phase_title = challenge_phase_title(phase.challenge, phase)
+      expect(page).to have_content(challenge_phase_title)
+      expect(page).to have_content(evaluation_period(evaluation_form))
     end
   end
 
@@ -43,10 +54,10 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       fill_in_title("Updated Evaluation Form Title")
       toggle_criteria_accordion(0)
-      check_criteria_accordion_state(page, 0, true)
+      check_criteria_accordion_state(0, true)
 
       save_form
-      expect(page).to have_content('Evaluation Form Saved')
+      expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
       expect(evaluation_form.title).to eq("Updated Evaluation Form Title")
@@ -57,6 +68,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     it "is accessible" do
       visit evaluation_forms_confirmation_path
       expect(evaluation_form.title).to eq("Updated Evaluation Form Title")
+      expect(page).to have_content("Evaluation Form Saved")
       expect(page).to(be_axe_clean)
     end
   end
@@ -183,7 +195,7 @@ def toggle_criteria_accordion(index)
   find("button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']").click
 end
 
-def check_criteria_accordion_state(page, index, state)
+def check_criteria_accordion_state(index, state)
   button_selector = "button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']"
   button_state_selector = "#{button_selector}[aria-expanded='#{state}']"
   expect(page).to have_selector(button_state_selector)
@@ -215,4 +227,13 @@ end
 
 def save_form
   click_link_or_button 'Save'
+end
+
+# Checks for form fields being focused. Usually in the case of a required field not filled out
+def expect_field_to_be_focused(selector)
+  expect(page).to have_css("#{selector}:focus")
+end
+
+def expect_form_title_to_be_focused
+  expect_field_to_be_focused("input[name='evaluation_form[title]']")
 end
