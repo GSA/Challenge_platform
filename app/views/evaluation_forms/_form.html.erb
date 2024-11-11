@@ -81,7 +81,7 @@
           </legend>
           <div class="display-flex flex-row">
             <div class="usa-radio margin-right-205">
-              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' if evaluation_form.weighted_scoring %> required <%= 'disabled' unless !disabled %>>
+              <input class="usa-radio__input" id="point_scale" type="radio" name="evaluation_form[weighted_scoring]" value="false" <%= 'checked' unless evaluation_form.weighted_scoring || !evaluation_form.persisted? %> required <%= 'disabled' unless !disabled %>>
               <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
             </div>
             <div class="usa-radio">

@@ -25,24 +25,38 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_full_form
 
       save_form
-
       expect(page).to have_content('Evaluation Form Saved')
     end
   end
 
   describe "update evaluation form page" do
     let(:challenge) { create(:challenge, user: user) }
-    let(:evaluation_form) { create(:evaluation_form, challenge: challenge) }
+    let(:evaluation_form) { create(:evaluation_form, challenge: challenge, phase: challenge.phases[0]) }
 
     it "is accessible" do
       visit edit_evaluation_form_path(evaluation_form)
       expect(page).to(be_axe_clean)
+    end
+
+    it 'allows editing of an existing form' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      fill_in_title("Updated Evaluation Form Title")
+      toggle_criteria_accordion(0)
+      check_criteria_accordion_state(page, 0, true)
+
+      save_form
+      expect(page).to have_content('Evaluation Form Saved')
+
+      evaluation_form.reload
+      expect(evaluation_form.title).to eq("Updated Evaluation Form Title")
     end
   end
 
   describe "evaluation form confirmation page" do
     it "is accessible" do
       visit evaluation_forms_confirmation_path
+      expect(evaluation_form.title).to eq("Updated Evaluation Form Title")
       expect(page).to(be_axe_clean)
     end
   end
@@ -165,8 +179,18 @@ def remove_criterion(index)
   click_link_or_button "evaluation_form_evaluation_criteria_attributes_#{index}_delete_criteria"
 end
 
+def toggle_criteria_accordion(index)
+  find("button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']").click
+end
+
+def check_criteria_accordion_state(page, index, state)
+  button_selector = "button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']"
+  button_state_selector = "#{button_selector}[aria-expanded='#{state}']"
+  expect(page).to have_selector(button_state_selector)
+end
+
 def visible_criterion_indicies
-  all('.criteria-row').map.with_index { |_element, index| index }
+  all('.criteria-row').map { |element| element["data-index"].to_i }
 end
 
 def select_option_range_start(index, value)

@@ -7,7 +7,6 @@ FactoryBot.define do
     # Fields
     title { "#{Faker::Lorem.word.humanize} Evaluation Form" }
     instructions { Faker::Lorem.sentence(word_count: 10) }
-    closing_date { Faker::Date.forward(days: 30) }
     comments_required { Faker::Boolean.boolean }
     weighted_scoring { Faker::Boolean.boolean }
 
@@ -24,6 +23,16 @@ FactoryBot.define do
     # Assures proper points sum of 100 when weighted_scoring = 100
     # Skips initial validation on eval form create because of dependency
     EvaluationForm.skip_callback(:validate, :before, :criteria_weights_must_sum_to_one_hundred)
+
+    after(:build) do |evaluation_form|
+      if evaluation_form.phase&.end_date.present?
+        phase_end_date = evaluation_form.phase.end_date
+        evaluation_form.closing_date = phase_end_date + 1.day
+      else
+        # Fallback in case of no phase end_date
+        closing_date { Faker::Date.forward(days: 30) }
+      end
+    end
 
     after(:create) do |evaluation_form|
       num_criteria = rand(1..10)
