@@ -44,4 +44,4 @@ en:
       text: "One of the challenge submissions has a recused evaluator. Please review the list of submissions and unassign a recused evaluator."
     no_evaluation_form:
       heading: "No Evaluation Form"
-      text: "This challenge does not have an assigned valid evaluation form. Please create an evaluation form and assign it to the challenge."
+      text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."
