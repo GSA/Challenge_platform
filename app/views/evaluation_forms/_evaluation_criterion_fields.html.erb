@@ -139,6 +139,7 @@
           class: "usa-select margin-0 height-auto width-auto font-sans-md text-bold option-range-select option-range-start",
           disabled: !f.object.rating? || form_disabled,
           include_blank: true,
+          aria: { label: "Criteria Option Range Start" },
           data: { action: "change->evaluation-criteria#toggleOptionRange" }
         %>
         <span class="margin-x-2 text-bold font-sans-md">to</span>
@@ -148,6 +149,7 @@
           class: "usa-select margin-0 height-auto width-auto font-sans-md text-bold option-range-select option-range-end",
           disabled: !f.object.rating? || form_disabled,
           include_blank: true,
+          aria: { label: "Criteria Option Range End" },
           data: { action: "change->evaluation-criteria#toggleOptionRange" }
         %>
       </div>

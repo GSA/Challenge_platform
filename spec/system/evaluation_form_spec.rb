@@ -16,17 +16,24 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
     it "is accessible" do
       visit new_evaluation_form_path
+      # Accessibility check on empty form
       expect(page).to(be_axe_clean)
     end
 
-    it 'allows creation of a valid form' do
+    it 'allows creation of a valid form with all 3 criteria scoring types' do
       visit new_evaluation_form_path
 
       fill_in_full_form
 
-      save_form
-      expect(page).to have_content("Evaluation Form Saved")
+      # Toggle one criterion accordion then check accessibility
+      toggle_criteria_accordion(0)
+      check_criteria_accordion_expanded(0, false)
+      expect(page).to(be_axe_clean)
 
+      save_form
+
+      # Click through confirmation page
+      expect(page).to have_content("Evaluation Form Saved")
       click_link_or_button "Manage Evaluation Forms"
 
       # Should be on evaluation index view
@@ -37,12 +44,33 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       challenge_phase_title = challenge_phase_title(phase.challenge, phase)
       expect(page).to have_content(challenge_phase_title)
       expect(page).to have_content(evaluation_period(evaluation_form))
+
+      # Check accessibility
+      expect(page).to(be_axe_clean)
+    end
+
+    it 'allows removing evaluation criteria' do
+      visit new_evaluation_form_path
+
+      fill_in_full_form
+
+      # Starts with 3
+      expect(visible_criterion_indicies.length).to eq(3)
+      remove_criterion(0)
+      expect(visible_criterion_indicies.length).to eq(2)
+      remove_criterion(1)
+      expect(visible_criterion_indicies.length).to eq(1)
+
+      # Removing last criteria creates a new blank one
+      remove_criterion(2)
+      expect(visible_criterion_indicies.length).to eq(1)
+      expect(visible_criterion_indicies).to include(3)
     end
   end
 
   describe "update evaluation form page" do
-    let(:challenge) { create(:challenge, user: user) }
-    let(:evaluation_form) { create(:evaluation_form, challenge: challenge, phase: challenge.phases[0]) }
+    let(:challenge) { create(:challenge, user:) }
+    let(:evaluation_form) { create(:evaluation_form, challenge:, phase: challenge.phases[0], weighted_scoring: true) }
 
     it "is accessible" do
       visit edit_evaluation_form_path(evaluation_form)
@@ -199,11 +227,11 @@ def check_criteria_accordion_expanded(index, state)
   button_state_selector = "#{button_selector}[aria-expanded='#{state}']"
   expect(page).to have_selector(button_state_selector)
 
-  accordion_content = find("#evaluation_form_evaluation_criteria_attributes_#{index}_accordion")
+  accordion_content = find("#evaluation_form_evaluation_criteria_attributes_#{index}_accordion", visible: :all)
   if state
     expect(accordion_content).to be_visible
   else
-    expect(accordion_content).to be_hidden
+    expect(accordion_content).not_to be_visible
   end
 end
 
