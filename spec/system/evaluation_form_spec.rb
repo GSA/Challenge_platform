@@ -22,43 +22,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     it 'allows creation of a valid form' do
       visit new_evaluation_form_path
 
-      # Fill in main form fields
-      fill_in_title("New Evaluation Form")
-      select_phase(challenge.phases.first)
-      fill_in_instructions("Example instructions")
-      check_require_comments
-      select_scale_type("point")
-      fill_in_end_date(challenge.phases.first.end_date + 1)
-
-      # Fill in initial criterion
-      index = 0
-      fill_in_criterion_title(index, "New Numeric Evaluation Criterion")
-      fill_in_criterion_description(index, "Example criterion description")
-      fill_in_criterion_points_weight(index, "10")
-      select_criterion_scoring_type(index, "numeric")
-
-      # Add new criterion (binary scoring type) and fill in
-      index = add_criterion
-      fill_in_criterion_title(index, "New Binary Evaluation Criterion")
-      fill_in_criterion_description(index, "Example criterion description")
-      fill_in_criterion_points_weight(index, "10")
-      select_criterion_scoring_type(index, "binary")
-      fill_in_criterion_option_label(index, 0, "No")
-      fill_in_criterion_option_label(index, 1, "Yes")
-
-      # Add new criterion (rating scoring type) and fill in
-      index = add_criterion
-      fill_in_criterion_title(index, "New Rating Evaluation Criterion")
-      fill_in_criterion_description(index, "Example criterion description")
-      fill_in_criterion_points_weight(index, "10")
-      select_criterion_scoring_type(index, "rating")
-      select_option_range_start(index, 1)
-      select_option_range_end(index, 5)
-      fill_in_criterion_option_label(index, 1, "Disagree")
-      fill_in_criterion_option_label(index, 2, "Slightly Disagree")
-      fill_in_criterion_option_label(index, 3, "Neutral")
-      fill_in_criterion_option_label(index, 4, "Slightly Agree")
-      fill_in_criterion_option_label(index, 5, "Agree")
+      fill_in_full_form
 
       save_form
 
@@ -82,6 +46,63 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
   end
+end
+
+def fill_in_full_form
+  fill_in_base_form_info
+  fill_in_all_eval_criteria_types
+end
+
+def fill_in_base_form_info
+  # Fill in main form fields
+  fill_in_title("New Evaluation Form")
+  select_phase(challenge.phases.first)
+  fill_in_instructions("Example instructions")
+  check_require_comments
+  select_scale_type("point")
+  fill_in_end_date(challenge.phases.first.end_date + 1)
+end
+
+def fill_in_all_eval_criteria_types
+  fill_in_numeric_criteria_type
+  fill_in_binary_criteria_type
+  fill_in_rating_criteria_type
+end
+
+def fill_in_numeric_criteria_type
+  # Fill in initial criterion
+  index = 0
+  fill_in_criterion_title(index, "New Numeric Evaluation Criterion")
+  fill_in_criterion_description(index, "Example criterion description")
+  fill_in_criterion_points_weight(index, "10")
+  select_criterion_scoring_type(index, "numeric")
+end
+
+def fill_in_binary_criteria_type
+  # Add new criterion (binary scoring type) and fill in
+  index = add_criterion
+  fill_in_criterion_title(index, "New Binary Evaluation Criterion")
+  fill_in_criterion_description(index, "Example criterion description")
+  fill_in_criterion_points_weight(index, "10")
+  select_criterion_scoring_type(index, "binary")
+  fill_in_criterion_option_label(index, 0, "No")
+  fill_in_criterion_option_label(index, 1, "Yes")
+end
+
+def fill_in_rating_criteria_type
+  # Add new criterion (rating scoring type) and fill in
+  index = add_criterion
+  fill_in_criterion_title(index, "New Rating Evaluation Criterion")
+  fill_in_criterion_description(index, "Example criterion description")
+  fill_in_criterion_points_weight(index, "10")
+  select_criterion_scoring_type(index, "rating")
+  select_option_range_start(index, 1)
+  select_option_range_end(index, 5)
+  fill_in_criterion_option_label(index, 1, "Disagree")
+  fill_in_criterion_option_label(index, 2, "Slightly Disagree")
+  fill_in_criterion_option_label(index, 3, "Neutral")
+  fill_in_criterion_option_label(index, 4, "Slightly Agree")
+  fill_in_criterion_option_label(index, 5, "Agree")
 end
 
 # Form Fill Helpers
