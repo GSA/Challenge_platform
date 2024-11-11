@@ -177,7 +177,7 @@
 
   <% if !form_disabled %>
     <div class="margin-top-2">
-      <%= button_tag type: "button", class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria", data: {action: "click->evaluation-criteria#removeCriteria"} do %>
+      <%= button_tag type: "button", id: criteria_field_id(f, "delete_criteria", is_template), class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria", data: {action: "click->evaluation-criteria#removeCriteria"} do %>
         Remove criteria
       <% end %>
     </div>

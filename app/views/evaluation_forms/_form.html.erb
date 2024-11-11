@@ -96,13 +96,13 @@
         <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
           <% if evaluation_form.evaluation_criteria.empty? %>
             <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
-              <div class="criteria-row margin-bottom-2" data-evaluation-criteria-target="criteriaRow">
+              <div class="criteria-row margin-bottom-2" data-evaluation-criteria-target="criteriaRow" data-index="0">
                 <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false, form_disabled: false } %>
               </div>
             <% end %>
           <% else %>
             <%= form.fields_for :evaluation_criteria, include_id: false do |ec| %>
-              <div class="criteria-row margin-bottom-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>" data-evaluation-criteria-target="criteriaRow">
+              <div class="criteria-row margin-bottom-2" style="<%= ec.object.marked_for_destruction? ? "display: none;" : "" %>" data-evaluation-criteria-target="criteriaRow" data-index="<%= ec.options[:child_index] %>">
                 <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: false, form_disabled: disabled } %>
               </div>
             <% end %>
@@ -111,7 +111,7 @@
 
         <% if !disabled %>
           <div class="usa-accordion">
-            <div id="criteria-template" class="criteria-row margin-bottom-2 display-none" data-evaluation-criteria-target="template">
+            <div id="criteria-template" class="criteria-row margin-bottom-2 display-none" data-evaluation-criteria-target="template" data-index="template">
               <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
                 <%= render partial: 'evaluation_criterion_fields', locals: { f: ec, is_template: true, form_disabled: disabled } %>
               <% end %>
