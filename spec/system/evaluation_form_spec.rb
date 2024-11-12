@@ -93,6 +93,29 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # Other criteria should still be collapsed
       check_criteria_accordion_expanded(1, false)
     end
+
+    it "shows an error if criteria points don't add up to 100 for weighted form" do
+      visit new_evaluation_form_path
+
+      fill_in_base_form_info
+      select_scale_type("weighted")
+
+      # Fill in two criteria with only 20 points
+      fill_in_numeric_criteria_type(initial: true)
+      fill_in_criterion_points_weight(0, 10)
+      fill_in_numeric_criteria_type
+      fill_in_criterion_points_weight(1, 10)
+
+      save_form
+      expect(page).to have_content(I18n.t("evaluation_form_criteria_weight_total_error"))
+
+      # Fix weights to add up to 100 and form should submit
+      fill_in_criterion_points_weight(0, 50)
+      fill_in_criterion_points_weight(1, 50)
+
+      save_form
+      expect(page).to have_content("Evaluation Form Saved", wait: 1)
+    end
   end
 
   describe "update evaluation form page" do
@@ -206,7 +229,7 @@ def check_require_comments
 end
 
 def select_scale_type(scale_type)
-  allowed_scale_types = %w[point weight]
+  allowed_scale_types = %w[point weighted]
   unless allowed_scale_types.include?(scale_type)
     raise ArgumentError, "Invalid scale type: #{scale_type}. Allowed values are: #{allowed_scale_types.join(', ')}"
   end
