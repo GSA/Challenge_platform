@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative '../services/evaluator_management_service'
 
 # == Schema Information
 #
@@ -33,7 +34,8 @@
 #  recertification_expired_at :datetime
 #
 class User < ApplicationRecord
-  after_create :accept_evaluator_invitation
+  after_create :process_evaluator_invitations
+
 
   VALID_EVALUATOR_ROLES = %w[evaluator solver challenge_manager].freeze
 
@@ -149,10 +151,7 @@ class User < ApplicationRecord
 
   private
 
-  def accept_evaluator_invitation
-    EvaluatorInvitation.where(email: email).find_each do |invite|
-      ChallengePhasesEvaluator.create(challenge: invite.challenge, phase: invite.phase, user: self)
-      invite.destroy
-    end
+  def process_evaluator_invitations
+    EvaluatorManagementService.accept_evaluator_invitation(self)
   end
 end
