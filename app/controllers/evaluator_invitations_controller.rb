@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class EvaluatorInvitationsController < ApplicationController
+  before_action -> { authorize_user('challenge_manager') }
   before_action :set_challenge
   before_action :set_evaluator_invitation
 
