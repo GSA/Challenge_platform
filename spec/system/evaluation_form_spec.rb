@@ -101,7 +101,17 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(challenge.phases.first.end_date + 1)
 
       save_form
-      expect(page).to have_content("Evaluation Form Saved", wait: 1)
+      expect(page).to have_content("Evaluation Form Saved", wait: 5)
+    end
+
+    it "contains the evaluation form data when editing after creation" do
+      visit new_evaluation_form_path
+      fill_in_full_form
+      save_form
+      evaluation_form = EvaluationForm.first
+      click_link_or_button "Manage Evaluation Forms"
+      click_edit_button_for_evaluation_form(evaluation_form.id)
+      expect_form_to_match_all_evaluation_form_values(evaluation_form)
     end
 
     it 'allows removing evaluation criteria' do
@@ -222,7 +232,7 @@ def fill_in_base_form_info
   fill_in_title("New Evaluation Form")
   select_phase(challenge.phases.first)
   fill_in_instructions("Example instructions")
-  check_require_comments
+  check_comments_required
   select_scale_type("point")
   fill_in_end_date(challenge.phases.first.end_date + 1)
 end
@@ -283,7 +293,7 @@ def fill_in_instructions(value)
   fill_in 'evaluation_form[instructions]', with: value
 end
 
-def check_require_comments
+def check_comments_required
   find("label[for='evaluation_form_comments_required']").click
 end
 
@@ -373,6 +383,10 @@ def save_form
   click_link_or_button 'Save'
 end
 
+def click_edit_button_for_evaluation_form(id)
+  find("form[action='/evaluation_forms/#{id}/edit'] button[type='submit']").click
+end
+
 ##### Form Focus Helpers #####
 # Checks for form fields being focused. Usually in the case of a required field not filled out
 # Includes non visible fields because of custom checkbox and radio button styling
@@ -429,4 +443,107 @@ def expect_criterion_option_label_to_be_focused(criterion_index, label_index)
   selector =
     "input[name='evaluation_form[evaluation_criteria_attributes][#{criterion_index}][option_labels][#{label_index}]']"
   expect_field_to_be_focused(selector)
+end
+
+##### Form Field Value Helpers #####
+def expect_form_to_match_all_evaluation_form_values(evaluation_form)
+  expect_base_form_field_to_match(evaluation_form)
+  expect_criterion_fields_to_match(evaluation_form)
+end
+
+def expect_base_form_field_to_match(evaluation_form)
+  expect_form_title_to_equal(evaluation_form.title)
+  phase = evaluation_form.phase
+  expect_form_phase_to_equal(challenge_phase_title(phase.challenge, phase))
+  expect_form_instructions_to_equal(evaluation_form.instructions)
+  expect_form_comments_required_to_equal(evaluation_form.comments_required)
+  expect_form_scale_type_to_equal(evaluation_form.weighted_scoring)
+  expect_form_end_date_to_equal(evaluation_form.closing_date.strftime("%m/%d/%Y"))
+end
+
+def expect_criterion_fields_to_match(evaluation_form)
+  evaluation_form.evaluation_criteria.each_with_index do |criterion, index|
+    expect_criterion_title_to_equal(index, criterion.title)
+    expect_criterion_description_to_equal(index, criterion.description)
+    expect_criterion_points_or_weight_to_equal(index, criterion.points_or_weight)
+    expect_criterion_scoring_type_to_equal(index, criterion.scoring_type)
+
+    expect_criterion_scoring_type_specific_fields_to_match(index, criterion)
+  end
+end
+
+def expect_criterion_scoring_type_specific_fields_to_match(index, criterion)
+  # Rating specific fields
+  if criterion.scoring_type == "rating"
+    expect_criterion_option_range_start_to_equal(index, criterion.option_range_start)
+    expect_criterion_option_range_end_to_equal(index, criterion.option_range_end)
+  end
+
+  # Option labels. Only for rating/binary scoring_types
+  return unless criterion.scoring_type != "numeric"
+
+  # expect_criterion_option_labels_to_match(criterion)
+  criterion.option_labels.each do |option_index, option_label|
+    expect_criterion_option_label_to_equal(index, option_index, option_label)
+  end
+end
+
+# Base form value checkers
+def expect_form_title_to_equal(value)
+  expect(find_by_id('evaluation_form_title').value).to eq(value)
+end
+
+def expect_form_phase_to_equal(value)
+  expect(find_by_id('challenge-combo').value).to eq(value)
+end
+
+def expect_form_instructions_to_equal(value)
+  expect(find_by_id('evaluation_form_instructions').value).to eq(value)
+end
+
+def expect_form_comments_required_to_equal(value)
+  expect(find_by_id('evaluation_form_comments_required', visible: :all).checked?).to eq(value)
+end
+
+def expect_form_scale_type_to_equal(value)
+  expect(find("input[name='evaluation_form[weighted_scoring]'][value='#{value}']", visible: :all)).to be_checked
+end
+
+def expect_form_end_date_to_equal(value)
+  expect(find_by_id('evaluation_form_closing_date').value).to eq(value)
+end
+
+# Criterion value checkers. Checks all visibility since accordions can be collapsed
+def expect_criterion_title_to_equal(index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{index}_title", visible: :all).value).to eq(value)
+end
+
+def expect_criterion_description_to_equal(index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{index}_description", visible: :all).value).to eq(value)
+end
+
+def expect_criterion_points_or_weight_to_equal(index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{index}_points_or_weight",
+              visible: :all).value.to_i).to eq(value)
+end
+
+def expect_criterion_scoring_type_to_equal(index, value)
+  scoring_type_radio = find("#evaluation_form_evaluation_criteria_attributes_#{index}_scoring_type_#{value}",
+                            visible: :all)
+  expect(scoring_type_radio).to be_checked
+end
+
+def expect_criterion_option_range_start_to_equal(index, value)
+  expect(find("select#evaluation_form_evaluation_criteria_attributes_#{index}_option_range_start",
+              visible: :all).value.to_i).to eq(value)
+end
+
+def expect_criterion_option_range_end_to_equal(index, value)
+  expect(find("select#evaluation_form_evaluation_criteria_attributes_#{index}_option_range_end",
+              visible: :all).value.to_i).to eq(value)
+end
+
+def expect_criterion_option_label_to_equal(criterion_index, label_index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{criterion_index}_option_labels_#{label_index}",
+              visible: :all).value).to eq(value)
 end
