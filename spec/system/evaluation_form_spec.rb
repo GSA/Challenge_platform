@@ -33,7 +33,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       save_form
 
       # Click through confirmation page
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_content("Evaluation Form Saved", wait: 1)
       click_link_or_button "Manage Evaluation Forms"
 
       # Should be on evaluation index view
@@ -47,6 +47,61 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Check accessibility
       expect(page).to(be_axe_clean)
+    end
+
+    it "prevents form submission and focuses first missing required field" do
+      visit new_evaluation_form_path
+
+      # Cycle through saving form, checking field focus, and filling field for all fields
+      # Check form title
+      save_form
+      expect_form_title_to_be_focused
+      fill_in_title("New Evaluation Form")
+      # Check form phase
+      save_form
+      expect_form_phase_to_be_focused
+      select_phase(challenge.phases.first)
+      # Check form instructions
+      save_form
+      expect_form_instructions_to_be_focused
+      fill_in_instructions("Example instructions")
+      # Check form scale type
+      save_form
+      expect_form_scale_type_to_be_focused
+      select_scale_type("point")
+      # Check criterion title
+      save_form
+      expect_criterion_title_to_be_focused(0)
+      fill_in_criterion_title(0, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
+      # Check criterion description
+      save_form
+      expect_criterion_description_to_be_focused(0)
+      fill_in_criterion_description(0, Faker::Lorem.sentence)
+      # Check criterion points/weight
+      save_form
+      expect_criterion_points_or_weight_to_be_focused(0)
+      fill_in_criterion_points_weight(0, 100)
+      # Check criterion scoring type
+      save_form
+      expect_criterion_scoring_type_to_be_focused(0)
+      select_criterion_scoring_type(0, "rating")
+      # Check criterion option labels
+      save_form
+      expect_criterion_option_label_to_be_focused(0, 0)
+      fill_in_criterion_option_label(0, 0, "Unlikely")
+      save_form
+      expect_criterion_option_label_to_be_focused(0, 1)
+      fill_in_criterion_option_label(0, 1, "Neutral")
+      save_form
+      expect_criterion_option_label_to_be_focused(0, 2)
+      fill_in_criterion_option_label(0, 2, "Likely")
+      # Check form end date
+      save_form
+      expect_form_end_date_to_be_focused
+      fill_in_end_date(challenge.phases.first.end_date + 1)
+
+      save_form
+      expect(page).to have_content("Evaluation Form Saved", wait: 1)
     end
 
     it 'allows removing evaluation criteria' do
@@ -78,7 +133,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # Should still be expanded because it's missing field values
       check_criteria_accordion_expanded(0, true)
       # Criteria title should be focused since it is required and not filled yet
-      expect_criteria_title_to_be_focused(0)
+      expect_criterion_title_to_be_focused(0)
 
       # Other criteria starts expanded
       check_criteria_accordion_expanded(1, true)
@@ -152,7 +207,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   end
 end
 
-# Form Fill Helpers
+#######################################
+############### Helpers ###############
+#######################################
+
+##### Form Fill Helpers #####
 def fill_in_full_form
   fill_in_base_form_info
   fill_in_all_eval_criteria_types
@@ -177,7 +236,7 @@ end
 def fill_in_numeric_criteria_type(initial: false)
   index = initial ? 0 : add_criterion
 
-  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.word} #{Faker::Lorem.word}")
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
   fill_in_criterion_description(index, "Example criterion description")
   fill_in_criterion_points_weight(index, "10")
   select_criterion_scoring_type(index, "numeric")
@@ -186,7 +245,7 @@ end
 def fill_in_binary_criteria_type(initial: false)
   index = initial ? 0 : add_criterion
 
-  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.word} #{Faker::Lorem.word}")
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
   fill_in_criterion_description(index, "Example criterion description")
   fill_in_criterion_points_weight(index, "10")
   select_criterion_scoring_type(index, "binary")
@@ -197,7 +256,7 @@ end
 def fill_in_rating_criteria_type(initial: false)
   index = initial ? 0 : add_criterion
 
-  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.word} #{Faker::Lorem.word}")
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
   fill_in_criterion_description(index, "Example criterion description")
   fill_in_criterion_points_weight(index, "10")
   select_criterion_scoring_type(index, "rating")
@@ -314,10 +373,11 @@ def save_form
   click_link_or_button 'Save'
 end
 
-# Form Focus Helpers
+##### Form Focus Helpers #####
 # Checks for form fields being focused. Usually in the case of a required field not filled out
+# Includes non visible fields because of custom checkbox and radio button styling
 def expect_field_to_be_focused(selector)
-  expect(page).to have_css("#{selector}:focus")
+  expect(page).to have_css("#{selector}:focus", visible: :all)
 end
 
 def expect_form_title_to_be_focused
@@ -325,7 +385,48 @@ def expect_form_title_to_be_focused
   expect_field_to_be_focused(selector)
 end
 
-def expect_criteria_title_to_be_focused(index)
+def expect_form_phase_to_be_focused
+  selector = "#challenge-combo"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_form_instructions_to_be_focused
+  selector = "textarea[name='evaluation_form[instructions]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_form_scale_type_to_be_focused
+  selector = "input#point_scale"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_form_end_date_to_be_focused
+  selector = "input[name='evaluation_form[closing_date]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_title_to_be_focused(index)
   selector = "input[name='evaluation_form[evaluation_criteria_attributes][#{index}][title]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_description_to_be_focused(index)
+  selector = "textarea[name='evaluation_form[evaluation_criteria_attributes][#{index}][description]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_points_or_weight_to_be_focused(index)
+  selector = "input[name='evaluation_form[evaluation_criteria_attributes][#{index}][points_or_weight]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_scoring_type_to_be_focused(index)
+  selector = "#evaluation_form_evaluation_criteria_attributes_#{index}_scoring_type_numeric"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_option_label_to_be_focused(criterion_index, label_index)
+  selector =
+    "input[name='evaluation_form[evaluation_criteria_attributes][#{criterion_index}][option_labels][#{label_index}]']"
   expect_field_to_be_focused(selector)
 end
