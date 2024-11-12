@@ -66,6 +66,33 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(visible_criterion_indicies.length).to eq(1)
       expect(visible_criterion_indicies).to include(3)
     end
+
+    it "does not allow collapsing criteria with missing fields and collapses correct accordion" do
+      visit new_evaluation_form_path
+
+      fill_in_base_form_info
+      # Adds a second criteria to make sure the correct accordion collapses
+      fill_in_numeric_criteria_type
+
+      toggle_criteria_accordion(0)
+      # Should still be expanded because it's missing field values
+      check_criteria_accordion_expanded(0, true)
+      # Criteria title should be focused since it is required and not filled yet
+      expect_criteria_title_to_be_focused(0)
+
+      # Other criteria starts expanded
+      check_criteria_accordion_expanded(1, true)
+      # Collapse and check other accordion
+      toggle_criteria_accordion(1)
+      check_criteria_accordion_expanded(1, false)
+
+      fill_in_numeric_criteria_type(initial: true)
+      toggle_criteria_accordion(0)
+      # Should be collapsed since it is filled out
+      check_criteria_accordion_expanded(0, false)
+      # Other criteria should still be collapsed
+      check_criteria_accordion_expanded(1, false)
+    end
   end
 
   describe "update evaluation form page" do
@@ -85,6 +112,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       check_criteria_accordion_expanded(0, true)
 
       save_form
+      expect(page).to have_current_path(evaluation_forms_confirmation_path, wait: 1)
       expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
@@ -118,24 +146,24 @@ def fill_in_base_form_info
 end
 
 def fill_in_all_eval_criteria_types
-  fill_in_numeric_criteria_type
+  fill_in_numeric_criteria_type(initial: true)
   fill_in_binary_criteria_type
   fill_in_rating_criteria_type
 end
 
-def fill_in_numeric_criteria_type
-  # Fill in initial criterion
-  index = 0
-  fill_in_criterion_title(index, "New Numeric Evaluation Criterion")
+def fill_in_numeric_criteria_type(initial: false)
+  index = initial ? 0 : add_criterion
+
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.word} #{Faker::Lorem.word}")
   fill_in_criterion_description(index, "Example criterion description")
   fill_in_criterion_points_weight(index, "10")
   select_criterion_scoring_type(index, "numeric")
 end
 
-def fill_in_binary_criteria_type
-  # Add new criterion (binary scoring type) and fill in
-  index = add_criterion
-  fill_in_criterion_title(index, "New Binary Evaluation Criterion")
+def fill_in_binary_criteria_type(initial: false)
+  index = initial ? 0 : add_criterion
+
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.word} #{Faker::Lorem.word}")
   fill_in_criterion_description(index, "Example criterion description")
   fill_in_criterion_points_weight(index, "10")
   select_criterion_scoring_type(index, "binary")
@@ -143,10 +171,10 @@ def fill_in_binary_criteria_type
   fill_in_criterion_option_label(index, 1, "Yes")
 end
 
-def fill_in_rating_criteria_type
-  # Add new criterion (rating scoring type) and fill in
-  index = add_criterion
-  fill_in_criterion_title(index, "New Rating Evaluation Criterion")
+def fill_in_rating_criteria_type(initial: false)
+  index = initial ? 0 : add_criterion
+
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.word} #{Faker::Lorem.word}")
   fill_in_criterion_description(index, "Example criterion description")
   fill_in_criterion_points_weight(index, "10")
   select_criterion_scoring_type(index, "rating")
@@ -270,5 +298,11 @@ def expect_field_to_be_focused(selector)
 end
 
 def expect_form_title_to_be_focused
-  expect_field_to_be_focused("input[name='evaluation_form[title]']")
+  selector = "input[name='evaluation_form[title]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criteria_title_to_be_focused(index)
+  selector = "input[name='evaluation_form[evaluation_criteria_attributes][#{index}][title]']"
+  expect_field_to_be_focused(selector)
 end
