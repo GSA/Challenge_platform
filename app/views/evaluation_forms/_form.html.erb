@@ -26,13 +26,22 @@
         provide instructions that will be shared with your evaluators. 
       </p>
       <div>
-        <%= form.label :title, class: "usa-label" %>
-        <%= form.text_field :title, maxlength: 150, class: "usa-input", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, required: true, disabled: disabled %>
+        <%= form.label :title, class: "usa-label text-bold font-sans-sm" do %>
+          Title <span style="color: darkred;">*</span>
+        <% end %>
+        <%= form.text_field :title,
+          maxlength: 150,
+          class: "usa-input",
+          data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"},
+          required: true,
+          disabled: disabled %>
       </div>
 
       <%= inline_error(evaluation_form, :title) %>
 
-      <label class="usa-label" for="challenge-combo">Select a challenge</label>
+      <label class="usa-label text-bold font-sans-sm" for="challenge-combo">
+        Select a Challenge <span style="color: darkred;">*</span>
+      </label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
         <select class="usa-select" required <%= if disabled then "disabled" end %> id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
@@ -52,7 +61,9 @@
 
       <div class="usa-character-count">
         <div class="usa-form-group">
-          <%= form.label :instructions, class: "usa-label" %>
+          <%= form.label :instructions, class: "usa-label text-bold font-sans-sm" do %>
+            Instructions <span style="color: darkred;">*</span>
+          <% end %>
           <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, required: true, disabled: disabled%>
         </div>
         <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
@@ -135,12 +146,12 @@
         Set the end date of your evaluation period.
         Your evaluation start date is the end date of your challenge.
       </p>
-      <div class="usa-label">Evaluation Start Date:</div>
+      <div class="usa-label text-bold font-sans-sm">Evaluation Start Date:</div>
       <div class="usa-hint" data-evaluation-form-target="startDate">mm/dd/yyyy</div>
       <div class="usa-form-group">
-        <label class="usa-label" id="evaluation_form_closing_date_label" for="evaluation_form_closing_date"
-          >Evaluation End Date:</label
-        >
+        <label class="usa-label text-bold font-sans-sm" id="evaluation_form_closing_date_label" for="evaluation_form_closing_date">
+          Evaluation End Date: <span style="color: darkred;">*</span>
+        </label>
         <div class="usa-hint" id="evaluation_form_closing_date_hint">mm/dd/yyyy</div>
         <div data-evaluation-form-target="datePicker" class="usa-date-picker" data-default-value="<%= evaluation_form.closing_date %>" data-min-date="<%= if evaluation_form.challenge then evaluation_form.challenge.end_date end %>">
           <input
