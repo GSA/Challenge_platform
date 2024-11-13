@@ -28,7 +28,7 @@ class ManageEvaluatorsController < ApplicationController
   private
 
   def set_challenge
-    @challenge = Challenge.find(params[:challenge_id])
+    @challenge = current_user.challenge_manager_challenges.find(params[:challenge_id])
   end
 
   def set_phase
