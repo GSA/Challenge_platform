@@ -184,7 +184,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   end
 
   describe "update evaluation form page" do
-    let(:challenge) { create(:challenge, user:) }
+    let(:challenge) { create(:challenge, user:, is_multi_phase: true) }
     let(:evaluation_form) { create(:evaluation_form, challenge:, phase: challenge.phases[0], weighted_scoring: true) }
 
     it "is accessible" do
@@ -195,16 +195,37 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     it 'allows editing of an existing form' do
       visit edit_evaluation_form_path(evaluation_form)
 
-      fill_in_title("Updated Evaluation Form Title")
-      toggle_criteria_accordion(0)
-      check_criteria_accordion_expanded(0, true)
+      # Prep updated form field values for comparison
+      updated_title = "Updated #{evaluation_form.title}"
+      # TODO: Might affect disabled state, start_date, etc.
+      updated_phase = challenge.phases[1]
+      updated_instructions = "Updated #{evaluation_form.instructions}"
+      updated_comments_required = !evaluation_form.comments_required
+      # TODO: Enable this when criteria updating and weight fixing is implemented
+      # updated_scale_type = !evaluation_form.weighted_scoring
+      updated_end_date = updated_phase.end_date + 1.day
+
+      # Update form field values
+      fill_in_title(updated_title)
+      select_phase(updated_phase)
+      fill_in_instructions(updated_instructions)
+      check_comments_required
+      # TODO: When switching to weighted it needs to make sure criteria values sum to 100
+      # select_scale_type(updated_scale_type ? "point" : "weighted")
+      fill_in_end_date(updated_end_date)
 
       save_form
       expect(page).to have_current_path(evaluation_forms_confirmation_path, wait: 1)
       expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
-      expect(evaluation_form.title).to eq("Updated Evaluation Form Title")
+      expect(evaluation_form.title).to eq(updated_title)
+      expect(evaluation_form.phase_id).to eq(updated_phase.id)
+      expect(evaluation_form.instructions).to eq(updated_instructions)
+      expect(evaluation_form.comments_required).to eq(updated_comments_required)
+      # TODO: Enable this when weighted scoring issue above is solved
+      # expect(evaluation_form.weighted_scoring).to eq(updated_scale_type)
+      expect(evaluation_form.closing_date).to eq(updated_end_date)
     end
   end
 
@@ -372,11 +393,19 @@ def fill_in_criterion_option_label(criterion_index, label_index, value)
           with: value
 end
 
-# TODO: This might need to go a month ahead if the date isn't found initially
 def fill_in_end_date(date)
-  date = date.strftime("%Y-%m-%d")
+  date_string = date.strftime("%Y-%m-%d")
+
   find(".usa-date-picker__button").click
-  find(".usa-date-picker__calendar__date[data-value='#{date}']").click
+  # Ensure proper year is focused in calendar
+  find(".usa-date-picker__calendar__year-selection").click
+  find(".usa-date-picker__calendar__year[data-value='#{date.year}']").click
+  # Ensure proper month is focused in calendar
+  find(".usa-date-picker__calendar__month-selection").click
+  find(".usa-date-picker__calendar__month[data-value='#{date.month - 1}']").click
+
+  # Select date from calendar
+  find(".usa-date-picker__calendar__date[data-value='#{date_string}']").click
 end
 
 def save_form
@@ -505,6 +534,7 @@ def expect_form_comments_required_to_equal(value)
   expect(find_by_id('evaluation_form_comments_required', visible: :all).checked?).to eq(value)
 end
 
+# value = false for point scale, true for weighted scale
 def expect_form_scale_type_to_equal(value)
   expect(find("input[name='evaluation_form[weighted_scoring]'][value='#{value}']", visible: :all)).to be_checked
 end
