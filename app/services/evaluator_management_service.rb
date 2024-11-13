@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EvaluatorManagementService
   def initialize(challenge, phase)
     @challenge = challenge
@@ -5,7 +7,7 @@ class EvaluatorManagementService
   end
 
   def process_evaluator_invitation(email, invitation_params)
-    user = User.find_by(email: email)
+    user = User.find_by(email:)
     user ? add_existing_user_as_evaluator(user) : handle_invitation(email, invitation_params)
   end
 
@@ -23,7 +25,7 @@ class EvaluatorManagementService
   def self.accept_evaluator_invitation(user)
     invitations = EvaluatorInvitation.where(email: user.email)
     invitations.each do |invite|
-      ChallengePhasesEvaluator.create(challenge: invite.challenge, phase: invite.phase, user: user)
+      ChallengePhasesEvaluator.create(challenge: invite.challenge, phase: invite.phase, user:)
       invite.destroy
     end
     { success: true, message: I18n.t('manage_evaluators.accept_evaluator_invitation.success') }
@@ -32,29 +34,64 @@ class EvaluatorManagementService
   private
 
   def add_existing_user_as_evaluator(user)
-    return { success: true, message: I18n.t('manage_evaluators.process_evaluator_invitation.already_added', email: user.email) } if @phase.evaluators.include?(user)
-    return { success: false, message: I18n.t('manage_evaluators.process_evaluator_invitation.invalid_role', email: user.email) } unless User::VALID_EVALUATOR_ROLES.include?(user.role)
+    if @phase.evaluators.include?(user)
+      return {
+        success: true,
+        message: I18n.t('manage_evaluators.process_evaluator_invitation.already_added',
+                        email: user.email)
+      }
+    end
 
-    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user: user)
+    unless User::VALID_EVALUATOR_ROLES.include?(user.role)
+      return {
+        success: false,
+        message: I18n.t('manage_evaluators.process_evaluator_invitation.invalid_role',
+                        email: user.email)
+      }
+    end
+
+    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
 
     if cpe.persisted?
-      { success: true, message: I18n.t('manage_evaluators.process_evaluator_invitation.add_success', email: user.email) }
+      {
+        success: true,
+        message: I18n.t('manage_evaluators.process_evaluator_invitation.add_success',
+                        email: user.email)
+      }
     else
-      { success: false, message: I18n.t('manage_evaluators.process_evaluator_invitation.add_failure', email: user.email) }
+      {
+        success: false,
+        message: I18n.t('manage_evaluators.process_evaluator_invitation.add_failure',
+                        email: user.email)
+      }
     end
   end
 
   def handle_invitation(email, invitation_params)
-    existing_invitation = @challenge.evaluator_invitations.find_by(email: email, phase: @phase)
+    existing_invitation = @challenge.evaluator_invitations.find_by(email:, phase: @phase)
     existing_invitation ? resend_invitation(existing_invitation) : create_new_invitation(invitation_params)
   end
 
   def create_new_invitation(invitation_params)
-    invitation = @challenge.evaluator_invitations.new(invitation_params.merge(phase: @phase, last_invite_sent: Time.current))
+    invitation = @challenge.evaluator_invitations.new(
+      invitation_params.merge(
+        phase: @phase,
+        last_invite_sent: Time.current
+      )
+    )
     if invitation.save
-      { success: true, message: I18n.t('manage_evaluators.process_evaluator_invitation.invitation_sent', email: invitation_params[:email]) }
+      {
+        success: true,
+        message: I18n.t(
+          'manage_evaluators.process_evaluator_invitation.invitation_sent',
+          email: invitation_params[:email]
+        )
+      }
     else
-      { success: false, message: invitation.errors.full_messages.join(", ") }
+      {
+        success: false,
+        message: invitation.errors.full_messages.join(", ")
+      }
     end
   end
 

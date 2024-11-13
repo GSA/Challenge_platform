@@ -22,6 +22,7 @@ class ChallengePhasesEvaluator < ApplicationRecord
 
   def user_has_valid_role
     return if User::VALID_EVALUATOR_ROLES.include?(user.role)
+
     errors.add(:user, "must have a valid evaluator role")
   end
 end

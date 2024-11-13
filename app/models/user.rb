@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../services/evaluator_management_service'
 
 # == Schema Information
@@ -35,7 +36,6 @@ require_relative '../services/evaluator_management_service'
 #
 class User < ApplicationRecord
   after_create :process_evaluator_invitations
-
 
   VALID_EVALUATOR_ROLES = %w[evaluator solver challenge_manager].freeze
 
@@ -136,7 +136,7 @@ class User < ApplicationRecord
   end
 
   def self.default_role_and_status_for_email(email)
-    if EvaluatorInvitation.exists?(email: email)
+    if EvaluatorInvitation.exists?(email:)
       %w[evaluator pending]
     elsif default_challenge_manager?(email)
       %w[challenge_manager pending]
