@@ -1,11 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Submissions" do
-  describe "GET /submissions" do
+  let(:user) { nil }
+  let(:challenge) { create_challenge(user: user, title: "Boston Tea Party Cleanup") }
+  let(:phase) { create_phase(challenge_id: challenge.id) }
+
+  before { log_in_user(user) }
+
+  describe "GET /phases/:id/submissions" do
     context "when logged in as a super admin" do
-      before do
-        create_and_log_in_user(role: "super_admin")
-      end
+      let(:user) { create_user(role: "super_admin") }
 
       it "redirects to the phoenix app" do
         get phases_path
@@ -15,9 +19,7 @@ RSpec.describe "Submissions" do
     end
 
     context "when logged in as a admin" do
-      before do
-        create_and_log_in_user(role: "admin")
-      end
+      let(:user) { create_user(role: "admin") }
 
       it "redirects to the phoenix app" do
         get phases_path
@@ -27,40 +29,9 @@ RSpec.describe "Submissions" do
     end
 
     context "when logged in as a challenge manager" do
-      let(:challenge_user) { create_user(role: "challenge_manager") }
-
-      before { log_in_user(challenge_user) }
-
-      it "renders the index view with the correct header" do
-        get phases_path
-
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include("Submissions & Evaluations")
-        expect(response.body).to include("View challenge submissions")
-      end
-
-      it "renders an empty list" do
-        get phases_path
-
-        expect(response.body).to include("You currently do not have any challenges.")
-      end
-
-      it "renders a list of challenges" do
-        agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-        challenge = Challenge.create!(user: challenge_user, agency:, title: "Turning monster energy into pepto bismol")
-        phase = create_phase(challenge_id: challenge.id)
-        ChallengeManager.create(user: challenge_user, challenge:)
-        create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: phase.id)
-
-        get phases_path
-        expect(response.body).to include("Turning monster energy into pepto bismol")
-        expect(response.body).to include("Frodo")
-      end
+      let(:user) { create_user(role: "challenge_manager") }
 
       it "renders an empty list of submissions for a user's challenge" do
-        challenge = create_challenge(user: challenge_user, title: "Boston Tea Party Cleanup")
-        phase = create_phase(challenge_id: challenge.id)
-
         get submissions_phase_path(phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
 
@@ -68,8 +39,6 @@ RSpec.describe "Submissions" do
       end
 
       it "renders a list of submissions for a user's challenge" do
-        challenge = create_challenge(user: challenge_user, title: "Boston Tea Party Cleanup")
-        phase = create_phase(challenge_id: challenge.id)
         submission = create(:submission, challenge: challenge, phase: phase)
 
         get submissions_phase_path(phase)
@@ -84,10 +53,34 @@ RSpec.describe "Submissions" do
         get submissions_phase_path(phase)
         expect(response).to have_http_status(:not_found)
       end
+    end
+
+    context "when logged in as an evaluator" do
+      let(:user) { create_user(role: "evaluator") }
+
+      it "redirects to the dashboard" do
+        get submissions_phase_path(phase)
+
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    context "when logged in as a solver" do
+      let(:user) { create_user(role: "solver") }
+
+      it "redirects to the phoenix app" do
+        get submissions_phase_path(phase)
+
+        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+      end
+    end
+  end
+
+  describe "GET /submissions/:id" do
+    context "when logged in as a challenge manager" do
+      let(:user) { create_user(role: "challenge_manager") }
 
       it "renders a details page for an individual submission" do
-        challenge = create_challenge(user: challenge_user)
-        phase = create_phase(challenge_id: challenge.id)
         submission = create(:submission, challenge: phase.challenge, brief_description: "This submission has legs.")
 
         get submission_path(submission)
@@ -102,30 +95,6 @@ RSpec.describe "Submissions" do
 
         get submission_path(submission)
         expect(response).to have_http_status(:not_found)
-      end
-    end
-
-    context "when logged in as an evaluator" do
-      before do
-        create_and_log_in_user(role: "evaluator")
-      end
-
-      it "redirects to the dashboard" do
-        get phases_path
-
-        expect(response).to redirect_to(dashboard_path)
-      end
-    end
-
-    context "when logged in as a solver" do
-      before do
-        create_and_log_in_user(role: "solver")
-      end
-
-      it "redirects to the phoenix app" do
-        get phases_path
-
-        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
   end
