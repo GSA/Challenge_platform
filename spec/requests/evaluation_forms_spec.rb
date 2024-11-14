@@ -47,9 +47,11 @@ RSpec.describe "EvaluationForms" do
         agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
         challenge = Challenge.create!(user:, agency:, title: "Turning red bull into water")
         ChallengeManager.create(user:, challenge:)
+        ph1 = create_phase(challenge_id: challenge.id)
+        ph2 = create_phase(challenge_id: challenge.id)
 
-        create_evaluation_form(title: "Frodo", challenge_id: challenge.id, challenge_phase: 1)
-        create_evaluation_form(title: "Sam", challenge_id: challenge.id, challenge_phase: 2)
+        create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: ph1.id)
+        create_evaluation_form(title: "Sam", challenge_id: challenge.id, phase_id: ph2.id)
         get evaluation_forms_path
         expect(response.body).to include("Sam")
         expect(response.body).to include("Frodo")
@@ -63,11 +65,15 @@ RSpec.describe "EvaluationForms" do
         user2 = create_user(role: "challenge_manager", email: "testwizard@example.gov")
         challenge2 = Challenge.create!(user: user2, agency:, title: "Turning frogs into princes")
         ChallengeManager.create(user: user2, challenge:)
+        ph1 = create_phase(challenge_id: challenge.id)
+        ph2 = create_phase(challenge_id: challenge.id)
+        ph3 = create_phase(challenge_id: challenge2.id)
+        ph4 = create_phase(challenge_id: challenge2.id)
 
-        create_evaluation_form(title: "Shrek", challenge_id: challenge.id, challenge_phase: 1)
-        create_evaluation_form(title: "Fiona", challenge_id: challenge.id, challenge_phase: 2)
-        create_evaluation_form(title: "Donkey", challenge_id: challenge2.id, challenge_phase: 1)
-        create_evaluation_form(title: "Farquad", challenge_id: challenge2.id, challenge_phase: 2)
+        create_evaluation_form(title: "Shrek", challenge_id: challenge.id, phase_id: ph1.id)
+        create_evaluation_form(title: "Fiona", challenge_id: challenge.id, phase_id: ph2.id)
+        create_evaluation_form(title: "Donkey", challenge_id: challenge2.id, phase_id: ph3.id)
+        create_evaluation_form(title: "Farquad", challenge_id: challenge2.id, phase_id: ph4.id)
 
         get evaluation_forms_path
         expect(response.body).to include("Shrek")
@@ -105,7 +111,7 @@ RSpec.describe "EvaluationForms" do
   describe "PATCH /evaluation_forms/:id" do
     let(:challenge_user) { create_user(role: "challenge_manager") }
     let(:challenge) { create_challenge(user: challenge_user) }
-    let(:evaluation_form) { create_evaluation_form(challenge_id: challenge.id, challenge_phase: 1) }
+    let(:evaluation_form) { create_evaluation_form(challenge_id: challenge.id) }
 
     before { log_in_user(challenge_user) }
 
