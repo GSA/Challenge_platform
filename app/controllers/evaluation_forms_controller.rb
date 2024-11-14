@@ -72,7 +72,7 @@ class EvaluationFormsController < ApplicationController
   end
 
   def set_evaluation_forms
-    @evaluation_forms = EvaluationForm.by_user(current_user)
+    @evaluation_forms = EvaluationForm.by_user(current_user).includes([:challenge, :phase])
   end
 
   # Only allow a list of trusted parameters through.
