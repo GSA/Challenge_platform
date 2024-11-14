@@ -43,3 +43,9 @@
 /node_modules
 /coverage/
 /vars.*.yml
+
+# dev env configuration files
+.direnv/
+.vscode/
+.yarn/
+.yarnrc

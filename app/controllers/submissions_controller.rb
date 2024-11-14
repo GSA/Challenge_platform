@@ -21,7 +21,7 @@ class SubmissionsController < ApplicationController
     params.require(:submission).permit(:comments)
   end
 
-  # User access enforced through their assigned challenge_manager_challenges
+  # User access enforced by role
   def set_submission
     @submission = Submission.by_user(current_user).find(params[:id])
   end
