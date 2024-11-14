@@ -27,6 +27,16 @@ export default class extends Controller {
     }
   }
 
+  updateMaxPoints(e) {
+    const form = e.target.closest('form[data-controller="evaluation-form"]');
+    const pointsWeights = form.querySelectorAll(".points-or-weight");
+    if (e.target.id == 'weighted_scale') {
+      pointsWeights.forEach((input) => input.max = "100")
+    } else {
+      pointsWeights.forEach((input) => input.max = "9999")
+    }
+  }
+
   validatePresence(e) {
     if (!e.target.value) {
       e.target.classList.add("border-secondary")
