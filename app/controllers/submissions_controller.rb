@@ -23,6 +23,6 @@ class SubmissionsController < ApplicationController
 
   # User access enforced through their assigned challenge_manager_challenges
   def set_submission
-    @submission = Submission.where(challenge: current_user.challenge_manager_challenges).find(params[:id])
+    @submission = Submission.by_user(current_user).find(params[:id])
   end
 end

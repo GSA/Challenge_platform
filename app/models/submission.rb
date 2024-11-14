@@ -24,6 +24,18 @@ class Submission < ApplicationRecord
   # Validations
   validates :title, presence: true
 
+  scope :by_user, lambda { |user|
+    case user.role
+    when 'challenge_manager'
+      where(challenge: user.challenge_manager_challenges)
+    when 'evaluator'
+      joins(:evaluators).where(evaluators: { id: user.id })
+    when 'solver'
+      where(submitter: user)
+    else
+      none
+    end
+  }
   def eligible_for_evaluation?
     selected? or winner?
   end

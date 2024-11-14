@@ -68,11 +68,15 @@ class EvaluationFormsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_evaluation_form
-    @evaluation_form = EvaluationForm.find(params[:id])
+    @evaluation_form = EvaluationForm.
+      by_user(current_user).
+      find(params[:id])
   end
 
   def set_evaluation_forms
-    @evaluation_forms = EvaluationForm.by_user(current_user).includes([:challenge, :phase])
+    @evaluation_forms = EvaluationForm.
+      by_user(current_user).
+      includes([:challenge, :phase])
   end
 
   # Only allow a list of trusted parameters through.
