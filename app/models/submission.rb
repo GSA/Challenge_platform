@@ -5,11 +5,10 @@ class Submission < ApplicationRecord
   enum :judging_status, { not_selected: "not_selected", selected: "selected", qualified: "qualified", winner: "winner" }
 
   # Associations
-  belongs_to :submitter, class_name: 'User'
   belongs_to :challenge
   belongs_to :phase
-  # I don't think we need this belongs_to anymore?
-  # belongs_to :manager, class_name: 'User'
+  belongs_to :submitter, class_name: 'User'
+  belongs_to :manager, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
 
