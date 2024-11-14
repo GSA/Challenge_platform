@@ -46,8 +46,7 @@ RSpec.describe "Phases" do
       end
 
       it "renders a list of challenges" do
-        agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-        challenge = Challenge.create!(user: challenge_user, agency:, title: "Turning monster energy into pepto bismol")
+        challenge = create(:challenge, user: challenge_user, title: "Turning monster energy into pepto bismol")
         phase = create_phase(challenge_id: challenge.id)
         ChallengeManager.create(user: challenge_user, challenge:)
         create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: phase.id)

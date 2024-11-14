@@ -3,14 +3,12 @@
 require 'rails_helper'
 
 describe "A11y", :js do
-  let(:user) { nil }
-
-  before do
-    system_login_user(user) if user
-  end
-
   describe "Logged-in as a Challenge Manager" do
     let(:user) { create_user(role: "challenge_manager") }
+
+    before do
+      system_login_user(user)
+    end
 
     it "manage phases index page is accessible with no challenges" do
       visit phases_path

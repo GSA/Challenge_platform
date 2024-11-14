@@ -3,14 +3,10 @@
 require 'rails_helper'
 
 describe "A11y", :js do
-  let(:user) { nil }
-
-  before do
-    system_login_user(user) if user
-  end
-
   describe "Logged-in as a Challenge Manager" do
     let(:user) { create_user(role: "challenge_manager") }
+
+    before { system_login_user(user) }
 
     it "manage submissions by challenge phase page is accessible with one challenge" do
       challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
