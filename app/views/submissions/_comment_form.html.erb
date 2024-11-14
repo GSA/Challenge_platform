@@ -1,4 +1,4 @@
-<%= form_with(model: @submission, url: manage_submission_path(@submission), class: "width-mobile-lg") do |form| %>
+<%= form_with(model: @submission, url: submission_path(@submission), class: "width-mobile-lg") do |form| %>
     <div class="usa-form-group">
         <%= form.label :comments, "Comments and notes:", class: "usa-label" %>
         <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments %>

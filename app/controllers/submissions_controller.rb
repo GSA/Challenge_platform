@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ManageSubmissionsController < ApplicationController
+class SubmissionsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_submission, only: [:show, :update]
 

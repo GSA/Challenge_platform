@@ -17,12 +17,12 @@ Rails.application.routes.draw do
       post 'clone'
     end
   end
-  resources :manage_phases, only: [:index] do
+  resources :phases, only: [:index] do
     member do
       get :submissions
     end
   end
-  resources :manage_submissions, only: [:index, :show, :update]
+  resources :submissions, only: [:index, :show, :update]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

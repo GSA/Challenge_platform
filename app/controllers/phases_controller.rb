@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ManagePhasesController < ApplicationController
+class PhasesController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_phase, except: [:index]
 
