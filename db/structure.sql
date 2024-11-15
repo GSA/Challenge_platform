@@ -10,6 +10,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
 -- Name: oban_job_state; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -685,7 +692,7 @@ CREATE TABLE public.oban_jobs (
     attempted_by text[],
     discarded_at timestamp without time zone,
     priority integer DEFAULT 0 NOT NULL,
-    tags text[] DEFAULT ARRAY[]::text[],
+    tags character varying(255)[] DEFAULT ARRAY[]::character varying[],
     meta jsonb DEFAULT '{}'::jsonb,
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
@@ -768,7 +775,8 @@ CREATE TABLE public.phases (
     how_to_enter text,
     how_to_enter_delta text,
     inserted_at timestamp(0) without time zone NOT NULL,
-    updated_at timestamp(0) without time zone NOT NULL
+    updated_at timestamp(0) without time zone NOT NULL,
+    submissions_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -2256,6 +2264,8 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241115193801),
+(20241115193605),
 (20241107161811),
 (20241023195356),
 (20241018150049),
