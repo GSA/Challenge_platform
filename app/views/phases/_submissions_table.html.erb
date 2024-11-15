@@ -1,9 +1,9 @@
 <% if @phase.evaluation_form.nil? %>
-  <%= render 'shared/no_evaluation_form_alert' %>
+  <%= render 'shared/alert_error', alert_heading: t('alerts.no_evaluation_form.heading'), alert_text: t('alerts.no_evaluation_form.text') %>
 <% end %>
 
 <% if phase_has_recused_evaluator?(@phase) %>
-  <%= render 'shared/recused_evaluator_alert' %>
+  <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator.text') %>
 <% end %>
 
 <table class="usa-table usa-table--stacked-header usa-table--borderless width-full">

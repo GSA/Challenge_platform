@@ -10,6 +10,6 @@ module ManageSubmissionsHelper
   end
 
   def phase_has_recused_evaluator?(phase)
-    EvaluatorSubmissionAssignment.where(submission: phase.submissions).exists?(status: :recused)
+    phase.evaluator_submission_assignments.recused.exists?
   end
 end

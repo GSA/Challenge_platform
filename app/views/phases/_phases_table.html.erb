@@ -15,7 +15,7 @@
               <%= challenge_phase_title(challenge, phase) %>
               </th>
             <td data-label="Number of Submissions">
-              <%= phase.submissions_count %>
+              <%= phase.submissions.count %>
             </td>
             <td data-label="Evaluation Form">
               <% if phase.evaluation_form %>
@@ -38,7 +38,7 @@
                 <button class="usa-button font-body-2xs text-no-wrap">
                   Manage Evaluators
                 </button>
-                <% unless phase.submissions.empty? %>
+                <% if phase.submissions.count > 0 %>
                   <%= link_to(submissions_phase_path(phase)) do %>
                     <button class="usa-button font-body-2xs text-no-wrap">
                       View Submissions
