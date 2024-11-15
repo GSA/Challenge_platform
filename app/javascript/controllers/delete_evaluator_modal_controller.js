@@ -21,7 +21,6 @@ export default class extends Controller {
     event.preventDefault()
     this.evaluatorIdValue = event.currentTarget.dataset.evaluatorId
     this.evaluatorTypeValue = event.currentTarget.dataset.evaluatorType
-    this.challengeIdValue = event.currentTarget.dataset.challengeId
     this.phaseIdValue = event.currentTarget.dataset.phaseId
     this.modalTarget.showModal()
   }
@@ -44,7 +43,7 @@ export default class extends Controller {
   deleteEvaluator(forceDelete = false) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content
   
-    fetch(`/challenges/${this.challengeIdValue}/manage_evaluators/${this.evaluatorIdValue}`, {
+    fetch(`/phases/${this.phaseIdValue}/manage_evaluators/${this.evaluatorIdValue}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
