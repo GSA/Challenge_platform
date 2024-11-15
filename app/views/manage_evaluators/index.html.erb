@@ -19,14 +19,14 @@
         <%= form.label :first_name, class: "usa-label font-sans-md" do %>
           <span class="text-bold">First Name</span><span class="text-red">*</span>
         <% end %>
-        <div class="usa-hint font-sans-2xs text-normal">Add first and last name in that order.</div>
+        <div class="usa-hint font-sans-2xs text-normal">Add evaluator's first name.</div>
         <%= form.text_field :first_name, class: "usa-input", required: true, autocomplete: "given-name", style: "border: 1.5px solid #565c65;" %>
       </div>
       <div class="usa-form-group">
         <%= form.label :last_name, class: "usa-label font-sans-md" do %>
           <span class="text-bold">Last Name</span><span class="text-red">*</span>
         <% end %>
-        <div class="usa-hint font-sans-2xs text-normal">Add first and last name in that order.</div>
+        <div class="usa-hint font-sans-2xs text-normal">Add evaluator's last name.</div>
         <%= form.text_field :last_name, class: "usa-input", required: true, autocomplete: "family-name", style: "border: 1.5px solid #565c65;" %>
       </div>
       <div class="usa-form-group">
