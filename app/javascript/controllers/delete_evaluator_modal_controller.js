@@ -45,23 +45,14 @@ export default class extends Controller {
   
     fetch(`/phases/${this.phaseIdValue}/manage_evaluators/${this.evaluatorIdValue}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken
-      },
-      body: JSON.stringify({
-        evaluator_type: this.evaluatorTypeValue,
-        phase_id: this.phaseIdValue,
-        force_delete: forceDelete
-      })
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body: JSON.stringify({ evaluator_type: this.evaluatorTypeValue, phase_id: this.phaseIdValue, force_delete: forceDelete })
     })
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
-      return response.json()
-    })
-    .then(data => {
+      const data = response.json()
       if (data.success) {
         this.close()
         window.location.reload()
