@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const logoutSession = () => {
-    fetch("/sessions/timeout", {
+    fetch("/session/timeout", {
       method: "DELETE",
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
   var renewSession = () => {
-    fetch("/sessions/renew", {
+    fetch("/session/renew", {
       method: "POST",
       headers: {
         "X-CSRF-Token": document

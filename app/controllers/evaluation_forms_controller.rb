@@ -41,7 +41,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
         format.html do
-          redirect_to evaluation_forms_confirmation_path, notice: I18n.t("evaluation_form_saved")
+          redirect_to confirmation_evaluation_form_path(@evaluation_form), notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -68,11 +68,15 @@ class EvaluationFormsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_evaluation_form
-    @evaluation_form = EvaluationForm.find(params[:id])
+    @evaluation_form = EvaluationForm.
+      by_user(current_user).
+      find(params[:id])
   end
 
   def set_evaluation_forms
-    @evaluation_forms = EvaluationForm.by_user(current_user).includes([:challenge, :phase])
+    @evaluation_forms = EvaluationForm.
+      by_user(current_user).
+      includes([:challenge, :phase])
   end
 
   # Only allow a list of trusted parameters through.
