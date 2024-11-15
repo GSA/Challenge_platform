@@ -7,5 +7,6 @@ FactoryBot.define do
     association :manager, factory: :user
 
     title { Faker::Lorem.sentence }
+    status { "draft" }
   end
 end

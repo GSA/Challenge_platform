@@ -1033,7 +1033,8 @@ CREATE TABLE public.submissions (
     review_verified boolean,
     description_delta text,
     brief_description_delta text,
-    pdf_reference character varying(255)
+    pdf_reference character varying(255),
+    comments text
 );
 
 
@@ -2255,6 +2256,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241107161811),
 (20241023195356),
 (20241018150049),
 (20241017172408),
