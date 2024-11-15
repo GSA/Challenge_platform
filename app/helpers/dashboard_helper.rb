@@ -6,7 +6,7 @@ module DashboardHelper
       challenge_manager: [
         { image_path: 'emoji_events', href: Rails.configuration.phx_interop[:phx_uri],
           alt: 'challenges', title: 'Challenges', subtitle: 'Create and manage challenges.' },
-        { image_path: 'star_half', href: 'manage_submissions',
+        { image_path: 'star_half', href: 'phases',
           alt: 'submissions and evaluations', title: 'Submissions & Evaluations', subtitle:
            'Manage submissions, evaluations, and evaluators.' },
         { image_path: 'check_circle_outline', href: 'evaluation_forms',
