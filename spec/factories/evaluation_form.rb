@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :evaluation_form do
     # Associations
     association :challenge
-    association :phase
+    phase { association(:phase, challenge: challenge) }
 
     # Fields
     title { "#{Faker::Lorem.word.humanize} Evaluation Form" }

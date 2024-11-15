@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe 'Evaluation Form', :js, type: :system do
-  let(:user) { create_user(role: "challenge_manager") }
-
-  before do
-    system_login_user(user) if user
-  end
+  let(:user) { create_user(role: "challenge_manager", status: "active") }
 
   describe "new evaluation form page" do
-    let(:challenge) { create(:challenge, user:) }
+    let!(:challenge) { create(:challenge, user:) }
 
     before do
-      challenge.reload
+      system_login_user(user)
+    end
+
+    after do
+      system_logout
     end
 
     it "is accessible" do
@@ -184,8 +184,20 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   end
 
   describe "update evaluation form page" do
-    let(:challenge) { create(:challenge, user:, is_multi_phase: true) }
-    let(:evaluation_form) { create(:evaluation_form, challenge:, phase: challenge.phases[0], weighted_scoring: true) }
+    let(:challenge) do
+      create(:challenge, user:, is_multi_phase: true)
+    end
+    let(:evaluation_form) do
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+    end
+
+    before do
+      system_login_user(user)
+    end
+
+    after do
+      system_logout
+    end
 
     it "is accessible" do
       visit edit_evaluation_form_path(evaluation_form)
@@ -215,7 +227,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(updated_end_date)
 
       save_form
-      expect(page).to have_current_path(evaluation_forms_confirmation_path, wait: 1)
+      expect(page).to have_current_path(confirmation_evaluation_form_path(evaluation_form), wait: 1)
       expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
@@ -230,8 +242,21 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   end
 
   describe "evaluation form confirmation page" do
+    let(:evaluation_form) do
+      challenge = create(:challenge, user:, is_multi_phase: true)
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+    end
+
+    before do
+      system_login_user(user)
+    end
+
+    after do
+      system_logout
+    end
+
     it "is accessible" do
-      visit evaluation_forms_confirmation_path
+      visit confirmation_evaluation_form_path(evaluation_form)
       expect(page).to have_content("Evaluation Form Saved")
       expect(page).to(be_axe_clean)
     end
