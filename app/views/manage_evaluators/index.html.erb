@@ -1,7 +1,7 @@
 <div data-controller="delete-evaluator-modal">
   <div data-page="manage-evaluators">
     <div class="margin-bottom-2 margin-top-3">
-      <%= link_to manage_submissions_path, class: "usa-link display-inline-flex flex-align-center" do %>
+      <%= link_to phases_path, class: "usa-link display-inline-flex flex-align-center" do %>
         <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3", alt: "Back to previous page") %>
         <span class="margin-left-05 text-primary">Back</span>
       <% end %>
@@ -11,7 +11,7 @@
     <p>Create and manage a list of evaluators for the challenge.</p>
     <h2 class="padding-top-3">Add Evaluators</h2>
     <p>Evaluators will not be assigned to submissions until you assign in the submission detail view.</p>
-    <%= form_with(model: EvaluatorInvitation.new, url: challenge_manage_evaluators_path(@challenge), method: :post, local: true) do |form| %>
+    <%= form_with(model: EvaluatorInvitation.new, url: phase_manage_evaluators_path(@phase), method: :post, local: true) do |form| %>
       <%= form.hidden_field :challenge_id, value: @challenge.id %>
       <%= form.hidden_field :phase_id, value: @phase.id %>
       <%= form.hidden_field :last_invite_sent, value: Time.current %>
@@ -75,7 +75,7 @@
                 <td data-label="Assigned submissions" class="text-top"><%= assigned_submissions_count(evaluator, @challenge, @phase) %></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
-                    <%= link_to manage_submissions_path(@challenge), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
+                    <%= link_to phases_path(@challenge), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
                       View Submissions
                     <% end %>
                     <%= button_tag "Delete", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
@@ -99,7 +99,7 @@
                 <td data-label="User status" class="text-top">
                   <div class="display-flex flex-row flex-justify">
                     <span>Invite Sent</span>
-                    <%= button_to resend_challenge_evaluator_invitation_path(@challenge, invitation), method: :post, class: 'usa-button usa-button--unstyled margin-left-2', style: 'white-space: nowrap;', form: { class: 'display-inline' } do %>
+                    <%= button_to resend_phase_evaluator_invitation_path(@phase, invitation), method: :post, class: 'usa-button usa-button--unstyled margin-left-2', style: 'white-space: nowrap;', form: { class: 'display-inline' } do %>
                       <span class="text-primary">Resend</span>
                     <% end %>
                   </div>

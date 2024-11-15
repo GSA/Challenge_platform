@@ -1,11 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe ManageEvaluatorsController, type: :request do
+RSpec.describe "ManageEvaluators", type: :request do
   let(:user) { create_and_log_in_user(role: 'challenge_manager') }
   let(:challenge) { create(:challenge) }
   let(:phase) { create(:phase, challenge: challenge) }
   let(:evaluator) { create(:user, role: 'evaluator') }
-  let(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase, email: 'invitation@example.com') }
+  let(:invitation) do
+    create(:evaluator_invitation, challenge: challenge, phase: phase, email: 'invitation@example.com')
+  end
 
   let(:evaluator_service) { instance_double(EvaluatorManagementService) }
 
@@ -17,11 +19,12 @@ RSpec.describe ManageEvaluatorsController, type: :request do
 
   describe 'GET #index' do
     before do
+      invitation # create existing invitation
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
     end
 
     it 'assigns @evaluator_invitations and @existing_evaluators' do
-      get challenge_manage_evaluators_path(challenge, phase_id: phase.id)
+      get phase_manage_evaluators_path(phase)
 
       expect(assigns(:evaluator_invitations)).to eq([invitation])
       expect(assigns(:existing_evaluators)).to eq([evaluator])
@@ -38,15 +41,17 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       end
 
       it 'calls the EvaluatorManagementService to process the invitation' do
-        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true, message: 'Invitation sent successfully.' })
-        post challenge_manage_evaluators_path(challenge), params: valid_params
-        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true,
+                                                                                         message: 'Invitation sent successfully.' })
+        post phase_manage_evaluators_path(phase), params: valid_params
+        expect(response).to redirect_to(phase_manage_evaluators_path(phase))
       end
 
       it 'redirects to manage_evaluators path with success notice' do
-        allow(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true, message: 'Invitation sent successfully.' })
-        post challenge_manage_evaluators_path(challenge), params: valid_params
-        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        allow(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true,
+                                                                                        message: 'Invitation sent successfully.' })
+        post phase_manage_evaluators_path(phase), params: valid_params
+        expect(response).to redirect_to(phase_manage_evaluators_path(phase))
         expect(flash[:notice]).to eq('Invitation sent successfully.')
       end
     end
@@ -59,10 +64,11 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       end
 
       it 'does not create a new evaluator invitation' do
-        allow(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: false, message: 'Invalid email' })
-        expect {
-          post challenge_manage_evaluators_path(challenge), params: invalid_params
-        }.not_to change(EvaluatorInvitation, :count)
+        allow(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: false,
+                                                                                        message: 'Invalid email' })
+        expect do
+          post phase_manage_evaluators_path(phase), params: invalid_params
+        end.not_to change(EvaluatorInvitation, :count)
         expect(response).to render_template(:index)
       end
     end
@@ -76,14 +82,14 @@ RSpec.describe ManageEvaluatorsController, type: :request do
           hash_including(phase_id: phase.id.to_s)
         ).and_return({ success: true, message: 'User added as an evaluator.' })
 
-        post challenge_manage_evaluators_path(challenge), params: {
+        post phase_manage_evaluators_path(phase), params: {
           evaluator_invitation: {
             email: existing_user.email,
             phase_id: phase.id
           }
         }
 
-        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        expect(response).to redirect_to(phase_manage_evaluators_path(phase))
         expect(flash[:notice]).to eq('User added as an evaluator.')
       end
     end
@@ -96,30 +102,32 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       end
 
       it 'does not create an additional ChallengePhaseEvaluator' do
-        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: false, message: 'User is already an evaluator for this phase.' })
-        expect {
-          post challenge_manage_evaluators_path(challenge), params: {
+        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: false,
+                                                                                         message: 'User is already an evaluator for this phase.' })
+        expect do
+          post phase_manage_evaluators_path(phase), params: {
             evaluator_invitation: {
               email: existing_user.email,
               phase_id: phase.id
             }
           }
-        }.not_to change(ChallengePhasesEvaluator, :count)
+        end.not_to change(ChallengePhasesEvaluator, :count)
       end
     end
 
     context 'when inviting a user who already has an invitation for the challenge phase' do
       it 'does not create an additional EvaluatorInvitation' do
         invitation # create existing invitation
-        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true, message: 'Invitation resent.' })
-        expect {
-          post challenge_manage_evaluators_path(challenge), params: {
+        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true,
+                                                                                         message: 'Invitation resent.' })
+        expect do
+          post phase_manage_evaluators_path(phase), params: {
             evaluator_invitation: {
               email: invitation.email,
               phase_id: phase.id
             }
           }
-        }.not_to change(EvaluatorInvitation, :count)
+        end.not_to change(EvaluatorInvitation, :count)
       end
     end
 
@@ -127,16 +135,17 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       let(:existing_user) { create(:user, role: 'solver', status: 'pending') }
 
       it 'adds the user as an evaluator without changing their role' do
-        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true, message: 'User added as an evaluator.' })
+        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true,
+                                                                                         message: 'User added as an evaluator.' })
 
-        post challenge_manage_evaluators_path(challenge), params: {
+        post phase_manage_evaluators_path(phase), params: {
           evaluator_invitation: {
             email: existing_user.email,
             phase_id: phase.id
           }
         }
 
-        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        expect(response).to redirect_to(phase_manage_evaluators_path(phase))
         expect(flash[:notice]).to eq('User added as an evaluator.')
         existing_user.reload
         expect(existing_user.role).to eq('solver')
@@ -147,16 +156,17 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       let(:new_user_email) { 'new_user@example.com' }
 
       it 'creates an evaluator invitation' do
-        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true, message: 'Invitation sent successfully.' })
+        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: true,
+                                                                                         message: 'Invitation sent successfully.' })
 
-        post challenge_manage_evaluators_path(challenge), params: {
+        post phase_manage_evaluators_path(phase), params: {
           evaluator_invitation: {
             email: new_user_email,
             phase_id: phase.id
           }
         }
 
-        expect(response).to redirect_to(challenge_manage_evaluators_path(challenge, phase_id: phase.id))
+        expect(response).to redirect_to(phase_manage_evaluators_path(phase))
         expect(flash[:notice]).to eq('Invitation sent successfully.')
       end
     end
@@ -165,9 +175,10 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       let(:existing_user) { create(:user, role: 'admin') }
 
       it 'does not add the user as an evaluator and returns an error' do
-        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: false, message: 'User does not have a valid evaluator role.' })
+        expect(evaluator_service).to receive(:process_evaluator_invitation).and_return({ success: false,
+                                                                                         message: 'User does not have a valid evaluator role.' })
 
-        post challenge_manage_evaluators_path(challenge), params: {
+        post phase_manage_evaluators_path(phase), params: {
           evaluator_invitation: {
             email: existing_user.email,
             phase_id: phase.id
@@ -181,9 +192,8 @@ RSpec.describe ManageEvaluatorsController, type: :request do
   end
 
   describe 'DELETE #destroy' do
-    let(:phase1) { create(:phase, challenge: challenge) }
-    let(:phase2) { create(:phase, challenge: challenge) }
-    let!(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase1) }
+    let(:phase) { create(:phase, challenge: challenge) }
+    let!(:invitation) { create(:evaluator_invitation, challenge:, phase:) }
     let(:evaluator_service) { instance_double(EvaluatorManagementService) }
 
     before do
@@ -194,9 +204,12 @@ RSpec.describe ManageEvaluatorsController, type: :request do
       let(:evaluator) { create(:user, role: 'evaluator') }
 
       it 'removes the evaluator from their associated phase' do
-        expect(evaluator_service).to receive(:remove_evaluator).with('user', evaluator.id.to_s).and_return({ success: true, message: 'Evaluator removed successfully.' })
+        expect(evaluator_service).to receive(:remove_evaluator).with('user',
+                                                                     evaluator.id.to_s).and_return({ success: true,
+                                                                                                     message: 'Evaluator removed successfully.' })
 
-        delete challenge_manage_evaluator_path(challenge, evaluator), params: { evaluator_type: 'user', phase_id: phase.id }
+        delete phase_manage_evaluator_path(phase, evaluator),
+               params: { evaluator_type: 'user', phase_id: phase.id }
 
         expect(response).to have_http_status(:success)
         expect(JSON.parse(response.body)).to eq({ 'success' => true, 'message' => 'Evaluator removed successfully.' })
@@ -205,9 +218,12 @@ RSpec.describe ManageEvaluatorsController, type: :request do
 
     context 'when removing an evaluator invitation' do
       it 'removes the evaluator invitation' do
-        expect(evaluator_service).to receive(:remove_evaluator).with('invitation', invitation.id.to_s).and_return({ success: true, message: 'Invitation removed successfully.' })
+        expect(evaluator_service).to receive(:remove_evaluator).with('invitation',
+                                                                     invitation.id.to_s).and_return({ success: true,
+                                                                                                      message: 'Invitation removed successfully.' })
 
-        delete challenge_manage_evaluator_path(challenge, invitation), params: { evaluator_type: 'invitation', phase_id: phase1.id }
+        delete phase_manage_evaluator_path(phase, invitation),
+               params: { evaluator_type: 'invitation', phase_id: phase.id }
 
         expect(response).to have_http_status(:success)
         expect(JSON.parse(response.body)).to eq({ 'success' => true, 'message' => 'Invitation removed successfully.' })
@@ -216,13 +232,14 @@ RSpec.describe ManageEvaluatorsController, type: :request do
 
     context 'with invalid evaluator type' do
       it 'returns an error JSON response' do
-        expect(evaluator_service).to receive(:remove_evaluator).and_return({ success: false, message: 'Invalid evaluator type' })
-        delete challenge_manage_evaluator_path(challenge, 1), params: { evaluator_type: 'invalid', phase_id: phase1.id }
+        expect(evaluator_service).to receive(:remove_evaluator).and_return({ success: false,
+                                                                             message: 'Invalid evaluator type' })
+        delete phase_manage_evaluator_path(phase, 1), params: { evaluator_type: 'invalid', phase_id: phase.id }
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({
-          'success' => false,
-          'message' => 'Invalid evaluator type'
-        })
+                                                  'success' => false,
+                                                  'message' => 'Invalid evaluator type'
+                                                })
       end
     end
   end

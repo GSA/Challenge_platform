@@ -68,6 +68,7 @@ group :development, :test do
   gem "rubocop-capybara", require: false
 
   gem "codeclimate-test-reporter"
+  gem "bullet"
 end
 
 group :development do

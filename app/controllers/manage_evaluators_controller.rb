@@ -4,11 +4,10 @@ class ManageEvaluatorsController < ApplicationController
   include ManageEvaluatorsHelper
 
   before_action -> { authorize_user('challenge_manager') }
-  before_action :set_challenge
   before_action :set_phase, only: [:index, :create, :destroy]
 
   def index
-    @phase ? handle_existing_phases : handle_empty_phases
+    handle_existing_phases
   end
 
   def create
@@ -27,13 +26,10 @@ class ManageEvaluatorsController < ApplicationController
 
   private
 
-  def set_challenge
-    @challenge = current_user.challenge_manager_challenges.find(params[:challenge_id])
-  end
-
   def set_phase
     phase_id = params.dig(:evaluator_invitation, :phase_id) || params[:phase_id]
-    @phase = phase_id ? @challenge.phases.find(phase_id) : @challenge.phases.order(:start_date).first
+    @phase = Phase.where(challenge: current_user.challenge_manager_challenges).find(phase_id)
+    @challenge = @phase.challenge
   end
 
   def evaluator_service
@@ -50,12 +46,6 @@ class ManageEvaluatorsController < ApplicationController
     fetch_evaluators_and_invitations
   end
 
-  def handle_empty_phases
-    flash.now[:alert] = t('.no_phases_alert')
-    @evaluator_invitations = []
-    @existing_evaluators = []
-  end
-
   def fetch_evaluators_and_invitations
     @evaluator_invitations = @phase.evaluator_invitations
     @existing_evaluators = @phase.evaluators
@@ -63,7 +53,7 @@ class ManageEvaluatorsController < ApplicationController
 
   def handle_invitation_result(result)
     if result[:success]
-      redirect_to challenge_manage_evaluators_path(@challenge, phase_id: @phase.id), notice: result[:message]
+      redirect_to phase_manage_evaluators_path(@phase), notice: result[:message]
     else
       flash.now[:alert] = result[:message]
       handle_existing_phases
