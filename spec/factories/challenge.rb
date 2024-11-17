@@ -59,7 +59,7 @@ FactoryBot.define do
         3.times do
           create(:phase, challenge: challenge)
         end
-      else
+      elsif challenge.phases.empty?
         create(:phase, challenge: challenge)
       end
     end
