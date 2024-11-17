@@ -260,8 +260,28 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria + 3)
     end
 
-    # it 'allows removing existing criteria' do
-    # end
+    it 'allows removing existing criteria' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      num_criteria = evaluation_form.evaluation_criteria.length
+
+      # Add a criterion in case there is only 1 remaining
+      fill_in_numeric_criteria_type
+
+      # Make sure criteria are expanded so they can be edited if needed
+      open_all_criteria_accordions
+
+      # Remove an existing criterion from the form
+      remove_criterion(visible_criterion_indicies[0])
+
+      evaluation_form.reload
+      maybe_rebalance_criteria_weights(evaluation_form)
+      save_form
+
+      evaluation_form.reload
+      # Criteria count should be the same since one was added and removed
+      expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria)
+    end
   end
 
   describe "evaluation form confirmation page" do
