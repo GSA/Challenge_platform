@@ -192,7 +192,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
 
-    it 'allows editing of an existing form' do
+    it 'allows editing of an existing form values' do
       visit edit_evaluation_form_path(evaluation_form)
 
       # Prep updated form field values for comparison
@@ -227,6 +227,29 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # expect(evaluation_form.weighted_scoring).to eq(updated_scale_type)
       expect(evaluation_form.closing_date).to eq(updated_end_date)
     end
+
+    it 'allows adding new criteria' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      num_criteria = evaluation_form.evaluation_criteria.length
+
+      # Make sure criteria are expanded so they can be edited if needed
+      open_all_criteria_accordions
+
+      # Create 3 new criteria of each type
+      fill_in_numeric_criteria_type
+      fill_in_rating_criteria_type
+      fill_in_binary_criteria_type
+
+      maybe_rebalance_criteria_weights(evaluation_form)
+      save_form
+
+      evaluation_form.reload
+      expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria + 3)
+    end
+
+    # it 'allows removing existing criteria' do
+    # end
   end
 
   describe "evaluation form confirmation page" do
@@ -361,6 +384,23 @@ end
 
 def toggle_criteria_accordion(index)
   find("button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']").click
+end
+
+# False to close all, true to open all
+def open_all_criteria_accordions(open: true)
+  visible_criterion_indicies.each do |index|
+    if open
+      toggle_criteria_accordion(index) unless get_criteria_accordion_state(index)
+    elsif get_criteria_accordion_state(index)
+      toggle_criteria_accordion(index)
+    end
+  end
+end
+
+# Returns false if closed, true if open
+def get_criteria_accordion_state(index)
+  button_selector = "button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']"
+  find(button_selector)[:'aria-expanded'] == "true"
 end
 
 def check_criteria_accordion_expanded(index, state)
@@ -576,4 +616,15 @@ end
 def expect_criterion_option_label_to_equal(criterion_index, label_index, value)
   expect(find("#evaluation_form_evaluation_criteria_attributes_#{criterion_index}_option_labels_#{label_index}",
               visible: :all).value).to eq(value)
+end
+
+##### Misc Form Helpers #####
+def maybe_rebalance_criteria_weights(evaluation_form)
+  # Only rebalance if weighted scoring is enabled
+  return unless evaluation_form.weighted_scoring
+
+  balanced_values = random_values_for_weighted_scoring(visible_criterion_indicies.length)
+  visible_criterion_indicies.each do |index|
+    fill_in_criterion_points_weight(index, balanced_values[index])
+  end
 end
