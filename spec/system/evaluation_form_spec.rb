@@ -10,10 +10,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       system_login_user(user)
     end
 
-    # after do
-    #   system_logout
-    # end
-
     it "is accessible" do
       visit new_evaluation_form_path
       # Accessibility check on empty form
@@ -198,10 +194,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       system_login_user(user)
     end
 
-    # after do
-    #   system_logout
-    # end
-
     it "is accessible" do
       visit edit_evaluation_form_path(evaluation_form)
       expect(page).to(be_axe_clean)
@@ -249,19 +241,18 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       num_criteria = evaluation_form.evaluation_criteria.length
 
       # Make sure criteria are expanded so they can be edited if needed
-      open_all_criteria_accordions
+      toggle_all_criteria_accordions
 
       # Create 3 new criteria of each type
       fill_in_numeric_criteria_type
       fill_in_rating_criteria_type
       fill_in_binary_criteria_type
 
-      maybe_rebalance_criteria_weights(evaluation_form)
+      rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
       expect(page).to have_content("Evaluation Form Saved")
 
-      evaluation_form.reload
-      expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria + 3)
+      expect(evaluation_form.reload.evaluation_criteria.length).to eq(num_criteria + 3)
     end
 
     it 'allows removing existing criteria' do
@@ -273,13 +264,12 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_numeric_criteria_type
 
       # Make sure criteria are expanded so they can be edited if needed
-      open_all_criteria_accordions
+      toggle_all_criteria_accordions
 
       # Remove an existing criterion from the form
       remove_criterion(visible_criterion_indicies[0])
 
-      evaluation_form.reload
-      maybe_rebalance_criteria_weights(evaluation_form)
+      rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
       expect(page).to have_content("Evaluation Form Saved")
 
@@ -309,10 +299,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     before do
       system_login_user(user)
     end
-
-    # after do
-    #   system_logout
-    # end
 
     it "is accessible" do
       visit confirmation_evaluation_form_path(evaluation_form)
@@ -448,7 +434,7 @@ def toggle_criteria_accordion(index)
 end
 
 # False to close all, true to open all
-def open_all_criteria_accordions(open: true)
+def toggle_all_criteria_accordions(open: true)
   visible_criterion_indicies.each do |index|
     if open
       toggle_criteria_accordion(index) unless get_criteria_accordion_state(index)
@@ -680,13 +666,10 @@ def expect_criterion_option_label_to_equal(criterion_index, label_index, value)
 end
 
 ##### Misc Form Helpers #####
-def maybe_rebalance_criteria_weights(evaluation_form)
-  # Only rebalance if weighted scoring is enabled
-  return unless evaluation_form.weighted_scoring
-
+def rebalance_criteria_weights
   balanced_values = random_values_for_weighted_scoring(visible_criterion_indicies.length)
-  visible_criterion_indicies.each do |index|
-    fill_in_criterion_points_weight(index, balanced_values[index])
+  visible_criterion_indicies.each_with_index do |crit_index, each_index|
+    fill_in_criterion_points_weight(crit_index, balanced_values[each_index])
   end
 end
 
