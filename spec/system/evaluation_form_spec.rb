@@ -282,6 +282,17 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # Criteria count should be the same since one was added and removed
       expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria)
     end
+
+    it 'disables all fields except end date after start date' do
+      closed_challenge = create(:challenge, user:, phases: [create(:phase, end_date: 1.week.ago)])
+      closed_evaluation_form = create(:evaluation_form, challenge:, phase: closed_challenge.phases.first)
+
+      visit edit_evaluation_form_path(closed_evaluation_form)
+
+      # Add expectation in spec to satisfy rubocop
+      expect(page).to have_css("form[data-controller='evaluation-form']")
+      check_all_non_hidden_inputs_disabled_except_end_date
+    end
   end
 
   describe "evaluation form confirmation page" do
@@ -671,5 +682,18 @@ def maybe_rebalance_criteria_weights(evaluation_form)
   balanced_values = random_values_for_weighted_scoring(visible_criterion_indicies.length)
   visible_criterion_indicies.each do |index|
     fill_in_criterion_points_weight(index, balanced_values[index])
+  end
+end
+
+# Checks that all non hidden or end date fields are disabled
+def check_all_non_hidden_inputs_disabled_except_end_date
+  within("form[data-controller='evaluation-form']") do
+    all("input:not([type='hidden']), textarea, select").each do |field|
+      if field[:id] == "evaluation_form_closing_date"
+        expect(field).not_to be_disabled, "Expected #{field[:id]} to not be disabled"
+      else
+        expect(field).to be_disabled, "Expected #{field[:id]} to be disabled"
+      end
+    end
   end
 end
