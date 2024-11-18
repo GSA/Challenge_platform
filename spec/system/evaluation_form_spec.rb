@@ -204,7 +204,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
 
-    it 'allows editing of an existing form' do
+    it 'allows editing of an existing form values' do
       visit edit_evaluation_form_path(evaluation_form)
 
       # Prep updated form field values for comparison
@@ -238,6 +238,60 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # TODO: Enable this when weighted scoring issue above is solved
       # expect(evaluation_form.weighted_scoring).to eq(updated_scale_type)
       expect(evaluation_form.closing_date).to eq(updated_end_date)
+    end
+
+    it 'allows adding new criteria' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      num_criteria = evaluation_form.evaluation_criteria.length
+
+      # Make sure criteria are expanded so they can be edited if needed
+      open_all_criteria_accordions
+
+      # Create 3 new criteria of each type
+      fill_in_numeric_criteria_type
+      fill_in_rating_criteria_type
+      fill_in_binary_criteria_type
+
+      maybe_rebalance_criteria_weights(evaluation_form)
+      save_form
+
+      evaluation_form.reload
+      expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria + 3)
+    end
+
+    it 'allows removing existing criteria' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      num_criteria = evaluation_form.evaluation_criteria.length
+
+      # Add a criterion in case there is only 1 remaining
+      fill_in_numeric_criteria_type
+
+      # Make sure criteria are expanded so they can be edited if needed
+      open_all_criteria_accordions
+
+      # Remove an existing criterion from the form
+      remove_criterion(visible_criterion_indicies[0])
+
+      evaluation_form.reload
+      maybe_rebalance_criteria_weights(evaluation_form)
+      save_form
+
+      evaluation_form.reload
+      # Criteria count should be the same since one was added and removed
+      expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria)
+    end
+
+    it 'disables all fields except end date after start date' do
+      closed_challenge = create(:challenge, user:, phases: [create(:phase, end_date: 1.week.ago)])
+      closed_evaluation_form = create(:evaluation_form, challenge:, phase: closed_challenge.phases.first)
+
+      visit edit_evaluation_form_path(closed_evaluation_form)
+
+      # Add expectation in spec to satisfy rubocop
+      expect(page).to have_css("form[data-controller='evaluation-form']")
+      check_all_non_hidden_inputs_disabled_except_end_date
     end
   end
 
@@ -386,6 +440,23 @@ end
 
 def toggle_criteria_accordion(index)
   find("button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']").click
+end
+
+# False to close all, true to open all
+def open_all_criteria_accordions(open: true)
+  visible_criterion_indicies.each do |index|
+    if open
+      toggle_criteria_accordion(index) unless get_criteria_accordion_state(index)
+    elsif get_criteria_accordion_state(index)
+      toggle_criteria_accordion(index)
+    end
+  end
+end
+
+# Returns false if closed, true if open
+def get_criteria_accordion_state(index)
+  button_selector = "button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']"
+  find(button_selector)[:'aria-expanded'] == "true"
 end
 
 def check_criteria_accordion_expanded(index, state)
@@ -601,4 +672,28 @@ end
 def expect_criterion_option_label_to_equal(criterion_index, label_index, value)
   expect(find("#evaluation_form_evaluation_criteria_attributes_#{criterion_index}_option_labels_#{label_index}",
               visible: :all).value).to eq(value)
+end
+
+##### Misc Form Helpers #####
+def maybe_rebalance_criteria_weights(evaluation_form)
+  # Only rebalance if weighted scoring is enabled
+  return unless evaluation_form.weighted_scoring
+
+  balanced_values = random_values_for_weighted_scoring(visible_criterion_indicies.length)
+  visible_criterion_indicies.each do |index|
+    fill_in_criterion_points_weight(index, balanced_values[index])
+  end
+end
+
+# Checks that all non hidden or end date fields are disabled
+def check_all_non_hidden_inputs_disabled_except_end_date
+  within("form[data-controller='evaluation-form']") do
+    all("input:not([type='hidden']), textarea, select").each do |field|
+      if field[:id] == "evaluation_form_closing_date"
+        expect(field).not_to be_disabled, "Expected #{field[:id]} to not be disabled"
+      else
+        expect(field).to be_disabled, "Expected #{field[:id]} to be disabled"
+      end
+    end
+  end
 end

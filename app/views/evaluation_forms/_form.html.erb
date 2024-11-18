@@ -101,6 +101,7 @@
                 data-action="input->evaluation-form#updateMaxPoints"
                 <%= 'checked' if !evaluation_form.weighted_scoring && evaluation_form.persisted? %>
                 <%= 'disabled' if disabled %>
+                required
               >
               <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
             </div>

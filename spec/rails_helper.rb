@@ -11,6 +11,7 @@ require 'rspec/rails'
 require 'capybara/rspec'
 require 'axe-rspec'
 require 'faker'
+require 'support/evaluation_criteria_helpers'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -76,6 +77,7 @@ RSpec.configure do |config|
 
   config.include EvaluationFormsHelper, type: :system
   config.include PhasesHelper, type: :system
+  config.include EvaluationCriteriaHelpers, type: :system
 
   config.include FactoryBot::Syntax::Methods
   config.before(:suite) do
