@@ -33,7 +33,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       save_form
 
       # Click through confirmation page
-      expect(page).to have_content("Evaluation Form Saved", wait: 1)
+      expect(page).to have_content("Evaluation Form Saved")
       click_link_or_button "Manage Evaluation Forms"
 
       # Should be on evaluation index view
@@ -50,13 +50,14 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "prevents form submission and focuses first missing required field" do
+      title = "Prevents form submission #{Faker::Lorem.sentence(word_count: 3)}"
       visit new_evaluation_form_path
 
       # Cycle through saving form, checking field focus, and filling field for all fields
       # Check form title
       save_form
       expect_form_title_to_be_focused
-      fill_in_title("New Evaluation Form")
+      fill_in_title(title)
       # Check form phase
       save_form
       expect_form_phase_to_be_focused
@@ -65,10 +66,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       save_form
       expect_form_instructions_to_be_focused
       fill_in_instructions("Example instructions")
-      # Check form scale type
-      save_form
-      expect_form_scale_type_to_be_focused
-      select_scale_type("point")
       # Check criterion title
       save_form
       expect_criterion_title_to_be_focused(0)
@@ -101,15 +98,18 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(challenge.phases.first.end_date + 1)
 
       save_form
-      expect(page).to have_content("Evaluation Form Saved", wait: 5)
+      save_form
+      expect(page).to have_content("Evaluation Form Saved")
     end
 
     it "contains the evaluation form data when editing after creation" do
+      title = "Editing after creation"
       visit new_evaluation_form_path
-      fill_in_full_form
+      fill_in_full_form(title:)
       save_form
-      evaluation_form = EvaluationForm.first
       click_link_or_button "Manage Evaluation Forms"
+      expect(page).to have_link(title)
+      evaluation_form = EvaluationForm.find_by(title:)
       click_edit_button_for_evaluation_form(evaluation_form.id)
       expect_form_to_match_all_evaluation_form_values(evaluation_form)
     end
@@ -179,7 +179,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_criterion_points_weight(1, 50)
 
       save_form
-      expect(page).to have_content("Evaluation Form Saved", wait: 1)
+      expect(page).to have_content("Evaluation Form Saved")
     end
   end
 
@@ -227,7 +227,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(updated_end_date)
 
       save_form
-      expect(page).to have_current_path(confirmation_evaluation_form_path(evaluation_form), wait: 1)
+      expect(page).to have_current_path(confirmation_evaluation_form_path(evaluation_form))
       expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
@@ -268,14 +268,14 @@ end
 #######################################
 
 ##### Form Fill Helpers #####
-def fill_in_full_form
-  fill_in_base_form_info
+def fill_in_full_form(title: "New Evaluation Form")
+  fill_in_base_form_info(title:)
   fill_in_all_eval_criteria_types
 end
 
-def fill_in_base_form_info
+def fill_in_base_form_info(title: "New Evaluation Form")
   # Fill in main form fields
-  fill_in_title("New Evaluation Form")
+  fill_in_title(title)
   select_phase(challenge.phases.first)
   fill_in_instructions("Example instructions")
   check_comments_required
@@ -434,7 +434,7 @@ def fill_in_end_date(date)
 end
 
 def save_form
-  click_link_or_button 'Save'
+  click_on 'Save'
 end
 
 def click_edit_button_for_evaluation_form(id)

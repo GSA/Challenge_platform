@@ -1,4 +1,5 @@
 Capybara.default_max_wait_time = 5
+Capybara.predicates_wait = true
 
 RSpec.configure do |config|
   config.before(:each, type: :system) do
