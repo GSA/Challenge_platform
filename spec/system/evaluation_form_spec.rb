@@ -66,6 +66,10 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       save_form
       expect_form_instructions_to_be_focused
       fill_in_instructions("Example instructions")
+      # Check scale type
+      save_form
+      expect_form_scale_type_to_be_focused
+      select_scale_type("point")
       # Check criterion title
       save_form
       expect_criterion_title_to_be_focused(0)
@@ -97,7 +101,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect_form_end_date_to_be_focused
       fill_in_end_date(challenge.phases.first.end_date + 1)
 
-      save_form
       save_form
       expect(page).to have_content("Evaluation Form Saved")
     end
