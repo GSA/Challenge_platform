@@ -10,9 +10,9 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       system_login_user(user)
     end
 
-    after do
-      system_logout
-    end
+    # after do
+    #   system_logout
+    # end
 
     it "is accessible" do
       visit new_evaluation_form_path
@@ -198,9 +198,9 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       system_login_user(user)
     end
 
-    after do
-      system_logout
-    end
+    # after do
+    #   system_logout
+    # end
 
     it "is accessible" do
       visit edit_evaluation_form_path(evaluation_form)
@@ -258,6 +258,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       maybe_rebalance_criteria_weights(evaluation_form)
       save_form
+      expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
       expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria + 3)
@@ -280,6 +281,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       evaluation_form.reload
       maybe_rebalance_criteria_weights(evaluation_form)
       save_form
+      expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
       # Criteria count should be the same since one was added and removed
@@ -308,9 +310,9 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       system_login_user(user)
     end
 
-    after do
-      system_logout
-    end
+    # after do
+    #   system_logout
+    # end
 
     it "is accessible" do
       visit confirmation_evaluation_form_path(evaluation_form)
