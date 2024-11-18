@@ -160,7 +160,7 @@
       <% (0..10).each do |index| %>
         <% disabledOptionLabel = is_template || !f.object.persisted? || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
 
-        <div class="#{disabledOptionLabel ? 'display-none' : 'display-flex'} flex-align-center flex-justify margin-top-2 criteria-option-label-row"
+        <div class="<%= disabledOptionLabel ? 'display-none' : 'display-flex' %> flex-align-center flex-justify margin-top-2 criteria-option-label-row"
           data-evaluation-criteria-target="optionLabelRow">
           <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index, class: "font-sans-lg text-bold text-base-light" %>
 
