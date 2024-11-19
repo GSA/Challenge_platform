@@ -26,6 +26,10 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       check_criteria_accordion_expanded(0, false)
       expect(page).to(be_axe_clean)
 
+      # Open all criterion accordion then check accessibility
+      toggle_all_criteria_accordions
+      expect(page).to(be_axe_clean)
+
       save_form
 
       # Click through confirmation page
