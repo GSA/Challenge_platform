@@ -10,6 +10,7 @@ class PhasesController < ApplicationController
 
   def submissions
     @submissions = @phase.submissions
+    @submissions_count = @submissions.group(:status).count
   end
 
   private

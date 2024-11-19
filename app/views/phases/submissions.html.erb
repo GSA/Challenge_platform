@@ -6,5 +6,6 @@
     <p>This challenge phase does not currently have any submissions.</p>
   </div>
 <% else %>
+  <%= render partial: "submissions_stats", locals: { submissions: @submissions } %>
   <%= render partial: "submissions_table", locals: { submissions: @submissions } %>
 <% end %>
