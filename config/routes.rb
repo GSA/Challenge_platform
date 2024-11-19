@@ -3,24 +3,28 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   get 'auth/result', to: 'sessions#result'
-  resource 'session', only: [:new, :create, :destroy]
-  post 'sessions/renew', to: 'sessions#renew'
-  delete 'sessions/timeout', to: 'sessions#timeout'
+  resource 'session', only: [:new, :create, :destroy] do
+    post 'renew'
+    delete 'timeout'
+  end
 
   get '/', to: "dashboard#index"
   get '/dashboard', to: "dashboard#index"
 
   resources :evaluations, only: [:index]
-  get '/evaluation_forms/confirmation', to: 'evaluation_forms#confirmation'
-  resources :evaluation_forms
-  post '/evaluation_forms/clone', to: 'evaluation_forms#create_from_existing'
-  resources :manage_submissions, only: [:index]
-  resources :challenges, only: [] do
-    resources :manage_submissions, only: [:show]
-    resources :manage_evaluators, only: [:index, :create, :destroy]
-    resources :evaluator_invitations, only: [] do
+  resources :evaluation_forms do
+    member do
+      get 'confirmation'
+      post 'clone'
+    end
+  end
+  resources :phases, only: [:index] do
+    member do
+      get :submissions
+    end
+    resources :evaluators, only: [:index, :create, :destroy] do
       member do
-        post 'resend'
+        post 'resend_invite'
       end
     end
     resources :phases, only: [] do
@@ -33,6 +37,7 @@ Rails.application.routes.draw do
       get 'evaluator_submissions/:evaluator_id', to: 'evaluator_submissions#index', as: :evaluator_submissions_for_evaluator
     end
   end
+  resources :submissions, only: [:index, :show, :update]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

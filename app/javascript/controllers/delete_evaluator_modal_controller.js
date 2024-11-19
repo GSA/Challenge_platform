@@ -21,7 +21,6 @@ export default class extends Controller {
     event.preventDefault()
     this.evaluatorIdValue = event.currentTarget.dataset.evaluatorId
     this.evaluatorTypeValue = event.currentTarget.dataset.evaluatorType
-    this.challengeIdValue = event.currentTarget.dataset.challengeId
     this.phaseIdValue = event.currentTarget.dataset.phaseId
     this.modalTarget.showModal()
   }
@@ -44,22 +43,13 @@ export default class extends Controller {
   deleteEvaluator(forceDelete = false) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content
   
-    fetch(`/challenges/${this.challengeIdValue}/manage_evaluators/${this.evaluatorIdValue}`, {
+    fetch(`/phases/${this.phaseIdValue}/evaluators/${this.evaluatorIdValue}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken
-      },
-      body: JSON.stringify({
-        evaluator_type: this.evaluatorTypeValue,
-        phase_id: this.phaseIdValue,
-        force_delete: forceDelete
-      })
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body: JSON.stringify({ evaluator_type: this.evaluatorTypeValue, phase_id: this.phaseIdValue, force_delete: forceDelete })
     })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
+      if (!response.ok) { throw new Error('Network response was not ok') }
       return response.json()
     })
     .then(data => {
@@ -70,13 +60,12 @@ export default class extends Controller {
         throw new Error(data.message || 'Failed to remove evaluator')
       }
     })
-    .catch(error => {
-      alert(error.message || 'An error occurred while removing the evaluator')
-    })
+    .catch(error => { alert(error.message || 'An error occurred while removing the evaluator') })
   }
 
   resetModal() {
-    this.modalDescriptionTarget.textContent = 'Deleting an evaluator from the challenge will remove the evaluator from any submissions of this challenge that the evaluator is assigned to. It will also delete any of their completed or in progress evaluations for those submissions.'
+    this.modalDescriptionTarget.textContent = 'Deleting an evaluator from the challenge will remove the evaluator from any submissions of this ' +
+     'challenge that the evaluator is assigned to. It will also delete any of their completed or in progress evaluations for those submissions.'
     this.confirmButtonTarget.textContent = 'Yes'
   }
 }

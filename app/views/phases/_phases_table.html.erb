@@ -1,4 +1,4 @@
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
+<table class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
     <thead>
       <tr>
         <th scope="col">Challenge</th>
@@ -37,12 +37,14 @@
             </td>
             <td>
               <div class="display-flex flex-column grid-row grid-gap-1">
-                <%= link_to challenge_manage_evaluators_path(challenge, phase_id: phase.id), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
+                <%= link_to phase_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
                   Manage Evaluators
                 <% end %>
-                <% unless phase.submissions.empty? %>
-                  <%= link_to challenge_manage_submission_path(challenge, phase), class: "usa-button font-body-2xs text-no-wrap width-full" do %>
-                    View Submissions
+                <% if phase.submissions_count > 0 %>
+                  <%= link_to(submissions_phase_path(phase)) do %>
+                    <button class="usa-button font-body-2xs text-no-wrap width-full">
+                      View Submissions
+                    </button>
                   <% end %>
                 <% end %>
               </div>

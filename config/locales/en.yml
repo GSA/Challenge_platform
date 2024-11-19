@@ -32,22 +32,32 @@ en:
   already_logged_in_notice: "You are already logged in."
   evaluation_form_destroyed: "Evaluation form was successfully destroyed."
   evaluation_form_saved: "Evaluation form was saved successfully."
+  comments_saved: "Comments saved succesfully."
   login_error: "There was an issue with logging in. Please try again."
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
   evaluation_criterion_unique_title_in_form: "must be unique within the same form."
-  manage_evaluators:
+  evaluators:
     index:
       no_phases_alert: "This challenge has no phases. Please add at least one phase before managing evaluators."
     remove_user_evaluator:
-      evaluator_not_found: "Evaluator not found"
+      evaluator_not_found: "Evaluator not found."
       success: "Evaluator successfully removed from this phase."
       failure: "Failed to remove evaluator from this phase."
     remove_evaluator_invitation:
+      invitation_not_found: "Invitation not found."
       success: "Evaluator invitation successfully removed from the challenge."
-      failure: "Failed to remove evaluator invitation."      
-  evaluator_invitations:
-    resend:
+      failure: "Failed to remove evaluator invitation."
+    process_evaluator_invitation:
+      already_added: "%{email} has already been added as an evaluator for this phase."
+      invalid_role: "%{email} does not have a valid evaluator role."
+      add_success: "%{email} has been added as an evaluator for this phase."
+      add_failure: "Failed to add %{email} as an evaluator."
+      invitation_sent: "Invitation sent to %{email} for this challenge phase."
+      invitation_resent: "An invitation to this challenge has already been sent to %{email}. Invitation has been resent."
+    accept_evaluator_invitation:
+      success: "Evaluator created and added to challenge phase successfully."   
+    resend_invite:
       success: "Invitation resent successfully."
       failure: "Failed to resend invitation."      
   evaluation_criterion_unique_title_in_form_error: "Evaluation criteria title must be unique within the same form."
@@ -60,3 +70,10 @@ en:
     reassign:
       success: "Evaluator reassigned successfully"
       failure: "Failed to reassign evaluator"  
+  alerts:
+    recused_evaluator:
+      heading: "Recused Evaluator"
+      text: "One of the challenge submissions has a recused evaluator. Please review the list of submissions and unassign a recused evaluator."
+    no_evaluation_form:
+      heading: "No Evaluation Form"
+      text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."

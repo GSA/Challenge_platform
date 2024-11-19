@@ -6,7 +6,7 @@ module EvaluationFormsHelper
   end
 
   def challenge_phase_title(challenge, phase)
-    "#{challenge.title} - Phase #{phase_number(phase)}"
+    "#{challenge.title} - Phase #{phase_number(challenge, phase)}"
   end
 
   def evaluation_period(evaluation_form)

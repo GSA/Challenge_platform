@@ -38,7 +38,7 @@ RSpec.describe ChallengePhasesEvaluator, type: :model do
     challenge = create(:challenge)
     phase = create(:phase, challenge: challenge)
     user = create(:user, role: 'evaluator')
-    cpe = create(:challenge_phases_evaluator, challenge: challenge, phase: phase, user: user)
+    create(:challenge_phases_evaluator, challenge: challenge, phase: phase, user: user)
 
     expect(challenge.evaluators).to include(user)
     expect(phase.evaluators).to include(user)
