@@ -96,15 +96,24 @@ RSpec.describe EvaluatorManagementService do
     let!(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase, email: evaluator.email) }
 
     it 'processes all invitations for the user' do
-      expect {
+      expect do
         EvaluatorManagementService.accept_evaluator_invitation(evaluator)
-      }.to change(ChallengePhasesEvaluator, :count).by(1)
-        .and change(EvaluatorInvitation, :count).by(-1)
+      end.to change(ChallengePhasesEvaluator, :count).by(1).
+        and change(EvaluatorInvitation, :count).by(-1)
     end
 
     it 'returns a success message' do
       result = EvaluatorManagementService.accept_evaluator_invitation(evaluator)
       expect(result).to eq({ success: true, message: 'Evaluator created and added to challenge phase successfully.' })
+    end
+  end
+
+  describe '.resend_invitation' do
+    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:invitation) { create(:evaluator_invitation, challenge: challenge, phase: phase, email: evaluator.email) }
+
+    it 'updates the invitation last_invite_sent' do
+      expect { service.resend_invitation(invitation) }.to change { invitation.reload.last_invite_sent }
     end
   end
 end

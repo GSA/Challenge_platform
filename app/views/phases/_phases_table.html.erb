@@ -37,7 +37,7 @@
             </td>
             <td>
               <div class="display-flex flex-column grid-row grid-gap-1">
-                <%= link_to phase_manage_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
+                <%= link_to phase_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
                   Manage Evaluators
                 <% end %>
                 <% unless phase.submissions.empty? %>

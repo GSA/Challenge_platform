@@ -28,7 +28,17 @@ class EvaluatorManagementService
       ChallengePhasesEvaluator.create(challenge: invite.challenge, phase: invite.phase, user:)
       invite.destroy
     end
-    { success: true, message: I18n.t('manage_evaluators.accept_evaluator_invitation.success') }
+    { success: true, message: I18n.t('evaluators.accept_evaluator_invitation.success') }
+  end
+
+  # TODO: Implement sending the actual invitation email here
+  def resend_invitation(invitation)
+    if invitation.update(last_invite_sent: Time.current)
+      { success: true,
+        message: I18n.t('evaluators.process_evaluator_invitation.invitation_resent', email: invitation.email) }
+    else
+      { success: false }
+    end
   end
 
   private
@@ -37,7 +47,7 @@ class EvaluatorManagementService
     if @phase.evaluators.include?(user)
       return {
         success: true,
-        message: I18n.t('manage_evaluators.process_evaluator_invitation.already_added',
+        message: I18n.t('evaluators.process_evaluator_invitation.already_added',
                         email: user.email)
       }
     end
@@ -45,7 +55,7 @@ class EvaluatorManagementService
     unless User::VALID_EVALUATOR_ROLES.include?(user.role)
       return {
         success: false,
-        message: I18n.t('manage_evaluators.process_evaluator_invitation.invalid_role',
+        message: I18n.t('evaluators.process_evaluator_invitation.invalid_role',
                         email: user.email)
       }
     end
@@ -55,13 +65,13 @@ class EvaluatorManagementService
     if cpe.persisted?
       {
         success: true,
-        message: I18n.t('manage_evaluators.process_evaluator_invitation.add_success',
+        message: I18n.t('evaluators.process_evaluator_invitation.add_success',
                         email: user.email)
       }
     else
       {
         success: false,
-        message: I18n.t('manage_evaluators.process_evaluator_invitation.add_failure',
+        message: I18n.t('evaluators.process_evaluator_invitation.add_failure',
                         email: user.email)
       }
     end
@@ -83,7 +93,7 @@ class EvaluatorManagementService
       {
         success: true,
         message: I18n.t(
-          'manage_evaluators.process_evaluator_invitation.invitation_sent',
+          'evaluators.process_evaluator_invitation.invitation_sent',
           email: invitation_params[:email]
         )
       }
@@ -95,24 +105,16 @@ class EvaluatorManagementService
     end
   end
 
-  def resend_invitation(invitation)
-    invitation.update(last_invite_sent: Time.current)
-    {
-      success: true,
-      message: I18n.t('manage_evaluators.process_evaluator_invitation.invitation_resent', email: invitation.email)
-    }
-  end
-
   def remove_user_evaluator(evaluator_id)
     evaluator = User.find(evaluator_id)
     cpe = ChallengePhasesEvaluator.find_by(challenge: @challenge, phase: @phase, user: evaluator)
     if cpe.destroy
-      { success: true, message: I18n.t('manage_evaluators.remove_user_evaluator.success') }
+      { success: true, message: I18n.t('evaluators.remove_user_evaluator.success') }
     else
-      { success: false, message: I18n.t('manage_evaluators.remove_user_evaluator.failure') }
+      { success: false, message: I18n.t('evaluators.remove_user_evaluator.failure') }
     end
   rescue ActiveRecord::RecordNotFound
-    { success: false, message: I18n.t('manage_evaluators.remove_user_evaluator.evaluator_not_found') }
+    { success: false, message: I18n.t('evaluators.remove_user_evaluator.evaluator_not_found') }
   rescue StandardError => e
     { success: false, message: "Error: #{e.message}" }
   end
@@ -120,12 +122,12 @@ class EvaluatorManagementService
   def remove_evaluator_invitation(invitation_id)
     invitation = @challenge.evaluator_invitations.find_by!(id: invitation_id, phase: @phase)
     if invitation.destroy
-      { success: true, message: I18n.t('manage_evaluators.remove_evaluator_invitation.success') }
+      { success: true, message: I18n.t('evaluators.remove_evaluator_invitation.success') }
     else
-      { success: false, message: I18n.t('manage_evaluators.remove_evaluator_invitation.failure') }
+      { success: false, message: I18n.t('evaluators.remove_evaluator_invitation.failure') }
     end
   rescue ActiveRecord::RecordNotFound
-    { success: false, message: I18n.t('manage_evaluators.remove_evaluator_invitation.invitation_not_found') }
+    { success: false, message: I18n.t('evaluators.remove_evaluator_invitation.invitation_not_found') }
   rescue StandardError => e
     { success: false, message: "Error: #{e.message}" }
   end

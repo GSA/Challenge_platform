@@ -1,8 +1,8 @@
-# spec/helpers/manage_evaluators_helper_spec.rb
+# spec/helpers/evaluators_helper_spec.rb
 
 require 'rails_helper'
 
-RSpec.describe ManageEvaluatorsHelper, type: :helper do
+RSpec.describe EvaluatorsHelper, type: :helper do
   describe '#assigned_submissions_count' do
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge: challenge) }
@@ -12,7 +12,8 @@ RSpec.describe ManageEvaluatorsHelper, type: :helper do
     it 'returns the correct count of assigned submissions' do
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission)
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission)
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase))
+      create(:evaluator_submission_assignment, evaluator: evaluator,
+                                               submission: create(:submission, challenge: challenge, phase: phase))
 
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(3)
     end
@@ -27,7 +28,8 @@ RSpec.describe ManageEvaluatorsHelper, type: :helper do
 
     it 'only counts submissions for the specified challenge and phase' do
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission)
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: create(:challenge), phase: create(:phase)))
+      create(:evaluator_submission_assignment, evaluator: evaluator,
+                                               submission: create(:submission, challenge: create(:challenge), phase: create(:phase)))
 
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(1)
     end
