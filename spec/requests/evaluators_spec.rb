@@ -72,7 +72,7 @@ RSpec.describe "Evaluators", type: :request do
                                                                                                message: 'Invalid email' })
         expect do
           post phase_evaluators_path(phase), params: invalid_params
-        end.not_to change(EvaluatorInvitation, :count)
+        end.not_to change { EvaluatorInvitation.count }
         expect(response).to render_template(:index)
       end
     end
@@ -115,7 +115,7 @@ RSpec.describe "Evaluators", type: :request do
               phase_id: phase.id
             }
           }
-        end.not_to change(ChallengePhasesEvaluator, :count)
+        end.not_to change { ChallengePhasesEvaluator.count }
       end
     end
 
@@ -131,7 +131,7 @@ RSpec.describe "Evaluators", type: :request do
               phase_id: phase.id
             }
           }
-        end.not_to change(EvaluatorInvitation, :count)
+        end.not_to change { EvaluatorInvitation.count }
       end
     end
 
@@ -218,7 +218,7 @@ RSpec.describe "Evaluators", type: :request do
                params: { evaluator_type: 'user', phase_id: phase.id }
 
         expect(response).to have_http_status(:success)
-        expect(JSON.parse(response.body)).to eq({ 'success' => true, 'message' => 'Evaluator removed successfully.' })
+        expect(response.parsed_body).to eq({ 'success' => true, 'message' => 'Evaluator removed successfully.' })
       end
     end
 
@@ -232,7 +232,7 @@ RSpec.describe "Evaluators", type: :request do
                params: { evaluator_type: 'invitation', phase_id: phase.id }
 
         expect(response).to have_http_status(:success)
-        expect(JSON.parse(response.body)).to eq({ 'success' => true, 'message' => 'Invitation removed successfully.' })
+        expect(response.parsed_body).to eq({ 'success' => true, 'message' => 'Invitation removed successfully.' })
       end
     end
 

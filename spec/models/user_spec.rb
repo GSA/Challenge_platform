@@ -191,15 +191,15 @@ RSpec.describe User do
       end
 
       it 'creates ChallengePhasesEvaluator records for all invitations when user is created' do
-        expect {
+        expect do
           create(:user, email: user_email, role: 'evaluator')
-        }.to change(ChallengePhasesEvaluator, :count).by(3)
+        end.to change { ChallengePhasesEvaluator.count }.by(3)
       end
 
       it 'destroys all EvaluatorInvitation records when user is created' do
-        expect {
+        expect do
           create(:user, email: user_email, role: 'evaluator')
-        }.to change(EvaluatorInvitation, :count).by(-3)
+        end.to change { EvaluatorInvitation.count }.by(-3)
       end
 
       it 'associates the new user with the correct challenges and phases' do
@@ -212,17 +212,16 @@ RSpec.describe User do
 
     context 'when there are no existing evaluator invitations' do
       it 'does not create any ChallengePhasesEvaluator records' do
-        expect {
+        expect do
           create(:user, email: user_email)
-        }.not_to change(ChallengePhasesEvaluator, :count)
+        end.not_to change { ChallengePhasesEvaluator.count }
       end
 
       it 'does not destroy any EvaluatorInvitation records' do
-        expect {
+        expect do
           create(:user, email: user_email)
-        }.not_to change(EvaluatorInvitation, :count)
+        end.not_to change { EvaluatorInvitation.count }
       end
     end
-
   end
 end

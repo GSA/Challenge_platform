@@ -4,7 +4,7 @@ RSpec.describe EvaluatorManagementService do
   let(:user) { create_and_log_in_user(role: 'challenge_manager') }
   let(:challenge) { create(:challenge) }
   let(:phase) { create(:phase, challenge: challenge) }
-  let(:service) { EvaluatorManagementService.new(challenge, phase) }
+  let(:service) { described_class.new(challenge, phase) }
 
   describe '#process_evaluator_invitation' do
     context 'with an existing user' do
@@ -97,13 +97,13 @@ RSpec.describe EvaluatorManagementService do
 
     it 'processes all invitations for the user' do
       expect do
-        EvaluatorManagementService.accept_evaluator_invitation(evaluator)
-      end.to change(ChallengePhasesEvaluator, :count).by(1).
-        and change(EvaluatorInvitation, :count).by(-1)
+        described_class.accept_evaluator_invitation(evaluator)
+      end.to change { ChallengePhasesEvaluator.count }.by(1).
+        and change { EvaluatorInvitation.count }.by(-1)
     end
 
     it 'returns a success message' do
-      result = EvaluatorManagementService.accept_evaluator_invitation(evaluator)
+      result = described_class.accept_evaluator_invitation(evaluator)
       expect(result).to eq({ success: true, message: 'Evaluator created and added to challenge phase successfully.' })
     end
   end
