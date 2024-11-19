@@ -1,3 +1,11 @@
+<% if @phase.evaluation_form.nil? %>
+  <%= render 'shared/alert_error', alert_heading: t('alerts.no_evaluation_form.heading'), alert_text: t('alerts.no_evaluation_form.text') %>
+<% end %>
+
+<% if phase_has_recused_evaluator?(@phase) %>
+  <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator.text') %>
+<% end %>
+
 <table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
     <thead>
       <tr>
@@ -16,7 +24,7 @@
             </th>
             <td data-label="Eligible for Evaluation">
               <div class="display-flex flex-align-center">  
-                <% if eligible_for_evaluation?(submission) %>
+                <% if submission.eligible_for_evaluation? %>
                     <input type="checkbox" disabled checked class="display-none mobile-lg:display-block">
                     <div class="mobile-lg:display-none">
                         <%= image_tag(
@@ -41,7 +49,7 @@
             </td>
             <td data-label="Selected to Advance">
               <div class="display-flex flex-align-center">  
-                <% if selected_to_advance?(submission) %>
+                <% if submission.selected_to_advance? %>
                     <input type="checkbox" disabled checked class="display-none mobile-lg:display-block">
                     <div class="mobile-lg:display-none">
                         <%= image_tag(
@@ -72,9 +80,11 @@
             </td>
             <td>
               <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-                <button class="usa-button font-body-2xs text-no-wrap">
-                  View Submission
-                </button>
+                <%= link_to submission_path(submission) do %>
+                    <button class="usa-button font-body-2xs text-no-wrap">
+                        View Submission
+                    </button>
+                <% end %>    
               </div>  
             </td>  
           </tr>

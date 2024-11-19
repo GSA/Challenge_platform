@@ -40,9 +40,11 @@
                 <%= link_to challenge_manage_evaluators_path(challenge, phase_id: phase.id), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
                   Manage Evaluators
                 <% end %>
-                <% unless phase.submissions.empty? %>
-                  <%= link_to challenge_manage_submission_path(challenge, phase), class: "usa-button font-body-2xs text-no-wrap width-full" do %>
-                    View Submissions
+                <% if phase.submissions_count > 0 %>
+                  <%= link_to(submissions_phase_path(phase)) do %>
+                    <button class="usa-button font-body-2xs text-no-wrap">
+                      View Submissions
+                    </button>
                   <% end %>
                 <% end %>
               </div>

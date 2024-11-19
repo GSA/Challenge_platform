@@ -32,6 +32,7 @@ en:
   already_logged_in_notice: "You are already logged in."
   evaluation_form_destroyed: "Evaluation form was successfully destroyed."
   evaluation_form_saved: "Evaluation form was saved successfully."
+  comments_saved: "Comments saved succesfully."
   login_error: "There was an issue with logging in. Please try again."
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
@@ -61,6 +62,12 @@ en:
       success: "Evaluator reassigned successfully"
       failure: "Failed to reassign evaluator"
   alerts:
+    recused_evaluator:
+      heading: "Recused Evaluator"
+      text: "One of the challenge submissions has a recused evaluator. Please review the list of submissions and unassign a recused evaluator."
+    no_evaluation_form:
+      heading: "No Evaluation Form"
+      text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."
     recused_submission:
       heading: "Recused"
-      text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."      
+      text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."   
