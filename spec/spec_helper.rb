@@ -37,6 +37,12 @@ def system_login_user(user)
   visit "/dev/accounts"
   fill_in "Email", with: user.email
   click_on "Dev Login"
+  expect(page).to have_current_path(dashboard_path)
+  # expect(page).to have_button('Logout')
+end
+
+def system_logout
+  click_on "Logout"
 end
 
 def create_user(attrs = {})

@@ -5,7 +5,8 @@ export default class extends Controller {
   static targets = ["criteriaList", "template", "criteriaRow"];
 
   connect() {
-    this.counter = this.criteriaRowTargets.length;
+    // -1 to match the 0 indexed eval criteria elements
+    this.counter = this.criteriaRowTargets.length - 1;
   }
 
   addCriteria() {
@@ -62,6 +63,9 @@ export default class extends Controller {
     newCriteria.setAttribute("data-evaluation-criteria-target", "criteriaRow");
     newCriteria.style.display = "block";
     newCriteria.removeAttribute("id");
+
+    // TODO: Fix criteria indexing for easier testing of new criteria added
+    newCriteria.setAttribute("data-index", this.counter);
 
     let accordionButton = newCriteria.querySelector(".usa-accordion__button");
     let accordionContent = newCriteria.querySelector(".usa-accordion__content");
