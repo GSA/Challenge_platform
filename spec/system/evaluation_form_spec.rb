@@ -577,7 +577,7 @@ def expect_base_form_field_to_match(evaluation_form)
   expect_form_phase_to_equal(challenge_phase_title(phase.challenge, phase))
   expect_form_instructions_to_equal(evaluation_form.instructions)
   expect_form_comments_required_to_equal(evaluation_form.comments_required)
-  expect_form_scale_type_to_equal(evaluation_form.weighted_scoring)
+  expect_form_scale_type_to_equal(evaluation_form.weighted_scoring?)
   expect_form_end_date_to_equal(evaluation_form.closing_date.strftime("%m/%d/%Y"))
 end
 

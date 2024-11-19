@@ -129,7 +129,7 @@ RSpec.describe "EvaluationForms" do
 
         patch evaluation_form_path(evaluation_form), params: { evaluation_form: { weighted_scoring: true } }
         evaluation_form.reload
-        expect(evaluation_form.weighted_scoring).to be_truthy
+        expect(evaluation_form).to be_weighted_scoring
       end
 
       it "fails if criteria doesn't add up to 100" do
@@ -150,7 +150,7 @@ RSpec.describe "EvaluationForms" do
 
         evaluation_form.reload
 
-        expect(evaluation_form.weighted_scoring).to be_falsey
+        expect(evaluation_form).not_to be_weighted_scoring
       end
     end
   end
