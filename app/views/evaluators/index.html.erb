@@ -11,7 +11,7 @@
     <p>Create and manage a list of evaluators for the challenge.</p>
     <h2 class="padding-top-3">Add Evaluators</h2>
     <p>Evaluators will not be assigned to submissions until you assign in the submission detail view.</p>
-    <%= form_with(model: EvaluatorInvitation.new, url: phase_manage_evaluators_path(@phase), method: :post, local: true) do |form| %>
+    <%= form_with(model: EvaluatorInvitation.new, url: phase_evaluators_path(@phase), method: :post, local: true) do |form| %>
       <%= form.hidden_field :challenge_id, value: @challenge.id %>
       <%= form.hidden_field :phase_id, value: @phase.id %>
       <%= form.hidden_field :last_invite_sent, value: Time.current %>
@@ -99,7 +99,7 @@
                 <td data-label="User status" class="text-top">
                   <div class="display-flex flex-row flex-justify">
                     <span>Invite Sent</span>
-                    <%= button_to resend_phase_evaluator_invitation_path(@phase, invitation), method: :post, class: 'usa-button usa-button--unstyled margin-left-2', style: 'white-space: nowrap;', form: { class: 'display-inline' } do %>
+                    <%= button_to resend_invite_phase_evaluator_path(@phase, invitation), method: :post, class: 'usa-button usa-button--unstyled margin-left-2', style: 'white-space: nowrap;', form: { class: 'display-inline' } do %>
                       <span class="text-primary">Resend</span>
                     <% end %>
                   </div>

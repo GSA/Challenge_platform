@@ -22,10 +22,9 @@ Rails.application.routes.draw do
     member do
       get :submissions
     end
-    resources :manage_evaluators, only: [:index, :create, :destroy]
-    resources :evaluator_invitations, only: [] do
+    resources :evaluators, only: [:index, :create, :destroy] do
       member do
-        post 'resend'
+        post 'resend_invite'
       end
     end
   end

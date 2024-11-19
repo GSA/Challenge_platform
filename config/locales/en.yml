@@ -37,7 +37,7 @@ en:
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
   evaluation_criterion_unique_title_in_form: "must be unique within the same form."
-  manage_evaluators:
+  evaluators:
     index:
       no_phases_alert: "This challenge has no phases. Please add at least one phase before managing evaluators."
     remove_user_evaluator:
@@ -57,8 +57,7 @@ en:
       invitation_resent: "An invitation to this challenge has already been sent to %{email}. Invitation has been resent."
     accept_evaluator_invitation:
       success: "Evaluator created and added to challenge phase successfully."   
-  evaluator_invitations:
-    resend:
+    resend_invite:
       success: "Invitation resent successfully."
       failure: "Failed to resend invitation."      
   evaluation_criterion_unique_title_in_form_error: "Evaluation criteria title must be unique within the same form."
