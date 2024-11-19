@@ -63,3 +63,10 @@ en:
   evaluation_criterion_unique_title_in_form_error: "Evaluation criteria title must be unique within the same form."
   evaluation_form_criteria_weight_total_error: "The total weight of all evaluation criteria must add up to 100 when weighted scoring is enabled."
   evaluation_criteria_form_title_placeholder: "Add criteria title here"
+  alerts:
+    recused_evaluator:
+      heading: "Recused Evaluator"
+      text: "One of the challenge submissions has a recused evaluator. Please review the list of submissions and unassign a recused evaluator."
+    no_evaluation_form:
+      heading: "No Evaluation Form"
+      text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."

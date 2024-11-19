@@ -12,12 +12,11 @@
       <% @challenges.each do |challenge| %>
         <% challenge.phases.each do |phase| %>
           <tr>
-            <th data-label="Form Title" scope="row" class="text-top">
-              <strong><%= challenge_phase_title(challenge, phase) %></strong>
-              <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
-            </th>
-            <td data-label="Number of Submissions" class="text-top">
-              <%= phase.submissions.length %>
+            <th data-label="Form Title" scope="row">
+              <%= challenge_phase_title(challenge, phase) %>
+              </th>
+            <td data-label="Number of Submissions">
+              <%= phase.submissions_count %>
             </td>
             <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
@@ -40,7 +39,7 @@
                 <%= link_to phase_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
                   Manage Evaluators
                 <% end %>
-                <% unless phase.submissions.empty? %>
+                <% if phase.submissions_count > 0 %>
                   <%= link_to(submissions_phase_path(phase)) do %>
                     <button class="usa-button font-body-2xs text-no-wrap width-full">
                       View Submissions
