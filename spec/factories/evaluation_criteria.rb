@@ -4,7 +4,7 @@ FactoryBot.define do
     association :evaluation_form
 
     # Fields
-    title { "Criterion #{Faker::Lorem.word}" }
+    title { "Criterion #{Faker::Lorem.sentence(word_count: 3)}" }
     description { Faker::Lorem.sentence }
     points_or_weight { rand(0..100) }
     scoring_type { [:numeric, :rating, :binary].sample }
