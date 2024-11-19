@@ -33,7 +33,8 @@ class EvaluatorsController < ApplicationController
 
   def resend_invite
     @evaluator_invitation = @phase.evaluator_invitations.find(params[:id])
-    if evaluator_service.resend_invitation(@evaluator_invitation)
+    result = evaluator_service.resend_invitation(@evaluator_invitation)
+    if result[:success]
       redirect_to phase_evaluators_path(@phase),
                   notice: t('.success')
     else
