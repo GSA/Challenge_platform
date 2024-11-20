@@ -25,18 +25,42 @@
 
         <div class="display-flex flex-row tablet:margin-left-auto">
             <div class="text-center margin-right-5">
-            <span class="font-sans-xl text-green text-bold"><%= @submissions_count["completed"] || 0 %></span><br>
+            <span class="font-sans-xl text-green text-bold"><%= @submissions_by_status["completed"] || 0 %></span><br>
             <span class="text-base-sm text-green text-bold">Completed</span>
             </div>
             <div class="text-center margin-right-5">
-            <span class="font-sans-xl text-orange text-bold"><%= @submissions_count["in_progress"] || 0 %></span><br>
+            <span class="font-sans-xl text-orange text-bold"><%= @submissions_by_status["in_progress"] || 0 %></span><br>
             <span class="text-base-sm text-orange text-bold">In Progress</span>
             </div>
             <div class="text-center margin-right-2">
-            <span class="font-sans-xl text-secondary-dark text-bold"><%= @submissions_count["not_started"] || 0 %></span><br>
+            <span class="font-sans-xl text-secondary-dark text-bold"><%= @submissions_by_status["not_started"] || 0 %></span><br>
             <span class="text-base-sm text-secondary-dark text-bold">Not Started</span>
             </div>
         </div>
+        </div>
+    </div>
+    <div class="display-flex flex-wrap tablet:flex-justify margin-top-2">
+        <div class="font-body-xs">
+            <%= image_tag(
+                "images/usa-icons/verified.svg",
+                class: "usa-icon--size-3 margin-right-1",
+                alt: ""
+            )%>
+            <span class="text-top">
+                <span class="text-primary"><%= @submissions.select { |s| s.eligible_for_evaluation? }.count %> of <%= @submissions.count %></span> 
+                submissions selected for evaluation
+            </span>
+        </div>
+        <div class="font-body-xs">
+            <%= image_tag(
+                "images/usa-icons/star_outline.svg",
+                class: "usa-icon--size-3 margin-right-1",
+                alt: ""
+            )%>
+            <span class="text-top">
+                <span class="text-primary"><%= @submissions.select { |s| s.selected_to_advance? }.count %> of <%= @submissions.count %></span> 
+                submissions selected to advance
+            </span>
         </div>
     </div>
 </div>
