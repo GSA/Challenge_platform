@@ -242,14 +242,14 @@ RSpec.describe EvaluationScore, type: :model do
       expect do
         evaluation_score.update!(comment: Faker::Lorem.characters(number: 3001))
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Comment cannot exceed 3000 characters")
+                         "Validation failed: Comment is too long (maximum is 3000 characters)")
 
       evaluation_score.update!(comment: Faker::Lorem.characters(number: 3000))
 
       expect do
         evaluation_score.update!(comment_override: Faker::Lorem.characters(number: 3001))
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Comment override cannot exceed 3000 characters")
+                         "Validation failed: Comment override is too long (maximum is 3000 characters)")
     end
   end
 end

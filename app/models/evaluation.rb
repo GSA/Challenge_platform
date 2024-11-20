@@ -27,9 +27,9 @@ class Evaluation < ApplicationRecord
   }
 
   validates :total_score, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :additional_comments, length: { maximum: 3000, message: "cannot exceed 3000 characters" },
+  validates :additional_comments, length: { maximum: 3000 },
                                   allow_nil: true
-  validates :revision_comments, length: { maximum: 3000, message: "cannot exceed 3000 characters" },
+  validates :revision_comments, length: { maximum: 3000 },
                                 allow_nil: true
 
   validate :user_has_valid_role

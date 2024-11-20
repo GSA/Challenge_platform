@@ -21,8 +21,8 @@ class EvaluationScore < ApplicationRecord
   validates :score, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
   validates :score_override, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
   validates :comment, presence: true, if: -> { evaluation.evaluation_form.comments_required? }
-  validates :comment, length: { maximum: 3000, message: "cannot exceed 3000 characters" }, allow_nil: true
-  validates :comment_override, length: { maximum: 3000, message: "cannot exceed 3000 characters" },
+  validates :comment, length: { maximum: 3000 }, allow_nil: true
+  validates :comment_override, length: { maximum: 3000 },
                                allow_nil: true
 
   validate :score_within_criterion_limits
