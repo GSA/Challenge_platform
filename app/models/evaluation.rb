@@ -17,6 +17,7 @@
 class Evaluation < ApplicationRecord
   belongs_to :user
   belongs_to :evaluation_form
+  belongs_to :submission
   has_many :evaluation_scores, dependent: :destroy
 
   enum :status, {
@@ -25,6 +26,10 @@ class Evaluation < ApplicationRecord
     in_progress: 2,
     completed: 3
   }
+
+  validates :user_id,
+            uniqueness: { scope: [:evaluation_form_id, :submission_id],
+                          message: I18n.t("evaluations.unique_user_for_evaluation_form_and_submission_error") }
 
   validates :total_score, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :additional_comments, length: { maximum: 3000 },

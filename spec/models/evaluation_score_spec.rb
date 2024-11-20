@@ -17,7 +17,15 @@ RSpec.describe EvaluationScore, type: :model do
       expect(evaluation_score.evaluation_criterion).to be_present
     end
 
-    # TODO: Possibly check uniqueness with evaluation and evaluation_criterion?
+    it "there can only be one score per evaluation for a specific criterion" do
+      # One already exists from above let statements
+      expect(evaluation_score.evaluation_criterion).to be_present
+      # Try creating another with the same evaluation and a criteria that already has a score from factory
+      expect do
+        create(:evaluation_score, evaluation:, evaluation_criterion: evaluation_form.evaluation_criteria[0])
+      end.to raise_error(ActiveRecord::RecordInvalid,
+                         "Validation failed: Evaluation #{I18n.t('evaluation_scores.unique_evaluation_for_evaluation_criterion_error')}")
+    end
   end
 
   describe "score validations for numeric criterion" do

@@ -474,6 +474,7 @@ CREATE TABLE public.evaluations (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
     evaluation_form_id bigint NOT NULL,
+    submission_id bigint NOT NULL,
     additional_comments text,
     revision_comments text,
     status integer DEFAULT 0 NOT NULL,
@@ -1850,6 +1851,13 @@ CREATE UNIQUE INDEX idx_on_evaluation_id_evaluation_criterion_id_c69f3b58f4 ON p
 
 
 --
+-- Name: idx_on_user_id_evaluation_form_id_submission_id_f77140cf65; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_on_user_id_evaluation_form_id_submission_id_f77140cf65 ON public.evaluations USING btree (user_id, evaluation_form_id, submission_id);
+
+
+--
 -- Name: index_challenge_phases_evaluators_on_challenge_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1913,17 +1921,17 @@ CREATE INDEX index_evaluations_on_evaluation_form_id ON public.evaluations USING
 
 
 --
+-- Name: index_evaluations_on_submission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluations_on_submission_id ON public.evaluations USING btree (submission_id);
+
+
+--
 -- Name: index_evaluations_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_evaluations_on_user_id ON public.evaluations USING btree (user_id);
-
-
---
--- Name: index_evaluations_on_user_id_and_evaluation_form_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_evaluations_on_user_id_and_evaluation_form_id ON public.evaluations USING btree (user_id, evaluation_form_id);
 
 
 --
@@ -2112,6 +2120,14 @@ ALTER TABLE ONLY public.federal_partners
 
 ALTER TABLE ONLY public.federal_partners
     ADD CONSTRAINT federal_partners_sub_agency_id_fkey FOREIGN KEY (sub_agency_id) REFERENCES public.agencies(id);
+
+
+--
+-- Name: evaluations fk_rails_0c1862edb7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations
+    ADD CONSTRAINT fk_rails_0c1862edb7 FOREIGN KEY (submission_id) REFERENCES public.submissions(id);
 
 
 --

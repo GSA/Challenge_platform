@@ -18,6 +18,11 @@ class EvaluationScore < ApplicationRecord
   belongs_to :evaluation
   belongs_to :evaluation_criterion
 
+  validates :evaluation_id, uniqueness: {
+    scope: :evaluation_criterion_id,
+    message: I18n.t("evaluation_scores.unique_evaluation_for_evaluation_criterion_error")
+  }
+
   validates :score, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
   validates :score_override, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
   validates :comment, presence: true, if: -> { evaluation.evaluation_form.comments_required? }

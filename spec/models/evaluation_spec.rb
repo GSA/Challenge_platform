@@ -2,8 +2,9 @@ require 'rails_helper'
 
 RSpec.describe Evaluation, type: :model do
   let(:user) { create(:user, :evaluator) }
+  let(:submission) { create(:submission, manager: user) }
   let(:evaluation_form) { create(:evaluation_form) }
-  let(:evaluation) { create(:evaluation, user:, evaluation_form:) }
+  let(:evaluation) { create(:evaluation, user:, evaluation_form:, submission:) }
 
   describe "associations" do
     it "belongs to a user" do
@@ -12,6 +13,20 @@ RSpec.describe Evaluation, type: :model do
 
     it "belongs to an evaluation form" do
       expect(evaluation.evaluation_form).to eq(evaluation_form)
+    end
+
+    it "belongs to a submission" do
+      expect(evaluation.submission).to eq(submission)
+    end
+
+    it "user can only have one evaluation per submission and form" do
+      # One already exists from above let statements
+      expect(evaluation.user).to be_present
+      # Try creating another with same user, evaluation_form, and submission
+      expect do
+        create(:evaluation, user:, evaluation_form:, submission:)
+      end.to raise_error(ActiveRecord::RecordInvalid,
+                         "Validation failed: User #{I18n.t('evaluations.unique_user_for_evaluation_form_and_submission_error')}")
     end
   end
 
@@ -64,8 +79,6 @@ RSpec.describe Evaluation, type: :model do
       end.to raise_error(ActiveRecord::RecordInvalid,
                          "Validation failed: Revision comments is too long (maximum is 3000 characters)")
     end
-
-    # TODO: Possibly check uniqueness with user and evaluation_form?
   end
 
   describe "status" do

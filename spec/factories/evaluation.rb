@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :evaluation do
     association :user, :evaluator
     association :evaluation_form
+    association :submission
     status { :not_started }
     total_score { nil }
     additional_comments { nil }
