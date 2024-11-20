@@ -22,6 +22,11 @@ Rails.application.routes.draw do
     member do
       get :submissions
     end
+    resources :evaluators, only: [:index, :create, :destroy] do
+      member do
+        post 'resend_invite'
+      end
+    end
   end
   resources :submissions, only: [:index, :show, :update]
 

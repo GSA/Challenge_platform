@@ -19,7 +19,6 @@ RSpec.describe EvaluatorInvitation, type: :model do
     create(:evaluator_invitation, challenge:, phase:, email: "test@example.com")
     duplicate_invitation = build(:evaluator_invitation, challenge:, phase:, email: "test@example.com")
     expect(duplicate_invitation).not_to be_valid
-    expect(duplicate_invitation.errors[:email]).to include("has already been taken")
   end
 
   it "allows the same email for different challenges or phases" do

@@ -1,10 +1,11 @@
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+<table class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
     <thead>
       <tr>
         <th scope="col">Challenge</th>
         <th scope="col">Number of Submissions</th>
         <th scope="col">Evaluation Form</th>
         <th scope="col">Evaluations are due by</th>
+        <th scope="col"><span class="usa-sr-only">Actions</span></th>
       </tr>
     </thead>
     <tbody>
@@ -17,7 +18,7 @@
             <td data-label="Number of Submissions">
               <%= phase.submissions_count %>
             </td>
-            <td data-label="Evaluation Form">
+            <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
                 <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
                   <%= phase.evaluation_form.title %>
@@ -26,29 +27,32 @@
                 N/A  
               <% end %>  
             </td>
-            <td data-label="Evaluations are due by">
+            <td data-label="Evaluations are due by" class="text-top">
               <% if phase.evaluation_form %>
                 <%= phase.evaluation_form.closing_date %>
               <% else %>
                 N/A  
-              <% end %>  
+              <% end %>
             </td>
             <td>
-              <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-                <button class="usa-button font-body-2xs text-no-wrap">
+              <div class="display-flex flex-column grid-row grid-gap-1">
+                <%= link_to phase_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
                   Manage Evaluators
-                </button>
+                <% end %>
                 <% if phase.submissions_count > 0 %>
                   <%= link_to(submissions_phase_path(phase)) do %>
-                    <button class="usa-button font-body-2xs text-no-wrap">
+                    <button class="usa-button font-body-2xs text-no-wrap width-full">
                       View Submissions
                     </button>
                   <% end %>
-                <% end %>  
+                <% end %>
+              </div>
               </div>  
+            </td>
             </td>  
           </tr>
         <% end %>  
       <% end %>  
     </tbody>
   </table>
+  

@@ -10,6 +10,14 @@ dialog::backdrop {
   border-color: black;
 }
 
+.usa-table.usa-table--borderless.gray-header {
+  thead {
+    th {
+      background-color: #dfe1e2;
+    }
+  }
+}
+
 #add-criteria-button.usa-button {
   background-color: #4d8055;
 }
