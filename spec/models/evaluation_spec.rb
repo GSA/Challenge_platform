@@ -21,7 +21,7 @@ RSpec.describe Evaluation, type: :model do
     end
 
     it "belongs to an evaluator_submission_assignment" do
-      expect(evaluation.submission).to eq(submission)
+      expect(evaluation.evaluator_submission_assignment).to eq(evaluator_submission_assignment)
     end
 
     it "user can only have one evaluation per submission and form" do
