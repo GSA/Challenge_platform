@@ -7,10 +7,12 @@
 #  id                                 :bigint           not null, primary key
 #  user_id                            :bigint           not null
 #  evaluation_form_id                 :bigint           not null
+#  submission_id                      :bigint           not null
 #  evaluator_submission_assignment_id :bigint           not null
-#  total_score                        :integer          default(nil)
 #  additional_comments                :text
 #  revision_comments                  :text
+#  total_score                        :integer
+#  completed_at                       :datetime
 #  created_at                         :datetime         not null
 #  updated_at                         :datetime         not null
 #

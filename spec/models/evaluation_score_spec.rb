@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: evaluation_scores
+#
+#  id                      :bigint           not null, primary key
+#  evaluation_id           :bigint           not null
+#  evaluation_criterion_id :bigint           not null
+#  score                   :integer          not null
+#  score_override          :integer
+#  comment                 :text
+#  comment_override        :text
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#
 require 'rails_helper'
 
 RSpec.describe EvaluationScore, type: :model do
