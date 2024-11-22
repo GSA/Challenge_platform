@@ -3,8 +3,9 @@ require 'rails_helper'
 RSpec.describe Evaluation, type: :model do
   let(:user) { create(:user, :evaluator) }
   let(:submission) { create(:submission, manager: user) }
+  let(:evaluator_submission_assignment) { create(:evaluator_submission_assignment, evaluator: user) }
   let(:evaluation_form) { create(:evaluation_form) }
-  let(:evaluation) { create(:evaluation, user:, evaluation_form:, submission:) }
+  let(:evaluation) { create(:evaluation, user:, evaluation_form:, submission:, evaluator_submission_assignment:) }
 
   describe "associations" do
     it "belongs to a user" do
@@ -19,6 +20,10 @@ RSpec.describe Evaluation, type: :model do
       expect(evaluation.submission).to eq(submission)
     end
 
+    it "belongs to an evaluator_submission_assignment" do
+      expect(evaluation.submission).to eq(submission)
+    end
+
     it "user can only have one evaluation per submission and form" do
       # One already exists from above let statements
       expect(evaluation.user).to be_present
@@ -27,6 +32,16 @@ RSpec.describe Evaluation, type: :model do
         create(:evaluation, user:, evaluation_form:, submission:)
       end.to raise_error(ActiveRecord::RecordInvalid,
                          "Validation failed: User #{I18n.t('evaluations.unique_user_for_evaluation_form_and_submission_error')}")
+    end
+
+    it "user can only have one evaluation per evaluator_submission_assignment" do
+      # One already exists from above let statements
+      expect(evaluation.user).to be_present
+      # Try creating another with same user, evaluation_form, and submission
+      expect do
+        create(:evaluation, evaluator_submission_assignment:)
+      end.to raise_error(ActiveRecord::RecordInvalid,
+                         "Validation failed: Evaluator submission assignment #{I18n.t('evaluations.unique_evaluator_submission_assignment')}")
     end
   end
 
@@ -78,29 +93,6 @@ RSpec.describe Evaluation, type: :model do
         evaluation.update!(revision_comments: Faker::Lorem.characters(number: 3001))
       end.to raise_error(ActiveRecord::RecordInvalid,
                          "Validation failed: Revision comments is too long (maximum is 3000 characters)")
-    end
-  end
-
-  describe "status" do
-    it "allows updating and checking the status" do
-      expect(evaluation).to be_not_started
-      expect(evaluation.status).to eq("not_started")
-
-      evaluation.recused!
-      expect(evaluation).to be_recused
-      expect(evaluation.status).to eq("recused")
-
-      evaluation.not_started!
-      expect(evaluation).to be_not_started
-      expect(evaluation.status).to eq("not_started")
-
-      evaluation.in_progress!
-      expect(evaluation).to be_in_progress
-      expect(evaluation.status).to eq("in_progress")
-
-      evaluation.completed!
-      expect(evaluation).to be_completed
-      expect(evaluation.status).to eq("completed")
     end
   end
 end

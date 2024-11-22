@@ -475,10 +475,11 @@ CREATE TABLE public.evaluations (
     user_id bigint NOT NULL,
     evaluation_form_id bigint NOT NULL,
     submission_id bigint NOT NULL,
+    evaluator_submission_assignment_id bigint NOT NULL,
     additional_comments text,
     revision_comments text,
-    status integer DEFAULT 0 NOT NULL,
     total_score integer,
+    completed_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -1921,6 +1922,13 @@ CREATE INDEX index_evaluations_on_evaluation_form_id ON public.evaluations USING
 
 
 --
+-- Name: index_evaluations_on_evaluator_submission_assignment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_evaluations_on_evaluator_submission_assignment_id ON public.evaluations USING btree (evaluator_submission_assignment_id);
+
+
+--
 -- Name: index_evaluations_on_submission_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2176,6 +2184,14 @@ ALTER TABLE ONLY public.evaluation_scores
 
 ALTER TABLE ONLY public.evaluator_submission_assignments
     ADD CONSTRAINT fk_rails_67111ac897 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: evaluations fk_rails_736a746a12; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations
+    ADD CONSTRAINT fk_rails_736a746a12 FOREIGN KEY (evaluator_submission_assignment_id) REFERENCES public.evaluator_submission_assignments(id);
 
 
 --

@@ -3,7 +3,8 @@ FactoryBot.define do
     association :user, :evaluator
     association :evaluation_form
     association :submission
-    status { :not_started }
+    association :evaluator_submission_assignment
+
     total_score { nil }
     additional_comments { nil }
     revision_comments { nil }

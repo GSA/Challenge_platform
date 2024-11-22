@@ -4,32 +4,29 @@
 #
 # Table name: evaluations
 #
-#  id                    :bigint           not null, primary key
-#  user_id               :bigint           not null
-#  evaluation_form_id    :bigint           not null
-#  status                :integer          default("not_started"), not null
-#  total_score           :integer          default(nil)
-#  additional_comments   :text
-#  revision_comments     :text
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
+#  id                                 :bigint           not null, primary key
+#  user_id                            :bigint           not null
+#  evaluation_form_id                 :bigint           not null
+#  evaluator_submission_assignment_id :bigint           not null
+#  total_score                        :integer          default(nil)
+#  additional_comments                :text
+#  revision_comments                  :text
+#  created_at                         :datetime         not null
+#  updated_at                         :datetime         not null
 #
 class Evaluation < ApplicationRecord
   belongs_to :user
   belongs_to :evaluation_form
   belongs_to :submission
+  belongs_to :evaluator_submission_assignment
   has_many :evaluation_scores, dependent: :destroy
-
-  enum :status, {
-    not_started: 0,
-    recused: 1,
-    in_progress: 2,
-    completed: 3
-  }
 
   validates :user_id,
             uniqueness: { scope: [:evaluation_form_id, :submission_id],
                           message: I18n.t("evaluations.unique_user_for_evaluation_form_and_submission_error") }
+
+  validates :evaluator_submission_assignment,
+            uniqueness: { message: I18n.t('evaluations.unique_evaluator_submission_assignment') }
 
   validates :total_score, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :additional_comments, length: { maximum: 3000 },
