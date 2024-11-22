@@ -49,8 +49,4 @@ class Phase < ApplicationRecord
 
   # Validations
   validates :title, :start_date, :end_date, presence: true
-
-  def submissions_count
-    evaluator_submission_assignments.select(:submission_id).distinct.count
-  end
 end

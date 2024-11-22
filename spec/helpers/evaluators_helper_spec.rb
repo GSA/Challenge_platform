@@ -10,10 +10,9 @@ RSpec.describe EvaluatorsHelper, type: :helper do
     let(:submission) { create(:submission, challenge: challenge, phase: phase) }
 
     it 'returns the correct count of assigned submissions' do
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission)
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission)
-      create(:evaluator_submission_assignment, evaluator: evaluator,
-                                               submission: create(:submission, challenge: challenge, phase: phase))
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :not_started)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :in_progress)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :completed)
 
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(3)
     end
@@ -27,9 +26,10 @@ RSpec.describe EvaluatorsHelper, type: :helper do
     end
 
     it 'only counts submissions for the specified challenge and phase' do
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :not_started)
       create(:evaluator_submission_assignment, evaluator: evaluator,
-                                               submission: create(:submission, challenge: create(:challenge), phase: create(:phase)))
+                                               submission: create(:submission, challenge: create(:challenge), phase: create(:phase)),
+                                               status: :not_started)
 
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(1)
     end

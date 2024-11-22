@@ -14,6 +14,7 @@ module EvaluatorsHelper
       evaluator.evaluator_submission_assignments.
         joins(:submission).
         where(submissions: { challenge:, phase: }).
+        where.not(status: [:unassigned, :recused_unassigned]).
         count
     else
       0
@@ -32,8 +33,18 @@ module EvaluatorsHelper
       'text-green'
     when :unassigned
       'text-accent-cool-darker'
+    when :recused_unassigned
+      'text-secondary'
     else
       'text-base'
     end
   end
+
+  # TODO: Display score for the evaluation submission assignment after EvaluationScore is added
+  # def display_score(assignment, evaluator_id)
+  #   evaluation = Evaluation.find_by(evaluator_submission_assignment: assignment, user_id: evaluator_id)
+  #   score = evaluation&.evaluation_scores&.effective_score
+
+  #   evaluation&.completed? && score ? score : 'N/A'
+  # end
 end

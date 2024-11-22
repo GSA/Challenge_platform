@@ -12,10 +12,11 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
     recused: 2,
     not_started: 3,
     in_progress: 4,
-    completed: 5
+    completed: 5,
+    recused_unassigned: 6
   }
 
-  STATUS_ORDER = [:recused, :not_started, :in_progress, :completed]
+  STATUS_ORDER = [:recused, :unassigned, :recused_unassigned, :not_started, :in_progress, :completed]
 
   scope :ordered_by_status, -> {
     order(Arel.sql(
