@@ -27,14 +27,10 @@ Rails.application.routes.draw do
         post 'resend_invite'
       end
     end
-    resources :phases, only: [] do
-      resources :evaluator_submissions, only: [:index] do
-        member do
-          post 'unassign'
-          post 'reassign'
-        end
+    resources :evaluator_submission_assignments, only: [:index, :update] do
+      collection do
+        patch '', to: 'evaluator_submission_assignments#update'
       end
-      get 'evaluator_submissions/:evaluator_id', to: 'evaluator_submissions#index', as: :evaluator_submissions_for_evaluator
     end
   end
   resources :submissions, only: [:index, :show, :update]
