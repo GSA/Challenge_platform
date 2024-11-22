@@ -16,15 +16,17 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
     recused_unassigned: 6
   }
 
-  STATUS_ORDER = [:recused, :unassigned, :recused_unassigned, :not_started, :in_progress, :completed]
+  STATUS_ORDER = %i[recused unassigned recused_unassigned not_started in_progress completed].freeze
 
-  scope :ordered_by_status, -> {
-    order(Arel.sql(
-      "CASE " +
-      STATUS_ORDER.map.with_index { |status, index|
-        "WHEN evaluator_submission_assignments.status = #{statuses[status]} THEN #{index + 1}"
-      }.join(" ") +
-      " ELSE #{STATUS_ORDER.length + 1} END"
-    ))
+  scope :ordered_by_status, lambda {
+    order(
+      Arel.sql(
+        [
+          "CASE status",
+          *STATUS_ORDER.map.with_index { |status, index| "WHEN #{statuses[status]} THEN #{index}" },
+          "ELSE #{STATUS_ORDER.length} END"
+        ].join(" ")
+      )
+    )
   }
 end

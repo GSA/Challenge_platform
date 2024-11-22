@@ -18,11 +18,10 @@ export default class extends Controller {
 
   open(event) {
     event.preventDefault();
-    this.submissionIdValue = event.currentTarget.dataset.submissionId;
-    this.evaluatorIdValue = event.currentTarget.dataset.evaluatorId;
-    this.phaseIdValue = event.currentTarget.dataset.phaseId;
+    this.setValues(event.currentTarget.dataset);
     this.modalTarget.showModal();
   }
+
 
   close() {
     this.modalTarget.close()
@@ -36,6 +35,12 @@ export default class extends Controller {
 
   confirm() {
     this.unassignEvaluatorSubmission()
+  }
+
+  setValues(dataset) {
+    this.submissionIdValue = dataset.submissionId;
+    this.evaluatorIdValue = dataset.evaluatorId;
+    this.phaseIdValue = dataset.phaseId;
   }
 
   unassignEvaluatorSubmission() {
