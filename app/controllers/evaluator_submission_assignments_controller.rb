@@ -13,7 +13,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       where(status: %i[completed in_progress not_started recused]).
       ordered_by_status
     @unassigned_submissions = @evaluator_assignments.
-      where(status: %i[:unassigned, :recused_unassigned]).
+      where(status: %i[unassigned recused_unassigned]).
       ordered_by_status
     @submissions_count = @assigned_submissions.group('evaluator_submission_assignments.status').count
   end

@@ -22,7 +22,7 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
     order(
       Arel.sql(
         [
-          "CASE status",
+          "CASE evaluator_submission_assignments.status",
           *STATUS_ORDER.map.with_index { |status, index| "WHEN #{statuses[status]} THEN #{index}" },
           "ELSE #{STATUS_ORDER.length} END"
         ].join(" ")
