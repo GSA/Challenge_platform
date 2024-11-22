@@ -24,4 +24,16 @@ RSpec.describe EvaluatorSubmissionAssignment, type: :model do
     create(:evaluator_submission_assignment, submission:, evaluator: user)
     expect(user.assigned_submissions).to include(submission)
   end
+
+  it "associates the evaluation with the assigned submission and properly deletes both" do
+    evaluator_submission_assignment = create(:evaluator_submission_assignment, submission:, evaluator: user)
+    evaluation = create(:evaluation, evaluator_submission_assignment:, submission:, user:)
+
+    expect(evaluator_submission_assignment.evaluation).to eq(evaluation)
+
+    evaluator_submission_assignment.destroy
+
+    expect(described_class.find_by(id: evaluator_submission_assignment.id)).to be_nil
+    expect(Evaluation.find_by(id: evaluation.id)).to be_nil
+  end
 end

@@ -5,6 +5,7 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   belongs_to :submission
   belongs_to :evaluator, class_name: "User", foreign_key: :user_id, inverse_of: :assigned_submissions
+  has_one :evaluation, dependent: :destroy
 
   has_one :phase, through: :submission
 

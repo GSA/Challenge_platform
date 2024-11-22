@@ -6,7 +6,7 @@ FactoryBot.define do
     # Fields
     title { "Criterion #{Faker::Lorem.sentence(word_count: 3)}" }
     description { Faker::Lorem.sentence }
-    points_or_weight { rand(0..100) }
+    points_or_weight { rand(1..100) }
     scoring_type { [:numeric, :rating, :binary].sample }
     option_range_start { nil }
     option_range_end { nil }
