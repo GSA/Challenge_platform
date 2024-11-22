@@ -3,7 +3,6 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["modal", "confirmButton"]
   static values = {
-    challengeId: String,
     phaseId: String,
     submissionId: String,
     evaluatorId: String
@@ -18,12 +17,11 @@ export default class extends Controller {
   }
 
   open(event) {
-    event.preventDefault()
-    this.submissionIdValue = event.currentTarget.dataset.submissionId
-    this.evaluatorIdValue = event.currentTarget.dataset.evaluatorId
-    this.challengeIdValue = event.currentTarget.dataset.challengeId
-    this.phaseIdValue = event.currentTarget.dataset.phaseId
-    this.modalTarget.showModal()
+    event.preventDefault();
+    this.submissionIdValue = event.currentTarget.dataset.submissionId;
+    this.evaluatorIdValue = event.currentTarget.dataset.evaluatorId;
+    this.phaseIdValue = event.currentTarget.dataset.phaseId;
+    this.modalTarget.showModal();
   }
 
   close() {
@@ -41,35 +39,31 @@ export default class extends Controller {
   }
 
   unassignEvaluatorSubmission() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content
-
-    fetch(`/challenges/${this.challengeIdValue}/phases/${this.phaseIdValue}/evaluator_submissions/${this.submissionIdValue}/unassign`, {
-      method: 'POST',
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    
+    fetch(`/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${this.evaluatorIdValue}`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken
+        'X-CSRF-Token': csrfToken,
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        evaluator_id: this.evaluatorIdValue
+        submission_id: this.submissionIdValue,
+        status: 'unassigned'
       })
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      return response.json()
-    })
+    .then(response => response.json())
     .then(data => {
       if (data.success) {
-        this.close()
-        window.location.reload()
+        window.location.href = `/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${this.evaluatorIdValue}`;
       } else {
-        throw new Error(data.message || 'Failed to unassign evaluator from submission')
+        throw new Error(data.message || 'Failed to unassign evaluator from submission');
       }
     })
     .catch(error => {
-      console.error('Error:', error)
-      alert(error.message || 'An error occurred while unassigning the evaluator from the submission')
-    })
+      console.error('Error:', error);
+      alert(error.message || 'An error occurred while unassigning the evaluator from the submission');
+    });
   }
 }
