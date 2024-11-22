@@ -63,6 +63,11 @@ en:
   evaluation_criterion_unique_title_in_form_error: "Evaluation criteria title must be unique within the same form."
   evaluation_form_criteria_weight_total_error: "The total weight of all evaluation criteria must add up to 100 when weighted scoring is enabled."
   evaluation_criteria_form_title_placeholder: "Add criteria title here"
+  evaluations: 
+    unique_user_for_evaluation_form_and_submission_error: "already has an evaluation for this form and submission"
+    unique_evaluator_submission_assignment: "already has an evaluation"
+  evaluation_scores:
+    unique_evaluation_for_evaluation_criterion_error: "already has a score for this evaluation criterion"
   alerts:
     recused_evaluator:
       heading: "Recused Evaluator"
