@@ -1,0 +1,691 @@
+require 'rails_helper'
+
+RSpec.describe 'Evaluation Form', :js, type: :system do
+  let(:user) { create_user(role: "challenge_manager", status: "active") }
+
+  describe "new evaluation form page" do
+    let!(:challenge) { create(:challenge, user:) }
+
+    before do
+      system_login_user(user)
+    end
+
+    it "is accessible" do
+      visit new_evaluation_form_path
+      # Accessibility check on empty form
+      expect(page).to(be_axe_clean)
+    end
+
+    it 'allows creation of a valid form with all 3 criteria scoring types' do
+      visit new_evaluation_form_path
+
+      fill_in_full_form
+
+      # Toggle one criterion accordion then check accessibility
+      toggle_criteria_accordion(0)
+      check_criteria_accordion_expanded(0, false)
+      expect(page).to(be_axe_clean)
+
+      # Open all criterion accordion then check accessibility
+      toggle_all_criteria_accordions
+      expect(page).to(be_axe_clean)
+
+      save_form
+
+      # Click through confirmation page
+      expect(page).to have_content("Evaluation Form Saved")
+      click_link_or_button "Manage Evaluation Forms"
+
+      # Should be on evaluation index view
+      evaluation_form = EvaluationForm.first
+      expect(page).to have_content("Evaluation Forms")
+      expect(page).to have_content(evaluation_form.title)
+      phase = evaluation_form.phase
+      challenge_phase_title = challenge_phase_title(phase.challenge, phase)
+      expect(page).to have_content(challenge_phase_title)
+      expect(page).to have_content(evaluation_period(evaluation_form))
+
+      # Check accessibility
+      expect(page).to(be_axe_clean)
+    end
+
+    it "prevents form submission and focuses first missing required field" do
+      title = "Prevents form submission #{Faker::Lorem.sentence(word_count: 3)}"
+      visit new_evaluation_form_path
+
+      # Cycle through saving form, checking field focus, and filling field for all fields
+      # Check form title
+      save_form
+      expect_form_title_to_be_focused
+      fill_in_title(title)
+      # Check form phase
+      save_form
+      expect_form_phase_to_be_focused
+      select_phase(challenge.phases.first)
+      # Check form instructions
+      save_form
+      expect_form_instructions_to_be_focused
+      fill_in_instructions("Example instructions")
+      # Check scale type
+      save_form
+      expect_form_scale_type_to_be_focused
+      select_scale_type("point")
+      # Check criterion title
+      save_form
+      expect_criterion_title_to_be_focused(0)
+      fill_in_criterion_title(0, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
+      # Check criterion description
+      save_form
+      expect_criterion_description_to_be_focused(0)
+      fill_in_criterion_description(0, Faker::Lorem.sentence)
+      # Check criterion points/weight
+      save_form
+      expect_criterion_points_or_weight_to_be_focused(0)
+      fill_in_criterion_points_weight(0, 100)
+      # Check criterion scoring type
+      save_form
+      expect_criterion_scoring_type_to_be_focused(0)
+      select_criterion_scoring_type(0, "rating")
+      # Check criterion option labels
+      save_form
+      expect_criterion_option_label_to_be_focused(0, 0)
+      fill_in_criterion_option_label(0, 0, "Unlikely")
+      save_form
+      expect_criterion_option_label_to_be_focused(0, 1)
+      fill_in_criterion_option_label(0, 1, "Neutral")
+      save_form
+      expect_criterion_option_label_to_be_focused(0, 2)
+      fill_in_criterion_option_label(0, 2, "Likely")
+      # Check form end date
+      save_form
+      expect_form_end_date_to_be_focused
+      fill_in_end_date(challenge.phases.first.end_date + 1)
+
+      save_form
+      expect(page).to have_content("Evaluation Form Saved")
+    end
+
+    it "contains the evaluation form data when editing after creation" do
+      title = "Editing after creation"
+      visit new_evaluation_form_path
+      fill_in_full_form(title:)
+      save_form
+      click_link_or_button "Manage Evaluation Forms"
+      expect(page).to have_link(title)
+      evaluation_form = EvaluationForm.find_by(title:)
+      click_edit_button_for_evaluation_form(evaluation_form.id)
+      expect_form_to_match_all_evaluation_form_values(evaluation_form)
+    end
+
+    it 'allows removing evaluation criteria' do
+      visit new_evaluation_form_path
+
+      fill_in_full_form
+
+      # Starts with 3
+      expect(visible_criterion_indicies.length).to eq(3)
+      remove_criterion(0)
+      expect(visible_criterion_indicies.length).to eq(2)
+      remove_criterion(1)
+      expect(visible_criterion_indicies.length).to eq(1)
+
+      # Removing last criteria creates a new blank one
+      remove_criterion(2)
+      expect(visible_criterion_indicies.length).to eq(1)
+      expect(visible_criterion_indicies).to include(3)
+    end
+
+    it "does not allow collapsing criteria with missing fields and collapses correct accordion" do
+      visit new_evaluation_form_path
+
+      fill_in_base_form_info
+      # Adds a second criteria to make sure the correct accordion collapses
+      fill_in_numeric_criteria_type
+
+      toggle_criteria_accordion(0)
+      # Should still be expanded because it's missing field values
+      check_criteria_accordion_expanded(0, true)
+      # Criteria title should be focused since it is required and not filled yet
+      expect_criterion_title_to_be_focused(0)
+
+      # Other criteria starts expanded
+      check_criteria_accordion_expanded(1, true)
+      # Collapse and check other accordion
+      toggle_criteria_accordion(1)
+      check_criteria_accordion_expanded(1, false)
+
+      fill_in_numeric_criteria_type(initial: true)
+      toggle_criteria_accordion(0)
+      # Should be collapsed since it is filled out
+      check_criteria_accordion_expanded(0, false)
+      # Other criteria should still be collapsed
+      check_criteria_accordion_expanded(1, false)
+    end
+
+    it "shows an error if criteria points don't add up to 100 for weighted form" do
+      visit new_evaluation_form_path
+
+      fill_in_base_form_info
+      select_scale_type("weighted")
+
+      # Fill in two criteria with only 20 points
+      fill_in_numeric_criteria_type(initial: true)
+      fill_in_criterion_points_weight(0, 10)
+      fill_in_numeric_criteria_type
+      fill_in_criterion_points_weight(1, 10)
+
+      save_form
+      expect(page).to have_content(I18n.t("evaluation_form_criteria_weight_total_error"))
+
+      # Fix weights to add up to 100 and form should submit
+      fill_in_criterion_points_weight(0, 50)
+      fill_in_criterion_points_weight(1, 50)
+
+      save_form
+      expect(page).to have_content("Evaluation Form Saved")
+    end
+  end
+
+  describe "update evaluation form page" do
+    let(:challenge) do
+      create(:challenge, user:, is_multi_phase: true)
+    end
+    let(:evaluation_form) do
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+    end
+
+    before do
+      system_login_user(user)
+    end
+
+    it "is accessible" do
+      visit edit_evaluation_form_path(evaluation_form)
+      expect(page).to(be_axe_clean)
+    end
+
+    it 'allows editing of an existing form values' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      # Prep updated form field values for comparison
+      updated_title = "Updated #{evaluation_form.title}"
+      # TODO: Might affect disabled state, start_date, etc.
+      updated_phase = challenge.phases[1]
+      updated_instructions = "Updated #{evaluation_form.instructions}"
+      updated_comments_required = !evaluation_form.comments_required
+      # TODO: Enable this when criteria updating and weight fixing is implemented
+      # updated_scale_type = !evaluation_form.weighted_scoring
+      updated_end_date = updated_phase.end_date + 1.day
+
+      # Update form field values
+      fill_in_title(updated_title)
+      select_phase(updated_phase)
+      fill_in_instructions(updated_instructions)
+      check_comments_required
+      # TODO: When switching to weighted it needs to make sure criteria values sum to 100
+      # select_scale_type(updated_scale_type ? "point" : "weighted")
+      fill_in_end_date(updated_end_date)
+
+      save_form
+      expect(page).to have_current_path(confirmation_evaluation_form_path(evaluation_form))
+      expect(page).to have_content("Evaluation Form Saved")
+
+      evaluation_form.reload
+      expect(evaluation_form.title).to eq(updated_title)
+      expect(evaluation_form.phase_id).to eq(updated_phase.id)
+      expect(evaluation_form.instructions).to eq(updated_instructions)
+      expect(evaluation_form.comments_required).to eq(updated_comments_required)
+      # TODO: Enable this when weighted scoring issue above is solved
+      # expect(evaluation_form.weighted_scoring).to eq(updated_scale_type)
+      expect(evaluation_form.closing_date).to eq(updated_end_date)
+    end
+
+    it 'allows adding new criteria' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      num_criteria = evaluation_form.evaluation_criteria.length
+
+      # Make sure criteria are expanded so they can be edited if needed
+      toggle_all_criteria_accordions
+
+      # Create 3 new criteria of each type
+      fill_in_numeric_criteria_type
+      fill_in_rating_criteria_type
+      fill_in_binary_criteria_type
+
+      rebalance_criteria_weights if evaluation_form.weighted_scoring?
+      save_form
+      expect(page).to have_content("Evaluation Form Saved")
+
+      expect(evaluation_form.reload.evaluation_criteria.length).to eq(num_criteria + 3)
+    end
+
+    it 'allows removing existing criteria' do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      num_criteria = evaluation_form.evaluation_criteria.length
+
+      # Add a criterion in case there is only 1 remaining
+      fill_in_numeric_criteria_type
+
+      # Make sure criteria are expanded so they can be edited if needed
+      toggle_all_criteria_accordions
+
+      # Remove an existing criterion from the form
+      remove_criterion(visible_criterion_indicies[0])
+
+      rebalance_criteria_weights if evaluation_form.weighted_scoring?
+      save_form
+      expect(page).to have_content("Evaluation Form Saved")
+
+      evaluation_form.reload
+      # Criteria count should be the same since one was added and removed
+      expect(evaluation_form.evaluation_criteria.length).to eq(num_criteria)
+    end
+
+    it 'disables all fields except end date after start date' do
+      closed_challenge = create(:challenge, user:, phases: [create(:phase, end_date: 1.week.ago)])
+      closed_evaluation_form = create(:evaluation_form, challenge:, phase: closed_challenge.phases.first)
+
+      visit edit_evaluation_form_path(closed_evaluation_form)
+
+      # Add expectation in spec to satisfy rubocop
+      expect(page).to have_css("form[data-controller='evaluation-form']")
+      check_all_non_hidden_inputs_disabled_except_end_date
+    end
+  end
+
+  describe "evaluation form confirmation page" do
+    let(:evaluation_form) do
+      challenge = create(:challenge, user:, is_multi_phase: true)
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+    end
+
+    before do
+      system_login_user(user)
+    end
+
+    it "is accessible" do
+      visit confirmation_evaluation_form_path(evaluation_form)
+      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to(be_axe_clean)
+    end
+  end
+end
+
+#######################################
+############### Helpers ###############
+#######################################
+
+##### Form Fill Helpers #####
+def fill_in_full_form(title: "New Evaluation Form")
+  fill_in_base_form_info(title:)
+  fill_in_all_eval_criteria_types
+end
+
+def fill_in_base_form_info(title: "New Evaluation Form")
+  # Fill in main form fields
+  fill_in_title(title)
+  select_phase(challenge.phases.first)
+  fill_in_instructions("Example instructions")
+  check_comments_required
+  select_scale_type("point")
+  fill_in_end_date(challenge.phases.first.end_date + 1)
+end
+
+def fill_in_all_eval_criteria_types
+  fill_in_numeric_criteria_type(initial: true)
+  fill_in_binary_criteria_type
+  fill_in_rating_criteria_type
+end
+
+def fill_in_numeric_criteria_type(initial: false)
+  index = initial ? 0 : add_criterion
+
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
+  fill_in_criterion_description(index, "Example criterion description")
+  fill_in_criterion_points_weight(index, "10")
+  select_criterion_scoring_type(index, "numeric")
+end
+
+def fill_in_binary_criteria_type(initial: false)
+  index = initial ? 0 : add_criterion
+
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
+  fill_in_criterion_description(index, "Example criterion description")
+  fill_in_criterion_points_weight(index, "10")
+  select_criterion_scoring_type(index, "binary")
+  fill_in_criterion_option_label(index, 0, "No")
+  fill_in_criterion_option_label(index, 1, "Yes")
+end
+
+def fill_in_rating_criteria_type(initial: false)
+  index = initial ? 0 : add_criterion
+
+  fill_in_criterion_title(index, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
+  fill_in_criterion_description(index, "Example criterion description")
+  fill_in_criterion_points_weight(index, "10")
+  select_criterion_scoring_type(index, "rating")
+  select_option_range_start(index, 1)
+  select_option_range_end(index, 5)
+  fill_in_criterion_option_label(index, 1, "Disagree")
+  fill_in_criterion_option_label(index, 2, "Slightly Disagree")
+  fill_in_criterion_option_label(index, 3, "Neutral")
+  fill_in_criterion_option_label(index, 4, "Slightly Agree")
+  fill_in_criterion_option_label(index, 5, "Agree")
+end
+
+def fill_in_title(value)
+  fill_in 'evaluation_form[title]', with: value
+end
+
+def select_phase(phase)
+  challenge_phase_title = challenge_phase_title(phase.challenge, phase)
+  find_by_id('challenge-combo').click
+  find('#challenge-combo--list li', text: challenge_phase_title).click
+end
+
+def fill_in_instructions(value)
+  fill_in 'evaluation_form[instructions]', with: value
+end
+
+def check_comments_required
+  find("label[for='evaluation_form_comments_required']").click
+end
+
+def select_scale_type(scale_type)
+  allowed_scale_types = %w[point weighted]
+  unless allowed_scale_types.include?(scale_type)
+    raise ArgumentError, "Invalid scale type: #{scale_type}. Allowed values are: #{allowed_scale_types.join(', ')}"
+  end
+
+  find("label[for='#{scale_type}_scale']").click
+end
+
+def fill_in_criterion_title(index, value)
+  fill_in "evaluation_form[evaluation_criteria_attributes][#{index}][title]", with: value
+end
+
+def fill_in_criterion_description(index, value)
+  fill_in "evaluation_form[evaluation_criteria_attributes][#{index}][description]", with: value
+end
+
+def fill_in_criterion_points_weight(index, value)
+  fill_in "evaluation_form[evaluation_criteria_attributes][#{index}][points_or_weight]", with: value
+end
+
+def select_criterion_scoring_type(index, scoring_type)
+  allowed_scoring_types = %w[numeric rating binary]
+  unless allowed_scoring_types.include?(scoring_type)
+    raise ArgumentError,
+          "Invalid scoring type: #{scoring_type}. Allowed values are: #{allowed_scoring_types.join(', ')}"
+  end
+
+  find("label[for='evaluation_form_evaluation_criteria_attributes_#{index}_scoring_type_#{scoring_type}']").click
+end
+
+def add_criterion
+  click_link_or_button "add-criteria-button"
+  # Returns the last visible criterion index (most recently added)
+  visible_criterion_indicies[-1]
+end
+
+def remove_criterion(index)
+  click_link_or_button "evaluation_form_evaluation_criteria_attributes_#{index}_delete_criteria"
+end
+
+def toggle_criteria_accordion(index)
+  find("button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']").click
+end
+
+# False to close all, true to open all
+def toggle_all_criteria_accordions(open: true)
+  visible_criterion_indicies.each do |index|
+    if open
+      toggle_criteria_accordion(index) unless get_criteria_accordion_state(index)
+    elsif get_criteria_accordion_state(index)
+      toggle_criteria_accordion(index)
+    end
+  end
+end
+
+# Returns false if closed, true if open
+def get_criteria_accordion_state(index)
+  button_selector = "button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']"
+  find(button_selector)[:'aria-expanded'] == "true"
+end
+
+def check_criteria_accordion_expanded(index, state)
+  button_selector = "button[aria-controls='evaluation_form_evaluation_criteria_attributes_#{index}_accordion']"
+  button_state_selector = "#{button_selector}[aria-expanded='#{state}']"
+  expect(page).to have_selector(button_state_selector)
+
+  accordion_content = find("#evaluation_form_evaluation_criteria_attributes_#{index}_accordion", visible: :all)
+  if state
+    expect(accordion_content).to be_visible
+  else
+    expect(accordion_content).not_to be_visible
+  end
+end
+
+def visible_criterion_indicies
+  all('.criteria-row').map { |element| element["data-index"].to_i }
+end
+
+def select_option_range_start(index, value)
+  select value, from: "evaluation_form[evaluation_criteria_attributes][#{index}][option_range_start]"
+end
+
+def select_option_range_end(index, value)
+  select value, from: "evaluation_form[evaluation_criteria_attributes][#{index}][option_range_end]"
+end
+
+def fill_in_criterion_option_label(criterion_index, label_index, value)
+  fill_in "evaluation_form[evaluation_criteria_attributes][#{criterion_index}][option_labels][#{label_index}]",
+          with: value
+end
+
+def fill_in_end_date(date)
+  date_string = date.strftime("%Y-%m-%d")
+
+  find(".usa-date-picker__button").click
+  # Ensure proper year is focused in calendar
+  find(".usa-date-picker__calendar__year-selection").click
+  find(".usa-date-picker__calendar__year[data-value='#{date.year}']").click
+  # Ensure proper month is focused in calendar
+  find(".usa-date-picker__calendar__month-selection").click
+  find(".usa-date-picker__calendar__month[data-value='#{date.month - 1}']").click
+
+  # Select date from calendar
+  find(".usa-date-picker__calendar__date[data-value='#{date_string}']").click
+end
+
+def save_form
+  click_on 'Save'
+end
+
+def click_edit_button_for_evaluation_form(id)
+  find("form[action='/evaluation_forms/#{id}/edit'] button[type='submit']").click
+end
+
+##### Form Focus Helpers #####
+# Checks for form fields being focused. Usually in the case of a required field not filled out
+# Includes non visible fields because of custom checkbox and radio button styling
+def expect_field_to_be_focused(selector)
+  expect(page).to have_css("#{selector}:focus", visible: :all)
+end
+
+def expect_form_title_to_be_focused
+  selector = "input[name='evaluation_form[title]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_form_phase_to_be_focused
+  selector = "#challenge-combo"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_form_instructions_to_be_focused
+  selector = "textarea[name='evaluation_form[instructions]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_form_scale_type_to_be_focused
+  selector = "input#point_scale"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_form_end_date_to_be_focused
+  selector = "input[name='evaluation_form[closing_date]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_title_to_be_focused(index)
+  selector = "input[name='evaluation_form[evaluation_criteria_attributes][#{index}][title]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_description_to_be_focused(index)
+  selector = "textarea[name='evaluation_form[evaluation_criteria_attributes][#{index}][description]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_points_or_weight_to_be_focused(index)
+  selector = "input[name='evaluation_form[evaluation_criteria_attributes][#{index}][points_or_weight]']"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_scoring_type_to_be_focused(index)
+  selector = "#evaluation_form_evaluation_criteria_attributes_#{index}_scoring_type_numeric"
+  expect_field_to_be_focused(selector)
+end
+
+def expect_criterion_option_label_to_be_focused(criterion_index, label_index)
+  selector =
+    "input[name='evaluation_form[evaluation_criteria_attributes][#{criterion_index}][option_labels][#{label_index}]']"
+  expect_field_to_be_focused(selector)
+end
+
+##### Form Field Value Helpers #####
+def expect_form_to_match_all_evaluation_form_values(evaluation_form)
+  expect_base_form_field_to_match(evaluation_form)
+  expect_criterion_fields_to_match(evaluation_form)
+end
+
+def expect_base_form_field_to_match(evaluation_form)
+  expect_form_title_to_equal(evaluation_form.title)
+  phase = evaluation_form.phase
+  expect_form_phase_to_equal(challenge_phase_title(phase.challenge, phase))
+  expect_form_instructions_to_equal(evaluation_form.instructions)
+  expect_form_comments_required_to_equal(evaluation_form.comments_required)
+  expect_form_scale_type_to_equal(evaluation_form.weighted_scoring?)
+  expect_form_end_date_to_equal(evaluation_form.closing_date.strftime("%m/%d/%Y"))
+end
+
+def expect_criterion_fields_to_match(evaluation_form)
+  evaluation_form.evaluation_criteria.each_with_index do |criterion, index|
+    expect_criterion_title_to_equal(index, criterion.title)
+    expect_criterion_description_to_equal(index, criterion.description)
+    expect_criterion_points_or_weight_to_equal(index, criterion.points_or_weight)
+    expect_criterion_scoring_type_to_equal(index, criterion.scoring_type)
+
+    expect_criterion_scoring_type_specific_fields_to_match(index, criterion)
+  end
+end
+
+def expect_criterion_scoring_type_specific_fields_to_match(index, criterion)
+  # Rating specific fields
+  if criterion.scoring_type == "rating"
+    expect_criterion_option_range_start_to_equal(index, criterion.option_range_start)
+    expect_criterion_option_range_end_to_equal(index, criterion.option_range_end)
+  end
+
+  # Option labels. Only for rating/binary scoring_types
+  return unless criterion.scoring_type != "numeric"
+
+  # expect_criterion_option_labels_to_match(criterion)
+  criterion.option_labels.each do |option_index, option_label|
+    expect_criterion_option_label_to_equal(index, option_index, option_label)
+  end
+end
+
+# Base form value checkers
+def expect_form_title_to_equal(value)
+  expect(find_by_id('evaluation_form_title').value).to eq(value)
+end
+
+def expect_form_phase_to_equal(value)
+  expect(find_by_id('challenge-combo').value).to eq(value)
+end
+
+def expect_form_instructions_to_equal(value)
+  expect(find_by_id('evaluation_form_instructions').value).to eq(value)
+end
+
+def expect_form_comments_required_to_equal(value)
+  expect(find_by_id('evaluation_form_comments_required', visible: :all).checked?).to eq(value)
+end
+
+# value = false for point scale, true for weighted scale
+def expect_form_scale_type_to_equal(value)
+  expect(find("input[name='evaluation_form[weighted_scoring]'][value='#{value}']", visible: :all)).to be_checked
+end
+
+def expect_form_end_date_to_equal(value)
+  expect(find_by_id('evaluation_form_closing_date').value).to eq(value)
+end
+
+# Criterion value checkers. Checks all visibility since accordions can be collapsed
+def expect_criterion_title_to_equal(index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{index}_title", visible: :all).value).to eq(value)
+end
+
+def expect_criterion_description_to_equal(index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{index}_description", visible: :all).value).to eq(value)
+end
+
+def expect_criterion_points_or_weight_to_equal(index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{index}_points_or_weight",
+              visible: :all).value.to_i).to eq(value)
+end
+
+def expect_criterion_scoring_type_to_equal(index, value)
+  scoring_type_radio = find("#evaluation_form_evaluation_criteria_attributes_#{index}_scoring_type_#{value}",
+                            visible: :all)
+  expect(scoring_type_radio).to be_checked
+end
+
+def expect_criterion_option_range_start_to_equal(index, value)
+  expect(find("select#evaluation_form_evaluation_criteria_attributes_#{index}_option_range_start",
+              visible: :all).value.to_i).to eq(value)
+end
+
+def expect_criterion_option_range_end_to_equal(index, value)
+  expect(find("select#evaluation_form_evaluation_criteria_attributes_#{index}_option_range_end",
+              visible: :all).value.to_i).to eq(value)
+end
+
+def expect_criterion_option_label_to_equal(criterion_index, label_index, value)
+  expect(find("#evaluation_form_evaluation_criteria_attributes_#{criterion_index}_option_labels_#{label_index}",
+              visible: :all).value).to eq(value)
+end
+
+##### Misc Form Helpers #####
+def rebalance_criteria_weights
+  balanced_values = random_values_for_weighted_scoring(visible_criterion_indicies.length)
+  visible_criterion_indicies.each_with_index do |crit_index, each_index|
+    fill_in_criterion_points_weight(crit_index, balanced_values[each_index])
+  end
+end
+
+# Checks that all non hidden or end date fields are disabled
+def check_all_non_hidden_inputs_disabled_except_end_date
+  within("form[data-controller='evaluation-form']") do
+    all("input:not([type='hidden']), textarea, select").each do |field|
+      if field[:id] == "evaluation_form_closing_date"
+        expect(field).not_to be_disabled, "Expected #{field[:id]} to not be disabled"
+      else
+        expect(field).to be_disabled, "Expected #{field[:id]} to be disabled"
+      end
+    end
+  end
+end

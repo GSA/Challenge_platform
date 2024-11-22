@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "confirmButton", "modalDescription"]
+  static targets = ["modal"]
   static values = {
     challengeId: String,
     evaluatorId: String,
@@ -27,7 +27,6 @@ export default class extends Controller {
 
   close() {
     this.modalTarget.close()
-    this.resetModal()
   }
 
   handleOutsideClick(event) {
@@ -61,11 +60,5 @@ export default class extends Controller {
       }
     })
     .catch(error => { alert(error.message || 'An error occurred while removing the evaluator') })
-  }
-
-  resetModal() {
-    this.modalDescriptionTarget.textContent = 'Deleting an evaluator from the challenge will remove the evaluator from any submissions of this ' +
-     'challenge that the evaluator is assigned to. It will also delete any of their completed or in progress evaluations for those submissions.'
-    this.confirmButtonTarget.textContent = 'Yes'
   }
 }

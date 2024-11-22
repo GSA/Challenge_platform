@@ -17,7 +17,14 @@ class EvaluatorsController < ApplicationController
       evaluator_invitation_params
     )
 
-    handle_invitation_result(result)
+    if result[:success]
+      redirect_to phase_evaluators_path(@phase), notice: result[:message]
+    else
+      flash.now[:alert] = result[:message]
+      @evaluator_invitations = @phase.evaluator_invitations
+      @existing_evaluators = @phase.evaluators
+      render :index
+    end
   end
 
   def destroy
@@ -58,16 +65,5 @@ class EvaluatorsController < ApplicationController
     params.require(:evaluator_invitation).permit(
       :first_name, :last_name, :email, :challenge_id, :phase_id, :last_invite_sent
     )
-  end
-
-  def handle_invitation_result(result)
-    if result[:success]
-      redirect_to phase_evaluators_path(@phase), notice: result[:message]
-    else
-      flash.now[:alert] = result[:message]
-      @evaluator_invitations = @phase.evaluator_invitations
-      @existing_evaluators = @phase.evaluators
-      render :index
-    end
   end
 end

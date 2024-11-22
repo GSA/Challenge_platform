@@ -37,7 +37,7 @@ class EvaluatorManagementService
       { success: true,
         message: I18n.t('evaluators.process_evaluator_invitation.invitation_resent', email: invitation.email) }
     else
-      { success: false }
+      { success: false, message: I18n.t('evaluators.resend_invite.failure') }
     end
   end
 
