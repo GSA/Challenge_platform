@@ -24,4 +24,11 @@ RSpec.describe EvaluatorSubmissionAssignment, type: :model do
     create(:evaluator_submission_assignment, submission:, evaluator: user)
     expect(user.assigned_submissions).to include(submission)
   end
+
+  it "associates the evaluation with the assigned submission" do
+    evaluator_submission_assignment = create(:evaluator_submission_assignment, submission:, evaluator: user)
+    evaluation = create(:evaluation, evaluator_submission_assignment:, submission:, user:)
+
+    expect(evaluator_submission_assignment.evaluation).to eq(evaluation)
+  end
 end
