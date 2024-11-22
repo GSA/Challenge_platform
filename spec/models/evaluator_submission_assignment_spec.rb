@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: evaluator_submission_assignments
+#
+#  id            :bigint           not null, primary key
+#  user_id       :bigint           not null
+#  submission_id :bigint           not null
+#  status        :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
 require 'rails_helper'
 
 RSpec.describe EvaluatorSubmissionAssignment, type: :model do

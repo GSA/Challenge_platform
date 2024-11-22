@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Base class for most controllers.
+# The class manages sessions for authenticated users and auth actions.
 class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 

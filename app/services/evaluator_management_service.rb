@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# This service handles evaluator invitation as well as adding and removing evalutors to challenge phases.
 class EvaluatorManagementService
   def initialize(challenge, phase)
     @challenge = challenge
