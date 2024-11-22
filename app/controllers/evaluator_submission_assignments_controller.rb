@@ -7,7 +7,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
 
   def index
     @evaluator_assignments = @phase.evaluator_submission_assignments.
-      includes(:submission).
+      includes(:submission, :evaluation).
       where(user_id: @evaluator.id)
     @assigned_submissions = @evaluator_assignments.
       where(status: %i[completed in_progress not_started recused]).

@@ -3,7 +3,7 @@
   <td data-label="Evaluation status">
     <span class="text-top text-bold <%= evaluation_status(assignment.status) %>"><%= assignment.status.titleize %></span>
   </td>
-  <td data-label="Score" class="text-top text-light">N/A<%# display_score(assignment) %></td>
+  <td data-label="Score" class="text-top text-light"><%= display_score(assignment, evaluator.id) %></td>
   <td data-label="">
     <div class="display-flex flex-justify-end">
       <%= button_to "Reassign", phase_evaluator_submission_assignment_path(phase, assignment.submission, evaluator_id: evaluator.id, submission_id: assignment.submission.id, status: :not_started), method: :patch, class: 'usa-button usa-button--outline font-body-3xs' %>

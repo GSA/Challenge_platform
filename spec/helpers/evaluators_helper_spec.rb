@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe EvaluatorsHelper, type: :helper do
-  describe '#assigned_submissions_count' do
-    let(:challenge) { create(:challenge) }
-    let(:phase) { create(:phase, challenge: challenge) }
-    let(:evaluator) { create(:user, role: :evaluator) }
-    let(:submission) { create(:submission, challenge: challenge, phase: phase) }
+  let(:challenge) { create(:challenge) }
+  let(:phase) { create(:phase, challenge: challenge) }
+  let(:evaluator) { create(:user, role: :evaluator) }
+  let(:submission) { create(:submission, challenge: challenge, phase: phase) }
 
+  describe '#assigned_submissions_count' do
     it 'returns the correct count of assigned submissions' do
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :not_started)
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :in_progress)
@@ -34,4 +34,28 @@ RSpec.describe EvaluatorsHelper, type: :helper do
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(1)
     end
   end
+
+  describe '#display_score' do
+  let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission) }
+
+  context 'when evaluation exists and has a total score' do
+    it 'returns the total score' do
+      create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator, total_score: 85)
+      expect(helper.display_score(assignment, evaluator.id)).to eq(85)
+    end
+  end
+
+  context 'when evaluation exists but has no total score' do
+    it 'returns N/A' do
+      create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator, total_score: nil)
+      expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
+    end
+  end
+
+  context 'when evaluation does not exist' do
+    it 'returns N/A' do
+      expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
+    end
+  end
+end
 end

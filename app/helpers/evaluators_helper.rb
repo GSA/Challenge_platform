@@ -40,11 +40,13 @@ module EvaluatorsHelper
     end
   end
 
-  # TODO: Display score for the evaluation submission assignment after EvaluationScore is added
-  # def display_score(assignment, evaluator_id)
-  #   evaluation = Evaluation.find_by(evaluator_submission_assignment: assignment, user_id: evaluator_id)
-  #   score = evaluation&.evaluation_scores&.effective_score
+  def display_score(assignment, evaluator_id)
+    evaluation = assignment.evaluation
 
-  #   evaluation&.completed? && score ? score : 'N/A'
-  # end
+    if evaluation && evaluation.total_score.present?
+      evaluation.total_score
+    else
+      'N/A'
+    end
+  end
 end
