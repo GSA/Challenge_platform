@@ -52,7 +52,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   end
 
   def handle_successful_update(new_status)
-    flash[:success] = t("evaluator_submission_assignments.#{new_status}.success")
+    flash.now[:success] = t("evaluator_submission_assignments.#{new_status}.success")
     respond_to do |format|
       format.html { redirect_to_assignment_path }
       format.json { render json: { success: true, message: flash[:success] } }
@@ -60,7 +60,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   end
 
   def handle_failed_update(new_status)
-    flash[:error] = t("evaluator_submission_assignments.#{new_status}.failure")
+    flash.now[:error] = t("evaluator_submission_assignments.#{new_status}.failure")
     respond_to do |format|
       format.html { redirect_to_assignment_path }
       format.json { render json: { success: false, message: flash[:error] }, status: :unprocessable_entity }

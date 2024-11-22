@@ -20,19 +20,14 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   STATUS_ORDER = %i[recused unassigned recused_unassigned not_started in_progress completed].freeze
 
-  scope :ordered_by_status, lambda {
-    order(
-      Arel.sql(
-        sanitize_sql_array(
-          [
-            "CASE evaluator_submission_assignments.status " +
-            STATUS_ORDER.map.with_index { |status, index| "WHEN ? THEN ?" }.join(" ") +
-            " ELSE ? END",
-            *STATUS_ORDER.flat_map { |status| [statuses[status], STATUS_ORDER.index(status)] },
-            STATUS_ORDER.length
-          ]
-        )
-      )
-    )
+  scope :ordered_by_status, -> {
+    order(Arel.sql(
+      sanitize_sql_array([
+        "CASE evaluator_submission_assignments.status #{STATUS_ORDER.map { '
+          WHEN ? THEN ?' }.join} ELSE ? END",
+        *STATUS_ORDER.flat_map { |status| [statuses[status], STATUS_ORDER.index(status)] },
+        STATUS_ORDER.length
+      ])
+    ))
   }
 end
