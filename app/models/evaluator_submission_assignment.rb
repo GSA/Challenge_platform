@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EvaluatorSubmissionAssignment < ApplicationRecord
+  include ActiveRecord::Sanitization
+
   belongs_to :submission
   belongs_to :evaluator, class_name: "User", foreign_key: :user_id, inverse_of: :assigned_submissions
 
@@ -21,11 +23,15 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
   scope :ordered_by_status, lambda {
     order(
       Arel.sql(
-        [
-          "CASE evaluator_submission_assignments.status",
-          *STATUS_ORDER.map.with_index { |status, index| "WHEN #{statuses[status]} THEN #{index}" },
-          "ELSE #{STATUS_ORDER.length} END"
-        ].join(" ")
+        sanitize_sql_array(
+          [
+            "CASE evaluator_submission_assignments.status " +
+            STATUS_ORDER.map.with_index { |status, index| "WHEN ? THEN ?" }.join(" ") +
+            " ELSE ? END",
+            *STATUS_ORDER.flat_map { |status| [statuses[status], STATUS_ORDER.index(status)] },
+            STATUS_ORDER.length
+          ]
+        )
       )
     )
   }
