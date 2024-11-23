@@ -25,15 +25,15 @@
 
         <div class="display-flex flex-row tablet:margin-left-auto">
             <div class="text-center margin-right-5">
-            <span class="font-sans-xl text-green text-bold"><%= @submissions_by_status["completed"] || 0 %></span><br>
+            <span class="font-sans-xl text-green text-bold"><%= @submissions_by_status[:completed] || 0 %></span><br>
             <span class="text-base-sm text-green text-bold">Completed</span>
             </div>
             <div class="text-center margin-right-5">
-            <span class="font-sans-xl text-orange text-bold"><%= @submissions_by_status["in_progress"] || 0 %></span><br>
+            <span class="font-sans-xl text-orange text-bold"><%= @submissions_by_status[:in_progress] || 0 %></span><br>
             <span class="text-base-sm text-orange text-bold">In Progress</span>
             </div>
             <div class="text-center margin-right-2">
-            <span class="font-sans-xl text-secondary-dark text-bold"><%= @submissions_by_status["not_started"] || 0 %></span><br>
+            <span class="font-sans-xl text-secondary-dark text-bold"><%= @submissions_by_status[:not_started] || 0 %></span><br>
             <span class="text-base-sm text-secondary-dark text-bold">Not Started</span>
             </div>
         </div>

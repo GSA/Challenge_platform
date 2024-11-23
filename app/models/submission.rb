@@ -11,6 +11,7 @@ class Submission < ApplicationRecord
   belongs_to :manager, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
+  has_many :evaluations, dependent: :destroy
 
   # Fields
   attribute :title, :string
@@ -35,6 +36,8 @@ class Submission < ApplicationRecord
       none
     end
   }
+  scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
+
   def eligible_for_evaluation?
     selected? or winner?
   end
