@@ -40,7 +40,7 @@ module EvaluatorsHelper
     end
   end
 
-  def display_score(assignment, evaluator_id)
+  def display_score(assignment)
     if assignment.completed? && assignment.evaluation&.total_score
       assignment.evaluation.total_score
     else
