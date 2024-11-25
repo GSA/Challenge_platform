@@ -21,12 +21,12 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
     order(
       Arel.sql(
         "CASE evaluator_submission_assignments.status
-          WHEN #{statuses[:recused]} THEN 0
-          WHEN #{statuses[:unassigned]} THEN 1
-          WHEN #{statuses[:recused_unassigned]} THEN 2
-          WHEN #{statuses[:not_started]} THEN 3
-          WHEN #{statuses[:in_progress]} THEN 4
-          WHEN #{statuses[:completed]} THEN 5
+          WHEN #{ActiveRecord::Base.connection.quote(statuses[:recused])} THEN 0
+          WHEN #{ActiveRecord::Base.connection.quote(statuses[:unassigned])} THEN 1
+          WHEN #{ActiveRecord::Base.connection.quote(statuses[:recused_unassigned])} THEN 2
+          WHEN #{ActiveRecord::Base.connection.quote(statuses[:not_started])} THEN 3
+          WHEN #{ActiveRecord::Base.connection.quote(statuses[:in_progress])} THEN 4
+          WHEN #{ActiveRecord::Base.connection.quote(statuses[:completed])} THEN 5
           ELSE 6
         END"
       )
