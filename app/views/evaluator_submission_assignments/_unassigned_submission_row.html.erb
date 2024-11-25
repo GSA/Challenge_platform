@@ -1,6 +1,6 @@
 <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
   <td data-label="Submission ID" class="text-top text-bold">
-    <% if assignment.status == "recused" %>
+    <% if assignment.recused? %>
       <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
     <% end %>
     <%= assignment.submission.id %>  
