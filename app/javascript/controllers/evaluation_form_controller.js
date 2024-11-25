@@ -34,39 +34,53 @@ export default class extends Controller {
   updateMaxPoints(e) {
     const form = e.target.closest('form[data-controller="evaluation-form"]');
     const pointsWeights = form.querySelectorAll(".points-or-weight");
-    const weightedScale = e.target.value == "true";
+    const weightedScale = e.target.value === "true";
 
-    // Check if any input has a value over 100
-    const hasValuesOver100 = Array.from(pointsWeights).some(
-      (input) => parseInt(input.value.trim()) > 100
-    );
-
-    // Display confirmation dialog if switching to weighted and any point inputs have a value
-    if (weightedScale && hasValuesOver100) {
-      const confirmed = window.confirm(
-        "You have values over 100. Changing the scale type to weighted will reset your weight values"
-      );
-      if (!confirmed) {
+    if (weightedScale && this.hasValuesOverLimit(pointsWeights, 100)) {
+      if (!this.confirmReset()) {
         e.preventDefault();
         return;
       }
-
-      pointsWeights.forEach((input) => (input.value = ""));
+      this.clearInputs(pointsWeights);
+      this.expandAllAccordions(form);
     }
 
-    if (e.target.id == "weighted_scale") {
-      pointsWeights.forEach((input) => (input.max = "100"));
-    } else {
-      pointsWeights.forEach((input) => (input.max = "9999"));
-    }
+    this.updateMaxValues(pointsWeights, weightedScale ? 100 : 9999);
+  }
 
-    const accordionButtons = form.querySelectorAll(".usa-accordion__button");
-    accordionButtons.forEach((accordionButton) =>
-      accordionButton.setAttribute("aria-expanded", true)
+  // Helper: Check if any input values exceed a given limit
+  hasValuesOverLimit(inputs, limit) {
+    return Array.from(inputs).some(
+      (input) => parseInt(input.value.trim()) > limit
     );
+  }
 
+  // Helper: Show confirmation dialog for resetting values
+  confirmReset() {
+    return window.confirm(
+      "You have values over 100. Changing the scale type to weighted will reset your weight values."
+    );
+  }
+
+  // Helper: Clear all input values
+  clearInputs(inputs) {
+    inputs.forEach((input) => (input.value = ""));
+  }
+
+  // Helper: Update max values for inputs
+  updateMaxValues(inputs, maxValue) {
+    inputs.forEach((input) => (input.max = maxValue));
+  }
+
+  // Helper: Expand all accordions
+  expandAllAccordions(form) {
+    const accordionButtons = form.querySelectorAll(".usa-accordion__button");
     const accordions = form.querySelectorAll(".usa-accordion__content");
-    accordions.forEach((accordion) => accordion.removeAttribute("hidden"));
+
+    accordionButtons.forEach((button) =>
+      button.setAttribute("aria-expanded", true)
+    );
+    accordions.forEach((content) => content.removeAttribute("hidden"));
   }
 
   validatePresence(e) {
