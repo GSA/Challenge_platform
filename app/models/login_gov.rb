@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+# LoginGov manages authentication with the external login.gov service
+# login.gov is a single-signon (SSO) identity provider (IdP) for GSA.
 class LoginGov
+  # helper class for errors from the LoginGov API
   class LoginApiError < StandardError
     attr_reader :status_code, :response_body
 

@@ -10,7 +10,7 @@
 #  first_name       :string           not null
 #  last_name        :string           not null
 #  email            :string           not null
-#  last_invite_sent :datetime         not null
+#  last_invite_sent :datetime
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #

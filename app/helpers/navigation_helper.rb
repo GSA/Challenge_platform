@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# View helpers for the top navigation bar and utility menu.
 module NavigationHelper
   def utility_menu_link(image_path, href, _alt, button_label)
     link_to(href,
