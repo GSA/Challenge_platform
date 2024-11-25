@@ -6,8 +6,11 @@
   <td data-label="Score" class="text-top text-light"><%= display_score(assignment, evaluator.id) %></td>
   <td data-label="">
     <div class="display-flex flex-justify-end">
-      <% if assignment.status == "unassigned" %>
-        <%= button_to "Reassign", phase_evaluator_submission_assignment_path(phase, assignment.submission, evaluator_id: evaluator.id, submission_id: assignment.submission.id, status: :not_started), method: :patch, class: 'usa-button usa-button--outline font-body-3xs' %>
+      <% if assignment.unassigned? %>
+        <%= button_to "Reassign", phase_evaluator_submission_assignment_path(@phase, assignment), 
+          method: :patch, 
+          params: { status: :not_started, evaluator_id: evaluator.id }, 
+          class: 'usa-button usa-button--outline font-body-3xs' %>        
       <% end %>
     </div>
   </td>

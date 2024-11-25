@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
+# Controller for evaluator submissions assignments index and update status
 class EvaluatorSubmissionAssignmentsController < ApplicationController
+  before_action -> { authorize_user('challenge_manager') }
   before_action :set_challenge_and_phase
   before_action :set_evaluator, only: [:index]
   before_action :set_assignment, only: [:update]
 
   def index
-    @evaluator_assignments = @phase.evaluator_submission_assignments.
-      includes(:submission, :evaluation).
-      where(user_id: @evaluator.id)
+    @evaluator_assignments = @phase.evaluator_submission_assignments.where(user_id: @evaluator.id)
     @assigned_submissions = @evaluator_assignments.
       where(status: %i[completed in_progress not_started recused]).
       ordered_by_status
@@ -37,14 +37,11 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   end
 
   def set_evaluator
-    @evaluator = params[:evaluator_id] ? User.find(params[:evaluator_id]) : current_user
+    @evaluator = @phase.evaluators.find(params[:evaluator_id])
   end
 
   def set_assignment
-    @assignment = EvaluatorSubmissionAssignment.find_by!(
-      user_id: params[:evaluator_id],
-      submission_id: params[:submission_id]
-    )
+    @assignment = @phase.evaluator_submission_assignments.find(params[:id])
   end
 
   def update_assignment_status(new_status)

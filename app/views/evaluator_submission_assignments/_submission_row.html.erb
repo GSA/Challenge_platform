@@ -6,15 +6,13 @@
   <td data-label="Score" class="text-top text-normal"><%= display_score(assignment, evaluator.id) %></td>
   <td data-label="">
     <div class="display-flex flex-justify-end">
-      <% if assignment.status == "completed" %>
+      <% if assignment.completed? %>
         <%= link_to "View Evaluation", submissions_path(@challenge), class: 'usa-button font-body-3xs margin-right-1' %>
       <% end %>
       <%= button_tag "Unassign", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
         action: "click->unassign-evaluator-submission-modal#open",
-        submission_id: assignment.submission.id,
-        evaluator_id: evaluator.id,
-        phase_id: @phase.id,
-        status: :unassigned
+        assignment_id: assignment.id,
+        phase_id: @phase.id
       } %>
     </div>
   </td>
