@@ -36,26 +36,28 @@ RSpec.describe EvaluatorsHelper, type: :helper do
   end
 
   describe '#display_score' do
-  let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission) }
+    let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission) }
 
-  context 'when evaluation exists and has a total score' do
-    it 'returns the total score' do
-      create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator, total_score: 85)
-      expect(helper.display_score(assignment, evaluator.id)).to eq(85)
+    context 'when assignment is completed and has an evaluation with a total score' do
+      it 'returns the total score' do
+        assignment.update(status: :completed)
+        create(:evaluation, evaluator_submission_assignment: assignment, total_score: 85)
+        expect(helper.display_score(assignment, evaluator.id)).to eq(85)
+      end
+    end
+
+    context 'when assignment is not completed' do
+      it 'returns N/A' do
+        create(:evaluation, evaluator_submission_assignment: assignment, total_score: 85)
+        expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
+      end
+    end
+
+    context 'when evaluation does not exist' do
+      it 'returns N/A' do
+        assignment.update(status: :completed)
+        expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
+      end
     end
   end
-
-  context 'when evaluation exists but has no total score' do
-    it 'returns N/A' do
-      create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator, total_score: nil)
-      expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
-    end
-  end
-
-  context 'when evaluation does not exist' do
-    it 'returns N/A' do
-      expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
-    end
-  end
-end
 end
