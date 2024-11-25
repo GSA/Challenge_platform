@@ -41,10 +41,8 @@ module EvaluatorsHelper
   end
 
   def display_score(assignment, evaluator_id)
-    evaluation = assignment.evaluation
-
-    if evaluation && evaluation.user_id == evaluator_id && evaluation.total_score.present?
-      evaluation.total_score
+    if assignment.completed? && assignment.evaluation&.total_score
+      assignment.evaluation.total_score
     else
       'N/A'
     end
