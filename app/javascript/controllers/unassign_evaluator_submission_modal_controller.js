@@ -4,8 +4,7 @@ export default class extends Controller {
   static targets = ["modal", "confirmButton"]
   static values = {
     phaseId: String,
-    submissionId: String,
-    evaluatorId: String
+    assignmentId: String
   }
 
   connect() {
@@ -38,15 +37,14 @@ export default class extends Controller {
   }
 
   setValues(dataset) {
-    this.submissionIdValue = dataset.submissionId;
-    this.evaluatorIdValue = dataset.evaluatorId;
+    this.assignmentIdValue = dataset.assignmentId;
     this.phaseIdValue = dataset.phaseId;
   }
 
   unassignEvaluatorSubmission() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     
-    fetch(`/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${this.evaluatorIdValue}`, {
+    fetch(`/phases/${this.phaseIdValue}/evaluator_submission_assignments/${this.assignmentIdValue}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -54,14 +52,14 @@ export default class extends Controller {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        submission_id: this.submissionIdValue,
         status: 'unassigned'
       })
     })
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        window.location.href = `/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${this.evaluatorIdValue}`;
+        const evaluatorId = new URLSearchParams(window.location.search).get('evaluator_id');
+        window.location.href = `/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${evaluatorId}`;
       } else {
         throw new Error(data.message || 'Failed to unassign evaluator from submission');
       }
