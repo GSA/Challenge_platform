@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: evaluation_criteria
+#
+#  id                 :bigint           not null, primary key
+#  evaluation_form_id :bigint           not null
+#  title              :string           not null
+#  description        :string           not null
+#  points_or_weight   :integer          not null
+#  scoring_type       :integer          not null
+#  option_range_start :integer
+#  option_range_end   :integer
+#  option_labels      :json
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#
 FactoryBot.define do
   factory :evaluation_criterion, class: 'EvaluationCriterion' do
     # Associations

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# View helpers for the main dashboard templates supporting various user roles.
 module DashboardHelper
   def dashboard_cards_by_role
     {

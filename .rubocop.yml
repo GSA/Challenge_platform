@@ -116,7 +116,7 @@ RSpec/NestedGroups:
 #### Style ####
 
 Style/Documentation:
-  Enabled: false
+  Enabled: true
 
 Style/FrozenStringLiteralComment:
   Exclude:
