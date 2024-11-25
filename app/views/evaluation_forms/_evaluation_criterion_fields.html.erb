@@ -65,7 +65,10 @@
       placeholder: "Add criteria points/weight here",
       required: true, 
       disabled: is_template || form_disabled,
-      data: {"evaluation-criteria-target": "pointsOrWeightField"}
+      data: { 
+        "evaluation-criteria-target": "pointsOrWeightField",
+        action: "blur->evaluation-criteria#checkPointsOrWeightMax"
+      }
     %>
 
     <div class="flex-7 font-sans-lg">

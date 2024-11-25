@@ -100,6 +100,18 @@ export default class extends Controller {
     });
   }
 
+  checkPointsOrWeightMax(event) {
+    const input = event.target;
+    const min = input.min;
+    const max = input.max;
+    const value = input.value;
+
+    // If field has a value on blur then check if it's valid
+    if ((value && value < min) || value > max) {
+      event.target.reportValidity();
+    }
+  }
+
   updateScoringOptions(row, scoringType) {
     const options = {
       scaleOptions: row.querySelector(".criteria-scale-options"),

@@ -184,6 +184,64 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       save_form
       expect(page).to have_content("Evaluation Form Saved")
     end
+
+    it "expands all criteria and resets values if switching to weighted scale with value over 100" do
+      visit new_evaluation_form_path
+
+      fill_in_base_form_info
+      select_scale_type("point")
+
+      # Fill in criteria with one being over 100
+      fill_in_numeric_criteria_type(initial: true)
+      fill_in_criterion_points_weight(0, 10)
+      fill_in_numeric_criteria_type
+      fill_in_criterion_points_weight(1, 101)
+
+      toggle_all_criteria_accordions(open: false)
+
+      check_criteria_accordion_expanded(0, false)
+      check_criteria_accordion_expanded(1, false)
+
+      select_scale_type("weighted")
+      accept_confirm
+
+      check_criteria_accordion_expanded(0, true)
+      check_criteria_accordion_expanded(1, true)
+
+      # Scale type should be weighted
+      expect_form_scale_type_to_equal(true)
+      expect_criterion_points_or_weight_to_equal(0, 0)
+      expect_criterion_points_or_weight_to_equal(1, 0)
+    end
+
+    it "does nothing and prevents switching scale if switching to weighted scale with value over 100 and not accepting" do
+      visit new_evaluation_form_path
+
+      fill_in_base_form_info
+      select_scale_type("point")
+
+      # Fill in criteria with one being over 100
+      fill_in_numeric_criteria_type(initial: true)
+      fill_in_criterion_points_weight(0, 10)
+      fill_in_numeric_criteria_type
+      fill_in_criterion_points_weight(1, 101)
+
+      toggle_all_criteria_accordions(open: false)
+
+      check_criteria_accordion_expanded(0, false)
+      check_criteria_accordion_expanded(1, false)
+
+      select_scale_type("weighted")
+      dismiss_confirm
+
+      check_criteria_accordion_expanded(0, false)
+      check_criteria_accordion_expanded(1, false)
+
+      # Scale type should be pointed still
+      expect_form_scale_type_to_equal(false)
+      expect_criterion_points_or_weight_to_equal(0, 10)
+      expect_criterion_points_or_weight_to_equal(1, 101)
+    end
   end
 
   describe "update evaluation form page" do
