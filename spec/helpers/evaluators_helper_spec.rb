@@ -42,21 +42,21 @@ RSpec.describe EvaluatorsHelper, type: :helper do
       it 'returns the total score' do
         assignment.update(status: :completed)
         create(:evaluation, evaluator_submission_assignment: assignment, total_score: 85)
-        expect(helper.display_score(assignment, evaluator.id)).to eq(85)
+        expect(helper.display_score(assignment)).to eq(85)
       end
     end
 
     context 'when assignment is not completed' do
       it 'returns N/A' do
         create(:evaluation, evaluator_submission_assignment: assignment, total_score: 85)
-        expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
+        expect(helper.display_score(assignment)).to eq('N/A')
       end
     end
 
     context 'when evaluation does not exist' do
       it 'returns N/A' do
         assignment.update(status: :completed)
-        expect(helper.display_score(assignment, evaluator.id)).to eq('N/A')
+        expect(helper.display_score(assignment)).to eq('N/A')
       end
     end
   end
