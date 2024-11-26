@@ -2,4 +2,4 @@
 
 <h1><%= if eval_form_disabled?(@evaluation_form) then "View" else "Editing" end %> evaluation form</h1>
 
-<%= render "form", evaluation_form: @evaluation_form %>
+<%= render "form", evaluation_form: @evaluation_form, available_phases: @available_phases %>

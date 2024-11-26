@@ -32,8 +32,12 @@ class EvaluationForm < ApplicationRecord
   validates :instructions, presence: true
   validates :closing_date, presence: true
 
+  validates :phase_id, uniqueness: true
+
   validate :criteria_weights_must_sum_to_one_hundred
   validate :validate_unique_criteria_titles
+
+  private
 
   def validate_unique_criteria_titles
     titles = evaluation_criteria.reject(&:marked_for_destruction?).map(&:title)

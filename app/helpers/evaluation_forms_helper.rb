@@ -9,6 +9,18 @@ module EvaluationFormsHelper
     "#{challenge.title} - Phase #{phase_number(challenge, phase)}"
   end
 
+  def options_for_available_phases(available_phases)
+    available_phases.flat_map do |entry|
+      challenge = entry[:challenge]
+      entry[:phases].map do |phase|
+        [
+          challenge_phase_title(challenge, phase).to_s,
+          "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime('%m/%d/%Y')}"
+        ]
+      end
+    end
+  end
+
   def evaluation_period(evaluation_form)
     start_date = evaluation_form.phase.end_date.strftime("%m/%d/%Y")
     end_date = evaluation_form.closing_date.strftime("%m/%d/%Y")

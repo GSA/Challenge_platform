@@ -44,13 +44,15 @@
       </label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-        <select class="usa-select" required <%= if disabled then "disabled" end %> id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
-          <% current_user.challenge_manager_challenges.includes(:phases).each do |challenge| %>
-            <% challenge.phases.each do |phase| %>
-              <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
-            <% end %>
-          <% end %>
-        </select>
+        <%= select_tag(
+          'challenge-combo',
+          options_for_select(options_for_available_phases(@available_phases)),
+          class: 'usa-select',
+          title: 'challenge-combo',
+          data: { action: 'evaluation-form#handleChallengeSelect' },
+          required: true,
+          disabled: disabled
+        ) %>
       </div>
       
       <%= inline_error(evaluation_form, :challenge_id) %>
