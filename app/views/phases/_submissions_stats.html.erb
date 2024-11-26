@@ -8,7 +8,7 @@
         <div class="tablet:flex-fill">
             <div class="display-flex flex-align-center margin-bottom-2 tablet:margin-bottom-0">
             <div class="margin-right-2">
-                <span class="font-sans-3xl text-primary text-bold"><%= @submissions.count %></span>
+                <span class="font-sans-3xl text-primary text-bold"><%= @submissions_count %></span>
             </div>
             <div>
                 <h3 class="usa-summary-box__heading text-primary margin-bottom-05" id="summary-box-key-information">
@@ -47,7 +47,7 @@
                 alt: ""
             )%>
             <span class="text-top">
-                <span class="text-primary"><%= @submissions.eligible_for_evaluation.count %> of <%= @submissions.count %></span>
+                <span class="text-primary"><%= @submissions.eligible_for_evaluation.count %> of <%= @submissions_count %></span>
                 submissions selected for evaluation
             </span>
         </div>
@@ -58,7 +58,7 @@
                 alt: ""
             )%>
             <span class="text-top">
-                <span class="text-primary"><%= @submissions.winner.count %> of <%= @submissions.count %></span>
+                <span class="text-primary"><%= @submissions.winner.count %> of <%= @submissions.eligible_for_evaluation.count %></span>
                 submissions selected to advance
             </span>
         </div>
