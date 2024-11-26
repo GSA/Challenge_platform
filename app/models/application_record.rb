@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# ApplicationRecord is the primary base class for DB backed models under app/models.
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 

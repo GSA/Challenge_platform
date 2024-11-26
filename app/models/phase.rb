@@ -5,21 +5,19 @@
 # Table name: phases
 #
 #  id                     :bigint           not null, primary key
-#  uuid                   :uuid             not null, default: -> { "gen_random_uuid()" }
-#  title                  :string
+#  challenge_id           :bigint           not null
+#  uuid                   :uuid             not null
+#  title                  :string(255)
 #  start_date             :datetime
 #  end_date               :datetime
-#  open_to_submissions     :boolean
-#  judging_criteria        :string
-#  judging_criteria_delta  :string
-#  judging_criteria_length :integer          virtual
-#  how_to_enter            :string
-#  how_to_enter_delta      :string
-#  how_to_enter_length     :integer          virtual
-#  delete_phase            :boolean          virtual
-#  challenge_id            :bigint           not null
-#  created_at             :datetime         not null
+#  open_to_submissions    :boolean
+#  judging_criteria       :text
+#  judging_criteria_delta :text
+#  how_to_enter           :text
+#  how_to_enter_delta     :text
+#  inserted_at            :datetime         not null
 #  updated_at             :datetime         not null
+#  submissions_count      :integer          default(0), not null
 #
 class Phase < ApplicationRecord
   belongs_to :challenge

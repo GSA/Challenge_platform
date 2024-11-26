@@ -4,18 +4,18 @@
 #
 # Table name: evaluation_criteria
 #
-#  id                   :bigint           not null, primary key
-#  title                :string           not null
-#  description          :string           not null
-#  points_or_weight     :smallint         not null
-#  scoring_type         :integer          not null
-#  option_range_start   :smallint
-#  option_range_end     :smallint
-#  option_labels        :json             default([])
-#  evaluation_form_id   :bigint           not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-
+#  id                 :bigint           not null, primary key
+#  evaluation_form_id :bigint           not null
+#  title              :string           not null
+#  description        :string           not null
+#  points_or_weight   :integer          not null
+#  scoring_type       :integer          not null
+#  option_range_start :integer
+#  option_range_end   :integer
+#  option_labels      :json
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#
 class EvaluationCriterion < ApplicationRecord
   self.table_name = 'evaluation_criteria'
 
