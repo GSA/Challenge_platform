@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# View helpers for rendering evaluation forms.
 module EvaluationFormsHelper
   def challenge_with_phase(evaluation_form)
     challenge_phase_title(evaluation_form.challenge, evaluation_form.phase)

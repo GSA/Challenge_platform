@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Controller for evaluation forms CRUD actions.
 class EvaluationFormsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_evaluation_form, only: %i[show edit update destroy]

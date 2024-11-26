@@ -3,15 +3,15 @@
 # Table name: evaluation_forms
 #
 #  id                :bigint           not null, primary key
-#  title             :string
-#  instructions      :string
-#  phase_id          :integer
+#  title             :string           not null
+#  instructions      :string           not null
 #  comments_required :boolean          default(FALSE)
 #  weighted_scoring  :boolean          default(FALSE)
-#  closing_date      :date
-#  challenge_id      :bigint
+#  closing_date      :date             not null
+#  challenge_id      :bigint           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  phase_id          :bigint           not null
 #
 require 'rails_helper'
 

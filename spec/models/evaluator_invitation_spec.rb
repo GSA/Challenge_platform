@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: evaluator_invitations
+#
+#  id               :bigint           not null, primary key
+#  challenge_id     :bigint           not null
+#  phase_id         :bigint           not null
+#  first_name       :string           not null
+#  last_name        :string           not null
+#  email            :string           not null
+#  last_invite_sent :datetime
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
 require 'rails_helper'
 
 RSpec.describe EvaluatorInvitation, type: :model do

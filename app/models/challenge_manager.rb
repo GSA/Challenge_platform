@@ -9,7 +9,6 @@
 #  user_id      :bigint
 #  revoked_at   :datetime
 #
-
 class ChallengeManager < ApplicationRecord
   belongs_to :challenge
   belongs_to :user
