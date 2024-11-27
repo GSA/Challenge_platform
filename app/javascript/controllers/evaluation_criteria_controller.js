@@ -102,13 +102,15 @@ export default class extends Controller {
 
   checkPointsOrWeightMax(event) {
     const input = event.target;
-    const min = input.min;
-    const max = input.max;
-    const value = input.value;
+    const min = parseInt(input.min);
+    const max = parseInt(input.max);
+    const value = parseInt(input.value);
 
     // If field has a value on blur then check if it's valid
-    if ((value && value < min) || value > max) {
-      event.target.reportValidity();
+    if (value && value < min) {
+      input.value = min;
+    } else if (value && value > max) {
+      input.value = max;
     }
   }
 
