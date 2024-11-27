@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# View helpers for rendering users with the evaluator role.
 module EvaluatorsHelper
   def user_status(evaluator)
     if evaluator.is_a?(User)

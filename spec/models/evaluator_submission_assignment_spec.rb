@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: evaluator_submission_assignments
+#
+#  id            :bigint           not null, primary key
+#  user_id       :bigint           not null
+#  submission_id :bigint           not null
+#  status        :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
 require 'rails_helper'
 
 RSpec.describe EvaluatorSubmissionAssignment, type: :model do
@@ -23,5 +34,17 @@ RSpec.describe EvaluatorSubmissionAssignment, type: :model do
   it "associates the submission as an assigned submission for the evaluator" do
     create(:evaluator_submission_assignment, submission:, evaluator: user)
     expect(user.assigned_submissions).to include(submission)
+  end
+
+  it "associates the evaluation with the assigned submission and properly deletes both" do
+    evaluator_submission_assignment = create(:evaluator_submission_assignment, submission:, evaluator: user)
+    evaluation = create(:evaluation, evaluator_submission_assignment:, submission:, user:)
+
+    expect(evaluator_submission_assignment.evaluation).to eq(evaluation)
+
+    evaluator_submission_assignment.destroy
+
+    expect(described_class.find_by(id: evaluator_submission_assignment.id)).to be_nil
+    expect(Evaluation.find_by(id: evaluation.id)).to be_nil
   end
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Controller for evaluators CRUD actions.
 class EvaluatorsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
 

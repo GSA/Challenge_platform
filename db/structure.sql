@@ -431,6 +431,80 @@ ALTER SEQUENCE public.evaluation_forms_id_seq OWNED BY public.evaluation_forms.i
 
 
 --
+-- Name: evaluation_scores; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.evaluation_scores (
+    id bigint NOT NULL,
+    evaluation_id bigint NOT NULL,
+    evaluation_criterion_id bigint NOT NULL,
+    score integer NOT NULL,
+    score_override integer,
+    comment text,
+    comment_override text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: evaluation_scores_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.evaluation_scores_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: evaluation_scores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.evaluation_scores_id_seq OWNED BY public.evaluation_scores.id;
+
+
+--
+-- Name: evaluations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.evaluations (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    evaluation_form_id bigint NOT NULL,
+    submission_id bigint NOT NULL,
+    evaluator_submission_assignment_id bigint NOT NULL,
+    additional_comments text,
+    revision_comments text,
+    total_score integer,
+    completed_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: evaluations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.evaluations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: evaluations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.evaluations_id_seq OWNED BY public.evaluations.id;
+
+
+--
 -- Name: evaluator_invitations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -685,7 +759,7 @@ CREATE TABLE public.oban_jobs (
     attempted_by text[],
     discarded_at timestamp without time zone,
     priority integer DEFAULT 0 NOT NULL,
-    tags text[] DEFAULT ARRAY[]::text[],
+    tags character varying(255)[] DEFAULT ARRAY[]::character varying[],
     meta jsonb DEFAULT '{}'::jsonb,
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
@@ -1301,6 +1375,20 @@ ALTER TABLE ONLY public.evaluation_forms ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
+-- Name: evaluation_scores id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_scores ALTER COLUMN id SET DEFAULT nextval('public.evaluation_scores_id_seq'::regclass);
+
+
+--
+-- Name: evaluations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations ALTER COLUMN id SET DEFAULT nextval('public.evaluations_id_seq'::regclass);
+
+
+--
 -- Name: evaluator_invitations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1528,6 +1616,22 @@ ALTER TABLE ONLY public.evaluation_forms
 
 
 --
+-- Name: evaluation_scores evaluation_scores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_scores
+    ADD CONSTRAINT evaluation_scores_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evaluations evaluations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations
+    ADD CONSTRAINT evaluations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: evaluator_invitations evaluator_invitations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1741,6 +1845,20 @@ CREATE UNIQUE INDEX idx_on_challenge_id_phase_id_email_b0ae3723d2 ON public.eval
 
 
 --
+-- Name: idx_on_evaluation_id_evaluation_criterion_id_c69f3b58f4; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_on_evaluation_id_evaluation_criterion_id_c69f3b58f4 ON public.evaluation_scores USING btree (evaluation_id, evaluation_criterion_id);
+
+
+--
+-- Name: idx_on_user_id_evaluation_form_id_submission_id_f77140cf65; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_on_user_id_evaluation_form_id_submission_id_f77140cf65 ON public.evaluations USING btree (user_id, evaluation_form_id, submission_id);
+
+
+--
 -- Name: index_challenge_phases_evaluators_on_challenge_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1780,6 +1898,48 @@ CREATE INDEX index_evaluation_forms_on_challenge_id ON public.evaluation_forms U
 --
 
 CREATE INDEX index_evaluation_forms_on_phase_id ON public.evaluation_forms USING btree (phase_id);
+
+
+--
+-- Name: index_evaluation_scores_on_evaluation_criterion_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluation_scores_on_evaluation_criterion_id ON public.evaluation_scores USING btree (evaluation_criterion_id);
+
+
+--
+-- Name: index_evaluation_scores_on_evaluation_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluation_scores_on_evaluation_id ON public.evaluation_scores USING btree (evaluation_id);
+
+
+--
+-- Name: index_evaluations_on_evaluation_form_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluations_on_evaluation_form_id ON public.evaluations USING btree (evaluation_form_id);
+
+
+--
+-- Name: index_evaluations_on_evaluator_submission_assignment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_evaluations_on_evaluator_submission_assignment_id ON public.evaluations USING btree (evaluator_submission_assignment_id);
+
+
+--
+-- Name: index_evaluations_on_submission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluations_on_submission_id ON public.evaluations USING btree (submission_id);
+
+
+--
+-- Name: index_evaluations_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_evaluations_on_user_id ON public.evaluations USING btree (user_id);
 
 
 --
@@ -1971,6 +2131,14 @@ ALTER TABLE ONLY public.federal_partners
 
 
 --
+-- Name: evaluations fk_rails_0c1862edb7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations
+    ADD CONSTRAINT fk_rails_0c1862edb7 FOREIGN KEY (submission_id) REFERENCES public.submissions(id);
+
+
+--
 -- Name: evaluation_forms fk_rails_1c5ee6cafd; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2003,11 +2171,43 @@ ALTER TABLE ONLY public.evaluator_submission_assignments
 
 
 --
+-- Name: evaluation_scores fk_rails_446b90867a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_scores
+    ADD CONSTRAINT fk_rails_446b90867a FOREIGN KEY (evaluation_id) REFERENCES public.evaluations(id);
+
+
+--
 -- Name: evaluator_submission_assignments fk_rails_67111ac897; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.evaluator_submission_assignments
     ADD CONSTRAINT fk_rails_67111ac897 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: evaluations fk_rails_736a746a12; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations
+    ADD CONSTRAINT fk_rails_736a746a12 FOREIGN KEY (evaluator_submission_assignment_id) REFERENCES public.evaluator_submission_assignments(id);
+
+
+--
+-- Name: evaluations fk_rails_8e2f1350a5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations
+    ADD CONSTRAINT fk_rails_8e2f1350a5 FOREIGN KEY (evaluation_form_id) REFERENCES public.evaluation_forms(id);
+
+
+--
+-- Name: evaluation_scores fk_rails_92979ffe0c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluation_scores
+    ADD CONSTRAINT fk_rails_92979ffe0c FOREIGN KEY (evaluation_criterion_id) REFERENCES public.evaluation_criteria(id);
 
 
 --
@@ -2048,6 +2248,14 @@ ALTER TABLE ONLY public.evaluator_invitations
 
 ALTER TABLE ONLY public.challenge_phases_evaluators
     ADD CONSTRAINT fk_rails_e27fcb2d4d FOREIGN KEY (challenge_id) REFERENCES public.challenges(id);
+
+
+--
+-- Name: evaluations fk_rails_ef42eba623; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.evaluations
+    ADD CONSTRAINT fk_rails_ef42eba623 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -2257,6 +2465,8 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241120024946),
+(20241120024939),
 (20241115193801),
 (20241115193605),
 (20241107161811),

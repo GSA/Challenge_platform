@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Dev
+  # AccountsController offers login convenience for dev and test environments only.
   class AccountsController < ApplicationController
     skip_before_action :check_session_expiration
 
