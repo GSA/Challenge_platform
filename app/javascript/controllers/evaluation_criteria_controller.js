@@ -106,11 +106,9 @@ export default class extends Controller {
     const max = parseInt(input.max);
     const value = parseInt(input.value);
 
-    // If field has a value on blur then check if it's valid
-    if (value && value < min) {
-      input.value = min;
-    } else if (value && value > max) {
-      input.value = max;
+    // If invalid value is entered then pop up error message
+    if (value && (value < min || value > max)) {
+      event.target.reportValidity();
     }
   }
 

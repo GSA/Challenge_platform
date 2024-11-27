@@ -37,11 +37,6 @@ export default class extends Controller {
     const weightedScale = e.target.value === "true";
 
     if (weightedScale && this.hasValuesOverLimit(pointsWeights, 100)) {
-      if (!this.confirmReset()) {
-        e.preventDefault();
-        return;
-      }
-      this.clearInputs(pointsWeights);
       this.expandAllAccordions(form);
     }
 
@@ -55,21 +50,12 @@ export default class extends Controller {
     );
   }
 
-  // Helper: Show confirmation dialog for resetting values
-  confirmReset() {
-    return window.confirm(
-      "You have values over 100. Changing the scale type to weighted will reset your weight values."
-    );
-  }
-
-  // Helper: Clear all input values
-  clearInputs(inputs) {
-    inputs.forEach((input) => (input.value = ""));
-  }
-
   // Helper: Update max values for inputs
   updateMaxValues(inputs, maxValue) {
     inputs.forEach((input) => (input.max = maxValue));
+    Array.from(inputs).every((input) => {
+      input.reportValidity();
+    });
   }
 
   // Helper: Expand all accordions
