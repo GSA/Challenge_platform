@@ -42,10 +42,8 @@ module EvaluatorsHelper
   end
 
   def display_score(assignment)
-    if assignment.completed? && assignment.evaluation&.total_score
-      assignment.evaluation.total_score
-    else
-      'N/A'
-    end
+    return 'N/A' unless assignment.completed?
+
+    assignment.evaluation.try(:total_score) || 'N/A'
   end
 end

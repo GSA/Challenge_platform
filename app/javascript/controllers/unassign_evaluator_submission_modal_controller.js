@@ -52,7 +52,9 @@ export default class extends Controller {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        status: 'unassigned'
+        evaluator_submission_assignment: {
+          status: 'unassigned'
+        }
       })
     })
     .then(response => response.json())

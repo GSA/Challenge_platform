@@ -13,9 +13,7 @@
   <h3 class="font-body-lg">Assigned Submissions</h3>
   <p><%= t('evaluator_submission_assignments.assigned_submissions') %></p>
 
-  <%= render 'submission_summary', assigned_count: @assigned_submissions.count, 
-                                   submissions_count: @submissions_count, 
-                                   phase_end_date: @phase.end_date %>
+  <%= render 'assignment_stats' %>
 
   <% if @assigned_submissions.any? %>
     <%= render layout: 'submission_table' do %>
