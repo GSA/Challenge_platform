@@ -108,6 +108,44 @@ RSpec.describe "EvaluationForms" do
     end
   end
 
+  describe "POST /evaluation_forms" do
+    let(:challenge_user) { create_user(role: "challenge_manager") }
+
+    before { log_in_user(challenge_user) }
+
+    context "creating evaluation form after phase end_date" do
+      it "allows creating of a form after phase end_date" do
+        # Generate a challenge and phase that has closed
+        Time.zone.now.to_date
+        phase_end_date = 1.day.ago.to_date
+        challenge = create(:challenge, user: challenge_user, phases: [create(:phase, end_date: phase_end_date)])
+        # evaluation_form = create(:evaluation_form, challenge:, phase: challenge.phases[0], closing_date: initial_closing_date)
+
+        # Generate some attributes to post to the create controller endpoint
+        new_attributes = FactoryBot.attributes_for(:evaluation_form)
+        expect(EvaluationForm.count).to eq(0)
+
+        post evaluation_forms_path, params: {
+          evaluation_form: {
+            phase_id: challenge.phases[0].id,
+            challenge_id: challenge.id,
+            closing_date: 1.day.from_now.to_date,
+            evaluation_criteria_attributes: {
+              "0" => {
+                title: "Example criterion 1",
+                description: "Example description",
+                points_or_weight: 100,
+                scoring_type: :numeric
+              }
+            }
+          }.merge(new_attributes)
+        }
+
+        expect(EvaluationForm.count).to eq(1)
+      end
+    end
+  end
+
   describe "PATCH /evaluation_forms/:id" do
     let(:challenge_user) { create_user(role: "challenge_manager") }
     let(:challenge) { create_challenge(user: challenge_user) }
@@ -151,6 +189,62 @@ RSpec.describe "EvaluationForms" do
         evaluation_form.reload
 
         expect(evaluation_form).not_to be_weighted_scoring
+      end
+    end
+
+    context "updating evaluation form after phase end_date" do
+      it "prevents updating attributes other than form closing_date" do
+        # Generate a form with a phase that has closed
+        initial_closing_date = Time.zone.now.to_date
+        phase_end_date = 1.day.ago.to_date
+        challenge = create(:challenge, user: challenge_user, phases: [create(:phase, end_date: phase_end_date)])
+        evaluation_form = create(:evaluation_form, challenge:, phase: challenge.phases[0],
+                                                   closing_date: initial_closing_date)
+
+        old_attributes = evaluation_form.attributes.symbolize_keys
+        new_attributes = FactoryBot.attributes_for(:evaluation_form)
+
+        patch evaluation_form_path(evaluation_form), params: {
+          evaluation_form: new_attributes
+        }
+
+        evaluation_form.reload
+
+        # Expect attributes to be unchanged from old attributes
+        new_attributes.each do |key, value|
+          # Factory is generating a phase which can be skipped
+          next if value.nil?
+
+          expect(evaluation_form.send(key)).to eq(old_attributes[key])
+        end
+      end
+
+      it "allows updating closing_date even if form start_date (phase end_date) has passed" do
+        # Generate a form with a phase that has closed
+        initial_closing_date = Time.zone.now.to_date
+        phase_end_date = 1.day.ago.to_date
+        challenge = create(:challenge, user: challenge_user, phases: [create(:phase, end_date: phase_end_date)])
+        evaluation_form = create(:evaluation_form, challenge:, phase: challenge.phases[0],
+                                                   closing_date: initial_closing_date)
+
+        old_title = evaluation_form.title
+
+        expect(evaluation_form.closing_date).to eq(initial_closing_date)
+
+        new_closing_date = 2.days.from_now.to_date
+
+        patch evaluation_form_path(evaluation_form), params: {
+          evaluation_form: {
+            title: "New title attempt",
+            closing_date: new_closing_date
+          }
+        }
+
+        evaluation_form.reload
+
+        expect(evaluation_form.closing_date).to eq(new_closing_date)
+        # Disallow other updates while still allowing end_date
+        expect(evaluation_form.title).to eq(old_title)
       end
     end
   end
