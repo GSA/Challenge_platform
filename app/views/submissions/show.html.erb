@@ -1,5 +1,14 @@
 <h1>Submission ID <%= @submission.id %></h1>
 <p class="text-normal">View submission information and assign evaluators to evaluate the submission.</p>
 
-<%= render partial: "submission_materials" %>
-<%= render partial: "comment_form" %>
+<div class="display-flex flex-row width-full border-top-1px">
+  <div style="width: 50%">
+    <%= render partial: "comment_form" %>
+  </div>  
+  <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer">
+    <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Back to previous page") %>
+  </div>  
+  <div style="width: 50%">  
+    <%= render partial: "submission_materials" %>
+  </div>  
+</div>
