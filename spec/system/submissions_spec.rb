@@ -15,6 +15,7 @@ describe "A11y", :js do
       visit submissions_phase_path(phase)
       expect(user.role).to eq("challenge_manager")
       expect(page).to have_content("Boston Tea Party Cleanup")
+      expect(page).to have_content("Total Submissions")
       expect(page).to(be_axe_clean)
     end
   end
