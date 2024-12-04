@@ -1,14 +1,17 @@
 <h1>Submission ID <%= @submission.id %></h1>
 <p class="text-normal">View submission information and assign evaluators to evaluate the submission.</p>
 
-<div class="display-flex flex-row width-full border-top-1px">
-  <div style="width: 50%">
+<div class="display-flex flex-row width-full border-top-1px" data-controller="submission-detail">
+  <div class="width-half" data-submission-detail-target="leftPane">
     <%= render partial: "comment_form" %>
   </div>  
-  <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer">
-    <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Back to previous page") %>
-  </div>  
-  <div style="width: 50%">  
+  <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer" data-action="click->submission-detail#handleCollapse" data-submission-detail-target="collapseBar">
+    <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Collapse Details") %>
+  </div>
+  <div class="bg-primary-darker margin-left-5 width-3 cursor-pointer display-none" data-action="click->submission-detail#handleExpand" data-submission-detail-target="expandBar">
+    <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3 icon-white", alt: "Expand Details") %>
+  </div>    
+  <div class="width-half" data-submission-detail-target="rightPane">  
     <%= render partial: "submission_materials" %>
   </div>  
 </div>
