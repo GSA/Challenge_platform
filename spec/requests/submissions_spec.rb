@@ -35,7 +35,7 @@ RSpec.describe "Submissions" do
         get submissions_phase_path(phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
 
-        expect(response.body).to include("This challenge phase does not currently have any submissions.")
+        expect(response.body).to include("No submissions found.")
       end
 
       it "renders a list of submissions for a user's challenge" do
