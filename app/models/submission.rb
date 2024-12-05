@@ -36,6 +36,7 @@ class Submission < ApplicationRecord
   belongs_to :manager, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
+  has_many :evaluations, through: :evaluator_submission_assignments
 
   # Fields
   attribute :title, :string
@@ -66,5 +67,24 @@ class Submission < ApplicationRecord
 
   def selected_to_advance?
     winner?
+  end
+
+  def average_score
+    avg = evaluations.average(:total_score)
+    score = avg ? avg.round : 0
+    [score, "#{score}%"]
+  end
+
+  def self.order_by_average_score(direction)
+    direction_sql = direction == :desc ? 'DESC' : 'ASC'
+
+    joins("LEFT JOIN evaluations ON evaluations.submission_id = submissions.id")
+      .group('submissions.id')
+      .order(
+        Arel.sql(
+          "COALESCE(ROUND(AVG(evaluations.total_score)), 0) #{direction_sql}, " \
+          "submissions.id #{direction_sql}"
+        )
+      )
   end
 end
