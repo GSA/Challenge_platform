@@ -12,14 +12,13 @@ class PhasesController < ApplicationController
   def submissions
     @submissions = @phase.submissions
 
-    @not_started = @submissions.left_outer_joins(:evaluations)
-      .where(evaluations: { id: nil })
+    @not_started = @submissions.where.missing(:evaluations)
 
-    @in_progress = @submissions.joins(:evaluations)
-      .where(evaluations: { completed_at: nil })
+    @in_progress = @submissions.joins(:evaluations).
+      where(evaluations: { completed_at: nil })
 
-    @completed = @submissions.joins(:evaluations)
-      .where.not(evaluations: { completed_at: nil })
+    @completed = @submissions.joins(:evaluations).
+      where.not(evaluations: { completed_at: nil })
 
     @submissions_by_status = {
       not_started: @not_started.count,
@@ -38,21 +37,27 @@ class PhasesController < ApplicationController
     @challenge = @phase.challenge
   end
 
-  private
-
   def apply_filters
-    case params[:status]
-    when 'not_started'
-      @submissions = @not_started
-    when 'in_progress'
-      @submissions = @in_progress
-    when 'completed'
-      @submissions = @completed
-    when 'recused'
-      @submissions = @submissions.joins(:evaluator_submission_assignments).
-        where(evaluator_submission_assignments: { status: :recused })
-    end
+    apply_status_filter if params[:status]
+    apply_eligibility_filters
+  end
 
+  def apply_status_filter
+    @submissions = case params[:status]
+      when 'not_started' then @not_started
+      when 'in_progress' then @in_progress
+      when 'completed'   then @completed
+      when 'recused'     then filter_recused_submissions
+      else @submissions
+      end
+  end
+
+  def filter_recused_submissions
+    @submissions.joins(:evaluator_submission_assignments).
+      where(evaluator_submission_assignments: { status: :recused })
+  end
+
+  def apply_eligibility_filters
     @submissions = @submissions.select(&:eligible_for_evaluation?) if params[:eligible_for_evaluation] == 'true'
     @submissions = @submissions.select(&:selected_to_advance?) if params[:selected_to_advance] == 'true'
   end

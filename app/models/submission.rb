@@ -78,9 +78,9 @@ class Submission < ApplicationRecord
   def self.order_by_average_score(direction)
     direction_sql = direction == :desc ? 'DESC' : 'ASC'
 
-    joins("LEFT JOIN evaluations ON evaluations.submission_id = submissions.id")
-      .group('submissions.id')
-      .order(
+    joins("LEFT JOIN evaluations ON evaluations.submission_id = submissions.id").
+      group('submissions.id').
+      order(
         Arel.sql(
           "COALESCE(ROUND(AVG(evaluations.total_score)), 0) #{direction_sql}, " \
           "submissions.id #{direction_sql}"
