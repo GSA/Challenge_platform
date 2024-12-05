@@ -13,5 +13,5 @@ application.register("evaluation-criteria", EvaluationCriteriaController)
 import EvaluationFormController from "./evaluation_form_controller"
 application.register("evaluation-form", EvaluationFormController)
 
-import SubmissionDetailController from "./submission_detail_controller"
-application.register("submission-detail", SubmissionDetailController)
+import HotdogController from "./hotdog_controller"
+application.register("hotdog", HotdogController)

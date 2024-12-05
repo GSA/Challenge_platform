@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="submission-detail"
+// Connects to data-controller="hotdog"
 export default class extends Controller {
   static targets = ["rightPane", "collapseBar", "leftPane", "expandBar"];
 

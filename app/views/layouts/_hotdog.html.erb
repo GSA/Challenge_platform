@@ -1,0 +1,14 @@
+<div class="display-flex flex-row width-full border-top-1px" data-controller="hotdog">
+  <div class="width-half" data-hotdog-target="leftPane">
+    <%= render partial: left %>
+  </div>  
+  <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer" data-action="click->hotdog#handleCollapse" data-hotdog-target="collapseBar">
+    <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Collapse Details") %>
+  </div>
+  <div class="bg-primary-darker margin-left-5 width-3 cursor-pointer display-none" data-action="click->hotdog#handleExpand" data-hotdog-target="expandBar">
+    <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3 icon-white", alt: "Expand Details") %>
+  </div>    
+  <div class="width-half" data-hotdog-target="rightPane">  
+    <%= render partial: right %>
+  </div>  
+</div>
