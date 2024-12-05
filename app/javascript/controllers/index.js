@@ -6,8 +6,10 @@ import { application } from "./application";
 
 import EvaluationFormController from "./evaluation_form_controller";
 import EvaluationCriteriaController from "./evaluation_criteria_controller";
+import SortFilterMenuController from "./sort_filter_menu_controller";
+import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller"
+
 application.register("evaluation-form", EvaluationFormController);
 application.register("evaluation-criteria", EvaluationCriteriaController);
-
-import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller"
-application.register("delete-evaluator-modal", DeleteEvaluatorModalController)
+application.register("delete-evaluator-modal", DeleteEvaluatorModalController);
+application.register("sort-filter-menu", SortFilterMenuController);
