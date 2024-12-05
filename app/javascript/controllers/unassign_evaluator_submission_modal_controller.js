@@ -1,18 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "confirmButton"]
+  static targets = ["modal"]
   static values = {
     phaseId: String,
     assignmentId: String
   }
 
   connect() {
-    this.modalTarget.addEventListener('click', this.handleOutsideClick.bind(this))
+    this.modalTarget.addEventListener('click', this.handleOutsideClick.bind(this));
   }
 
   disconnect() {
-    this.modalTarget.removeEventListener('click', this.handleOutsideClick.bind(this))
+    this.modalTarget.removeEventListener('click', this.handleOutsideClick.bind(this));
   }
 
   open(event) {
@@ -21,19 +21,14 @@ export default class extends Controller {
     this.modalTarget.showModal();
   }
 
-
   close() {
-    this.modalTarget.close()
+    this.modalTarget.close();
   }
 
   handleOutsideClick(event) {
     if (event.target === this.modalTarget) {
-      this.close()
+      this.close();
     }
-  }
-
-  confirm() {
-    this.unassignEvaluatorSubmission()
   }
 
   setValues(dataset) {
@@ -43,7 +38,6 @@ export default class extends Controller {
 
   unassignEvaluatorSubmission() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-    
     fetch(`/phases/${this.phaseIdValue}/evaluator_submission_assignments/${this.assignmentIdValue}`, {
       method: 'PATCH',
       headers: {
@@ -52,9 +46,7 @@ export default class extends Controller {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        evaluator_submission_assignment: {
-          status: 'unassigned'
-        }
+        evaluator_submission_assignment: { status: 'unassigned' }
       })
     })
     .then(response => response.json())

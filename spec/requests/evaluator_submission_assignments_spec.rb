@@ -7,12 +7,13 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
   let(:evaluator) { create(:user, role: 'evaluator') }
   let(:submission) { create(:submission, challenge: challenge, phase: phase) }
   let(:unassigned_submission) { create(:submission, challenge: challenge, phase: phase) }
+  let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge, closing_date: 1.month.from_now) }
 
-  let!(:not_started_assignment) do
+  let!(:assigned_assignment) do
     create(:evaluator_submission_assignment,
            submission: submission,
            evaluator: evaluator,
-           status: :not_started)
+           status: :assigned)
   end
 
   let!(:unassigned_assignment) do
@@ -24,6 +25,22 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
 
   before do
     ChallengeManager.create(user: challenge_manager, challenge: challenge)
+    ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+  end
+
+  describe 'GET #index' do
+    it 'renders the index page successfully' do
+      get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(evaluator.first_name)
+    end
+
+    it 'displays the correct counts for assigned submissions' do
+      get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
+      expect(response.body).to include('Assigned Submissions')
+      expect(response.body).to include(assigned_assignment.submission.id.to_s)
+      expect(response.body).to include(unassigned_assignment.submission.id.to_s)
+    end
   end
 
   describe 'PATCH #update' do
@@ -31,10 +48,10 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
       it 'reassigns the evaluator successfully and updates counts' do
 
         patch phase_evaluator_submission_assignment_path(phase, unassigned_assignment),
-              params: { status: :not_started, evaluator_id: evaluator.id }
+              params: { status: :assigned, evaluator_id: evaluator.id }
 
-        expect(unassigned_assignment.reload.status).to eq('not_started')
-        expect(flash[:success]).to eq(I18n.t('evaluator_submission_assignments.not_started.success'))
+        expect(unassigned_assignment.reload.status).to eq('assigned')
+        expect(flash[:success]).to eq(I18n.t('evaluator_submission_assignments.assigned.success'))
         expect(response).to redirect_to(phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id))
       end
 
@@ -42,20 +59,20 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
         allow_any_instance_of(EvaluatorSubmissionAssignment).to receive(:update).and_return(false)
 
         patch phase_evaluator_submission_assignment_path(phase, unassigned_assignment),
-              params: { status: :not_started, evaluator_id: evaluator.id }
+              params: { status: :assigned, evaluator_id: evaluator.id }
 
         expect(unassigned_assignment.reload.status).to eq('unassigned')
-        expect(flash[:error]).to eq(I18n.t('evaluator_submission_assignments.not_started.failure'))
+        expect(flash[:error]).to eq(I18n.t('evaluator_submission_assignments.assigned.failure'))
         expect(response).to redirect_to(phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id))
       end
     end
 
     context 'when unassigning' do
       it 'unassigns the evaluator successfully' do
-        patch phase_evaluator_submission_assignment_path(phase, not_started_assignment),
+        patch phase_evaluator_submission_assignment_path(phase, assigned_assignment),
               params: { status: :unassigned, evaluator_id: evaluator.id }
 
-        expect(not_started_assignment.reload.status).to eq('unassigned')
+        expect(assigned_assignment.reload.status).to eq('unassigned')
         expect(flash[:success]).to eq(I18n.t('evaluator_submission_assignments.unassigned.success'))
         expect(response).to redirect_to(phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id))
       end
@@ -63,10 +80,10 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
       it 'fails to unassign when the assignment is invalid' do
         allow_any_instance_of(EvaluatorSubmissionAssignment).to receive(:update).and_return(false)
 
-        patch phase_evaluator_submission_assignment_path(phase, not_started_assignment),
+        patch phase_evaluator_submission_assignment_path(phase, assigned_assignment),
               params: { status: :unassigned, evaluator_id: evaluator.id }
 
-        expect(not_started_assignment.reload.status).to eq('not_started')
+        expect(assigned_assignment.reload.status).to eq('assigned')
         expect(flash[:error]).to eq(I18n.t('evaluator_submission_assignments.unassigned.failure'))
         expect(response).to redirect_to(phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id))
       end

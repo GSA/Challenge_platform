@@ -10,13 +10,13 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   def index
     @evaluator_assignments = @phase.evaluator_submission_assignments.includes(:submission).where(user_id: @evaluator.id)
     @assigned_submissions = @evaluator_assignments.
-      where(status: %i[completed in_progress not_started recused]).
+      where(status: %i[assigned recused]).
       includes(:evaluation).
       ordered_by_status
     @unassigned_submissions = @evaluator_assignments.
       where(status: %i[unassigned recused_unassigned]).
       ordered_by_status
-    @submissions_count = @assigned_submissions.group('evaluator_submission_assignments.status').count
+    @submissions_count = calculate_submissions_count(@assigned_submissions)
   end
 
   # update only the status of the evaluation submission assignment to unassign or reassign an evaluator
@@ -64,6 +64,20 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
 
   def update_assignment_status(new_status)
     @assignment.update(status: new_status)
+  end
+
+  def calculate_submissions_count(assignments)
+    completed = assignments.count { |a| a.evaluation&.completed_at.present? }
+    in_progress = assignments.count { |a| a.evaluation.present? && a.evaluation.completed_at.nil? }
+    not_started = assignments.count { |a| a.evaluation.nil? }
+    total = completed + in_progress + not_started
+
+    {
+      "completed" => completed,
+      "in_progress" => in_progress,
+      "not_started" => not_started,
+      "total" => total
+    }
   end
 
   def handle_successful_update(new_status)
