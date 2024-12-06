@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Controller for evaluators CRUD actions.
 class EvaluatorsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
 
@@ -20,7 +21,7 @@ class EvaluatorsController < ApplicationController
     if result[:success]
       redirect_to phase_evaluators_path(@phase), notice: result[:message]
     else
-      flash.now[:alert] = result[:message]
+      flash[:alert] = result[:message]
       @evaluator_invitations = @phase.evaluator_invitations
       @existing_evaluators = @phase.evaluators
       render :index

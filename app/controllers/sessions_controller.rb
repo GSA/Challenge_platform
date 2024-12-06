@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# SessionsConroller manages session requests: login, logout and timeout functions.
+# This controller receives the redirect from login.gov and stores the valid user session.
 class SessionsController < ApplicationController
   before_action :check_error_result, :require_code_param, :exchange_token, only: [:result]
   skip_before_action :check_session_expiration, only: [:timeout, :destroy]

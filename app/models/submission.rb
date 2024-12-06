@@ -1,5 +1,30 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: submissions
+#
+#  id                      :bigint           not null, primary key
+#  submitter_id            :bigint           not null
+#  challenge_id            :bigint           not null
+#  title                   :string(255)
+#  brief_description       :text
+#  description             :text
+#  external_url            :string(255)
+#  status                  :string(255)
+#  deleted_at              :datetime
+#  inserted_at             :datetime         not null
+#  updated_at              :datetime         not null
+#  phase_id                :bigint           not null
+#  judging_status          :string(255)      default("not_selected")
+#  manager_id              :bigint
+#  terms_accepted          :boolean
+#  review_verified         :boolean
+#  description_delta       :text
+#  brief_description_delta :text
+#  pdf_reference           :string(255)
+#  comments                :text
+#
 class Submission < ApplicationRecord
   enum :status, { draft: "draft", submitted: "submitted" }
   enum :judging_status, { not_selected: "not_selected", selected: "selected", qualified: "qualified", winner: "winner" }

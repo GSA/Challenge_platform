@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# View helpers for rendering users with the evaluator role.
 module EvaluatorsHelper
   def user_status(evaluator)
     if evaluator.is_a?(User)
@@ -13,38 +14,34 @@ module EvaluatorsHelper
     if evaluator.is_a?(User)
       evaluator.evaluator_submission_assignments.
         joins(:submission).
-        where(submissions: { challenge:, phase: }).
-        where.not(status: [:unassigned, :recused_unassigned]).
+        where(submissions: { challenge: challenge, phase: phase }).
+        where(status: :assigned).
         count
     else
       0
     end
   end
 
-  def evaluation_status(status)
-    case status.to_sym
-    when :recused
-      'text-accent-warm-dark'
+  def evaluation_submission_assignment_color(assignment)
+    status = assignment.is_a?(EvaluatorSubmissionAssignment) ? assignment.evaluation_status : assignment.to_sym
+
+    case status
     when :not_started
-      'text-secondary-dark'
+      'bg-secondary-dark'
     when :in_progress
-      'text-orange'
+      'bg-orange text-black'
     when :completed
-      'text-green'
-    when :unassigned
-      'text-accent-cool-darker'
-    when :recused_unassigned
-      'text-secondary'
+      'bg-green'
+    when :recused, :unassigned, :recused_unassigned
+      'bg-base'
     else
-      'text-base'
+      'bg-base'
     end
   end
 
-  # TODO: Display score for the evaluation submission assignment after EvaluationScore is added
-  # def display_score(assignment, evaluator_id)
-  #   evaluation = Evaluation.find_by(evaluator_submission_assignment: assignment, user_id: evaluator_id)
-  #   score = evaluation&.evaluation_scores&.effective_score
+  def display_score(assignment)
+    return 'N/A' unless assignment.evaluation_status == :completed
 
-  #   evaluation&.completed? && score ? score : 'N/A'
-  # end
+    assignment.evaluation.try(:total_score) || 'N/A'
+  end
 end

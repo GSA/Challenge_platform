@@ -27,11 +27,7 @@ Rails.application.routes.draw do
         post 'resend_invite'
       end
     end
-    resources :evaluator_submission_assignments, only: [:index, :update] do
-      collection do
-        patch '', to: 'evaluator_submission_assignments#update'
-      end
-    end
+    resources :evaluator_submission_assignments, only: [:index, :update]
   end
   resources :submissions, only: [:index, :show, :update]
 

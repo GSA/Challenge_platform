@@ -67,12 +67,17 @@ en:
     assigned_submissions: "A list of submissions assigned to the user."
     unassigned_submissions: "A list of recused and unassigned submissions. Reassigning a user to a submission will make the submission available for the user to evaluate."
     empty_state: "There currently are no assigned submissions to this evaluator. Please assign submissions to this evaluator to view."
-    not_started:
+    assigned:
       success: "Evaluator reassigned successfully"
       failure: "Failed to reassign evaluator"
     unassigned:
       success: "Evaluator unassigned successfully"
       failure: "Failed to unassign evaluator"      
+  evaluations: 
+    unique_user_for_evaluation_form_and_submission_error: "already has an evaluation for this form and submission"
+    unique_evaluator_submission_assignment: "already has an evaluation"
+  evaluation_scores:
+    unique_evaluation_for_evaluation_criterion_error: "already has a score for this evaluation criterion"
   alerts:
     recused_evaluator:
       heading: "Recused Evaluator"
