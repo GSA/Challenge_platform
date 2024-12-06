@@ -44,12 +44,12 @@ class PhasesController < ApplicationController
 
   def apply_status_filter
     @submissions = case params[:status]
-      when 'not_started' then @not_started
-      when 'in_progress' then @in_progress
-      when 'completed'   then @completed
-      when 'recused'     then filter_recused_submissions
-      else @submissions
-      end
+                   when 'not_started' then @not_started
+                   when 'in_progress' then @in_progress
+                   when 'completed'   then @completed
+                   when 'recused'     then filter_recused_submissions
+                   else @submissions
+    end
   end
 
   def filter_recused_submissions
