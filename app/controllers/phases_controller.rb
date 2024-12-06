@@ -49,7 +49,7 @@ class PhasesController < ApplicationController
                    when 'completed'   then @completed
                    when 'recused'     then filter_recused_submissions
                    else @submissions
-    end
+                   end
   end
 
   def filter_recused_submissions
