@@ -10,7 +10,7 @@ plugins:
     enabled: true
     channel: rubocop-1-56-3
     checks:
-      Rails/ActionControllerFlashBeforeRender:
+      Rubocop/Rails/ActionControllerFlashBeforeRender:
         enabled: false    
 exclude_patterns:
 - .nix-bundler
