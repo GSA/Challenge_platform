@@ -51,10 +51,9 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
   private
 
   def assigned_evaluation_status
-    case
-    when evaluation&.completed_at.present?
+    if evaluation&.completed_at.present?
       :completed
-    when evaluation.present?
+    elsif evaluation.present?
       :in_progress
     else
       :not_started
