@@ -3,9 +3,9 @@
 # View helpers for rendering users with the evaluator role.
 module EvaluatorsHelper
   STATUS_COLORS = {
-    not_started: 'bg-secondary-dark',
-    in_progress: 'bg-orange text-black',
-    completed: 'bg-green',
+    not_started: 'bg-error-dark',
+    in_progress: 'bg-accent-warm-dark',
+    completed: 'bg-success-dark',
     recused: 'bg-base',
     unassigned: 'bg-base',
     recused_unassigned: 'bg-base'
