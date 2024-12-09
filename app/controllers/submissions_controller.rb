@@ -19,7 +19,7 @@ class SubmissionsController < ApplicationController
   private
 
   def submission_params
-    params.require(:submission).permit(:comments)
+    params.require(:submission).permit(:comments, :judging_status)
   end
 
   # User access enforced by role
