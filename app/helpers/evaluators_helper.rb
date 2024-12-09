@@ -27,11 +27,11 @@ module EvaluatorsHelper
 
     case status
     when :not_started
-      'bg-secondary-dark'
+      'bg-error-dark'
     when :in_progress
-      'bg-orange text-black'
+      'bg-accent-warm-dark'
     when :completed
-      'bg-green'
+      'bg-success-dark'
     when :recused, :unassigned, :recused_unassigned
       'bg-base'
     else
