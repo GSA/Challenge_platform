@@ -2,46 +2,44 @@
 
 # View helpers for rendering users with the evaluator role.
 module EvaluatorsHelper
+  STATUS_COLORS = {
+    not_started: 'bg-error-dark',
+    in_progress: 'bg-accent-warm-dark',
+    completed: 'bg-success-dark',
+    recused: 'bg-base',
+    unassigned: 'bg-base',
+    recused_unassigned: 'bg-base'
+  }.freeze
+
   def user_status(evaluator)
-    if evaluator.is_a?(User)
-      evaluator.status == 'active' ? "Available" : "Awaiting Approval"
-    else
-      "Invite Sent"
-    end
+    return "Invite Sent" unless evaluator.is_a?(User)
+
+    evaluator.status == 'active' ? "Available" : "Awaiting Approval"
   end
 
   def assigned_submissions_count(evaluator, challenge, phase)
-    if evaluator.is_a?(User)
-      evaluator.evaluator_submission_assignments.
-        joins(:submission).
-        where(submissions: { challenge: challenge, phase: phase }).
-        where(status: :assigned).
-        count
-    else
-      0
-    end
+    return 0 unless evaluator.is_a?(User)
+
+    evaluator.evaluator_submission_assignments.
+      joins(:submission).
+      where(submissions: { challenge:, phase: }).
+      where(status: :assigned).
+      count
   end
 
   def evaluation_submission_assignment_color(assignment)
-    status = assignment.is_a?(EvaluatorSubmissionAssignment) ? assignment.evaluation_status : assignment.to_sym
+    status = if assignment.is_a?(EvaluatorSubmissionAssignment)
+               assignment.evaluation_status
+             else
+               assignment.to_sym
+             end
 
-    case status
-    when :not_started
-      'bg-error-dark'
-    when :in_progress
-      'bg-accent-warm-dark'
-    when :completed
-      'bg-success-dark'
-    when :recused, :unassigned, :recused_unassigned
-      'bg-base'
-    else
-      'bg-base'
-    end
+    STATUS_COLORS[status]
   end
 
   def display_score(assignment)
     return 'N/A' unless assignment.evaluation_status == :completed
 
-    assignment.evaluation.try(:total_score) || 'N/A'
+    assignment.evaluation&.total_score || 'N/A'
   end
 end
