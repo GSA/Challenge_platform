@@ -1,0 +1,46 @@
+<div data-controller="unassign-evaluator-submission-modal"
+     data-unassign-evaluator-submission-modal-challenge-id-value="<%= @challenge.id %>"
+     data-unassign-evaluator-submission-modal-phase-id-value="<%= @phase.id %>"
+     data-page="evaluator-submissions">
+     
+  <%= render 'shared/back_link', path: phase_evaluators_path(@phase) %>
+  
+  <h1><%= @challenge.title %> - <%= @phase.title %></h1>
+  <p>View submissions assigned to an evalutor.</p>
+
+  <h2 class="text-primary font-body-md padding-top-1">Evaluator: <%= "#{@evaluator.first_name} #{@evaluator.last_name}" %></h2>
+
+  <h3 class="font-body-lg">Assigned Submissions</h3>
+  <p><%= t('evaluator_submission_assignments.assigned_submissions') %></p>
+
+  <%= render 'assignment_stats' %>
+
+  <% if @assigned_submissions.any? { |assignment| assignment.status == "recused" } %>
+    <%= render 'shared/alert_error', alert_heading: t('alerts.recused_submission.heading'), alert_text: t('alerts.recused_submission.text') %>
+  <% end %>
+
+  <% if @assigned_submissions.any? %>
+    <%= render layout: 'submission_table' do %>
+      <% @assigned_submissions.each do |assignment| %>
+        <%= render 'submission_row', assignment: assignment, evaluator: @evaluator %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p class="text-normal margin-bottom-10">
+      <%= t('evaluator_submission_assignments.empty_state') %>
+    </p>
+  <% end %>
+
+  <% if @unassigned_submissions.any? %>
+    <h3 class="font-body-lg">Unassigned Submissions</h3>
+    <p><%= t('evaluator_submission_assignments.unassigned_submissions') %></p>
+
+    <%= render layout: 'submission_table' do %>
+      <% @unassigned_submissions.each do |assignment| %>
+        <%= render 'unassigned_submission_row', assignment: assignment, evaluator: @evaluator, phase: @phase %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render 'unassign_evaluator_submission_modal' %>
+</div>
