@@ -20,11 +20,11 @@ module EvaluatorsHelper
   def assigned_submissions_count(evaluator, challenge, phase)
     return 0 unless evaluator.is_a?(User)
 
-    evaluator.evaluator_submission_assignments
-            .joins(:submission)
-            .where(submissions: { challenge:, phase: })
-            .where(status: :assigned)
-            .count
+    evaluator.evaluator_submission_assignments.
+      joins(:submission).
+      where(submissions: { challenge:, phase: }).
+      where(status: :assigned).
+      count
   end
 
   def evaluation_submission_assignment_color(assignment)
