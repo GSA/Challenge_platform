@@ -15,6 +15,10 @@
 
   <%= render 'assignment_stats' %>
 
+  <% if @assigned_submissions.any? { |assignment| assignment.status == "recused" } %>
+    <%= render 'shared/alert_error', alert_heading: t('alerts.recused_submission.heading'), alert_text: t('alerts.recused_submission.text') %>
+  <% end %>
+
   <% if @assigned_submissions.any? %>
     <%= render layout: 'submission_table' do %>
       <% @assigned_submissions.each do |assignment| %>

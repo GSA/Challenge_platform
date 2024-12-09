@@ -85,3 +85,6 @@ en:
     no_evaluation_form:
       heading: "No Evaluation Form"
       text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."
+    recused_submission:
+      heading: "Recused"
+      text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."

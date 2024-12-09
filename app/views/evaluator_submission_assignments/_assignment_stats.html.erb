@@ -1,5 +1,5 @@
 <div
-  class="usa-summary-box bg-base-lightest border-1px border-base-dark radius-0"
+  class="usa-summary-box bg-base-lightest border-1px border-base-dark radius-0 margin-bottom-2"
   role="region"
   aria-labelledby="summary-box-key-information"
 >
@@ -8,7 +8,7 @@
       <div class="tablet:flex-fill">
         <div class="display-flex flex-align-center margin-bottom-2 tablet:margin-bottom-0">
           <div class="margin-right-2">
-            <span class="font-sans-3xl text-primary text-bold"><%= @submissions_count["total"] %></span>
+            <span class="font-sans-3xl text-primary text-bold"><%= @assigned_submissions.count %></span>
           </div>
           <div>
             <h3 class="usa-summary-box__heading text-primary margin-bottom-05" id="summary-box-key-information">
