@@ -3,7 +3,7 @@
     <% if assignment.recused? %>
       <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
     <% end %>
-    <%= assignment.submission.id %>  
+    <%= assignment.submission.id %>
   </td>
   <td data-label="Evaluation status">
     <span class="text-top usa-tag <%= evaluation_submission_assignment_color(assignment) %>"><%= assignment.evaluation_status.to_s.titleize %></span>
