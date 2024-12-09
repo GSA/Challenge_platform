@@ -21,7 +21,7 @@ class EvaluatorsController < ApplicationController
     if result[:success]
       redirect_to phase_evaluators_path(@phase), notice: result[:message]
     else
-      flash[:alert] = result[:message]
+      flash.now[:alert] = result[:message]
       @evaluator_invitations = @phase.evaluator_invitations
       @existing_evaluators = @phase.evaluators
       render :index
