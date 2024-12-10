@@ -16,6 +16,43 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
 
+    it "shows a confirmation modal when clicking the cancel button" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel-modal', visible: true
+    end
+
+    it "redirects to evaluation form path when clicking yes in cancel modal" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel-modal', visible: true
+
+      within 'dialog#cancel-modal' do
+        click_link_or_button 'Yes'
+      end
+
+      assert_current_path evaluation_forms_path
+    end
+
+    it "closes the cancel modal and does nothing if you click close" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel-modal', visible: true
+
+      within 'dialog#cancel-modal' do
+        click_link_or_button 'Close'
+      end
+
+      assert_no_selector 'dialog#cancel-modal', visible: true
+      assert_current_path new_evaluation_form_path
+    end
+
     it 'allows creation of a valid form with all 3 criteria scoring types' do
       visit new_evaluation_form_path
 
@@ -201,6 +238,43 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     it "is accessible" do
       visit edit_evaluation_form_path(evaluation_form)
       expect(page).to(be_axe_clean)
+    end
+
+    it "shows a confirmation modal when clicking the cancel button" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel-modal', visible: true
+    end
+
+    it "redirects to evaluation form path when clicking yes in cancel modal" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel-modal', visible: true
+
+      within 'dialog#cancel-modal' do
+        click_link_or_button 'Yes'
+      end
+
+      assert_current_path evaluation_forms_path
+    end
+
+    it "closes the cancel modal and does nothing if you click close" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel-modal', visible: true
+
+      within 'dialog#cancel-modal' do
+        click_link_or_button 'Close'
+      end
+
+      assert_no_selector 'dialog#cancel-modal', visible: true
+      assert_current_path edit_evaluation_form_path(evaluation_form)
     end
 
     it 'allows editing of an existing form values' do

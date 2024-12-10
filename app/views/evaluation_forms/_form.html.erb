@@ -198,7 +198,16 @@
       Save
     </button>
     <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
-      <%= link_to "Cancel", evaluation_forms_path %>
-    </div>  
+      <%= link_to "Cancel", evaluation_forms_path, data: {"modal": "cancel-modal"} %>
+    </div>
   </div>
 <% end %>
+
+<%= render "modals/confirmation", 
+  id: "cancel-modal",
+  heading: "Are you sure you want to cancel?",
+  description: "Your evaluation form will not be saved and any entered information will be lost.",
+  confirm_text: "Yes",
+  confirm_redirect: evaluation_forms_path,
+  cancel_text: "Close"
+%>

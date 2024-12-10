@@ -1,0 +1,32 @@
+<dialog
+  id="<%= id %>"
+  class="border-width-0 radius-lg"
+  aria-labelledby=<%= "#{id}-heading" %>
+  aria-describedby=<%= "#{id}-description" %>
+>
+  <div class="usa-modal__content">
+    <div class="usa-modal__main">
+      <h2 class="usa-modal__heading" id=<%= "#{id}-heading" %>>
+        <%= heading %>
+      </h2>
+      <div class="usa-prose">
+        <p id=<%= "#{id}-description" %>>
+          <%= description %>
+        </p>
+      </div>
+      <div class="usa-modal__footer">
+        <% if defined?(confirm_redirect) %>
+          <%= link_to confirm_text, confirm_redirect, class: "usa-button" %>
+        <% else %>
+          <button id="modal-btn-confirm" class="usa-button" type="button"><%= confirm_text %></button>
+        <% end %>
+
+        <% if defined?(cancel_redirect) %>
+          <%= link_to cancel_text, cancel_redirect, class: "usa-button--unstyled" %>
+        <% else %>
+          <button id="modal-btn-cancel" class="usa-button--unstyled" type="button"><%= cancel_text %></button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</dialog>
