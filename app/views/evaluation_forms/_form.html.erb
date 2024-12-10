@@ -99,7 +99,7 @@
                 name="evaluation_form[weighted_scoring]"
                 value="false"
                 data-action="click->evaluation-form#updateMaxPoints"
-                <%= 'checked' if !evaluation_form.weighted_scoring? && evaluation_form.persisted? %>
+                <%= 'checked' if evaluation_form.weighted_scoring == false %>
                 <%= 'disabled' if disabled %>
                 required
               >
