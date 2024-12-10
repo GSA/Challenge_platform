@@ -1,6 +1,6 @@
 <div data-controller="submission-details">
     <%= form_with(model: @submission, url: submission_path(@submission), class: "maxw-mobile-lg") do |form| %>
-        <div class="usa-checkbox">
+        <div class="usa-checkbox" id="eligible-for-evaluation">
             <input
             class="usa-checkbox__input usa-checkbox__input--tile"
             id="judging-status-selected"
@@ -20,7 +20,7 @@
         </div>
     <% end %>
     <%= form_with(model: @submission, url: submission_path(@submission), class: "maxw-mobile-lg") do |form| %>
-        <div class="usa-checkbox">
+        <div class="usa-checkbox" id="selected-to-advance">
             <input
             class="usa-checkbox__input usa-checkbox__input--tile"
             id="judging-status-winner"

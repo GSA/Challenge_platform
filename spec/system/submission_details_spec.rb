@@ -21,11 +21,11 @@ describe "A11y", :js do
     it "allows manipulation of judging status" do
       visit submission_path(submission)
 
-      check('This submission is eligible for evaluation', allow_label_click: true)
+      find('#eligible-for-evaluation').click
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('selected')
 
-      check('This submission is selected to advance', allow_label_click: true)
+      find('#selected-to-advance').click
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('winner')
     end
