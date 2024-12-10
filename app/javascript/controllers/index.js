@@ -2,16 +2,19 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "./application";
 
-import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller"
-application.register("delete-evaluator-modal", DeleteEvaluatorModalController)
+import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller";
+application.register("delete-evaluator-modal", DeleteEvaluatorModalController);
 
-import EvaluationCriteriaController from "./evaluation_criteria_controller"
-application.register("evaluation-criteria", EvaluationCriteriaController)
+import UnassignEvaluatorSubmissionModalController from "./unassign_evaluator_submission_modal_controller";
+application.register("unassign-evaluator-submission-modal", UnassignEvaluatorSubmissionModalController);
 
-import EvaluationFormController from "./evaluation_form_controller"
-application.register("evaluation-form", EvaluationFormController)
+import EvaluationCriteriaController from "./evaluation_criteria_controller";
+application.register("evaluation-criteria", EvaluationCriteriaController);
 
-import HotdogController from "./hotdog_controller"
-application.register("hotdog", HotdogController)
+import EvaluationFormController from "./evaluation_form_controller";
+application.register("evaluation-form", EvaluationFormController);
+
+import HotdogController from "./hotdog_controller";
+application.register("hotdog", HotdogController);
