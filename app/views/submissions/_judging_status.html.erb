@@ -42,7 +42,7 @@
     <%= form_with(model: @submission, url: submission_path(@submission), data: {"submission-details-target": "qualifiedForm"}) do |form| %>
         <input
         class="usa-checkbox__input usa-checkbox__input--tile"
-        id="judging-status-selected"
+        id="judging-status-qualified-hidden"
         type="hidden"
         name="submission[judging_status]"
         value="qualified"
@@ -51,7 +51,7 @@
     <%= form_with(model: @submission, url: submission_path(@submission), data: {"submission-details-target": "selectedForm"}) do |form| %>
         <input
         class="usa-checkbox__input usa-checkbox__input--tile"
-        id="judging-status-selected"
+        id="judging-status-selected-hidden"
         type="hidden"
         name="submission[judging_status]"
         value="selected"
