@@ -116,32 +116,30 @@ RSpec.describe "EvaluationForms" do
     context "creating evaluation form after phase end_date" do
       it "allows creating of a form after phase end_date" do
         # Generate a challenge and phase that has closed
-        Time.zone.now.to_date
         phase_end_date = 1.day.ago.to_date
         challenge = create(:challenge, user: challenge_user, phases: [create(:phase, end_date: phase_end_date)])
-        # evaluation_form = create(:evaluation_form, challenge:, phase: challenge.phases[0], closing_date: initial_closing_date)
 
         # Generate some attributes to post to the create controller endpoint
         new_attributes = FactoryBot.attributes_for(:evaluation_form)
         expect(EvaluationForm.count).to eq(0)
 
-        post evaluation_forms_path, params: {
-          evaluation_form: {
-            phase_id: challenge.phases[0].id,
-            challenge_id: challenge.id,
-            closing_date: 1.day.from_now.to_date,
-            evaluation_criteria_attributes: {
-              "0" => {
-                title: "Example criterion 1",
-                description: "Example description",
-                points_or_weight: 100,
-                scoring_type: :numeric
+        expect do
+          post evaluation_forms_path, params: {
+            evaluation_form: {
+              phase_id: challenge.phases[0].id,
+              challenge_id: challenge.id,
+              closing_date: 1.day.from_now.to_date,
+              evaluation_criteria_attributes: {
+                "0" => {
+                  title: "Example criterion 1",
+                  description: "Example description",
+                  points_or_weight: 100,
+                  scoring_type: :numeric
+                }
               }
-            }
-          }.merge(new_attributes)
-        }
-
-        expect(EvaluationForm.count).to eq(1)
+            }.merge(new_attributes)
+          }
+        end.to change { EvaluationForm.count }.by(1)
       end
     end
   end
