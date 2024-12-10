@@ -22,6 +22,8 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       click_link_or_button "Cancel"
 
       assert_selector 'dialog#cancel-modal', visible: true
+
+      expect(page).to(be_axe_clean)
     end
 
     it "redirects to evaluation form path when clicking yes in cancel modal" do
@@ -304,6 +306,8 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       click_link_or_button "Cancel"
 
       assert_selector 'dialog#cancel-modal', visible: true
+
+      expect(page).to(be_axe_clean)
     end
 
     it "redirects to evaluation form path when clicking yes in cancel modal" do
