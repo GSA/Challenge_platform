@@ -64,6 +64,16 @@ en:
   evaluation_criterion_unique_title_in_form_error: "Evaluation criteria title must be unique within the same form."
   evaluation_form_criteria_weight_total_error: "The total weight of all evaluation criteria must add up to 100 when weighted scoring is enabled."
   evaluation_criteria_form_title_placeholder: "Add criteria title here"
+  evaluator_submission_assignments:
+    assigned_submissions: "A list of submissions assigned to the user."
+    unassigned_submissions: "A list of recused and unassigned submissions. Reassigning a user to a submission will make the submission available for the user to evaluate."
+    empty_state: "There currently are no assigned submissions to this evaluator. Please assign submissions to this evaluator to view."
+    assigned:
+      success: "Evaluator reassigned successfully"
+      failure: "Failed to reassign evaluator"
+    unassigned:
+      success: "Evaluator unassigned successfully"
+      failure: "Failed to unassign evaluator"      
   evaluations: 
     unique_user_for_evaluation_form_and_submission_error: "already has an evaluation for this form and submission"
     unique_evaluator_submission_assignment: "already has an evaluation"
@@ -76,3 +86,6 @@ en:
     no_evaluation_form:
       heading: "No Evaluation Form"
       text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."
+    recused_submission:
+      heading: "Recused"
+      text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."

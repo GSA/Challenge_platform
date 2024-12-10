@@ -1,6 +1,10 @@
 <h1>Submission ID <%= @submission.id %></h1>
 <h2 class="font-body-sm text-normal">View submission information and assign evaluators to evaluate the submission.</h2>
 
+<<<<<<< HEAD
 <%= render partial: "judging_status" %>
 <%= render partial: "comment_form" %>
 <%= render partial: "submission_materials" %>
+=======
+<%= render partial: "layouts/hotdog", locals: {left: 'submissions/comment_form', right: 'submissions/submission_materials', name: 'Submission Materials'} %>
+>>>>>>> dev
