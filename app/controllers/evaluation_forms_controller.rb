@@ -5,6 +5,7 @@ class EvaluationFormsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_evaluation_form, only: %i[show edit update destroy]
   before_action :set_evaluation_forms, only: %i[index]
+  before_action :set_available_phases, only: %i[new create edit update]
 
   # GET /evaluation_forms or /evaluation_forms.json
   def index; end
@@ -78,6 +79,20 @@ class EvaluationFormsController < ApplicationController
     @evaluation_forms = EvaluationForm.
       by_user(current_user).
       includes([:challenge, :phase])
+  end
+
+  def set_available_phases
+    current_phase_id = @evaluation_form&.phase_id
+
+    @available_phases =
+      current_user.challenge_manager_challenges.includes(:phases).map do |challenge|
+        {
+          challenge:,
+          phases: challenge.phases.reject do |phase|
+            current_phase_id != phase.id && EvaluationForm.exists?(phase_id: phase.id)
+          end
+        }
+      end
   end
 
   # Only allow a list of trusted parameters through.
