@@ -18,7 +18,7 @@ class PagesController < ApplicationController
 
   def index
     path = "#{BASE_URL}#{params[:path]}/"
-    reverse_proxy(HOST, path: path, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
+    reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
       config.on_missing do |_code, _response|
         redirect_to "/dashboard"
         return true
@@ -37,13 +37,13 @@ class PagesController < ApplicationController
       send_data(response.body, type: 'application/javascript')
     else
       path = "#{BASE_URL}assets/#{params[:path]}.#{params[:ext]}"
-      reverse_proxy(HOST, path: path, reset_accept_encoding: true, headers: { host: DOMAIN })
+      reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN })
     end
   end
 
   def root
     path = BASE_URL
-    reverse_proxy(HOST, path: path, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
+    reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
       config.on_response do |_code, response|
         if response.body.present?
           response.body = rewrite_links(response.body)
