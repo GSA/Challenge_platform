@@ -4,13 +4,17 @@
 
 import { application } from "./application";
 
-import EvaluationFormController from "./evaluation_form_controller";
+import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller";
+application.register("delete-evaluator-modal", DeleteEvaluatorModalController);
+
+import UnassignEvaluatorSubmissionModalController from "./unassign_evaluator_submission_modal_controller";
+application.register("unassign-evaluator-submission-modal", UnassignEvaluatorSubmissionModalController);
+
 import EvaluationCriteriaController from "./evaluation_criteria_controller";
-application.register("evaluation-form", EvaluationFormController);
 application.register("evaluation-criteria", EvaluationCriteriaController);
 
-import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller"
-application.register("delete-evaluator-modal", DeleteEvaluatorModalController)
+import EvaluationFormController from "./evaluation_form_controller";
+application.register("evaluation-form", EvaluationFormController);
 
-import UnassignEvaluatorSubmissionModalController from "./unassign_evaluator_submission_modal_controller"
-application.register("unassign-evaluator-submission-modal", UnassignEvaluatorSubmissionModalController)
+import HotdogController from "./hotdog_controller";
+application.register("hotdog", HotdogController);
