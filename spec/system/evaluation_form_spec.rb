@@ -16,6 +16,45 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
 
+    it "shows a confirmation modal when clicking the cancel button" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      expect(page).to(be_axe_clean)
+    end
+
+    it "redirects to evaluation form path when clicking yes in cancel modal" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Yes'
+      end
+
+      assert_current_path evaluation_forms_path
+    end
+
+    it "closes the cancel modal and does nothing if you click close" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Close'
+      end
+
+      assert_no_selector 'dialog#cancel', visible: true
+      assert_current_path new_evaluation_form_path
+    end
+
     it 'allows creation of a valid form with all 3 criteria scoring types' do
       visit new_evaluation_form_path
 
@@ -291,6 +330,45 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
 
+    it "shows a confirmation modal when clicking the cancel button" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      expect(page).to(be_axe_clean)
+    end
+
+    it "redirects to evaluation form path when clicking yes in cancel modal" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Yes'
+      end
+
+      assert_current_path evaluation_forms_path
+    end
+
+    it "closes the cancel modal and does nothing if you click close" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Close'
+      end
+
+      assert_no_selector 'dialog#cancel', visible: true
+      assert_current_path edit_evaluation_form_path(evaluation_form)
+    end
+
     it 'allows editing of an existing form values' do
       visit edit_evaluation_form_path(evaluation_form)
 
@@ -377,7 +455,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       visit edit_evaluation_form_path(closed_evaluation_form)
 
       # Add expectation in spec to satisfy rubocop
-      expect(page).to have_css("form[data-controller='evaluation-form']")
+      expect(page).to have_css("form[data-controller='evaluation-form modal']")
       check_all_non_hidden_inputs_disabled_except_end_date
     end
   end
@@ -519,6 +597,12 @@ end
 
 def remove_criterion(index)
   click_link_or_button "evaluation_form_evaluation_criteria_attributes_#{index}_delete_criteria"
+
+  assert_selector 'dialog#remove-criteria', visible: true
+
+  within 'dialog#remove-criteria' do
+    click_link_or_button 'Yes'
+  end
 end
 
 def toggle_criteria_accordion(index)
@@ -791,7 +875,7 @@ end
 
 # Checks that all non hidden or end date fields are disabled
 def check_all_non_hidden_inputs_disabled_except_end_date
-  within("form[data-controller='evaluation-form']") do
+  within("form[data-controller='evaluation-form modal']") do
     all("input:not([type='hidden']), textarea, select").each do |field|
       if field[:id] == "evaluation_form_closing_date"
         expect(field).not_to be_disabled, "Expected #{field[:id]} to not be disabled"
