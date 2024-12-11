@@ -210,4 +210,13 @@
     cancel_text: "Close",
     confirm_redirect: evaluation_forms_path
   %>
+
+  <%= render "modals/confirmation", 
+    id: "remove-criteria",
+    heading: "Are you sure you want to remove this criteria?",
+    description: "",
+    confirm_text: "Yes",
+    cancel_text: "No",
+    confirm_action: "evaluation-criteria#removeCriteria"
+  %>
 <% end %>

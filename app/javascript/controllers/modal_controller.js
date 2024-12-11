@@ -10,12 +10,14 @@ export default class extends Controller {
     const modalId = event.currentTarget.dataset.modalTargetId;
     const modal = this.modalTargets.find((modal) => modal.id === modalId);
 
+    this.openEvent = event;
+
     event.preventDefault();
 
     if (modal) {
       modal.showModal();
     } else {
-      console.error(`Modal with ID '${modalId}' not found.`);
+      console.warn(`Modal with ID '${modalId}' not found.`);
     }
   }
 
@@ -24,9 +26,13 @@ export default class extends Controller {
 
     if (modal) {
       const confirmRedirect = modal.dataset.modalConfirmRedirect;
+      const confirmAction = modal.dataset.modalConfirmAction;
 
       if (confirmRedirect) {
         window.location.href = confirmRedirect;
+      } else if (confirmAction) {
+        this.invokeAction(confirmAction);
+        modal.close();
       } else {
         modal.close();
         return true;
@@ -39,9 +45,13 @@ export default class extends Controller {
 
     if (modal) {
       const cancelRedirect = modal.dataset.modalCancelRedirect;
+      const cancelAction = modal.dataset.modalCancelAction;
 
       if (cancelRedirect) {
         window.location.href = cancelRedirect;
+      } else if (cancelAction) {
+        this.invokeAction(cancelAction);
+        modal.close();
       } else {
         modal.close();
         return false;
@@ -51,5 +61,27 @@ export default class extends Controller {
 
   _getModal(event) {
     return event.currentTarget.closest("dialog");
+  }
+
+  invokeAction(actionName) {
+    const [controllerName, action] = actionName.split("#");
+    const controllerElement = document.querySelector(
+      `[data-controller~="${controllerName}"]`
+    );
+
+    if (!controllerElement) {
+      console.warn(`Controller element for ${controllerName} not found.`);
+    }
+
+    const controller = this.application.getControllerForElementAndIdentifier(
+      controllerElement,
+      controllerName
+    );
+
+    if (controller && typeof controller[action] === "function") {
+      controller[action](this.openEvent);
+    } else {
+      console.warn(`Action ${actionName} not found on ${controllerName}`);
+    }
   }
 }
