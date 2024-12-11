@@ -36,6 +36,7 @@ class Submission < ApplicationRecord
   belongs_to :manager, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
+  has_many :evaluations, through: :evaluator_submission_assignments
 
   # Fields
   attribute :title, :string

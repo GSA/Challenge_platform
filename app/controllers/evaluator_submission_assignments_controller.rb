@@ -2,6 +2,8 @@
 
 # Controller for evaluator submissions assignments index and update status
 class EvaluatorSubmissionAssignmentsController < ApplicationController
+  include EvaluationsHelper
+
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_challenge_and_phase
   before_action :set_evaluator, only: [:index]
@@ -88,28 +90,4 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       evaluator_id: params[:evaluator_id]
     )
   end
-
-  def calculate_submissions_count(assignments)
-    counts = count_by_status(assignments)
-    counts.merge("total" => calculate_total(counts))
-  end
-
-  def count_by_status(assignments)
-    {
-      "completed" => count_completed(assignments),
-      "in_progress" => count_in_progress(assignments),
-      "not_started" => count_not_started(assignments),
-      "recused" => count_recused(assignments)
-    }
-  end
-
-  def count_completed(assignments) = assignments.count { |a| a.evaluation&.completed_at.present? }
-
-  def count_in_progress(assignments) = assignments.count { |a| a.evaluation.present? && a.evaluation.completed_at.nil? }
-
-  def count_not_started(assignments) = assignments.count { |a| a.assigned? && a.evaluation.nil? }
-
-  def count_recused(assignments) = assignments.count(&:recused?)
-
-  def calculate_total(counts) = counts.values.sum
 end
