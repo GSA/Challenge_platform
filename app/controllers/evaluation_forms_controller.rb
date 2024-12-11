@@ -106,7 +106,15 @@ class EvaluationFormsController < ApplicationController
                { option_labels: {} }
              ])
     closing_date = parse_closing_date(permitted[:closing_date])
-    closing_date ? permitted.merge({ closing_date: }) : permitted
+    permitted = permitted.merge({ closing_date: }) if closing_date
+
+    if action_name == "update"
+      # Update action may only allow closing_date depending on phase.end_date
+      handle_upate_permitted_params(permitted)
+    else
+      # Create action always allows all params
+      permitted
+    end
   end
 
   def parse_closing_date(input_date)
@@ -117,6 +125,17 @@ class EvaluationFormsController < ApplicationController
       "#{year}-#{month.rjust(2, '0')}-#{day.rjust(2, '0')}"
     else
       input_date
+    end
+  end
+
+  def handle_upate_permitted_params(permitted)
+    evaluation_form = EvaluationForm.find(params[:id])
+    phase = evaluation_form.phase
+
+    if phase&.end_date&.past?
+      permitted.slice(:closing_date)
+    else
+      permitted
     end
   end
 end
