@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'ostruct'
 
 # View helpers for calculating evaluation & submission details.
@@ -12,46 +13,39 @@ module EvaluationsHelper
     recused_unassigned: 'bg-base'
   }.freeze
 
+  Score = Struct.new(:raw_score, :formatted_score, :display_score)
+
   def evaluation_submission_assignment_status_color(assignment)
     STATUS_COLORS[assignment.evaluation_status]
   end
 
   def display_score(assignment)
     return 'N/A' unless assignment.evaluation_status == :completed
+
     assignment.evaluation&.total_score || 'N/A'
   end
 
   # individual evaluator score
   def evaluator_score(assignment)
     score = assignment.evaluation&.total_score
-    return OpenStruct.new(
-      raw_score: 0,
-      formatted_score: "0",
-      display_score: "N/A"
-    ) unless assignment.evaluation_status == :completed && score
 
-    OpenStruct.new(
-      raw_score: score,
-      formatted_score: "#{score}",
-      display_score: score
-    )
+    unless assignment.evaluation_status == :completed && score
+      return Score.new(0, "0", "N/A")
+    end
+
+    Score.new(score, score.to_s, score)
   end
 
   def average_score(submission)
     completed_evaluations = submission.evaluations.where.not(completed_at: nil)
-    return OpenStruct.new(
-      raw_score: 0,
-      formatted_score: "0",
-      display_score: "N/A"
-    ) unless completed_evaluations.any?
+
+    unless completed_evaluations.any?
+      return Score.new(0, "0", "N/A")
+    end
 
     avg = completed_evaluations.average(:total_score)
     score = avg ? avg.round : 0
-    OpenStruct.new(
-      raw_score: score,
-      formatted_score: "#{score}%",
-      display_score: "#{score}%"
-    )
+    Score.new(score, "#{score}%", "#{score}%")
   end
 
   # counting submissions & evaluations
