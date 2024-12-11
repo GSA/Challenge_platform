@@ -36,10 +36,11 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
   }
 
   def self.ordered_by_status
-    select('evaluator_submission_assignments.*, evaluations.id AS evaluation_id, evaluations.completed_at').
-      left_joins(:evaluation).
-      to_a.
-      sort_by { |assignment| ORDER_VALUES[assignment.evaluation_status] }
+    includes(:evaluation)
+      .select('evaluator_submission_assignments.*, evaluations.id AS evaluation_id, evaluations.completed_at')
+      .left_joins(:evaluation)
+      .to_a
+      .sort_by { |assignment| ORDER_VALUES[assignment.evaluation_status] }
   end
 
   def evaluation_status
