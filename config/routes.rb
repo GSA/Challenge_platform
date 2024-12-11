@@ -11,7 +11,11 @@ Rails.application.routes.draw do
   get '/', to: "dashboard#index"
   get '/dashboard', to: "dashboard#index"
 
-  resources :evaluations, only: [:index]
+  resources :evaluations, only: [:index] do
+    member do
+      get :submissions
+    end
+  end
   resources :evaluation_forms do
     member do
       get 'confirmation'
