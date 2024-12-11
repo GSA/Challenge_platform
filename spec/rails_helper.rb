@@ -78,6 +78,7 @@ RSpec.configure do |config|
   config.include EvaluationFormsHelper, type: :system
   config.include PhasesHelper, type: :system
   config.include EvaluationCriteriaHelpers, type: :system
+  config.include Capybara::RSpecMatchers, type: :request
 
   config.include FactoryBot::Syntax::Methods
   config.before(:suite) do

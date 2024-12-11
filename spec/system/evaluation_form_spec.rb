@@ -4,7 +4,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   let(:user) { create_user(role: "challenge_manager", status: "active") }
 
   describe "new evaluation form page" do
-    let!(:challenge) { create(:challenge, user:) }
+    let!(:challenge) { create(:challenge, user:, is_multi_phase: true) }
 
     before do
       system_login_user(user)
@@ -86,6 +86,36 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Check accessibility
       expect(page).to(be_axe_clean)
+    end
+
+    it "only shows phases without existing evaluation forms as options for phase select" do
+      create(:evaluation_form, phase: challenge.phases[0])
+      new_challenge = create(:challenge, user:)
+
+      # Generate taken and non taken challenge_phase_title values
+      invalid_phase = challenge.phases[0]
+      invalid_challenge_phase_title = challenge_phase_title(challenge, invalid_phase)
+      valid_phase = challenge.phases[1]
+      valid_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
+      new_challenge.phases[0]
+      new_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
+
+      visit new_evaluation_form_path
+
+      expect_form_phase_select_to_not_contain(invalid_challenge_phase_title)
+      expect_form_phase_select_to_contain(valid_challenge_phase_title)
+      expect_form_phase_select_to_contain(new_challenge_phase_title)
+    end
+
+    it "shows no results found if all phases are taken" do
+      # Make an evaluation form for all 3 initial factory challenge phases
+      create(:evaluation_form, phase: challenge.phases[0])
+      create(:evaluation_form, phase: challenge.phases[1])
+      create(:evaluation_form, phase: challenge.phases[2])
+
+      visit new_evaluation_form_path
+
+      expect_form_phase_select_to_be_empty
     end
 
     it "prevents form submission and focuses first missing required field" do
@@ -757,6 +787,30 @@ end
 
 def expect_form_phase_to_equal(value)
   expect(find_by_id('challenge-combo').value).to eq(value)
+end
+
+def expect_form_phase_select_to_not_contain(value)
+  expect(page).to have_no_select(
+    class: "usa-combo-box__select",
+    with_options: [value],
+    visible: :all
+  )
+end
+
+def expect_form_phase_select_to_contain(value)
+  expect(page).to have_select(
+    class: "usa-combo-box__select",
+    with_options: [value],
+    visible: :all
+  )
+end
+
+def expect_form_phase_select_to_be_empty
+  expect(page).to have_select(
+    class: "usa-combo-box__select",
+    options: [],
+    visible: :all
+  )
 end
 
 def expect_form_instructions_to_equal(value)
