@@ -100,7 +100,7 @@
                 type="radio"
                 name="evaluation_form[weighted_scoring]"
                 value="false"
-                data-action="input->evaluation-form#updateMaxPoints"
+                data-action="click->evaluation-form#updateMaxPoints"
                 <%= 'checked' if !evaluation_form.weighted_scoring? && evaluation_form.persisted? %>
                 <%= 'disabled' if disabled %>
                 required
@@ -114,7 +114,7 @@
                 type="radio"
                 name="evaluation_form[weighted_scoring]"
                 value="true"
-                data-action="input->evaluation-form#updateMaxPoints"
+                data-action="click->evaluation-form#updateMaxPoints"
                 <%= 'checked' if evaluation_form.weighted_scoring? %>
                 <%= 'disabled' if disabled %>
               >

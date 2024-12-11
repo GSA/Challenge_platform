@@ -1,11 +1,6 @@
 <div data-controller="delete-evaluator-modal">
   <div data-page="manage-evaluators">
-    <div class="margin-bottom-2 margin-top-3">
-      <%= link_to phases_path, class: "usa-link display-inline-flex flex-align-center" do %>
-        <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3", alt: "Back to previous page") %>
-        <span class="margin-left-05 text-primary">Back</span>
-      <% end %>
-    </div>
+  <%= render 'shared/back_link', path: phases_path(@phase) %>
     
     <h1><%= @challenge.title %> - <%= @phase.title %></h1>
     <p>Create and manage a list of evaluators for the challenge.</p>
@@ -75,7 +70,7 @@
                 <td data-label="Assigned submissions" class="text-top"><%= assigned_submissions_count(evaluator, @challenge, @phase) %></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
-                    <%= link_to phases_path(@challenge), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
+                    <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
                       View Submissions
                     <% end %>
                     <%= button_tag "Delete", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
