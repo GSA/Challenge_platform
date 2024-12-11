@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
-
 # View helpers for calculating evaluation & submission details.
 module EvaluationsHelper
   STATUS_COLORS = {
