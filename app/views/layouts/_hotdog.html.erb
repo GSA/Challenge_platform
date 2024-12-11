@@ -1,0 +1,31 @@
+<%# burger orientation, for mobile %>
+<div class="tablet:display-none" data-controller="hotdog">
+    <div data-hotdog-target="burgerCollapsible">
+        <%= render partial: right %>
+    </div>
+    <div class="bg-primary-darker margin-y-1 width-full cursor-pointer padding-1" data-action="click->hotdog#burgerCollapse" data-hotdog-target="burgerCollapse">
+        <%= image_tag('images/usa-icons/arrow_upward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05", alt: "Hide #{name}") %>
+        <span class="text-white width-15 display-inline-block">Hide <%= name %></span>
+    </div>
+    <div class="bg-primary-darker margin-y-1 width-full cursor-pointer display-none padding-1" data-action="click->hotdog#burgerExpand" data-hotdog-target="burgerExpand">
+        <%= image_tag('images/usa-icons/arrow_downward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05", alt: "Show #{name}") %>
+        <span class="text-white width-15 display-inline-block">Show <%= name %></span>
+    </div>    
+    <%= render partial: left %>
+</div>
+
+<%# hotdog orientation, for tablet and above %>
+<div class="display-none tablet:display-flex flex-row width-full border-top-1px" data-controller="hotdog">
+    <div class="width-half" data-hotdog-target="leftPane">
+        <%= render partial: left %>
+    </div>  
+    <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer" data-action="click->hotdog#hotdogCollapse" data-hotdog-target="hotdogCollapse">
+        <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Hide #{name}") %>
+    </div>
+    <div class="bg-primary-darker margin-left-5 width-3 cursor-pointer display-none" data-action="click->hotdog#hotdogExpand" data-hotdog-target="hotdogExpand">
+        <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3 icon-white", alt: "Show #{name}") %>
+    </div>    
+    <div class="width-half" data-hotdog-target="rightPane">  
+        <%= render partial: right %>
+    </div>  
+</div>
