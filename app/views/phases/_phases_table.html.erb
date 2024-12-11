@@ -1,4 +1,4 @@
-<table class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
+<table class="usa-table usa-table--stacked-header usa-table--borderless gray-header margin-bottom-10">
     <thead>
       <tr>
         <th scope="col">Challenge</th>
@@ -23,7 +23,7 @@
               <% if phase.evaluation_form %>
                 <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
                   <%= phase.evaluation_form.title %>
-              <% end %>    
+                <% end %>    
               <% else %>
                 N/A  
               <% end %>  

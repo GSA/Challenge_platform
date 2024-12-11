@@ -6,7 +6,7 @@
   <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator.text') %>
 <% end %>
 
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+<table class="usa-table usa-table--stacked-header usa-table--borderless gray-header width-full margin-bottom-10">
     <thead>
       <tr>
         <th scope="col">Submission ID</th>
@@ -14,6 +14,7 @@
         <th scope="col">Selected to Advance</th>
         <th scope="col">Assigned Evaluators</th>
         <th scope="col">Average Score</th>
+        <th scope="col"><span class="usa-sr-only">View Submission</span></th>
       </tr>
     </thead>
     <tbody>
@@ -73,13 +74,13 @@
               </div>  
             </td>
             <td data-label="Assigned Evaluators">
-                No evaluators assigned to this submission
+              No evaluators assigned to this submission
             </td>
             <td>
-                N/A
+              N/A
             </td>
             <td>
-              <div class="display-flex flex-no-wrap grid-row grid-gap-1">
+              <div class="display-flex flex-no-wrap grid-row grid-gap-1 padding-bottom-2">
                 <%= link_to submission_path(submission) do %>
                     <button class="usa-button font-body-2xs text-no-wrap">
                         View Submission
