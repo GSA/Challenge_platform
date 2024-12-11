@@ -100,6 +100,18 @@ export default class extends Controller {
     });
   }
 
+  checkPointsOrWeightMax(event) {
+    const input = event.target;
+    const min = parseInt(input.min);
+    const max = parseInt(input.max);
+    const value = parseInt(input.value);
+
+    // If invalid value is entered then pop up error message
+    if (value && (value < min || value > max)) {
+      event.target.reportValidity();
+    }
+  }
+
   updateScoringOptions(row, scoringType) {
     const options = {
       scaleOptions: row.querySelector(".criteria-scale-options"),
