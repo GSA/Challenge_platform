@@ -1,4 +1,4 @@
-<%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
+<%= form_with(model: evaluation_form, data: { controller: "evaluation-form modal" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: darkred">
       <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
@@ -198,16 +198,16 @@
       Save
     </button>
     <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
-      <%= link_to "Cancel", evaluation_forms_path, data: {"modal": "cancel-modal"} %>
+      <%= link_to "Cancel", "#", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
     </div>
   </div>
-<% end %>
 
-<%= render "modals/confirmation", 
-  id: "cancel-modal",
-  heading: "Are you sure you want to cancel?",
-  description: "Your evaluation form will not be saved and any entered information will be lost.",
-  confirm_text: "Yes",
-  confirm_redirect: evaluation_forms_path,
-  cancel_text: "Close"
-%>
+  <%= render "modals/confirmation", 
+    id: "cancel",
+    heading: "Are you sure you want to cancel?",
+    description: "Your evaluation form will not be saved and any entered information will be lost.",
+    confirm_text: "Yes",
+    cancel_text: "Close",
+    confirm_redirect: evaluation_forms_path
+  %>
+<% end %>

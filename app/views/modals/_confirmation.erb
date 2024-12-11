@@ -3,6 +3,9 @@
   class="border-width-0 radius-lg"
   aria-labelledby=<%= "#{id}-heading" %>
   aria-describedby=<%= "#{id}-description" %>
+  data-modal-target="modal"
+  data-modal-confirm-redirect="<%= defined?(confirm_redirect) ? confirm_redirect : '' %>"
+  data-modal-cancel-redirect="<%= defined?(cancel_redirect) ? cancel_redirect : '' %>"
 >
   <div class="usa-modal__content">
     <div class="usa-modal__main">
@@ -15,17 +18,8 @@
         </p>
       </div>
       <div class="usa-modal__footer">
-        <% if defined?(confirm_redirect) %>
-          <%= link_to confirm_text, confirm_redirect, class: "usa-button" %>
-        <% else %>
-          <button id="modal-btn-confirm" class="usa-button" type="button"><%= confirm_text %></button>
-        <% end %>
-
-        <% if defined?(cancel_redirect) %>
-          <%= link_to cancel_text, cancel_redirect, class: "usa-button--unstyled" %>
-        <% else %>
-          <button id="modal-btn-cancel" class="usa-button--unstyled" type="button"><%= cancel_text %></button>
-        <% end %>
+        <button id="modal-btn-confirm" class="usa-button" type="button" data-action="modal#confirm"><%= confirm_text %></button>
+        <button id="modal-btn-cancel" class="usa-button--unstyled" type="button" data-action="modal#cancel"><%= cancel_text %></button>
       </div>
     </div>
   </div>
