@@ -4,7 +4,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   let(:user) { create_user(role: "challenge_manager", status: "active") }
 
   describe "new evaluation form page" do
-    let!(:challenge) { create(:challenge, user:) }
+    let!(:challenge) { create(:challenge, user:, is_multi_phase: true) }
 
     before do
       system_login_user(user)
@@ -14,6 +14,45 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       visit new_evaluation_form_path
       # Accessibility check on empty form
       expect(page).to(be_axe_clean)
+    end
+
+    it "shows a confirmation modal when clicking the cancel button" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      expect(page).to(be_axe_clean)
+    end
+
+    it "redirects to evaluation form path when clicking yes in cancel modal" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Yes'
+      end
+
+      assert_current_path evaluation_forms_path
+    end
+
+    it "closes the cancel modal and does nothing if you click close" do
+      visit new_evaluation_form_path
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Close'
+      end
+
+      assert_no_selector 'dialog#cancel', visible: true
+      assert_current_path new_evaluation_form_path
     end
 
     it 'allows creation of a valid form with all 3 criteria scoring types' do
@@ -47,6 +86,36 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Check accessibility
       expect(page).to(be_axe_clean)
+    end
+
+    it "only shows phases without existing evaluation forms as options for phase select" do
+      create(:evaluation_form, phase: challenge.phases[0])
+      new_challenge = create(:challenge, user:)
+
+      # Generate taken and non taken challenge_phase_title values
+      invalid_phase = challenge.phases[0]
+      invalid_challenge_phase_title = challenge_phase_title(challenge, invalid_phase)
+      valid_phase = challenge.phases[1]
+      valid_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
+      new_challenge.phases[0]
+      new_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
+
+      visit new_evaluation_form_path
+
+      expect_form_phase_select_to_not_contain(invalid_challenge_phase_title)
+      expect_form_phase_select_to_contain(valid_challenge_phase_title)
+      expect_form_phase_select_to_contain(new_challenge_phase_title)
+    end
+
+    it "shows no results found if all phases are taken" do
+      # Make an evaluation form for all 3 initial factory challenge phases
+      create(:evaluation_form, phase: challenge.phases[0])
+      create(:evaluation_form, phase: challenge.phases[1])
+      create(:evaluation_form, phase: challenge.phases[2])
+
+      visit new_evaluation_form_path
+
+      expect_form_phase_select_to_be_empty
     end
 
     it "prevents form submission and focuses first missing required field" do
@@ -261,6 +330,45 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
 
+    it "shows a confirmation modal when clicking the cancel button" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      expect(page).to(be_axe_clean)
+    end
+
+    it "redirects to evaluation form path when clicking yes in cancel modal" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Yes'
+      end
+
+      assert_current_path evaluation_forms_path
+    end
+
+    it "closes the cancel modal and does nothing if you click close" do
+      visit edit_evaluation_form_path(evaluation_form)
+
+      click_link_or_button "Cancel"
+
+      assert_selector 'dialog#cancel', visible: true
+
+      within 'dialog#cancel' do
+        click_link_or_button 'Close'
+      end
+
+      assert_no_selector 'dialog#cancel', visible: true
+      assert_current_path edit_evaluation_form_path(evaluation_form)
+    end
+
     it 'allows editing of an existing form values' do
       visit edit_evaluation_form_path(evaluation_form)
 
@@ -347,7 +455,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       visit edit_evaluation_form_path(closed_evaluation_form)
 
       # Add expectation in spec to satisfy rubocop
-      expect(page).to have_css("form[data-controller='evaluation-form']")
+      expect(page).to have_css("form[data-controller='evaluation-form modal']")
       check_all_non_hidden_inputs_disabled_except_end_date
     end
   end
@@ -489,6 +597,12 @@ end
 
 def remove_criterion(index)
   click_link_or_button "evaluation_form_evaluation_criteria_attributes_#{index}_delete_criteria"
+
+  assert_selector 'dialog#remove-criteria', visible: true
+
+  within 'dialog#remove-criteria' do
+    click_link_or_button 'Yes'
+  end
 end
 
 def toggle_criteria_accordion(index)
@@ -675,6 +789,30 @@ def expect_form_phase_to_equal(value)
   expect(find_by_id('challenge-combo').value).to eq(value)
 end
 
+def expect_form_phase_select_to_not_contain(value)
+  expect(page).to have_no_select(
+    class: "usa-combo-box__select",
+    with_options: [value],
+    visible: :all
+  )
+end
+
+def expect_form_phase_select_to_contain(value)
+  expect(page).to have_select(
+    class: "usa-combo-box__select",
+    with_options: [value],
+    visible: :all
+  )
+end
+
+def expect_form_phase_select_to_be_empty
+  expect(page).to have_select(
+    class: "usa-combo-box__select",
+    options: [],
+    visible: :all
+  )
+end
+
 def expect_form_instructions_to_equal(value)
   expect(find_by_id('evaluation_form_instructions').value).to eq(value)
 end
@@ -737,7 +875,7 @@ end
 
 # Checks that all non hidden or end date fields are disabled
 def check_all_non_hidden_inputs_disabled_except_end_date
-  within("form[data-controller='evaluation-form']") do
+  within("form[data-controller='evaluation-form modal']") do
     all("input:not([type='hidden']), textarea, select").each do |field|
       if field[:id] == "evaluation_form_closing_date"
         expect(field).not_to be_disabled, "Expected #{field[:id]} to not be disabled"
