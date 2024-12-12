@@ -15,7 +15,7 @@
               <%= heading %>
             </h3>
             <p class="usa-summary-box__text text-primary-darker text-bold">
-              Evaluations due by <%= @phase.evaluation_form.closing_date.strftime('%m/%d/%Y') %>
+              Evaluations due by <%= @phase.evaluation_form&.closing_date&.strftime('%m/%d/%Y') || "N/A" %>
             </p>
           </div>
         </div>
