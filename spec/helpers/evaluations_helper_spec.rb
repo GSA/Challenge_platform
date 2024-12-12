@@ -51,7 +51,13 @@ RSpec.describe EvaluationsHelper, type: :helper do
 
     context 'when assignment is completed and has an evaluation with a total score' do
       it 'returns the correct score formats' do
-        create(:evaluation, evaluator_submission_assignment: assignment, total_score: 85, completed_at: Time.current)
+        create(:evaluation,
+          evaluator_submission_assignment: assignment,
+          total_score: 85,
+          completed_at: Time.current
+        )
+        allow(assignment).to receive(:evaluation_status).and_return(:completed)
+
         result = helper.evaluator_score(assignment)
         expect(result.raw_score).to eq(85)
         expect(result.formatted_score).to eq("85")
@@ -61,6 +67,7 @@ RSpec.describe EvaluationsHelper, type: :helper do
 
     context 'when assignment is not completed' do
       it 'returns appropriate defaults' do
+        allow(assignment).to receive(:evaluation_status).and_return(:in_progress)
         result = helper.evaluator_score(assignment)
         expect(result.raw_score).to eq(0)
         expect(result.formatted_score).to eq("0")
@@ -82,17 +89,21 @@ RSpec.describe EvaluationsHelper, type: :helper do
   end
 
   describe '#average_score' do
-    it 'returns zero when no completed evaluations exist' do
+    it 'returns defaults when no completed evaluations exist' do
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(0)
       expect(result.formatted_score).to eq("0")
+      expect(result.display_score).to eq("N/A")
     end
 
     it 'calculates average score from completed evaluations' do
-      evaluation.update!(completed_at: Time.current, total_score: 85)
+      evaluation1 = create(:evaluation, submission: submission, total_score: 80, completed_at: Time.current)
+      evaluation2 = create(:evaluation, submission: submission, total_score: 90, completed_at: Time.current)
+
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(85)
       expect(result.formatted_score).to eq("85%")
+      expect(result.display_score).to eq("85%")
     end
   end
 
@@ -131,22 +142,6 @@ RSpec.describe EvaluationsHelper, type: :helper do
       allow(assignment).to receive(:evaluation_status).and_return(:completed)
       allow(assignment).to receive(:evaluation).and_return(evaluation)
       expect(helper.display_score(assignment)).to eq(85)
-    end
-  end
-
-  describe '#average_score' do
-    it 'returns zero when no completed evaluations exist' do
-      result = helper.average_score(submission)
-      expect(result.raw_score).to eq(0)
-      expect(result.display_score).to eq("N/A")
-      expect(result.formatted_score).to eq("0")
-    end
-
-    it 'calculates average score from completed evaluations' do
-      evaluation.update!(completed_at: Time.current, total_score: 85)
-      result = helper.average_score(submission)
-      expect(result.raw_score).to eq(85)
-      expect(result.formatted_score).to eq("85%")
     end
   end
 
