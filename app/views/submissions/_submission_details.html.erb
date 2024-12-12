@@ -1,2 +1,7 @@
 <%= render partial: 'judging_status' %>
 <%= render partial: 'comment_form' %>
+<% if @submission.judging_status.in?(["selected", "winner"]) %>
+    <%= render partial: 'submission_evaluation' %>
+<% end %>
+
+
