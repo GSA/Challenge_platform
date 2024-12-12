@@ -114,7 +114,7 @@
     </div>
   </div>
 
-  <div class="criteria-scale-options usa-form-group" style="<%= f.object.numeric? || !f.object.persisted? || is_template ? 'display: none;' : '' %>">
+  <div class="criteria-scale-options usa-form-group" style="<%= f.object.numeric? || !f.object.scoring_type.present? || is_template ? 'display: none;' : '' %>">
     <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template), class: "text-bold" %>
 
     <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>">
@@ -161,7 +161,7 @@
 
     <div class="criteria-scale-option-labels" data-evaluation-criteria-target="optionLabels">
       <% (0..10).each do |index| %>
-        <% disabledOptionLabel = is_template || !f.object.persisted? || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
+        <% disabledOptionLabel = is_template || !f.object.scoring_type.present? || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
 
         <div class="<%= disabledOptionLabel ? 'display-none' : 'display-flex' %> flex-align-center flex-justify margin-top-2 criteria-option-label-row"
           data-evaluation-criteria-target="optionLabelRow">
