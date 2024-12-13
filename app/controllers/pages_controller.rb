@@ -8,12 +8,11 @@ class PagesController < ApplicationController
 
   # TODO: When launched, the cloud.gov pages need to move off the www.challenge.gov domain
   # and these constants will need to be updated. The will be similar to the commented out versions
-  # and likely based on content.challenge.gov
   DOMAIN = "federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"
   HOST = "https://federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"
-  BASE_URL = "/preview/gsa/challenges-and-prizes/staging/"
-  # DOMAIN = "www.challenge.gov".freeze
-  # HOST = "https://www.challenge.gov".freeze
+  BASE_URL = "/preview/gsa/challenges-and-prizes/eval-dev/"
+  # DOMAIN = "content.challenge.gov".freeze
+  # HOST = "https://content.challenge.gov".freeze
   # BASE_URL = "/".freeze
 
   def index
@@ -55,8 +54,7 @@ class PagesController < ApplicationController
   private
 
   def rewrite_links(html)
-    parsed_html = html.gsub("https://challenge.gov/", "/")
-    parsed_html = parsed_html.gsub(HOST, "/")
+    parsed_html = html.gsub(HOST, "/")
     if BASE_URL.length > 1
       parsed_html = parsed_html.gsub(BASE_URL, "/")
     end

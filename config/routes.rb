@@ -42,11 +42,7 @@ Rails.application.routes.draw do
     end
   end
 
-  if Rails.env.test?
-    get '/', to: "dashboard#index"
-  else
-    match '/assets/*path.:ext' => 'pages#assets', via: [:get]
-    match '/*path' => 'pages#index', via: [:get]
-    match '/' => 'pages#root', via: [:get]
-  end
+  match '/assets/*path.:ext' => 'pages#assets', via: [:get]
+  match '/*path' => 'pages#index', via: [:get]
+  match '/' => 'pages#root', via: [:get]
 end
