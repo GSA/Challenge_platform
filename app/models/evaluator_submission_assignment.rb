@@ -43,9 +43,12 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
   end
 
   def evaluation_status
-    return status.to_sym unless assigned?
+    return :recused if recused?
+    return :unassigned if unassigned?
+    return :recused_unassigned if recused_unassigned?
+    return assigned_evaluation_status if assigned?
 
-    assigned_evaluation_status
+    status&.to_sym
   end
 
   private
