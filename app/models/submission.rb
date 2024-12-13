@@ -36,6 +36,7 @@ class Submission < ApplicationRecord
   belongs_to :manager, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
+  has_many :evaluations, dependent: :destroy
 
   # Fields
   attribute :title, :string
@@ -66,5 +67,23 @@ class Submission < ApplicationRecord
 
   def selected_to_advance?
     winner?
+  end
+
+  def eligibility_checkbox_disabled?
+    evaluators.any?
+  end
+
+  def advancement_checkbox_disabled?
+    !eligible_for_evaluation? ||
+    !all_evaluations_completed? ||
+    evaluators.empty?
+  end
+
+  private
+
+  def all_evaluations_completed?
+    evaluator_submission_assignments.includes(:evaluation).all? do |assignment|
+      assignment.evaluation_status == :completed
+    end
   end
 end

@@ -40,6 +40,12 @@ RSpec.describe "Submissions" do
 
       it "renders a list of submissions for a user's challenge" do
         submission = create(:submission, challenge: challenge, phase: phase)
+        evaluator = create(:user, role: 'evaluator')
+        create(:evaluator_submission_assignment,
+               submission: submission,
+               evaluator: evaluator,
+               status: :assigned,
+               evaluation: create(:evaluation))
 
         get submissions_phase_path(phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
@@ -95,6 +101,105 @@ RSpec.describe "Submissions" do
 
         get submission_path(submission)
         expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+
+  describe "PATCH /submissions/:id" do
+    context "when logged in as a challenge manager" do
+      let(:user) { create_user(role: "challenge_manager") }
+      let(:submission) { create(:submission, challenge: challenge, phase: phase) }
+      let(:evaluator) { create(:user, role: 'evaluator') }
+
+      before do
+        ChallengeManager.create(user: user, challenge: challenge)
+      end
+
+      context "updating judging status" do
+        it "updates eligibility status to selected" do
+          patch submission_path(submission), params: {
+            submission: { judging_status: 'selected' }
+          }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(submission.reload.judging_status).to eq('selected')
+        end
+
+        it "updates advancement status to winner when evaluations are complete" do
+          submission.update!(judging_status: 'selected')
+          create(:evaluator_submission_assignment,
+                 submission: submission,
+                 evaluator: evaluator,
+                 status: :assigned,
+                 evaluation: create(:evaluation, completed_at: Time.current))
+
+          patch submission_path(submission), params: {
+            submission: { judging_status: 'winner' }
+          }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(submission.reload.judging_status).to eq('winner')
+        end
+
+        it "prevents advancement when evaluations are not complete" do
+          submission.update!(judging_status: 'selected')
+          create(:evaluator_submission_assignment,
+                 submission: submission,
+                 evaluator: evaluator,
+                 status: :assigned)
+
+          patch submission_path(submission), params: {
+            submission: { judging_status: 'winner' }
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(submission.reload.judging_status).to eq('selected')
+        end
+
+        it "prevents eligibility changes when evaluators are assigned" do
+          create(:evaluator_submission_assignment,
+                 submission: submission,
+                 evaluator: evaluator,
+                 status: :assigned)
+
+          patch submission_path(submission), params: {
+            submission: { judging_status: 'selected' }
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(submission.reload.judging_status).to eq('not_selected')
+        end
+
+        it "prevents changing judging_status from 'not_selected' to 'selected' when eligibility checkbox is disabled" do
+          submission.update!(judging_status: 'not_selected')
+          create(:evaluator_submission_assignment,
+                submission: submission,
+                evaluator: evaluator,
+                status: :assigned)
+
+          patch submission_path(submission), params: {
+            submission: { judging_status: 'selected' }
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(submission.reload.judging_status).to eq('not_selected')
+        end
+
+        it "prevents changing judging_status to 'winner' when not eligible" do
+          submission.update!(judging_status: 'not_selected')
+          create(:evaluator_submission_assignment,
+                  submission: submission,
+                  evaluator: evaluator,
+                  status: :assigned,
+                  evaluation: create(:evaluation, completed_at: Time.current))
+
+          patch submission_path(submission), params: {
+            submission: { judging_status: 'winner' }
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(submission.reload.judging_status).to eq('not_selected')
+        end
       end
     end
   end
