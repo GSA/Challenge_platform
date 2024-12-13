@@ -10,7 +10,10 @@ class PhasesController < ApplicationController
   end
 
   def submissions
-    @submissions = @phase.submissions
+    @submissions = @phase.submissions.includes(
+      :evaluators,
+      evaluator_submission_assignments: [:evaluation]
+    ).order(:id)
   end
 
   private
