@@ -10,10 +10,10 @@ class PhasesController < ApplicationController
   end
 
   def submissions
-    @submissions = @phase.submissions.includes(
-      :evaluators,
-      evaluator_submission_assignments: [:evaluation]
-    ).order(:id)
+    @submissions = @phase.submissions.order(:id)
+
+    include_evaluator_associations
+
     @submissions_count = @submissions.count
     not_started = @submissions.left_outer_joins(:evaluations).
       where({ "evaluations.id" => nil }).count
@@ -28,5 +28,16 @@ class PhasesController < ApplicationController
   def set_phase
     @phase = Phase.where(challenge: current_user.challenge_manager_challenges).find(params[:id])
     @challenge = @phase.challenge
+  end
+
+  def include_evaluator_associations
+    return unless request.format.html? && @submissions.any?
+    return unless has_evaluator_assignments?
+
+    @submissions = @submissions.includes(:evaluators, evaluator_submission_assignments: :evaluation)
+  end
+
+  def has_evaluator_assignments?
+    EvaluatorSubmissionAssignment.where(submission_id: @submissions.select(:id)).exists?
   end
 end

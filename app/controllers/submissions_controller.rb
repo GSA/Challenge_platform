@@ -17,19 +17,15 @@ class SubmissionsController < ApplicationController
 
   private
 
-
   def handle_judging_status_update
-    if valid_status_change? && @submission.update(submission_params)
-      respond_with_status(:ok)
-    else
-      respond_with_status(:unprocessable_entity)
+    unless valid_status_change?
+      return respond_with_error
     end
-  end
 
-  def respond_with_status(status)
-    respond_to do |format|
-      format.html { redirect_to submissions_phase_path(@submission.phase) }
-      format.json { render json: { status: status }, status: status }
+    if @submission.update(submission_params)
+      respond_with_success
+    else
+      respond_with_error
     end
   end
 
@@ -55,6 +51,20 @@ class SubmissionsController < ApplicationController
     end
 
     true
+  end
+
+  def respond_with_success
+    respond_to do |format|
+      format.html { redirect_to submissions_phase_path(@submission.phase) }
+      format.json { render json: { success: true }, status: :ok }
+    end
+  end
+
+  def respond_with_error
+    respond_to do |format|
+      format.html { redirect_to submissions_phase_path(@submission.phase) }
+      format.json { render json: { success: false }, status: :unprocessable_entity }
+    end
   end
 
   def submission_params

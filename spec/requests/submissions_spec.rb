@@ -64,6 +64,11 @@ RSpec.describe "Submissions" do
         create(:submission, challenge: challenge, phase: phase)
         create(:submission, challenge: challenge, phase: phase, judging_status: "selected")
 
+        allow_any_instance_of(ActionView::Base).to receive(:render).and_call_original
+        allow_any_instance_of(ActionView::Base).to receive(:render).
+          with(hash_including(partial: "submissions_table")).
+          and_return("")
+
         get submissions_phase_path(phase)
         expect(response.body).to include("Boston Tea Party Cleanup")
         # total submission count
