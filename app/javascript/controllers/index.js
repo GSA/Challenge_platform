@@ -18,3 +18,6 @@ application.register("evaluation-form", EvaluationFormController);
 
 import HotdogController from "./hotdog_controller";
 application.register("hotdog", HotdogController);
+
+import SubmissionJudgingStatusController from "./submission_judging_status_controller";
+application.register("submission-judging-status", SubmissionJudgingStatusController);
