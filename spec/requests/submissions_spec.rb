@@ -59,6 +59,19 @@ RSpec.describe "Submissions" do
         get submissions_phase_path(phase)
         expect(response).to have_http_status(:not_found)
       end
+
+      it "renders submission statistics" do
+        create(:submission, challenge: challenge, phase: phase)
+        create(:submission, challenge: challenge, phase: phase, judging_status: "selected")
+
+        get submissions_phase_path(phase)
+        expect(response.body).to include("Boston Tea Party Cleanup")
+        # total submission count
+        expect(response.body).to have_css("h3.text-primary", text: "Total Submissions")
+        expect(response.body).to have_css("span.font-sans-3xl.text-primary.text-bold", text: "2")
+        # selected to advance
+        expect(response.body).to have_css("span.text-primary", text: "1 of 2")
+      end
     end
 
     context "when logged in as an evaluator" do

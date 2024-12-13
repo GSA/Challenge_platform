@@ -61,6 +61,8 @@ class Submission < ApplicationRecord
       none
     end
   }
+  scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
+
   def eligible_for_evaluation?
     selected? or winner?
   end

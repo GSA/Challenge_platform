@@ -32,7 +32,9 @@ export default class extends Controller {
 
   // Opens all accordions, remove existing points/weights, update max points/weights values
   updateMaxPoints(e) {
-    const form = e.target.closest('form[data-controller="evaluation-form"]');
+    const form = e.target.closest(
+      'form[data-controller="evaluation-form modal"]'
+    );
     const pointsWeights = form.querySelectorAll(".points-or-weight");
     const weightedScale = e.target.value === "true";
 

@@ -34,6 +34,21 @@ RSpec.describe EvaluationForm do
       expect(evaluation_form).not_to be_valid
       expect(evaluation_form.errors[:closing_date]).to include("can't be blank")
     end
+
+    it 'validates the presence of a phase' do
+      phase = create(:phase)
+      evaluation_form = create(:evaluation_form, phase:)
+      expect(evaluation_form.phase).to eq(phase)
+    end
+
+    it 'requires a phase to be unique' do
+      phase = create(:phase)
+      create(:evaluation_form, phase:)
+
+      expect do
+        create(:evaluation_form, phase:)
+      end.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Phase has already been taken")
+    end
   end
 
   describe "scope" do

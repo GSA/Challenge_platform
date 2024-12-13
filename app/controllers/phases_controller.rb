@@ -14,6 +14,13 @@ class PhasesController < ApplicationController
       :evaluators,
       evaluator_submission_assignments: [:evaluation]
     ).order(:id)
+    @submissions_count = @submissions.count
+    not_started = @submissions.left_outer_joins(:evaluations).
+      where({ "evaluations.id" => nil }).count
+    in_progress = @submissions.joins(:evaluations).
+      select("submissions.id").where({ "evaluations.completed_at" => nil }).distinct.count
+    completed = @submissions_count - in_progress - not_started
+    @submissions_by_status = { not_started:, in_progress:, completed: }
   end
 
   private

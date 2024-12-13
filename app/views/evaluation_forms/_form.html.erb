@@ -1,4 +1,4 @@
-<%= form_with(model: evaluation_form, data: { controller: "evaluation-form" }) do |form| %>
+<%= form_with(model: evaluation_form, data: { controller: "evaluation-form modal" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: darkred">
       <h2><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
@@ -44,13 +44,15 @@
       </label>
       <div class="usa-hint">Choose the challenge this form will evaluate.</div>
       <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-        <select class="usa-select" required <%= if disabled then "disabled" end %> id="challenge-combo" title="challenge-combo" data-action="evaluation-form#handleChallengeSelect">
-          <% current_user.challenge_manager_challenges.includes(:phases).each do |challenge| %>
-            <% challenge.phases.each do |phase| %>
-              <option value="<%= "#{challenge.id}.#{phase.id}.#{phase.end_date.strftime("%m/%d/%Y")}" %>"><%= challenge_phase_title(challenge, phase) %></option>
-            <% end %>
-          <% end %>
-        </select>
+        <%= select_tag(
+          'challenge-combo',
+          options_for_select(options_for_available_phases(@available_phases)),
+          class: 'usa-select',
+          title: 'challenge-combo',
+          data: { action: 'evaluation-form#handleChallengeSelect' },
+          required: true,
+          disabled: disabled
+        ) %>
       </div>
       
       <%= inline_error(evaluation_form, :challenge_id) %>
@@ -99,7 +101,7 @@
                 name="evaluation_form[weighted_scoring]"
                 value="false"
                 data-action="click->evaluation-form#updateMaxPoints"
-                <%= 'checked' if !evaluation_form.weighted_scoring? && evaluation_form.persisted? %>
+                <%= 'checked' if evaluation_form.weighted_scoring == false && evaluation_form.persisted? %>
                 <%= 'disabled' if disabled %>
                 required
               >
@@ -113,7 +115,7 @@
                 name="evaluation_form[weighted_scoring]"
                 value="true"
                 data-action="click->evaluation-form#updateMaxPoints"
-                <%= 'checked' if evaluation_form.weighted_scoring? %>
+                <%= 'checked' if evaluation_form.weighted_scoring == true %>
                 <%= 'disabled' if disabled %>
               >
               <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weighted Scale (%)</label>
@@ -198,7 +200,25 @@
       Save
     </button>
     <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
-      <%= link_to "Cancel", evaluation_forms_path %>
-    </div>  
+      <%= link_to "Cancel", "#", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
+    </div>
   </div>
+
+  <%= render "modals/confirmation", 
+    id: "cancel",
+    heading: "Are you sure you want to cancel?",
+    description: "Your evaluation form will not be saved and any entered information will be lost.",
+    confirm_text: "Yes",
+    cancel_text: "Close",
+    confirm_redirect: evaluation_forms_path
+  %>
+
+  <%= render "modals/confirmation", 
+    id: "remove-criteria",
+    heading: "Are you sure you want to remove this criteria?",
+    description: "",
+    confirm_text: "Yes",
+    cancel_text: "No",
+    confirm_action: "evaluation-criteria#removeCriteria"
+  %>
 <% end %>

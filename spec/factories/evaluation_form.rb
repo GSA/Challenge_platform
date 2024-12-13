@@ -23,7 +23,11 @@ FactoryBot.define do
     # Assures proper points sum of 100 when weighted_scoring = 100
     # Skips initial validation on eval form create because of dependency
     before(:create) do
-      EvaluationForm.skip_callback(:validate, :before, :criteria_weights_must_sum_to_one_hundred)
+      if EvaluationForm._validate_callbacks.any? do |cb|
+        cb.kind == :before && cb.filter == :criteria_weights_must_sum_to_one_hundred
+      end
+        EvaluationForm.skip_callback(:validate, :before, :criteria_weights_must_sum_to_one_hundred)
+      end
     end
 
     after(:build) do |evaluation_form|
@@ -52,6 +56,7 @@ FactoryBot.define do
       else
         create_list(:evaluation_criterion, num_criteria, evaluation_form:)
       end
+
       evaluation_form.reload
     ensure
       EvaluationForm.set_callback(:validate, :before, :criteria_weights_must_sum_to_one_hundred)
