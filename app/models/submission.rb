@@ -76,9 +76,7 @@ class Submission < ApplicationRecord
   end
 
   def advancement_checkbox_disabled?
-    !eligible_for_evaluation? ||
-    !all_evaluations_completed? ||
-    evaluators.empty?
+    !eligible_for_evaluation? || !all_evaluations_completed? || evaluators.empty?
   end
 
   private

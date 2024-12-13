@@ -12,7 +12,7 @@ module EvaluationsHelper
       return Score.new(0, "0", "N/A")
     end
 
-    Score.new(score, score.to_s, score)
+    Score.new(score, score.to_s, score.to_s)
   end
 
   def average_score(submission)
@@ -24,6 +24,6 @@ module EvaluationsHelper
 
     avg = completed_evaluations.average(:total_score)
     score = avg ? avg.round : 0
-    Score.new(score, "#{score}", "#{score}")
+    Score.new(score, score.to_s, score.to_s)
   end
 end
