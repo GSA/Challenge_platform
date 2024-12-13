@@ -32,12 +32,12 @@ class PhasesController < ApplicationController
 
   def include_evaluator_associations
     return unless request.format.html? && @submissions.any?
-    return unless has_evaluator_assignments?
+    return unless evaluator_assignments?
 
     @submissions = @submissions.includes(:evaluators, evaluator_submission_assignments: :evaluation)
   end
 
-  def has_evaluator_assignments?
-    EvaluatorSubmissionAssignment.where(submission_id: @submissions.select(:id)).exists?
+  def evaluator_assignments?
+    EvaluatorSubmissionAssignment.exists?(submission_id: @submissions.select(:id))
   end
 end
