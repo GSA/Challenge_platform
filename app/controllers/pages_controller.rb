@@ -10,13 +10,13 @@ class PagesController < ApplicationController
   # and these constants will need to be updated. The will be similar to the commented out versions
   DOMAIN = "federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"
   HOST = "https://federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"
-  BASE_URL = "/preview/gsa/challenges-and-prizes/eval-dev/"
+  BASE_URL = "/preview/gsa/challenges-and-prizes/eval-dev"
   # DOMAIN = "content.challenge.gov".freeze
   # HOST = "https://content.challenge.gov".freeze
   # BASE_URL = "/".freeze
 
   def index
-    path = "#{BASE_URL}#{params[:path]}/"
+    path = "#{BASE_URL}/#{params[:path]}/"
     reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
       config.on_missing do |_code, _response|
         redirect_to "/dashboard"
@@ -31,17 +31,17 @@ class PagesController < ApplicationController
 
   def assets
     if params[:ext] == "min"
-      path = "#{HOST}#{BASE_URL}assets/#{params[:path]}.#{params[:ext]}.js"
+      path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}.js"
       response = Faraday.get(path)
       send_data(response.body, type: 'application/javascript')
     else
-      path = "#{BASE_URL}assets/#{params[:path]}.#{params[:ext]}"
+      path = "#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}"
       reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN })
     end
   end
 
   def root
-    path = BASE_URL
+    path = "#{BASE_URL}/"
     reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
       config.on_response do |_code, response|
         if response.body.present?
@@ -56,7 +56,7 @@ class PagesController < ApplicationController
   def rewrite_links(html)
     parsed_html = html.gsub(HOST, "/")
     if BASE_URL.length > 1
-      parsed_html = parsed_html.gsub(BASE_URL, "/")
+      parsed_html = parsed_html.gsub(BASE_URL, "")
     end
     # rubocop:disable Rails/OutputSafety
     parsed_html.html_safe
