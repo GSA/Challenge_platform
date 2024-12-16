@@ -25,7 +25,7 @@ describe "A11y", :js do
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('selected')
 
-      find('#selected-to-advance').click
+      find_by_id('selected-to-advance').click
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('winner')
     end
