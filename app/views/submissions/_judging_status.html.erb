@@ -27,8 +27,8 @@
             type="checkbox"
             name="submission[judging_status]"
             value="winner"
-            <%= unless @submission.judging_status.in?(["selected", "winner"]) then "disabled" end %>
-            <%= if @submission.judging_status == "winner" then "checked" end %>
+            <%= "disabled" unless @submission.judging_status.in?(["selected", "winner"]) %>
+            <%= "checked" if @submission.judging_status == "winner" %>
             data-action="change->submission-details#winnerSubmit"
             />
             <label class="usa-checkbox__label" for="judging-status-winner"
