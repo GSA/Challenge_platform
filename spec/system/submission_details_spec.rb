@@ -21,7 +21,7 @@ describe "A11y", :js do
     it "allows manipulation of judging status" do
       visit submission_path(submission)
 
-      find('#eligible-for-evaluation').click
+      find_by_id('eligible-for-evaluation').click
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('selected')
 
