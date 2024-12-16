@@ -14,7 +14,7 @@ describe "A11y", :js do
     it "submission details page is accessible" do
       visit submission_path(submission)
       expect(user.role).to eq("challenge_manager")
-      expect(page).to have_content(submission.id)
+      expect(page).to have_css('h1', text: "Submission ID #{submission.id}")
       expect(page).to(be_axe_clean)
     end
 
