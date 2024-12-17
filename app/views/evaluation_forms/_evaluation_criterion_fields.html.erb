@@ -2,7 +2,7 @@
   <button
     type="button"
     class="usa-accordion__button display-flex flex-justify icon-white"
-    aria-expanded="<%= f.object.errors.any? ? true : false %>"
+    aria-expanded="<%= !f.object.persisted? && (f.object.errors.any? || !@evaluation_form.errors.any?) %>"
     aria-controls="<%= criteria_field_id(f, "accordion", is_template) %>"
     data-evaluation-criteria-target="accordionButton"
     data-action="click->evaluation-criteria#validateInputs"

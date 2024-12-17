@@ -40,37 +40,40 @@ class EvaluationForm < ApplicationRecord
   private
 
   def validate_unique_criteria_titles
-    current_criteria = evaluation_criteria.reject(&:marked_for_destruction?)
-
-    titles = current_criteria.map(&:title)
-    duplicate_titles = titles.select { |title| titles.count(title) > 1 }.uniq
-
-    return if duplicate_titles.empty?
-
-    duplicate_titles.each do |duplicate_title|
-      current_criteria.each do |criterion|
-        if criterion.title == duplicate_title
-          criterion.errors.add(:title, I18n.t("evaluation_criteria.duplicate_title_error"))
-        end
+    duplicate_titles = find_duplicate_titles
+  
+    add_criteria_title_errors(duplicate_titles) unless duplicate_titles.empty?
+  end
+  
+  def find_duplicate_titles
+    current_criteria_titles = evaluation_criteria.reject(&:marked_for_destruction?).map(&:title)
+    current_criteria_titles.select { |title| current_criteria_titles.count(title) > 1 }.uniq
+  end
+  
+  def add_criteria_title_errors(duplicate_titles)
+    evaluation_criteria.reject(&:marked_for_destruction?).each do |criterion|
+      if duplicate_titles.include?(criterion.title)
+        criterion.errors.add(:title, I18n.t("evaluation_criteria.duplicate_title_error"))
       end
     end
-
     errors.add(:base, I18n.t("evaluation_criterion_unique_title_in_form_error"))
   end
 
   def criteria_weights_must_sum_to_one_hundred
-    current_criteria = evaluation_criteria.reject(&:marked_for_destruction?)
-
-    total_weight = current_criteria.sum do |criteria|
-      criteria.points_or_weight.to_i
-    end
-
-    return unless weighted_scoring? && total_weight != 100
-
-    current_criteria.each_with_index do |criteria, _index|
+    return unless weighted_scoring? && total_criteria_weight != 100
+  
+    add_weight_errors
+  end
+  
+  def total_criteria_weight
+    evaluation_criteria.reject(&:marked_for_destruction?).sum { |criteria| criteria.points_or_weight.to_i }
+  end
+  
+  def add_weight_errors
+    evaluation_criteria.reject(&:marked_for_destruction?).each do |criteria|
       criteria.errors.add("points_or_weight", I18n.t("evaluation_criteria.must_sum_to_100_error"))
     end
-
     errors.add(:base, I18n.t("evaluation_form_criteria_weight_total_error"))
   end
+  
 end

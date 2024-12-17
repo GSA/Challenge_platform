@@ -60,8 +60,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       fill_in_full_form
 
-      # Toggle one criterion accordion then check accessibility
-      toggle_criteria_accordion(0)
+      # Check accessibility with some collapsed criteria
       check_criteria_accordion_expanded(0, false)
       expect(page).to(be_axe_clean)
 
@@ -137,8 +136,10 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Starts with 3
       expect(visible_criterion_indicies.length).to eq(3)
+      toggle_criteria_accordion(0)
       remove_criterion(0)
       expect(visible_criterion_indicies.length).to eq(2)
+      toggle_criteria_accordion(1)
       remove_criterion(1)
       expect(visible_criterion_indicies.length).to eq(1)
 
@@ -327,13 +328,13 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       num_criteria = evaluation_form.evaluation_criteria.length
 
-      # Make sure criteria are expanded so they can be edited if needed
-      toggle_all_criteria_accordions
-
       # Create 3 new criteria of each type
       fill_in_numeric_criteria_type
       fill_in_rating_criteria_type
       fill_in_binary_criteria_type
+
+      # Make sure criteria are expanded so they can be edited if needed
+      toggle_all_criteria_accordions
 
       rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
