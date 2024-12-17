@@ -103,7 +103,7 @@
 
       <div class="usa-form-group">
         <fieldset class="usa-fieldset margin-top-205">
-          <legend class="usa-legend usa-process-list__heading display-flex flex-align-center font-sans-md text-bold <%= label_error_class(form, :weighted_scoring) %>">
+          <legend class="usa-legend usa-process-list__heading display-flex flex-align-center font-sans-md text-bold <%= label_error_class(form, :scale_type) %>">
             <span class="margin-right-05">Scale Type</span>
             <span class="margin-right-05" style="color: darkred;">*</span>
             <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for scale type' %>
@@ -115,11 +115,11 @@
                 class="usa-radio__input"
                 id="point_scale"
                 type="radio"
-                name="evaluation_form[weighted_scoring]"
-                value="false"
+                name="evaluation_form[scale_type]"
+                value="point"
                 data-action="click->evaluation-form#updateMaxPoints evaluation-form#validatePresence"
-                data-field-name="evaluation_form_weighted_scoring"
-                <%= 'checked' if evaluation_form.weighted_scoring == false %>
+                data-field-name="evaluation_form_scale_type"
+                <%= 'checked' if evaluation_form.point_scoring? %>
                 <%= 'disabled' if disabled %>
               >
               <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
@@ -129,11 +129,11 @@
                 class="usa-radio__input"
                 id="weighted_scale"
                 type="radio"
-                name="evaluation_form[weighted_scoring]"
-                value="true"
+                name="evaluation_form[scale_type]"
+                value="weight"
                 data-action="click->evaluation-form#updateMaxPoints evaluation-form#validatePresence"
-                data-field-name="evaluation_form_weighted_scoring"
-                <%= 'checked' if evaluation_form.weighted_scoring == true %>
+                data-field-name="evaluation_form_scale_type"
+                <%= 'checked' if evaluation_form.weighted_scoring? %>
                 <%= 'disabled' if disabled %>
               >
               <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weighted Scale (%)</label>
@@ -141,7 +141,7 @@
           </div>
 
           <div class="margin-top-1">
-            <%= inline_error(form, :weighted_scoring) %>
+            <%= inline_error(form, :scale_type) %>
           </div>
         </fieldset>
       </div>

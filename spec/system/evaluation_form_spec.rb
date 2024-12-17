@@ -194,12 +194,14 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       select_scale_type("weighted")
 
+      save_form
+
       check_criteria_accordion_expanded(0, true)
       check_criteria_accordion_expanded(1, true)
       check_criteria_accordion_expanded(2, true)
 
       # Scale type should be weighted
-      expect_form_scale_type_to_equal(true)
+      expect_form_scale_type_to_equal("weight")
     end
 
     it "does nothing if switching to weighted scale with no value over 100" do
@@ -225,7 +227,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       check_criteria_accordion_expanded(1, false)
 
       # Scale type should be weighted
-      expect_form_scale_type_to_equal(true)
+      expect_form_scale_type_to_equal("weight")
       expect_criterion_points_or_weight_to_equal(0, 10)
       expect_criterion_points_or_weight_to_equal(1, 100)
     end
@@ -236,7 +238,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       create(:challenge, user:, is_multi_phase: true)
     end
     let(:evaluation_form) do
-      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, scale_type: "weight")
     end
 
     before do
@@ -381,7 +383,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   describe "evaluation form confirmation page" do
     let(:evaluation_form) do
       challenge = create(:challenge, user:, is_multi_phase: true)
-      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, scale_type: "weight")
     end
 
     before do
@@ -667,7 +669,7 @@ def expect_base_form_field_to_match(evaluation_form)
   expect_form_phase_to_equal(challenge_phase_title(phase.challenge, phase))
   expect_form_instructions_to_equal(evaluation_form.instructions)
   expect_form_comments_required_to_equal(evaluation_form.comments_required)
-  expect_form_scale_type_to_equal(evaluation_form.weighted_scoring?)
+  expect_form_scale_type_to_equal(evaluation_form.scale_type)
   expect_form_end_date_to_equal(evaluation_form.closing_date.strftime("%m/%d/%Y"))
 end
 
@@ -739,9 +741,8 @@ def expect_form_comments_required_to_equal(value)
   expect(find_by_id('evaluation_form_comments_required', visible: :all).checked?).to eq(value)
 end
 
-# value = false for point scale, true for weighted scale
 def expect_form_scale_type_to_equal(value)
-  expect(find("input[name='evaluation_form[weighted_scoring]'][value='#{value}']", visible: :all)).to be_checked
+  expect(find("input[name='evaluation_form[scale_type]'][value='#{value}']", visible: :all)).to be_checked
 end
 
 def expect_form_end_date_to_equal(value)

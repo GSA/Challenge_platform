@@ -101,7 +101,7 @@ class EvaluationFormsController < ApplicationController
   def evaluation_form_params
     permitted = params.require(:evaluation_form).
       permit(:title, :instructions, :phase_id, :status, :comments_required,
-             :weighted_scoring, :publication_date, :closing_date, :challenge_id,
+             :scale_type, :publication_date, :closing_date, :challenge_id,
              evaluation_criteria_attributes: [
                :id, :title, :description, :points_or_weight, :scoring_type,
                :option_range_start, :option_range_end, :_destroy,

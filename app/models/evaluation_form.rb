@@ -8,7 +8,7 @@
 #  title             :string           not null
 #  instructions      :string           not null
 #  comments_required :boolean          default(FALSE)
-#  weighted_scoring  :boolean          default(FALSE)
+#  scale_type        :string           not null
 #  closing_date      :date             not null
 #  challenge_id      :bigint           not null
 #  created_at        :datetime         not null
@@ -23,6 +23,8 @@ class EvaluationForm < ApplicationRecord
   }, class_name: 'EvaluationCriterion', dependent: :destroy, inverse_of: :evaluation_form
   accepts_nested_attributes_for :evaluation_criteria, allow_destroy: true
 
+  enum :scale_type, { point: "point", weight: "weight" }, type: "string"
+
   scope :by_user, lambda { |user|
     joins(challenge: :challenge_manager_users).
       where(challenge_manager_users: { id: user.id })
@@ -30,12 +32,21 @@ class EvaluationForm < ApplicationRecord
 
   validates :title, presence: true, length: { maximum: 150 }
   validates :instructions, presence: true
+  validates :scale_type, presence: true
   validates :closing_date, presence: true
 
   validates :phase_id, uniqueness: true
 
   validate :criteria_weights_must_sum_to_one_hundred
   validate :validate_unique_criteria_titles
+
+  def weighted_scoring?
+    scale_type == "weight"
+  end
+
+  def point_scoring?
+    scale_type == "point"
+  end
 
   private
 
