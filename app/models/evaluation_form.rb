@@ -41,15 +41,15 @@ class EvaluationForm < ApplicationRecord
 
   def validate_unique_criteria_titles
     duplicate_titles = find_duplicate_titles
-  
+
     add_criteria_title_errors(duplicate_titles) unless duplicate_titles.empty?
   end
-  
+
   def find_duplicate_titles
     current_criteria_titles = evaluation_criteria.reject(&:marked_for_destruction?).map(&:title)
     current_criteria_titles.select { |title| current_criteria_titles.count(title) > 1 }.uniq
   end
-  
+
   def add_criteria_title_errors(duplicate_titles)
     evaluation_criteria.reject(&:marked_for_destruction?).each do |criterion|
       if duplicate_titles.include?(criterion.title)
@@ -61,19 +61,18 @@ class EvaluationForm < ApplicationRecord
 
   def criteria_weights_must_sum_to_one_hundred
     return unless weighted_scoring? && total_criteria_weight != 100
-  
+
     add_weight_errors
   end
-  
+
   def total_criteria_weight
     evaluation_criteria.reject(&:marked_for_destruction?).sum { |criteria| criteria.points_or_weight.to_i }
   end
-  
+
   def add_weight_errors
     evaluation_criteria.reject(&:marked_for_destruction?).each do |criteria|
       criteria.errors.add("points_or_weight", I18n.t("evaluation_criteria.must_sum_to_100_error"))
     end
     errors.add(:base, I18n.t("evaluation_form_criteria_weight_total_error"))
   end
-  
 end
