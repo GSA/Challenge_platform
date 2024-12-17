@@ -36,6 +36,9 @@ en:
   login_error: "There was an issue with logging in. Please try again."
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
+  evaluation_form: 
+    phase:
+      presence_error: "can't be blank"
   evaluation_criteria:
     duplicate_title_error: "must be unique within criteria"
     must_sum_to_100_error: "must sum to 100 with other criteria"

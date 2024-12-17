@@ -17,7 +17,7 @@
 #
 class EvaluationForm < ApplicationRecord
   belongs_to :challenge
-  belongs_to :phase
+  belongs_to :phase, optional: true # Disables default must exist error message
   has_many :evaluation_criteria, lambda {
     order(:created_at)
   }, class_name: 'EvaluationCriterion', dependent: :destroy, inverse_of: :evaluation_form
@@ -35,6 +35,8 @@ class EvaluationForm < ApplicationRecord
   validates :scale_type, presence: true
   validates :closing_date, presence: true
 
+  # Adds custom error message for phase presence failure instead of default from above
+  validates :phase, presence: { message: I18n.t("evaluation_form.phase.presence_error") }
   validates :phase_id, uniqueness: true
 
   validate :criteria_weights_must_sum_to_one_hundred
