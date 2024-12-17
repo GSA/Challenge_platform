@@ -7,13 +7,9 @@ class PagesController < ApplicationController
   protect_from_forgery except: :assets
 
   # TODO: When launched, the cloud.gov pages need to move off the www.challenge.gov domain
-  # and these constants will need to be updated. The will be similar to the commented out versions
-  DOMAIN = "federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"
-  HOST = "https://federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"
-  BASE_URL = "/preview/gsa/challenges-and-prizes/eval-dev"
-  # DOMAIN = "content.challenge.gov".freeze
-  # HOST = "https://content.challenge.gov".freeze
-  # BASE_URL = "/".freeze
+  DOMAIN = Rails.configuration.static_site_interop.fetch(:domain)
+  HOST = Rails.configuration.static_site_interop.fetch(:host)
+  BASE_URL = Rails.configuration.static_site_interop.fetch(:base_url)
 
   def index
     path = "#{BASE_URL}/#{params[:path]}/"
@@ -58,6 +54,9 @@ class PagesController < ApplicationController
     if BASE_URL.length > 1
       parsed_html = parsed_html.gsub(BASE_URL, "")
     end
+    # delete the data-public-url attribute from the react app element to send requests through rails proxy
+    parsed_html = parsed_html.sub(/(<div id="challenge-gov-react-app".+)(data-public-url=[^ ]+)/, '\1')
+
     # rubocop:disable Rails/OutputSafety
     parsed_html.html_safe
     # rubocop:enable Rails/OutputSafety
