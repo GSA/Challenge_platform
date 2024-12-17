@@ -171,7 +171,7 @@ export default class extends Controller {
       .querySelectorAll(".criteria-option-label-row")
       .forEach((labelRow, index) => {
         labelRow.style.display =
-          index >= start && index <= end ? "flex" : "none";
+          index >= start && index <= end ? "block" : "none";
         const input = labelRow.querySelector("input");
         input.disabled = index < start || index > end;
       });

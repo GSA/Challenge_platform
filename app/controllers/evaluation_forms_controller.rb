@@ -2,6 +2,8 @@
 
 # Controller for evaluation forms CRUD actions.
 class EvaluationFormsController < ApplicationController
+  helper FormHelper
+
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_evaluation_form, only: %i[show edit update destroy]
   before_action :set_evaluation_forms, only: %i[index]

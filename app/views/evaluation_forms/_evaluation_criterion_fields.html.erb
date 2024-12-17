@@ -18,100 +18,113 @@
   <% end %>
 
   <div class="usa-form-group margin-top-0">
-    <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template), class: "text-bold" %>
-    <span style="color: darkred;">*</span>
-    <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
+    <div class="display-flex flex-align-center text-bold">
+      <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template), class: "margin-right-05 #{label_error_class(f, :title)}" %>
+      <span class="margin-right-05" style="color: darkred;">*</span>
+      <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
+    </div>
 
     <%= f.text_field :title, 
       id: criteria_field_id(f, "title", is_template),
       name: criteria_field_name(f, "title", is_template),
-      class: "usa-input", 
-      placeholder: "Add criteria title here", 
+      class: "usa-input #{input_error_class(f, :title)}",
       maxlength: 150,
-      required: true, 
       disabled: is_template || form_disabled,
-      data: {"evaluation-criteria-target": "titleField"}
+      data: {
+        "evaluation-criteria-target": "titleField",
+        "action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"
+        }
     %>
+
+    <%= inline_error(f, :title) %>
   </div>
 
-  <div class="usa-character-count">
-    <div class="usa-form-group">
-      <%= f.label :description, "Criteria description", for: criteria_field_id(f, "description", is_template), class: "text-bold" %>
-      <span style="color: darkred;">*</span>
-      <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
+  <div class="usa-form-group">
+    <div class="usa-character-count">
+      <div class="display-flex flex-align-center text-bold">
+        <%= f.label :description, "Criteria description", for: criteria_field_id(f, "description", is_template), class: "margin-right-05 #{label_error_class(f, :description)}" %>
+        <span class="margin-right-05" style="color: darkred;">*</span>
+        <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
+      </div>
 
       <%= f.text_area :description, 
         id: criteria_field_id(f, "description", is_template),
         name: criteria_field_name(f, "description", is_template),
-        class: "usa-textarea usa-character-count__field", 
-        placeholder: "Add criteria description here", 
+        class: "usa-textarea usa-character-count__field #{input_error_class(f, :description)}",
         maxlength: 1000,
-        required: true, 
         disabled: is_template || form_disabled,
-        data: {"evaluation-criteria-target": "descriptionField"}
+        data: {
+          "evaluation-criteria-target": "descriptionField",
+          "action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"
+        }
       %>
+      <span class="usa-character-count__message">You can enter up to 1000 characters</span>
     </div>
-    <span class="usa-character-count__message">You can enter up to 1000 characters</span>
-  </div>
 
-  <div class="usa-form-group display-flex flex-align-center">
-    <%= f.number_field :points_or_weight, 
-      id: criteria_field_id(f, "points_or_weight", is_template),
-      name: criteria_field_name(f, "points_or_weight", is_template),
-      class: "points-or-weight usa-input flex-1 margin-top-0 margin-right-2 font-sans-lg",
-      min: 1, 
-      max: f.object.evaluation_form&.weighted_scoring? ? 100 : 9999,
-      step: 1, 
-      placeholder: "Add criteria points/weight here",
-      required: true, 
-      disabled: is_template || form_disabled,
-      data: { 
-        "evaluation-criteria-target": "pointsOrWeightField",
-        action: "input->evaluation-criteria#checkPointsOrWeightMax blur->evaluation-criteria#checkPointsOrWeightMax"
-      }
-    %>
-
-    <div class="flex-7 font-sans-lg">
-      <%= f.label :points_or_weight, "Criteria Points/Weight", 
-        for: criteria_field_id(f, "points_or_weight", is_template),
-        class: "text-bold"
-      %>
-
-      <span style="color: darkred;">*</span>
-      
-      <%= image_tag "images/usa-icons/help_outline.svg", 
-        width: 16, height: 16, alt: "Help for criteria title", 
-        class: "flex-0" 
-      %>
-    </div>
+    <%= inline_error(f, :description) %>
   </div>
 
   <div class="usa-form-group">
-    <%= f.label :scoring_type, "Scoring Type", for: criteria_field_id(f, "scoring_type", is_template), class: "font-sans-lg text-bold" %>
-    <span style="color: darkred;">*</span>
-    <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
-
-    <% scoring_types = { "numeric" => "Numeric score / points", "rating" => "Rating scale", "binary" => "Binary scale" } %>
-    <div>
-      <% scoring_types.each_with_index do |(value, label), index| %>
-        <div class="usa-radio">
-          <%= f.radio_button :scoring_type, value, 
-              id: criteria_field_id(f, "scoring_type_#{value}", is_template), 
-              name: criteria_field_name(f, :scoring_type, is_template),
-              class: "usa-radio__input scoring-type-radio",
-              checked: f.object.scoring_type == value,
-              required: index == 0,
-              disabled: is_template || form_disabled,
-              data: {
-                "evaluation-criteria-target": "scoringTypeRadio",
-                action: "click->evaluation-criteria#toggleScoringType"
-              }
-          %>
-
-          <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label, class: "usa-radio__label" %>
-        </div>
-      <% end %>
+    <div class="display-flex flex-align-center text-bold">
+      <%= f.label :points_or_weight, "Criteria Points/Weight", for: criteria_field_id(f, "points_or_weight", is_template), class: "margin-right-05 #{label_error_class(f, :points_or_weight)}" %>
+      <span class="margin-right-05" style="color: darkred;">*</span>
+      <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
     </div>
+
+    <%= f.number_field :points_or_weight, 
+      id: criteria_field_id(f, "points_or_weight", is_template),
+      name: criteria_field_name(f, "points_or_weight", is_template),
+      class: "points-or-weight usa-input #{input_error_class(f, :points_or_weight)}",
+      min: 1, 
+      max: f.object.evaluation_form&.weighted_scoring? ? 100 : 9999,
+      step: 1, 
+      disabled: is_template || form_disabled,
+      data: { 
+        "evaluation-criteria-target": "pointsOrWeightField",
+        action: "
+          input->evaluation-criteria#checkPointsOrWeightMax blur->evaluation-criteria#checkPointsOrWeightMax
+          evaluation-form#validatePresence focusout->evaluation-form#validatePresence
+        "
+      }
+    %>
+
+    <%= inline_error(f, :points_or_weight) %>
+  </div>
+
+  <div class="usa-form-group">
+    <fieldset class="usa-fieldset margin-top-205">
+      <legend class="usa-legend display-flex flex-align-center text-bold <%= label_error_class(f, :scoring_type) %>">
+        <span class="margin-right-05">Scoring type</span>
+        <span class="margin-right-05" style="color: darkred;">*</span>
+        <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
+      </legend>
+
+      <% scoring_types = { "numeric" => "Numeric score / points", "rating" => "Rating scale", "binary" => "Binary scale" } %>
+      <div>
+        <% scoring_types.each_with_index do |(value, label), index| %>
+          <div class="usa-radio">
+            <%= f.radio_button :scoring_type, value,
+                id: criteria_field_id(f, "scoring_type_#{value}", is_template),
+                name: criteria_field_name(f, :scoring_type, is_template),
+                class: "usa-radio__input scoring-type-radio",
+                checked: f.object.scoring_type == value,
+                disabled: is_template || form_disabled,
+                data: {
+                  "evaluation-criteria-target": "scoringTypeRadio",
+                  action: "click->evaluation-criteria#toggleScoringType evaluation-form#validatePresence",
+                  field_name: criteria_field_id(f, "scoring_type", is_template)
+                }
+            %>
+
+            <%= label_tag criteria_field_id(f, "scoring_type_#{value}", is_template), label, class: "usa-radio__label" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="margin-top-1">
+        <%= inline_error(f, :scoring_type) %>
+      </div>
+    </fieldset>
   </div>
 
   <div class="criteria-scale-options usa-form-group" style="<%= f.object.numeric? || !f.object.scoring_type.present? || is_template ? 'display: none;' : '' %>">
@@ -163,20 +176,26 @@
       <% (0..10).each do |index| %>
         <% disabledOptionLabel = is_template || !f.object.scoring_type.present? || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
 
-        <div class="<%= disabledOptionLabel ? 'display-none' : 'display-flex' %> flex-align-center flex-justify margin-top-2 criteria-option-label-row"
-          data-evaluation-criteria-target="optionLabelRow">
-          <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index, class: "font-sans-lg text-bold text-base margin-right-2" %>
+        <div class="<%= disabledOptionLabel ? 'display-none' : 'display' %> margin-top-2 criteria-option-label-row" data-evaluation-criteria-target="optionLabelRow">
+          <div class="display-flex flex-align-center flex-justify">
+            <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index, class: "font-sans-lg text-bold text-base margin-right-2 #{label_error_class(f, "option_labels_#{index}")}" %>
 
-          <%= f.text_field "option_labels", 
-            id: criteria_field_id(f, "option_labels", is_template) ++ "_#{index}",
-            name: criteria_field_name(f, "option_labels", is_template) ++ "[#{index}]",
-            class: "usa-input margin-0",
-            value: f.object.option_labels[index.to_s],
-            required: true, 
-            disabled: disabledOptionLabel || form_disabled,
-            data: {"evaluation-criteria-target": "optionLabelInput"}
-          %>
+            <%= f.text_field "option_labels",
+              id: criteria_field_id(f, "option_labels", is_template) ++ "_#{index}",
+              name: criteria_field_name(f, "option_labels", is_template) ++ "[#{index}]",
+              class: "usa-input margin-0 #{input_error_class(f, "option_labels_#{index}")}",
+              value: f.object.option_labels[index.to_s],
+              disabled: disabledOptionLabel || form_disabled,
+              data: {
+                "action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence",
+                "evaluation-criteria-target": "optionLabelInput"
+              }
+            %>
+          </div>
+
+          <%= inline_error(f, "option_labels_#{index}") %>
         </div>
+
       <% end %>
     </div>
   </div>

@@ -48,7 +48,9 @@ class EvaluationForm < ApplicationRecord
   end
 
   def criteria_weights_must_sum_to_one_hundred
-    total_weight = evaluation_criteria.reject(&:marked_for_destruction?).sum(&:points_or_weight)
+    total_weight = evaluation_criteria.reject(&:marked_for_destruction?).sum do |criteria|
+      criteria.points_or_weight.to_i
+    end
 
     return unless weighted_scoring? && total_weight != 100
 
