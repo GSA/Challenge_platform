@@ -15,7 +15,7 @@ module FormHelper
   def inline_error(form, field)
     object = form.object
     field_id = (form.object_name + "_#{field}_error").gsub(/[\[\]]/, "_").squeeze('_')
-    error = object.errors[field].present? ? object.errors[field].first : ""
+    error = object.errors[field].present? ? object.errors[field].join(", ") : ""
 
     tag.span(error, class: "text-secondary font-body-2xs", id: field_id)
   end
