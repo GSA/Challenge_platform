@@ -3,7 +3,7 @@
     <div style="color: darkred">
       <div class="usa-alert usa-alert--error" role="alert">
         <div class="usa-alert__body">
-          <h4 class="usa-alert__heading"><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h4>
+          <h2 class="usa-alert__heading"><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
           <ul>
             <% evaluation_form.errors.each do |error| %>
               <li><%= error.full_message %></li>
