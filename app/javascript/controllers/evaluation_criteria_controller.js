@@ -16,6 +16,9 @@ export default class extends Controller {
     this.replacePlaceholders(newCriteria);
     this.enableInputs(newCriteria);
 
+    this.collapseAllCriteria();
+    this.expandCriterion(newCriteria);
+
     this.criteriaListTarget.appendChild(newCriteria);
 
     this.updateCriteriaTitles();
@@ -38,6 +41,26 @@ export default class extends Controller {
     }
 
     this.updateCriteriaTitles();
+  }
+
+  collapseAllCriteria() {
+    const accordionButtons = this.element.querySelectorAll(
+      ".usa-accordion__button"
+    );
+    const accordions = this.element.querySelectorAll(".usa-accordion__content");
+
+    accordionButtons.forEach((button) =>
+      button.setAttribute("aria-expanded", false)
+    );
+    accordions.forEach((content) => content.setAttribute("hidden", ""));
+  }
+
+  expandCriterion(criterion) {
+    const accordionButton = criterion.querySelector(".usa-accordion__button");
+    const accordionContent = criterion.querySelector(".usa-accordion__content");
+
+    if (accordionButton) accordionButton.setAttribute("aria-expanded", true);
+    if (accordionContent) accordionContent.removeAttribute("hidden");
   }
 
   toggleScoringType(event) {
@@ -171,7 +194,7 @@ export default class extends Controller {
       .querySelectorAll(".criteria-option-label-row")
       .forEach((labelRow, index) => {
         labelRow.style.display =
-          index >= start && index <= end ? "flex" : "none";
+          index >= start && index <= end ? "block" : "none";
         const input = labelRow.querySelector("input");
         input.disabled = index < start || index > end;
       });

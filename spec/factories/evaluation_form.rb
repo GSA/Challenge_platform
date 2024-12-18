@@ -8,7 +8,7 @@ FactoryBot.define do
     title { "#{Faker::Lorem.word.humanize} Evaluation Form" }
     instructions { Faker::Lorem.sentence(word_count: 10) }
     comments_required { Faker::Boolean.boolean }
-    weighted_scoring { Faker::Boolean.boolean }
+    scale_type { [:point, :weight].sample }
 
     # Factory options
     trait :with_comments do
@@ -16,7 +16,11 @@ FactoryBot.define do
     end
 
     trait :weighted do
-      weighted_scoring { true }
+      scale_type { "weight" }
+    end
+
+    trait :pointed do
+      scale_type { "point" }
     end
 
     # Creates 1-10 evaluation_criterion
@@ -43,7 +47,7 @@ FactoryBot.define do
     after(:create) do |evaluation_form|
       num_criteria = rand(1..10)
 
-      if evaluation_form.weighted_scoring
+      if evaluation_form.weighted_scoring?
         weights = Array.new(num_criteria) { rand(1..100) }
         total_weight = weights.sum.to_f
         normalized_weights = weights.map { |w| (w / total_weight * 100).round }

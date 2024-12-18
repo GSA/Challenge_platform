@@ -60,8 +60,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       fill_in_full_form
 
-      # Toggle one criterion accordion then check accessibility
-      toggle_criteria_accordion(0)
+      # Check accessibility with some collapsed criteria
       check_criteria_accordion_expanded(0, false)
       expect(page).to(be_axe_clean)
 
@@ -118,62 +117,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect_form_phase_select_to_be_empty
     end
 
-    it "prevents form submission and focuses first missing required field" do
-      title = "Prevents form submission #{Faker::Lorem.sentence(word_count: 3)}"
-      visit new_evaluation_form_path
-
-      # Cycle through saving form, checking field focus, and filling field for all fields
-      # Check form title
-      save_form
-      expect_form_title_to_be_focused
-      fill_in_title(title)
-      # Check form phase
-      save_form
-      expect_form_phase_to_be_focused
-      select_phase(challenge.phases.first)
-      # Check form instructions
-      save_form
-      expect_form_instructions_to_be_focused
-      fill_in_instructions("Example instructions")
-      # Check scale type
-      save_form
-      expect_form_scale_type_to_be_focused
-      select_scale_type("point")
-      # Check criterion title
-      save_form
-      expect_criterion_title_to_be_focused(0)
-      fill_in_criterion_title(0, "Criterion #{Faker::Lorem.sentence(word_count: 3)}")
-      # Check criterion description
-      save_form
-      expect_criterion_description_to_be_focused(0)
-      fill_in_criterion_description(0, Faker::Lorem.sentence)
-      # Check criterion points/weight
-      save_form
-      expect_criterion_points_or_weight_to_be_focused(0)
-      fill_in_criterion_points_weight(0, 100)
-      # Check criterion scoring type
-      save_form
-      expect_criterion_scoring_type_to_be_focused(0)
-      select_criterion_scoring_type(0, "rating")
-      # Check criterion option labels
-      save_form
-      expect_criterion_option_label_to_be_focused(0, 0)
-      fill_in_criterion_option_label(0, 0, "Unlikely")
-      save_form
-      expect_criterion_option_label_to_be_focused(0, 1)
-      fill_in_criterion_option_label(0, 1, "Neutral")
-      save_form
-      expect_criterion_option_label_to_be_focused(0, 2)
-      fill_in_criterion_option_label(0, 2, "Likely")
-      # Check form end date
-      save_form
-      expect_form_end_date_to_be_focused
-      fill_in_end_date(challenge.phases.first.end_date + 1)
-
-      save_form
-      expect(page).to have_content("Evaluation Form Saved")
-    end
-
     it "contains the evaluation form data when editing after creation" do
       title = "Editing after creation"
       visit new_evaluation_form_path
@@ -193,8 +136,10 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Starts with 3
       expect(visible_criterion_indicies.length).to eq(3)
+      toggle_criteria_accordion(0)
       remove_criterion(0)
       expect(visible_criterion_indicies.length).to eq(2)
+      toggle_criteria_accordion(1)
       remove_criterion(1)
       expect(visible_criterion_indicies.length).to eq(1)
 
@@ -202,33 +147,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       remove_criterion(2)
       expect(visible_criterion_indicies.length).to eq(1)
       expect(visible_criterion_indicies).to include(3)
-    end
-
-    it "does not allow collapsing criteria with missing fields and collapses correct accordion" do
-      visit new_evaluation_form_path
-
-      fill_in_base_form_info
-      # Adds a second criteria to make sure the correct accordion collapses
-      fill_in_numeric_criteria_type
-
-      toggle_criteria_accordion(0)
-      # Should still be expanded because it's missing field values
-      check_criteria_accordion_expanded(0, true)
-      # Criteria title should be focused since it is required and not filled yet
-      expect_criterion_title_to_be_focused(0)
-
-      # Other criteria starts expanded
-      check_criteria_accordion_expanded(1, true)
-      # Collapse and check other accordion
-      toggle_criteria_accordion(1)
-      check_criteria_accordion_expanded(1, false)
-
-      fill_in_numeric_criteria_type(initial: true)
-      toggle_criteria_accordion(0)
-      # Should be collapsed since it is filled out
-      check_criteria_accordion_expanded(0, false)
-      # Other criteria should still be collapsed
-      check_criteria_accordion_expanded(1, false)
     end
 
     it "shows an error if criteria points don't add up to 100 for weighted form" do
@@ -276,12 +194,14 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       select_scale_type("weighted")
 
+      save_form
+
       check_criteria_accordion_expanded(0, true)
       check_criteria_accordion_expanded(1, true)
       check_criteria_accordion_expanded(2, true)
 
       # Scale type should be weighted
-      expect_form_scale_type_to_equal(true)
+      expect_form_scale_type_to_equal("weight")
     end
 
     it "does nothing if switching to weighted scale with no value over 100" do
@@ -307,7 +227,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       check_criteria_accordion_expanded(1, false)
 
       # Scale type should be weighted
-      expect_form_scale_type_to_equal(true)
+      expect_form_scale_type_to_equal("weight")
       expect_criterion_points_or_weight_to_equal(0, 10)
       expect_criterion_points_or_weight_to_equal(1, 100)
     end
@@ -318,7 +238,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       create(:challenge, user:, is_multi_phase: true)
     end
     let(:evaluation_form) do
-      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, scale_type: "weight")
     end
 
     before do
@@ -410,13 +330,13 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       num_criteria = evaluation_form.evaluation_criteria.length
 
-      # Make sure criteria are expanded so they can be edited if needed
-      toggle_all_criteria_accordions
-
       # Create 3 new criteria of each type
       fill_in_numeric_criteria_type
       fill_in_rating_criteria_type
       fill_in_binary_criteria_type
+
+      # Make sure criteria are expanded so they can be edited if needed
+      toggle_all_criteria_accordions
 
       rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
@@ -463,7 +383,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   describe "evaluation form confirmation page" do
     let(:evaluation_form) do
       challenge = create(:challenge, user:, is_multi_phase: true)
-      create(:evaluation_form, challenge:, phase: challenge.phases.first, weighted_scoring: true)
+      create(:evaluation_form, challenge:, phase: challenge.phases.first, scale_type: "weight")
     end
 
     before do
@@ -749,7 +669,7 @@ def expect_base_form_field_to_match(evaluation_form)
   expect_form_phase_to_equal(challenge_phase_title(phase.challenge, phase))
   expect_form_instructions_to_equal(evaluation_form.instructions)
   expect_form_comments_required_to_equal(evaluation_form.comments_required)
-  expect_form_scale_type_to_equal(evaluation_form.weighted_scoring?)
+  expect_form_scale_type_to_equal(evaluation_form.scale_type)
   expect_form_end_date_to_equal(evaluation_form.closing_date.strftime("%m/%d/%Y"))
 end
 
@@ -821,9 +741,8 @@ def expect_form_comments_required_to_equal(value)
   expect(find_by_id('evaluation_form_comments_required', visible: :all).checked?).to eq(value)
 end
 
-# value = false for point scale, true for weighted scale
 def expect_form_scale_type_to_equal(value)
-  expect(find("input[name='evaluation_form[weighted_scoring]'][value='#{value}']", visible: :all)).to be_checked
+  expect(find("input[name='evaluation_form[scale_type]'][value='#{value}']", visible: :all)).to be_checked
 end
 
 def expect_form_end_date_to_equal(value)

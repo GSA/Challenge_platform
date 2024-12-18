@@ -37,4 +37,19 @@ class EvaluationCriterion < ApplicationRecord
   validates :title, length: { maximum: 150 }
   validates :description, length: { maximum: 1000 }
   validates :points_or_weight, numericality: { only_integer: true }
+  validates :scoring_type, presence: true
+
+  validate :validate_option_labels_not_blank, if: -> { rating? || binary? }
+
+  private
+
+  def validate_option_labels_not_blank
+    return unless option_labels.is_a?(Hash)
+
+    option_labels.each do |key, value|
+      if value.blank?
+        errors.add("option_labels_#{key}", "can't be blank")
+      end
+    end
+  end
 end
