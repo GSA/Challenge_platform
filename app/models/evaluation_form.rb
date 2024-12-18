@@ -66,10 +66,10 @@ class EvaluationForm < ApplicationRecord
   def add_criteria_title_errors(duplicate_titles)
     criteria = evaluation_criteria.
       reject(&:marked_for_destruction?).
-      select{|c| duplicate_titles.include?(c.title)}.
-      reject{|c| c.errors.added?(:title, I18n.t("evaluation_criteria.duplicate_title_error"))}
+      select { |c| duplicate_titles.include?(c.title) }.
+      reject { |c| c.errors.added?(:title, I18n.t("evaluation_criteria.duplicate_title_error")) }
 
-    criteria.each {|c| c.errors.add(:title, I18n.t("evaluation_criteria.duplicate_title_error")) }
+    criteria.each { |c| c.errors.add(:title, I18n.t("evaluation_criteria.duplicate_title_error")) }
     errors.add(:base, I18n.t("evaluation_criterion_unique_title_in_form_error"))
   end
 
