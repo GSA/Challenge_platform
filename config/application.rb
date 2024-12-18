@@ -49,6 +49,12 @@ module ChallengePlatform
       jwt_secret: ENV.fetch("JWT_SECRET", "jwt_secret_123")
     }
 
+    config.static_site_interop = {
+      domain: ENV.fetch("PAGES_DOMAIN", "federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"),
+      host: ENV.fetch("PAGES_HOST", "https://federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"),
+      base_url: ENV.fetch("PAGES_BASE_URL", "/preview/gsa/challenges-and-prizes/staging")
+    }
+
     config.assets.initialize_on_precompile = false
   end
 end
