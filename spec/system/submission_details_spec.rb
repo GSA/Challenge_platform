@@ -22,10 +22,12 @@ describe "A11y", :js do
       visit submission_path(submission)
 
       find_by_id('eligible-for-evaluation').click
+      click_on('Save')
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('selected')
 
       find_by_id('selected-to-advance').click
+      click_on('Save')
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('winner')
     end
