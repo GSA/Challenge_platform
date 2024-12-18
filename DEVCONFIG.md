@@ -66,7 +66,7 @@ Once direnv is installed and your shell is restarted, clone the project and `cd`
     ```
     ./bin/dev
     ```
-    > _NOTE for login.gov configuration_ -- if you are **not** using direnv/nix to eval `.envrc`, you can run `source .env_login` in your terminal before starting the server or add the env vars in that file to your local environment directly.
+    > _NOTE for login.gov configuration_ -- if you are **not** using direnv/nix to eval `.envrc`, you can run `source .env_dev` in your terminal before starting the server or add the env vars in that file to your local environment directly.
 
 Now you can visit [`localhost:3000`](http://localhost:3000) from your browser.
 
