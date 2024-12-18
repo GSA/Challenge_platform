@@ -2,25 +2,22 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="submission-details"
 export default class extends Controller {
-  static targets = ["hiddenInput"]
   
-  selectedSubmit(e) {
-    console.log(e.target.checked)
+  eligibleCheck(e) {
+    const hiddenInput = e.target.form.elements["judging-status-hidden"]
     if (e.target.checked) {
-      this.hiddenInputTarget.value = "selected"
-      e.target.setAttribute('checked', true);
+      hiddenInput.value = "selected"
     } else {
-      this.hiddenInputTarget.setAttribute("value", "qualified")
-      e.target.setAttribute('checked', false);
+      hiddenInput.value = "qualified"
     }
-    console.log(this.hiddenInputTarget)
   }
 
-  winnerSubmit(e) {
+  selectedCheck(e) {
+    const hiddenInput = e.target.form.elements["judging-status-hidden"]
     if (e.target.checked) {
-      this.hiddenInputTarget.value = "winner"
+      hiddenInput.value = "winner"
     } else {
-      this.hiddenInputTarget.value = "selected"
+      hiddenInput.value = "selected"
     }
   }
 }

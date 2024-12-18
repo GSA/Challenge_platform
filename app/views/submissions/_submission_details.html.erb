@@ -1,17 +1,17 @@
 <div data-controller="submission-details">
+    <% rand = SecureRandom.hex(8) %>
     <%= form_with(model: @submission, url: submission_path(@submission), class: "maxw-mobile-lg") do |form| %>
         <div class="usa-checkbox" id="eligible-for-evaluation">
             <input
             class="usa-checkbox__input usa-checkbox__input--tile"
-            id="judging-status-selected"
             type="checkbox"
-            name="judging-status-selected-check"
+            id="<%= "#{rand}-judging-status-selected" %>"
             value="selected"
             <%= if @submission.judging_status == "winner" then "disabled" end %>
             <%= "checked" if @submission.judging_status.in?(["selected", "winner"]) %>
-            data-action="change->submission-details#selectedSubmit"
+            data-action="change->submission-details#eligibleCheck"
             />
-            <label class="usa-checkbox__label" for="judging-status-selected"
+            <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-selected" %>"
             >This submission is eligible for evaluation.
             <span class="usa-checkbox__label-description"
                 >Check the box if the submission is pre-screened and is eligible for the evaluation process.</span
@@ -21,13 +21,13 @@
         <div class="usa-checkbox" id="selected-to-advance">
             <input
             class="usa-checkbox__input usa-checkbox__input--tile"
-            id="judging-status-winner"
+            id="<%= "#{rand}-judging-status-winner" %>"
             type="checkbox"
             <%= "disabled" unless @submission.judging_status.in?(["selected", "winner"]) %>
             <%= "checked" if @submission.judging_status == "winner" %>
-            data-action="change->submission-details#winnerSubmit"
+            data-action="change->submission-details#selectedCheck"
             />
-            <label class="usa-checkbox__label" for="judging-status-winner"
+            <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-winner" %>"
             >This submission is selected to advance.
             <span class="usa-checkbox__label-description"
                 >Check the box to select this submission to advance or for award after all evaluations are completed.</span
@@ -35,7 +35,7 @@
             >
         </div>
         <input
-        id="judging-status-qualified-hidden"
+        id="judging-status-hidden"
         type="hidden"
         name="submission[judging_status]"
         data-submission-details-target="hiddenInput"
