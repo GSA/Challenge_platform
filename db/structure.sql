@@ -1109,7 +1109,7 @@ CREATE TABLE public.submissions (
     description_delta text,
     brief_description_delta text,
     pdf_reference character varying(255),
-    comments text
+    comments character varying
 );
 
 
@@ -1897,7 +1897,7 @@ CREATE INDEX index_evaluation_forms_on_challenge_id ON public.evaluation_forms U
 -- Name: index_evaluation_forms_on_phase_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_evaluation_forms_on_phase_id ON public.evaluation_forms USING btree (phase_id);
+CREATE UNIQUE INDEX index_evaluation_forms_on_phase_id ON public.evaluation_forms USING btree (phase_id);
 
 
 --
@@ -2465,6 +2465,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241125060011),
 (20241120024946),
 (20241120024939),
 (20241115193801),

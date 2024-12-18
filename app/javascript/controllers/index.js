@@ -16,6 +16,9 @@ application.register("evaluation-form", EvaluationFormController);
 import HotdogController from "./hotdog_controller";
 application.register("hotdog", HotdogController);
 
+import ModalController from "./modal_controller";
+application.register("modal", ModalController);
+
 import SortFilterMenuController from "./sort_filter_menu_controller";
 application.register("sort-filter-menu", SortFilterMenuController);
 

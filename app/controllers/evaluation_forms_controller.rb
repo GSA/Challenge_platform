@@ -5,6 +5,7 @@ class EvaluationFormsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_evaluation_form, only: %i[show edit update destroy]
   before_action :set_evaluation_forms, only: %i[index]
+  before_action :set_available_phases, only: %i[new create edit update]
 
   # GET /evaluation_forms or /evaluation_forms.json
   def index; end
@@ -80,6 +81,20 @@ class EvaluationFormsController < ApplicationController
       includes([:challenge, :phase])
   end
 
+  def set_available_phases
+    current_phase_id = @evaluation_form&.phase_id
+
+    @available_phases =
+      current_user.challenge_manager_challenges.includes(:phases).map do |challenge|
+        {
+          challenge:,
+          phases: challenge.phases.reject do |phase|
+            current_phase_id != phase.id && EvaluationForm.exists?(phase_id: phase.id)
+          end
+        }
+      end
+  end
+
   # Only allow a list of trusted parameters through.
   def evaluation_form_params
     permitted = params.require(:evaluation_form).
@@ -91,7 +106,15 @@ class EvaluationFormsController < ApplicationController
                { option_labels: {} }
              ])
     closing_date = parse_closing_date(permitted[:closing_date])
-    closing_date ? permitted.merge({ closing_date: }) : permitted
+    permitted = permitted.merge({ closing_date: }) if closing_date
+
+    if action_name == "update"
+      # Update action may only allow closing_date depending on phase.end_date
+      handle_upate_permitted_params(permitted)
+    else
+      # Create action always allows all params
+      permitted
+    end
   end
 
   def parse_closing_date(input_date)
@@ -102,6 +125,17 @@ class EvaluationFormsController < ApplicationController
       "#{year}-#{month.rjust(2, '0')}-#{day.rjust(2, '0')}"
     else
       input_date
+    end
+  end
+
+  def handle_upate_permitted_params(permitted)
+    evaluation_form = EvaluationForm.find(params[:id])
+    phase = evaluation_form.phase
+
+    if phase&.end_date&.past?
+      permitted.slice(:closing_date)
+    else
+      permitted
     end
   end
 end
