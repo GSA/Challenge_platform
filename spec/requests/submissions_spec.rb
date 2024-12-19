@@ -111,4 +111,129 @@ RSpec.describe "Submissions" do
       end
     end
   end
+
+  describe 'GET /phases/:id/submissions' do
+    let(:user) { create_user(role: "challenge_manager") }
+    let(:challenge) { create(:challenge, user: user) }
+    let(:phase) { create(:phase, challenge: challenge) }
+
+    before do
+      ChallengeManager.create!(user: user, challenge: challenge)
+      log_in_user(user)
+    end
+
+    context 'when viewing submissions' do
+      let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase) }
+      let!(:in_progress_submission) do
+        submission = create(:submission, challenge: challenge, phase: phase)
+        assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+        create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
+        submission
+      end
+      let!(:completed_submission) do
+        submission = create(:submission, challenge: challenge, phase: phase)
+        assignment = create(:evaluator_submission_assignment, submission: submission)
+        create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+        submission
+      end
+      let!(:eligible_submission) { create(:submission, challenge: challenge, phase: phase, judging_status: 'selected') }
+      let!(:selected_submission) do
+        submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'winner')
+        assignment = create(:evaluator_submission_assignment, submission: submission)
+        create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+        submission
+      end
+
+      it 'displays all submissions and their status counts' do
+        get submissions_phase_path(phase)
+
+        [not_started_submission, in_progress_submission, completed_submission,
+         eligible_submission, selected_submission].each do |submission|
+          expect(response.body).to include(submission.id.to_s)
+        end
+
+        expect(response.body).to include('text-secondary-dark text-bold">2<')  # not_started, eligible
+        expect(response.body).to include('text-orange text-bold">1<')          # in_progress
+        expect(response.body).to include('text-green text-bold">2<')           # completed, selected
+      end
+
+      context 'when filtering submissions' do
+        it 'shows only submissions matching the selected status' do
+          get submissions_phase_path(phase), params: { status: 'not_started' }
+
+          expect(response.body).to include(not_started_submission.id.to_s)
+          expect(response.body).to include(eligible_submission.id.to_s)
+          expect(response.body).not_to include(selected_submission.id.to_s)
+          expect(response.body).not_to include(in_progress_submission.id.to_s)
+          expect(response.body).not_to include(completed_submission.id.to_s)
+        end
+
+        it 'shows only completed submissions' do
+          get submissions_phase_path(phase), params: { status: 'completed' }
+
+          expect(response.body).to include(completed_submission.id.to_s)
+          expect(response.body).to include(selected_submission.id.to_s)
+          expect(response.body).not_to include(not_started_submission.id.to_s)
+          expect(response.body).not_to include(in_progress_submission.id.to_s)
+          expect(response.body).not_to include(eligible_submission.id.to_s)
+        end
+      end
+
+      context 'when filtering by eligibility' do
+        it 'displays only eligible for evaluation submissions' do
+          get submissions_phase_path(phase), params: { eligible_for_evaluation: 'true' }
+
+          expect(response.body).to include(eligible_submission.id.to_s)
+          expect(response.body).to include(selected_submission.id.to_s)
+          expect(response.body).not_to include(not_started_submission.id.to_s)
+          expect(response.body).not_to include(in_progress_submission.id.to_s)
+          expect(response.body).not_to include(completed_submission.id.to_s)
+        end
+
+        it 'displays only selected to advance submissions' do
+          get submissions_phase_path(phase), params: { selected_to_advance: 'true' }
+
+          expect(response.body).to include(selected_submission.id.to_s)
+          expect(response.body).not_to include(eligible_submission.id.to_s)
+          expect(response.body).not_to include(not_started_submission.id.to_s)
+          expect(response.body).not_to include(in_progress_submission.id.to_s)
+          expect(response.body).not_to include(completed_submission.id.to_s)
+        end
+      end
+
+      context 'when sorting submissions' do
+        before do
+          create(:evaluation,
+            evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: in_progress_submission),
+            total_score: 80
+          )
+
+          create(:evaluation,
+            evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: completed_submission),
+            total_score: 90
+          )
+        end
+
+        it 'orders submissions by score high to low' do
+          get submissions_phase_path(phase), params: { sort: 'average_score_high_to_low' }
+
+          response_body = response.body
+          high_score_index = response_body.index(completed_submission.id.to_s)
+          low_score_index = response_body.index(in_progress_submission.id.to_s)
+
+          expect(high_score_index).to be < low_score_index
+        end
+
+        it 'orders submissions by score low to high' do
+          get submissions_phase_path(phase), params: { sort: 'average_score_low_to_high' }
+
+          response_body = response.body
+          high_score_index = response_body.index(completed_submission.id.to_s)
+          low_score_index = response_body.index(in_progress_submission.id.to_s)
+
+          expect(low_score_index).to be < high_score_index
+        end
+      end
+    end
+  end
 end
