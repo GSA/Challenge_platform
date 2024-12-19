@@ -16,6 +16,9 @@ application.register("evaluation-form", EvaluationFormController);
 import HotdogController from "./hotdog_controller";
 application.register("hotdog", HotdogController);
 
+import SubmissionDetailsController from "./submission_details_controller";
+application.register("submission-details", SubmissionDetailsController);
+
 import ModalController from "./modal_controller";
 application.register("modal", ModalController);
 
