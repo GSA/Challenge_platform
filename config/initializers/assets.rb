@@ -14,7 +14,8 @@ Rails.application.config.assets.version = "1.0"
 
 Rails.application.config.assets.enabled = true
 
-
+# Move the rails assets so they don't conflict with the static pages
+Rails.application.config.assets.prefix = "/platform-assets"
 
 # Rails.application.config.assets.paths << Rails.root.join("app", "assets", "plugins", "uswds","js")
 

@@ -2,6 +2,8 @@
 
 # Controller for evaluation forms CRUD actions.
 class EvaluationFormsController < ApplicationController
+  helper FormHelper
+
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_evaluation_form, only: %i[show edit update destroy]
   before_action :set_evaluation_forms, only: %i[index]
@@ -99,7 +101,7 @@ class EvaluationFormsController < ApplicationController
   def evaluation_form_params
     permitted = params.require(:evaluation_form).
       permit(:title, :instructions, :phase_id, :status, :comments_required,
-             :weighted_scoring, :publication_date, :closing_date, :challenge_id,
+             :scale_type, :publication_date, :closing_date, :challenge_id,
              evaluation_criteria_attributes: [
                :id, :title, :description, :points_or_weight, :scoring_type,
                :option_range_start, :option_range_end, :_destroy,

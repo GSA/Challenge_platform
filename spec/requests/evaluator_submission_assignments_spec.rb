@@ -7,7 +7,9 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
   let(:evaluator) { create(:user, role: 'evaluator') }
   let(:submission) { create(:submission, challenge: challenge, phase: phase) }
   let(:unassigned_submission) { create(:submission, challenge: challenge, phase: phase) }
-  let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge, closing_date: 1.month.from_now) }
+  let!(:evaluation_form) do
+    create(:evaluation_form, phase: phase, challenge: challenge, closing_date: 1.month.from_now)
+  end
 
   let!(:assigned_assignment) do
     create(:evaluator_submission_assignment,
@@ -46,7 +48,6 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
   describe 'PATCH #update' do
     context 'when reassigning' do
       it 'reassigns the evaluator successfully and updates counts' do
-
         patch phase_evaluator_submission_assignment_path(phase, unassigned_assignment),
               params: { status: :assigned, evaluator_id: evaluator.id }
 

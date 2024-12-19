@@ -6,7 +6,7 @@
 #  title             :string           not null
 #  instructions      :string           not null
 #  comments_required :boolean          default(FALSE)
-#  weighted_scoring  :boolean          default(FALSE)
+#  scale_type        :string           not null
 #  closing_date      :date             not null
 #  challenge_id      :bigint           not null
 #  created_at        :datetime         not null

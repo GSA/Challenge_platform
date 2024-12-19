@@ -10,7 +10,8 @@ describe "A11y", :js do
   end
 
   describe "Logged-out" do
-    it "web root page is accessible" do
+    xit "web root page is accessible" do
+      # Marking as pending as the root page is proxied pages content for now
       visit "/"
       expect(page).to(be_axe_clean)
     end

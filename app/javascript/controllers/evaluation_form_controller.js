@@ -21,11 +21,10 @@ export default class extends Controller {
         "data-min-date",
         `${year}-${month}-${day}`
       );
-
-      this.updateErrorMessage("evaluation_form_challenge_id", "");
-      this.updateErrorMessage("evaluation_form_phase_id", "");
     } else {
-      this.updateErrorMessage("evaluation_form_challenge_id", "can't be blank");
+      this.challengeIDTarget.value = null;
+      this.phaseIDTarget.value = null;
+
       this.startDateTarget.innerHTML = "mm/dd/yyyy";
     }
   }
@@ -72,13 +71,41 @@ export default class extends Controller {
   }
 
   validatePresence(e) {
-    if (!e.target.value) {
-      e.target.classList.add("border-secondary");
-      this.updateErrorMessage(e.target.id, "can't be blank");
+    const target = e.target;
+    const formGroup = target.closest(".usa-form-group");
+    const fieldName = target.dataset.fieldName || target.id;
+
+    const label = this.findLabel(target, formGroup);
+
+    if (!target.value) {
+      this.addErrorClasses(target, label);
+      this.updateErrorMessage(fieldName, "can't be blank");
     } else {
-      e.target.classList.remove("border-secondary");
-      this.updateErrorMessage(e.target.id, "");
+      this.removeErrorClasses(target, label);
+      this.updateErrorMessage(fieldName, "");
     }
+  }
+
+  findLabel(target, formGroup) {
+    const isSelect =
+      target.tagName === "SELECT" ||
+      target.classList.contains("usa-combo-box__input");
+    const isRadio = target.type === "radio";
+
+    const labelId = isSelect ? target.name : target.id;
+    const labelQuery = isRadio ? "legend" : `label[for="${labelId}"]`;
+
+    return formGroup.querySelector(labelQuery);
+  }
+
+  addErrorClasses(target, label) {
+    target.classList.add("border-secondary");
+    if (label) label.classList.add("text-secondary");
+  }
+
+  removeErrorClasses(target, label) {
+    target.classList.remove("border-secondary");
+    if (label) label.classList.remove("text-secondary");
   }
 
   updateErrorMessage(field, message) {
