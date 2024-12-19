@@ -159,22 +159,22 @@ RSpec.describe "EvaluationForms" do
       end
     end
 
-    context "when updating weighted scoring in scale type" do
-      it "updates the weighted_scoring attribute" do
+    context "when updating scale type to weight" do
+      it "updates the scale_type attribute" do
         create(:evaluation_criterion, evaluation_form: evaluation_form, points_or_weight: 100)
 
-        patch evaluation_form_path(evaluation_form), params: { evaluation_form: { weighted_scoring: true } }
+        patch evaluation_form_path(evaluation_form), params: { evaluation_form: { scale_type: "weight" } }
         evaluation_form.reload
-        expect(evaluation_form).to be_weighted_scoring
+        expect(evaluation_form.scale_type).to eq("weight")
       end
 
       it "fails if criteria doesn't add up to 100" do
-        evaluation_form = create(:evaluation_form, weighted_scoring: false)
+        evaluation_form = create(:evaluation_form, scale_type: "point")
         evaluation_criterion = create(:evaluation_criterion, evaluation_form:, points_or_weight: 100)
 
         patch evaluation_form_path(evaluation_form), params: {
           evaluation_form: {
-            weighted_scoring: true,
+            scale_type: "weight",
             evaluation_criteria_attributes: {
               "0" => {
                 id: evaluation_criterion.id,
@@ -186,7 +186,8 @@ RSpec.describe "EvaluationForms" do
 
         evaluation_form.reload
 
-        expect(evaluation_form).not_to be_weighted_scoring
+        # Scale type shouldn't change if validation fails
+        expect(evaluation_form.scale_type).to eq("point")
       end
     end
 

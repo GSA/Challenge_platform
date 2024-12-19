@@ -50,3 +50,7 @@ dialog::backdrop {
     }
   }
 }
+
+.usa-combo-box .border-secondary + input {
+  border: 1px solid red;
+}
