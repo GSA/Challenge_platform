@@ -107,6 +107,8 @@ jobs:
             ls -l /tmp/test-results
             ./cc-test-reporter format-coverage \
               --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json
+            printf 'ls -l coverage after format-coverage\n'
+            ls -l coverage/
 
       - persist_to_workspace:
           root: ~/Challenge_platform/coverage
