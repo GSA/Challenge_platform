@@ -402,12 +402,12 @@ CREATE TABLE public.evaluation_forms (
     title character varying NOT NULL,
     instructions character varying NOT NULL,
     comments_required boolean DEFAULT false,
-    weighted_scoring boolean DEFAULT false,
     closing_date date NOT NULL,
     challenge_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    phase_id bigint NOT NULL
+    phase_id bigint NOT NULL,
+    scale_type character varying
 );
 
 
@@ -2465,6 +2465,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241217164258),
 (20241125060011),
 (20241120024946),
 (20241120024939),

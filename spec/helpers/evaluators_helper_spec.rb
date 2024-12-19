@@ -11,8 +11,10 @@ RSpec.describe EvaluatorsHelper, type: :helper do
   describe '#assigned_submissions_count' do
     it 'returns the correct count of assigned submissions' do
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator,
+                                               submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator,
+                                               submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
 
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(3)
     end
@@ -36,15 +38,19 @@ RSpec.describe EvaluatorsHelper, type: :helper do
 
     it 'does not count unassigned or recused submissions' do
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :unassigned)
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :recused)
+      create(:evaluator_submission_assignment, evaluator: evaluator,
+                                               submission: create(:submission, challenge: challenge, phase: phase), status: :unassigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator,
+                                               submission: create(:submission, challenge: challenge, phase: phase), status: :recused)
 
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(1)
     end
   end
 
   describe '#display_score' do
-    let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned) }
+    let(:assignment) do
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
+    end
 
     context 'when assignment is completed and has an evaluation with a total score' do
       it 'returns the total score' do

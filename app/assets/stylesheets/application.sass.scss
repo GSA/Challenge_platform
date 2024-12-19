@@ -21,3 +21,7 @@ dialog::backdrop {
 #add-criteria-button.usa-button {
   background-color: #4d8055;
 }
+
+.usa-combo-box .border-secondary + input {
+  border: 1px solid red;
+}

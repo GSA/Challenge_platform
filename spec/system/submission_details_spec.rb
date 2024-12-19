@@ -14,18 +14,20 @@ describe "A11y", :js do
     it "submission details page is accessible" do
       visit submission_path(submission)
       expect(user.role).to eq("challenge_manager")
-      expect(page).to have_content(submission.id)
+      expect(page).to have_css('h1', text: "Submission ID #{submission.id}")
       expect(page).to(be_axe_clean)
     end
 
     it "allows manipulation of judging status" do
       visit submission_path(submission)
 
-      find('#eligible-for-evaluation').click
+      find_by_id('eligible-for-evaluation').click
+      click_on('Save')
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('selected')
 
-      find('#selected-to-advance').click
+      find_by_id('selected-to-advance').click
+      click_on('Save')
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('winner')
     end
