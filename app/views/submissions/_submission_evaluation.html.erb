@@ -3,4 +3,5 @@
   <%= render 'shared/alert_error', alert_heading: t('alerts.no_evaluation_form.heading'), alert_text: t('alerts.no_evaluation_form.text') %>
 <% else %>
     <%= render partial: 'assigned_evaluators' %>
+    <%= render partial: 'available_evaluators' %>
 <% end %>
