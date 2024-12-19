@@ -2,28 +2,25 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="submission-details"
 export default class extends Controller {
+  static targets = ["judgingStatusHidden", "eligibleCheckbox", "winnerCheckbox"];
   
   eligibleCheck(e) {
-    const hiddenInput = e.target.form.elements["judging-status-hidden"]
-    const winnerCheckbox = e.target.form.elements[3]
     if (e.target.checked) {
-      hiddenInput.value = "selected"
-      winnerCheckbox.disabled = false
+      this.judgingStatusHiddenTarget.value = "selected"
+      this.winnerCheckboxTarget.disabled = false
     } else {
-      hiddenInput.value = "not_selected"
-      winnerCheckbox.disabled = true
+      this.judgingStatusHiddenTarget.value = "not_selected"
+      this.winnerCheckboxTarget.disabled = true
     }
   }
 
   selectedCheck(e) {
-    const hiddenInput = e.target.form.elements["judging-status-hidden"]
-    const eligibleCheckbox = e.target.form.elements[2]
     if (e.target.checked) {
-      hiddenInput.value = "winner"
-      eligibleCheckbox.disabled = true
+      this.judgingStatusHiddenTarget.value = "winner"
+      this.eligibleCheckboxTarget.disabled = true
     } else {
-      hiddenInput.value = "selected"
-      eligibleCheckbox.disabled = false
+      this.judgingStatusHiddenTarget.value = "selected"
+      this.eligibleCheckboxTarget.disabled = false
     }
   }
 }

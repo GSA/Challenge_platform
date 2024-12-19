@@ -10,6 +10,7 @@
             <%= if @submission.judging_status == "winner" then "disabled" end %>
             <%= "checked" if @submission.judging_status.in?(["selected", "winner"]) %>
             data-action="change->submission-details#eligibleCheck"
+            data-submission-details-target="eligibleCheckbox"
             />
             <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-selected" %>"
             >This submission is eligible for evaluation.
@@ -26,6 +27,7 @@
             <%= "disabled" unless @submission.judging_status.in?(["selected", "winner"]) %>
             <%= "checked" if @submission.judging_status == "winner" %>
             data-action="change->submission-details#selectedCheck"
+            data-submission-details-target="winnerCheckbox"
             />
             <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-winner" %>"
             >This submission is selected to advance.
@@ -38,7 +40,7 @@
         id="judging-status-hidden"
         type="hidden"
         name="submission[judging_status]"
-        data-submission-details-target="hiddenInput"
+        data-submission-details-target="judgingStatusHidden"
         />
         <div class="usa-form-group">
             <%= form.label :comments, "Comments and notes:", class: "usa-label" %>
