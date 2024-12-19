@@ -10,7 +10,7 @@ export default class extends Controller {
       hiddenInput.value = "selected"
       winnerCheckbox.disabled = false
     } else {
-      hiddenInput.value = "qualified"
+      hiddenInput.value = "not_selected"
       winnerCheckbox.disabled = true
     }
   }
