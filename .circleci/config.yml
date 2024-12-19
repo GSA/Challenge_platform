@@ -103,8 +103,8 @@ jobs:
                               --out /tmp/test-results/rspec.xml \
                               --format progress \
                               $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
-            printf 'ls -l coverage\n'
-            ls -l coverage/
+            printf 'ls -l /tmp/test-results\n'
+            ls -l /tmp/test-results
             ./cc-test-reporter format-coverage \
               --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json
 
