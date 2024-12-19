@@ -12,10 +12,27 @@ class PhasesController < ApplicationController
   def submissions
     @submissions = @phase.submissions
 
+    set_submission_counts
+    set_submission_statuses
+
+    apply_filters
+    apply_sorting
+  end
+
+  private
+
+  def set_phase
+    @phase = Phase.where(challenge: current_user.challenge_manager_challenges).find(params[:id])
+    @challenge = @phase.challenge
+  end
+
+  def set_submission_counts
     @submissions_count = @submissions.count
     @eligible_count = @submissions.eligible_for_evaluation.count
     @selected_count = @submissions.winner.count
+  end
 
+  def set_submission_statuses
     @not_started = @submissions.where.missing(:evaluations)
     @in_progress = @submissions.joins(:evaluations).
       where(evaluations: { completed_at: nil }).distinct
@@ -27,16 +44,6 @@ class PhasesController < ApplicationController
       in_progress: @in_progress.count,
       completed: @completed.count
     }
-
-    apply_filters
-    apply_sorting
-  end
-
-  private
-
-  def set_phase
-    @phase = Phase.where(challenge: current_user.challenge_manager_challenges).find(params[:id])
-    @challenge = @phase.challenge
   end
 
   def apply_filters
@@ -60,8 +67,13 @@ class PhasesController < ApplicationController
   end
 
   def apply_eligibility_filters
-    @submissions = @submissions.where(judging_status: [:selected, :winner]) if params[:eligible_for_evaluation] == 'true'
-    @submissions = @submissions.where(judging_status: :winner) if params[:selected_to_advance] == 'true'
+    if params[:eligible_for_evaluation] == 'true'
+      @submissions = @submissions.where(judging_status: [:selected, :winner])
+    end
+
+    if params[:selected_to_advance] == 'true'
+      @submissions = @submissions.where(judging_status: :winner)
+    end
   end
 
   def apply_sorting
