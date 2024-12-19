@@ -74,13 +74,13 @@ class Submission < ApplicationRecord
   def average_score
     avg = evaluations.average(:total_score)
     score = avg ? avg.round : 0
-    [score, "#{score}%"]
+    [score, "#{score}"]
   end
 
   def self.order_by_average_score(direction)
     direction_sql = direction == :desc ? 'DESC' : 'ASC'
 
-    joins("LEFT JOIN evaluations ON evaluations.submission_id = submissions.id").
+    joins("LEFT JOIN evaluations ON evaluations.submission_id = submissions.id AND evaluations.completed_at IS NOT NULL").
       group('submissions.id').
       order(
         Arel.sql(
