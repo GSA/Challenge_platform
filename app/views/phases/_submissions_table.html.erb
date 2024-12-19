@@ -21,7 +21,7 @@
     </thead>
     <tbody>
       <% @submissions.each do |submission| %>
-          <tr>
+          <tr data-submission-id="<%= submission.id %>">
             <th data-label="Submission ID" scope="row">
               <span class="mobile-lg:display-none">Submission ID </span><%= submission.id %>
             </th>

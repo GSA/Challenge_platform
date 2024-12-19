@@ -82,8 +82,10 @@ class PhasesController < ApplicationController
   def apply_eligibility_filter(submissions)
     if params[:selected_to_advance] == 'true'
       submissions.where(judging_status: %w[winner])
-    else
+    elsif params[:eligible_for_evaluation] == 'true'
       submissions.where(judging_status: %w[selected winner])
+    else
+      submissions
     end
   end
 

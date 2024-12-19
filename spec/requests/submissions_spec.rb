@@ -149,33 +149,33 @@ RSpec.describe "Submissions" do
 
         [not_started_submission, in_progress_submission, completed_submission,
          eligible_submission, selected_submission].each do |submission|
-          expect(response.body).to include(submission.id.to_s)
+          expect(response.body).to have_css("[data-submission-id='#{submission.id}']")
         end
 
-        expect(response.body).to include('text-secondary-dark text-bold">2<')  # not_started, eligible
-        expect(response.body).to include('text-orange text-bold">1<')          # in_progress
-        expect(response.body).to include('text-green text-bold">2<')           # completed, selected
+        expect(response.body).to have_css('.text-secondary-dark.text-bold', text: '2')  # not_started, eligible
+        expect(response.body).to have_css('.text-orange.text-bold', text: '1')          # in_progress
+        expect(response.body).to have_css('.text-green.text-bold', text: '2')           # completed, selected
       end
 
       context 'when filtering submissions' do
         it 'shows only submissions matching the selected status' do
           get submissions_phase_path(phase), params: { status: 'not_started' }
 
-          expect(response.body).to include(not_started_submission.id.to_s)
-          expect(response.body).to include(eligible_submission.id.to_s)
-          expect(response.body).not_to include(selected_submission.id.to_s)
-          expect(response.body).not_to include(in_progress_submission.id.to_s)
-          expect(response.body).not_to include(completed_submission.id.to_s)
+          expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
+          expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{selected_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{completed_submission.id}']")
         end
 
         it 'shows only completed submissions' do
           get submissions_phase_path(phase), params: { status: 'completed' }
 
-          expect(response.body).to include(completed_submission.id.to_s)
-          expect(response.body).to include(selected_submission.id.to_s)
-          expect(response.body).not_to include(not_started_submission.id.to_s)
-          expect(response.body).not_to include(in_progress_submission.id.to_s)
-          expect(response.body).not_to include(eligible_submission.id.to_s)
+          expect(response.body).to have_css("[data-submission-id='#{completed_submission.id}']")
+          expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{not_started_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{eligible_submission.id}']")
         end
       end
 
@@ -183,21 +183,21 @@ RSpec.describe "Submissions" do
         it 'displays only eligible for evaluation submissions' do
           get submissions_phase_path(phase), params: { eligible_for_evaluation: 'true' }
 
-          expect(response.body).to include(eligible_submission.id.to_s)
-          expect(response.body).to include(selected_submission.id.to_s)
-          expect(response.body).not_to include(not_started_submission.id.to_s)
-          expect(response.body).not_to include(in_progress_submission.id.to_s)
-          expect(response.body).not_to include(completed_submission.id.to_s)
+          expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
+          expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{not_started_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{completed_submission.id}']")
         end
 
         it 'displays only selected to advance submissions' do
           get submissions_phase_path(phase), params: { selected_to_advance: 'true' }
 
-          expect(response.body).to include(selected_submission.id.to_s)
-          expect(response.body).not_to include(eligible_submission.id.to_s)
-          expect(response.body).not_to include(not_started_submission.id.to_s)
-          expect(response.body).not_to include(in_progress_submission.id.to_s)
-          expect(response.body).not_to include(completed_submission.id.to_s)
+          expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{eligible_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{not_started_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).not_to have_css("[data-submission-id='#{completed_submission.id}']")
         end
       end
 
@@ -217,21 +217,19 @@ RSpec.describe "Submissions" do
         it 'orders submissions by score high to low' do
           get submissions_phase_path(phase), params: { sort: 'average_score_high_to_low' }
 
-          response_body = response.body
-          high_score_index = response_body.index(completed_submission.id.to_s)
-          low_score_index = response_body.index(in_progress_submission.id.to_s)
-
-          expect(high_score_index).to be < low_score_index
+          expect(response.body).to have_selector(
+            "tr[data-submission-id='#{completed_submission.id}']" \
+            " ~ tr[data-submission-id='#{in_progress_submission.id}']"
+          )
         end
 
         it 'orders submissions by score low to high' do
           get submissions_phase_path(phase), params: { sort: 'average_score_low_to_high' }
 
-          response_body = response.body
-          high_score_index = response_body.index(completed_submission.id.to_s)
-          low_score_index = response_body.index(in_progress_submission.id.to_s)
-
-          expect(low_score_index).to be < high_score_index
+          expect(response.body).to have_selector(
+            "tr[data-submission-id='#{in_progress_submission.id}']" \
+            " ~ tr[data-submission-id='#{completed_submission.id}']"
+          )
         end
       end
     end
