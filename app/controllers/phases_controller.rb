@@ -67,13 +67,13 @@ class PhasesController < ApplicationController
   end
 
   def apply_eligibility_filters
-    if params[:eligible_for_evaluation] == 'true'
-      @submissions = @submissions.where(judging_status: [:selected, :winner])
-    end
+    return unless params[:eligible_for_evaluation] == 'true' || params[:selected_to_advance] == 'true'
 
-    if params[:selected_to_advance] == 'true'
-      @submissions = @submissions.where(judging_status: :winner)
-    end
+    @submissions = if params[:selected_to_advance] == 'true'
+                    @submissions.where(judging_status: 'winner')
+                  else
+                    @submissions.where(judging_status: ['selected', 'winner'])
+                  end
   end
 
   def apply_sorting
