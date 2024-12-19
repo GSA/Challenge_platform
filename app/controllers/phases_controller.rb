@@ -11,13 +11,14 @@ class PhasesController < ApplicationController
 
   def submissions
     @submissions = @phase.submissions
-    @submissions_count = @submissions.count
-    
-    @not_started = @submissions.where.missing(:evaluations)
 
+    @submissions_count = @submissions.count
+    @eligible_count = @submissions.eligible_for_evaluation.count
+    @selected_count = @submissions.winner.count
+
+    @not_started = @submissions.where.missing(:evaluations)
     @in_progress = @submissions.joins(:evaluations).
       where(evaluations: { completed_at: nil }).distinct
-
     @completed = @submissions.joins(:evaluations).
       where.not(evaluations: { completed_at: nil }).distinct
 
@@ -59,8 +60,8 @@ class PhasesController < ApplicationController
   end
 
   def apply_eligibility_filters
-    @submissions = @submissions.select(&:eligible_for_evaluation?) if params[:eligible_for_evaluation] == 'true'
-    @submissions = @submissions.select(&:selected_to_advance?) if params[:selected_to_advance] == 'true'
+    @submissions = @submissions.where(judging_status: [:selected, :winner]) if params[:eligible_for_evaluation] == 'true'
+    @submissions = @submissions.where(judging_status: :winner) if params[:selected_to_advance] == 'true'
   end
 
   def apply_sorting
