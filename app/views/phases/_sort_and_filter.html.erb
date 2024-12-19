@@ -1,27 +1,20 @@
 <div class="grid-container padding-x-0">
   <div class="grid-row">
     <div class="grid-col-12 display-flex flex-column flex-align-start padding-top-105">
-      <nav aria-label="Sort and filter options" class="usa-nav" data-controller="sort-filter-menu">
-        <ul class="usa-nav__primary usa-accordion">
-          <li class="bg-primary radius-md">
+      <nav aria-label="Sort and filter options" class="tablet:usa-nav display-flex" data-controller="sort-filter-menu">
+        <ul class="usa-nav__primary usa-accordion" style="position: relative;">
+          <li class="radius-md">
             <button
               type="button"
               class="usa-accordion__button usa-nav__link usa-current"
               aria-expanded="false"
               aria-controls="basic-nav-section-one"
-              style="&:hover { color: inherit !important; outline: none; }"
+              style="background-color: transparent; border: none; padding: 0;"
             >
-              <span style="color: white !important;">Sort & Filter</span>
+              <span class="text-primary font-sans-md text-underline" style="text-decoration-thickness: 2px;">Sort & Filter</span>
             </button>
-            <style>
-              .usa-accordion__button.usa-current::after {
-                content: none !important;
-              }
-              .usa-nav__primary button[aria-expanded="false"] span::after {
-                background-color: white !important;
-              }            
-            </style>          
-            <ul id="basic-nav-section-one" class="usa-nav__submenu text-no-wrap bg-transparent font-sans-xs width-auto">
+            <ul id="basic-nav-section-one" class="usa-nav__submenu text-no-wrap bg-transparent font-sans-xs width-auto" 
+                style="position: absolute; top: 100%; left: 0; z-index: 1000; max-height: 80vh; overflow-y: auto;">
               <% menu_items = [
                 { label: "Evaluation progress: Completed", value: "status=completed" },
                 { label: "Evaluation progress: In progress", value: "status=in_progress" },
@@ -46,7 +39,7 @@
                         alt: "Selected", 
                         class: "icon-white checkmark margin-left-neg-1 padding-top-05", 
                         style: "display: none;" %>
-                    <span><%= item[:label] %></span>
+                    <span class="text-white"><%= item[:label] %></span>
                   </a>
                 </li>
               <% end %>

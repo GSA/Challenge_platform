@@ -21,3 +21,32 @@ dialog::backdrop {
 #add-criteria-button.usa-button {
   background-color: #4d8055;
 }
+
+.usa-accordion__button.usa-nav__link.usa-current {
+  &:hover {
+    color: inherit;
+    outline: none;
+  }
+
+  &::after {
+    display: none;
+  }
+}
+
+.usa-nav__primary {
+  button[aria-expanded="false"], 
+  button[aria-expanded="true"] {
+    span {
+      padding-right: 2rem;
+      padding-bottom: 4px;
+      font-weight: 700;
+      
+      &::after {
+        right: 12px;
+        background-color: #005ea2 !important;
+        display: block !important;
+        position: absolute;
+      }
+    }
+  }
+}
