@@ -47,18 +47,19 @@ class PhasesController < ApplicationController
   end
 
   def apply_filters
-    apply_status_filter if params[:status]
-    apply_eligibility_filters
-  end
+    if params[:eligible_for_evaluation] == 'true' || params[:selected_to_advance] == 'true'
+      apply_eligibility_filters
+    end
 
-  def apply_status_filter
-    @submissions = case params[:status]
-                   when 'not_started' then @not_started
-                   when 'in_progress' then @in_progress
-                   when 'completed'   then @completed
-                   when 'recused'     then filter_recused_submissions
-                   else @submissions
-                   end
+    if params[:status]
+      @submissions = case params[:status]
+                    when 'not_started' then @not_started
+                    when 'in_progress' then @in_progress
+                    when 'completed'   then @completed
+                    when 'recused'     then filter_recused_submissions
+                    else @submissions
+                    end
+    end
   end
 
   def filter_recused_submissions
@@ -67,8 +68,6 @@ class PhasesController < ApplicationController
   end
 
   def apply_eligibility_filters
-    return unless params[:eligible_for_evaluation] == 'true' || params[:selected_to_advance] == 'true'
-
     @submissions = if params[:selected_to_advance] == 'true'
                     @submissions.where(judging_status: 'winner')
                   else
