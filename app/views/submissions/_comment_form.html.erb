@@ -1,9 +1,0 @@
-<%= form_with(model: @submission, url: submission_path(@submission), class: "max-width-mobile-lg") do |form| %>
-    <div class="usa-form-group">
-        <%= form.label :comments, "Comments and notes:", class: "usa-label" %>
-        <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments %>
-    </div>
-    <button type="submit" name="commit" class="usa-button font-body-2xs text-no-wrap margin-y-2">
-        Save
-    </button>    
-<% end %>
