@@ -105,7 +105,7 @@ class EvaluationFormsController < ApplicationController
              evaluation_criteria_attributes: [
                :id, :title, :description, :points_or_weight, :scoring_type,
                :option_range_start, :option_range_end, :_destroy,
-               { option_labels: {} }
+               { option_labels: %i[0 1 2 3 4 5 6 7 8 9 10] }
              ])
     closing_date = parse_closing_date(permitted[:closing_date])
     permitted = permitted.merge({ closing_date: }) if closing_date
