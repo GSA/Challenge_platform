@@ -49,9 +49,9 @@ class Submission < ApplicationRecord
   # Validations
   validates :title, presence: true
   validate :can_be_selected_to_advance,
-    if: -> { judging_status_change == ['selected', 'winner'] }
+           if: -> { judging_status_change == %w[selected winner] }
   validate :can_be_ineligible_for_evaluation,
-    if: -> { judging_status_change == ['selected', 'not_selected'] }
+           if: -> { judging_status_change == %w[selected not_selected] }
 
   scope :by_user, lambda { |user|
     case user.role
@@ -76,7 +76,7 @@ class Submission < ApplicationRecord
   end
 
   def eligibility_deselection_disabled?
-    evaluator_submission_assignments.where(status: [:assigned, :recused]).exists?
+    evaluator_submission_assignments.exists?(status: [:assigned, :recused])
   end
 
   def advancement_checkbox_disabled?
@@ -97,14 +97,12 @@ class Submission < ApplicationRecord
       return
     end
 
-    if advancement_checkbox_disabled?
-      errors.add(:judging_status, "can't be selected to advance if not all evaluations are complete")
-    end
+    return unless advancement_checkbox_disabled?
+    errors.add(:judging_status, "can't be selected to advance if not all evaluations are complete")
   end
 
   def can_be_ineligible_for_evaluation
-    if eligibility_deselection_disabled?
-      errors.add(:judging_status, "can't deselect evaluation eligibility when there are evaluators assigned")
-    end
+    return unless eligibility_deselection_disabled?
+    errors.add(:judging_status, "can't deselect evaluation eligibility when there are evaluators assigned")
   end
 end

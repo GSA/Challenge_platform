@@ -10,14 +10,9 @@ class SubmissionsController < ApplicationController
   def update
     respond_to do |format|
       if @submission.update(submission_params)
-        format.html do
-          flash[:success] = I18n.t("comments_saved")
-          redirect_to submission_path(@submission.phase)
-        end
-        format.json { render json: { submission: @submission } }
+        handle_successful_update(format)
       else
-        format.html { render :show }
-        format.json { render json: { errors: @submission.errors }, status: :unprocessable_entity }
+        handle_failed_update(format)
       end
     end
   end
@@ -31,5 +26,18 @@ class SubmissionsController < ApplicationController
   # User access enforced by role
   def set_submission
     @submission = Submission.by_user(current_user).find(params[:id])
+  end
+
+  def handle_successful_update(format)
+    format.html do
+      flash[:success] = I18n.t("comments_saved")
+      redirect_to submission_path(@submission.phase)
+    end
+    format.json { render json: { submission: @submission } }
+  end
+
+  def handle_failed_update(format)
+    format.html { render :show }
+    format.json { render json: { errors: @submission.errors }, status: :unprocessable_entity }
   end
 end
