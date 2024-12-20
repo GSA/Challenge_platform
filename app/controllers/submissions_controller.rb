@@ -6,7 +6,7 @@ class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:show, :update]
 
   def show
-    @evaluators = @submission.phase.evaluators
+    @available_evaluators = @submission.phase.evaluators - @submission.evaluators
   end  
 
   def update

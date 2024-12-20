@@ -12,7 +12,7 @@
   </h2>
 
   <div class="usa-accordion__content background-primary-lighter" id="<%= rand %>">
-    <% @evaluators.each do |evaluator| %>
+    <% @available_evaluators.each do |evaluator| %>
             <div class="float-left">
                 <%= "#{evaluator.first_name} #{evaluator.last_name}" %> <br/>
                 <%= evaluator.email %>

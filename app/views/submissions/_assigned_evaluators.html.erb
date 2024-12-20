@@ -16,23 +16,19 @@
           <thead>
             <tr>
               <th scope="col">Evaluator name</th>
-              <th scope="col">Email address</th>
-              <th scope="col">User role</th>
-              <th scope="col">User status</th>
-              <th scope="col">Assigned submissions</th>
+              <th scope="col">Evaluation Status</th>
+              <th scope="col">Score</th>
               <th scope="col" aria-label="Actions"></th>
             </tr>
           </thead>
           <tbody>
-            <% @evaluators.each do |evaluator| %>
+            <% @submission.evaluators.each do |evaluator| %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                 <th scope="row" data-label="Evaluator name" class="text-top">
                   <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span>
                 </th>
-                <td data-label="Email address" class="text-top"><%= evaluator.email %></td>
-                <td data-label="User role" class="text-top"><%= evaluator.role.titleize %></td>
-                <td data-label="User status" class="text-top"><%= user_status(evaluator) %></td>
-                <td data-label="Assigned submissions" class="text-top"><%= assigned_submissions_count(evaluator, @challenge, @phase) %></td>
+                <td data-label="Evaluation Status" class="text-top"></td>
+                <td data-label="Score" class="text-top"></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
                     <%= link_to phase_evaluator_submission_assignments_path(@submission.phase, evaluator_id: evaluator.id), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
