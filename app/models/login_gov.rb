@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'uri'
 
 # LoginGov manages authentication with the external login.gov service
 # login.gov is a single-signon (SSO) identity provider (IdP) for GSA.
@@ -72,6 +73,7 @@ class LoginGov
 
     # fetch the public_key from the well-known configuration jwks_uri
     jwks_uri = openid_config.fetch("jwks_uri")
+    validate_jwks_uri(jwks_uri)
     public_key = get_public_key(jwks_uri)
 
     # build the client assertion
@@ -100,6 +102,14 @@ class LoginGov
     end
 
     JSON.parse(response.body)
+  end
+
+  def validate_jwks_uri(uri)
+    allowed_hostnames = ["trusted-domain.com"]
+    uri_host = URI.parse(uri).host
+    unless allowed_hostnames.include?(uri_host)
+      raise LoginApiError.new("Invalid jwks_uri", code: 400, body: "The jwks_uri is not allowed.")
+    end
   end
 
   def read_private_key
