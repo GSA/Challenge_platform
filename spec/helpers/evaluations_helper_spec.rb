@@ -102,8 +102,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
 
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(85)
-      expect(result.formatted_score).to eq("85%")
-      expect(result.display_score).to eq("85%")
+      expect(result.formatted_score).to eq("85")
+      expect(result.display_score).to eq("85")
     end
   end
 
