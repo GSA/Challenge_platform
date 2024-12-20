@@ -4,8 +4,22 @@
 class EvaluatorSubmissionAssignmentsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_challenge_and_phase
-  before_action :set_evaluator, only: [:index]
+  before_action :set_evaluator, only: [:index, :create]
   before_action :set_assignment, only: [:update]
+  before_action :set_submission, only: [:create]
+
+  def create
+    @evaluator_submission_assignment = EvaluatorSubmissionAssignment.new(
+      user_id: params["evaluator_id"],
+      submission_id: @submission.id,
+      status: :assigned
+      )
+    if @evaluator_submission_assignment.save
+      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignment_saved")
+    else
+      redirect_to confirmation_evaluation_form_path(@evaluator_submission_assignment), notice: I18n.t("evaluation_form_saved")
+    end
+  end
 
   def index
     @evaluator_assignments = @phase.evaluator_submission_assignments.includes(:submission).where(user_id: @evaluator.id)
@@ -48,6 +62,10 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   def set_assignment
     @assignment = @phase.evaluator_submission_assignments.find(params[:id])
   end
+
+  def set_submission
+    @submission = @phase.submissions.find(params[:submission_id])
+  end  
 
   def status_from_params
     status = params[:status] || params.dig(:evaluator_submission_assignment, :status)

@@ -18,7 +18,11 @@
                 <%= evaluator.email %>
             </div> 
             <div class="float-right">
-                button
+                <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
+                  <%= f.hidden_field :evaluator_id, value: evaluator.id %>
+                  <%= f.hidden_field :submission_id, value: @submission.id %>
+                  <%= f.submit "Assign" %>
+                <% end %>
             </div>
 
     <% end %>
