@@ -2,8 +2,6 @@
 
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
-  include EvaluationsHelper
-
   before_action -> { authorize_user('evaluator') }
   before_action :set_phase, except: [:index]
 
@@ -21,7 +19,7 @@ class EvaluationsController < ApplicationController
       includes(:submission, :evaluation).
       ordered_by_status
 
-    @submissions_count = calculate_submissions_count(@assigned_submissions)
+    @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
   private

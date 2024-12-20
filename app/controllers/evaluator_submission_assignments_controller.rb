@@ -2,8 +2,6 @@
 
 # Controller for evaluator submissions assignments index and update status
 class EvaluatorSubmissionAssignmentsController < ApplicationController
-  include EvaluationsHelper
-
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_challenge_and_phase
   before_action :set_evaluator, only: [:index]
@@ -18,7 +16,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     @unassigned_submissions = @evaluator_assignments.
       where(status: %i[unassigned recused_unassigned]).
       ordered_by_status
-    @submissions_count = calculate_submissions_count(@assigned_submissions)
+    @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
   # update only the status of the evaluation submission assignment to unassign or reassign an evaluator
