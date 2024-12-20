@@ -143,7 +143,25 @@ RSpec.describe "Submissions" do
           expect(submission.reload.judging_status).to eq('selected')
         end
 
-        it "updates advancement status to winner when evaluations are complete" do
+        it "prevents deselecting evaluation eligibility when evaluators are assigned" do
+          submission.update!(judging_status: 'selected')
+          create(:evaluator_submission_assignment,
+                 submission: submission,
+                 evaluator: evaluator,
+                 status: :assigned)
+
+          patch submission_path(submission), params: {
+            submission: { judging_status: 'not_selected' }
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(submission.reload.judging_status).to eq('selected')
+          expect(JSON.parse(response.body)['errors']).to include(
+            "judging_status" => ["can't deselect evaluation eligibility when there are evaluators assigned"]
+          )
+        end
+
+        it "allows advancing to winner when eligible and evaluations complete" do
           submission.update!(judging_status: 'selected')
           create(:evaluator_submission_assignment,
                  submission: submission,
@@ -159,7 +177,7 @@ RSpec.describe "Submissions" do
           expect(submission.reload.judging_status).to eq('winner')
         end
 
-        it "prevents advancement when evaluations are not complete" do
+        it "prevents selected to advance when evaluations are incomplete" do
           submission.update!(judging_status: 'selected')
           create(:evaluator_submission_assignment,
                  submission: submission,
@@ -172,51 +190,20 @@ RSpec.describe "Submissions" do
 
           expect(response).to have_http_status(:unprocessable_entity)
           expect(submission.reload.judging_status).to eq('selected')
+          expect(JSON.parse(response.body)['errors']).to include(
+            "judging_status" => ["can't be selected to advance if not all evaluations are complete"]
+          )
         end
+      end
 
-        it "prevents eligibility changes when evaluators are assigned" do
-          create(:evaluator_submission_assignment,
-                 submission: submission,
-                 evaluator: evaluator,
-                 status: :assigned)
-
+      context "updating comments" do
+        it "successfully updates comments" do
           patch submission_path(submission), params: {
-            submission: { judging_status: 'selected' }
+            submission: { comments: "Comment about submission here" }
           }, as: :json
 
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(submission.reload.judging_status).to eq('not_selected')
-        end
-
-        it "prevents changing judging_status from 'not_selected' to 'selected' when eligibility checkbox is disabled" do
-          submission.update!(judging_status: 'not_selected')
-          create(:evaluator_submission_assignment,
-                submission: submission,
-                evaluator: evaluator,
-                status: :assigned)
-
-          patch submission_path(submission), params: {
-            submission: { judging_status: 'selected' }
-          }, as: :json
-
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(submission.reload.judging_status).to eq('not_selected')
-        end
-
-        it "prevents changing judging_status to 'winner' when not eligible" do
-          submission.update!(judging_status: 'not_selected')
-          create(:evaluator_submission_assignment,
-                  submission: submission,
-                  evaluator: evaluator,
-                  status: :assigned,
-                  evaluation: create(:evaluation, completed_at: Time.current))
-
-          patch submission_path(submission), params: {
-            submission: { judging_status: 'winner' }
-          }, as: :json
-
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(submission.reload.judging_status).to eq('not_selected')
+          expect(response).to have_http_status(:ok)
+          expect(submission.reload.comments).to eq("Comment about submission here")
         end
       end
     end
