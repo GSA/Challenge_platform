@@ -1,12 +1,14 @@
 require 'rails_helper'
 
-RSpec.describe 'Evaluator Submission Assignments', type: :system, js: true do
+RSpec.describe 'Evaluator Submission Assignments', :js, type: :system do
   let(:user) { create_user(role: "challenge_manager", status: "active") }
   let(:challenge) { create(:challenge) }
   let(:phase) { create(:phase, challenge: challenge) }
   let(:evaluator) { create(:user, role: 'evaluator') }
   let(:submission) { create(:submission, phase: phase) }
-  let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge, closing_date: 1.month.from_now) }
+  let!(:evaluation_form) do
+    create(:evaluation_form, phase: phase, challenge: challenge, closing_date: 1.month.from_now)
+  end
 
   before do
     ChallengeManager.create!(user: user, challenge: challenge)
@@ -20,7 +22,7 @@ RSpec.describe 'Evaluator Submission Assignments', type: :system, js: true do
     expect(page).to be_axe_clean
   end
 
-  it 'allows unassigning a submission from an evaluator', js: true do
+  it 'allows unassigning a submission from an evaluator', :js do
     assigned_assignment = create(
       :evaluator_submission_assignment,
       submission: submission,
@@ -35,7 +37,7 @@ RSpec.describe 'Evaluator Submission Assignments', type: :system, js: true do
     expect(unassign_button).to be_visible
     unassign_button.click
 
-    expect(page).to have_selector('#unassign-evaluator-submission-modal', visible: true)
+    expect(page).to have_css('#unassign-evaluator-submission-modal', visible: true)
     expect(page).to have_content('Are you sure you want to unassign an evaluator from this submission?')
 
     within('#unassign-evaluator-submission-modal') do

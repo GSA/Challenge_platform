@@ -8,7 +8,6 @@ Rails.application.routes.draw do
     delete 'timeout'
   end
 
-  get '/', to: "dashboard#index"
   get '/dashboard', to: "dashboard#index"
 
   resources :evaluations, only: [:index]
@@ -35,8 +34,6 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Defines the root path route ("/")
-  # root "posts#index"
   if Rails.env.development? || Rails.env.dev? || Rails.env.test?
     namespace :dev do
       get "/sandbox", to: "sandbox#index"
@@ -44,4 +41,8 @@ Rails.application.routes.draw do
       post "/login", to: "accounts#login"
     end
   end
+
+  match '/assets/*path.:ext' => 'pages#assets', via: [:get]
+  match '/*path' => 'pages#index', via: [:get]
+  match '/' => 'pages#root', via: [:get]
 end
