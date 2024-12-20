@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "3.2.4"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.2.1"
+gem "rails", "~> 7.2.2", ">= 7.2.2.1"
 
 # Use postgresql as the database for Active Record
 gem "pg"
@@ -88,7 +88,7 @@ end
 group :test do
   gem "webmock"
   gem "rspec_junit_formatter"
-  gem 'simplecov', '~> 0.17.0', require: false
+  gem 'simplecov', '~> 0.22.0', require: false
   gem "rails-controller-testing"
 end
 

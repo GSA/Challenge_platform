@@ -2,8 +2,6 @@ require 'simplecov'
 require 'webmock/rspec'
 require 'securerandom'
 
-SimpleCov.command_name 'RSpec'
-
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
