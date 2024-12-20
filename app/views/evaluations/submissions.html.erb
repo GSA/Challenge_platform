@@ -1,7 +1,7 @@
 <%= render 'shared/back_link', path: evaluations_path %>
 
 <h1><%= challenge_phase_title(@phase.challenge, @phase) %></h1>
-<p class="text-normal">View challenge submissions and manage evaluation progress.</p>
+<p class="text-normal">View challenges with submissions assigned to me to evaluate.</p>
 
 <% if @assigned_submissions.empty? %>
   <div class="text-normal">

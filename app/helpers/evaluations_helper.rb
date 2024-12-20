@@ -43,7 +43,7 @@ module EvaluationsHelper
 
     avg = completed_evaluations.average(:total_score)
     score = avg ? avg.round : 0
-    Score.new(score, "#{score}%", "#{score}%")
+    Score.new(score, "#{score}", "#{score}")
   end
 
   # counting submissions & evaluations
