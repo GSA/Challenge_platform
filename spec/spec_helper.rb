@@ -2,8 +2,6 @@ require 'simplecov'
 require 'webmock/rspec'
 require 'securerandom'
 
-SimpleCov.command_name 'RSpec'
-
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -75,8 +73,9 @@ def create_evaluation_form(attrs = {})
   title = attrs[:title] || "test challenge"
   challenge_id = attrs[:challenge_id] || create_challenge.id
   phase_id = attrs[:phase_id] || create_phase.id
+  scale_type = attrs[:scale_type] || "point"
   EvaluationForm.create!(title:, challenge_id:, phase_id:, instructions: "test instructions",
-                         closing_date: Date.tomorrow)
+                         closing_date: Date.tomorrow, scale_type: scale_type)
 end
 
 def create_agency(attrs = {})

@@ -19,7 +19,7 @@ require 'rails_helper'
 RSpec.describe EvaluationCriterion, type: :model do
   let(:challenge) { create(:challenge) }
   let(:phase) { create(:phase, challenge:) }
-  let(:evaluation_form) { create(:evaluation_form, challenge:, phase:, weighted_scoring: false) }
+  let(:evaluation_form) { create(:evaluation_form, challenge:, phase:, scale_type: "point") }
   let(:evaluation_criterion) { create(:evaluation_criterion, evaluation_form:) }
 
   describe "creating an evaluation criterion" do

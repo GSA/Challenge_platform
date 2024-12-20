@@ -11,7 +11,7 @@ describe "A11y", :js do
     it "manage submissions by challenge phase page is accessible with one challenge" do
       challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
       phase = create_phase(challenge_id: challenge.id)
-      submission = create(:submission, manager: user, challenge: challenge, phase: phase)
+      create(:submission, manager: user, challenge: challenge, phase: phase)
 
       visit submissions_phase_path(phase)
       expect(user.role).to eq("challenge_manager")
