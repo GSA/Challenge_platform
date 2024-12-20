@@ -31,16 +31,11 @@
                 <td data-label="Score" class="text-top"></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
-                    <%= link_to phase_evaluator_submission_assignments_path(@submission.phase, evaluator_id: evaluator.id), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
-                      View Submissions
+                    <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
+                      <%= f.hidden_field :evaluator_id, value: evaluator.id %>
+                      <%= f.hidden_field :submission_id, value: @submission.id %>
+                      <%= f.submit "Unassign" %>
                     <% end %>
-                    <%= button_tag "Delete", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
-                      action: "click->delete-evaluator-modal#open",
-                      evaluator_id: evaluator.id, 
-                      evaluator_type: 'user', 
-                      challenge_id: @submission.challenge.id, 
-                      phase_id: @submission.phase.id 
-                    } %>
                   </div>
                 </td>
               </tr>
