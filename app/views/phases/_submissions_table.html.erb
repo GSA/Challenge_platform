@@ -37,7 +37,7 @@
                       <legend class="usa-sr-only">Eligibility for evaluation</legend>
                       <%= f.check_box :judging_status,
                           id: "eligible_for_evaluation_#{submission.id}",
-                          disabled: submission.eligibility_checkbox_disabled?,
+                          disabled: submission.eligibility_deselection_disabled?,
                           checked: submission.eligible_for_evaluation?,
                           class: "usa-checkbox__input",
                           data: {
@@ -90,23 +90,22 @@
               </div>
             </td>
             <td data-label="Assigned Evaluators">
-              <% if submission.evaluators.any? %>
+              <% active_assignments = submission.evaluator_submission_assignments.select { |a| ['assigned', 'recused'].include?(a.status) } %>
+              <% if active_assignments.any? %>
                 <div class="display-flex flex-column">
-                  <% submission.evaluator_submission_assignments.each do |assignment| %>
+                  <% active_assignments.each do |assignment| %>
                     <div class="margin-bottom-05 display-flex flex-row flex-justify">
                       <div class="flex-fill">
                         <span class="<%= assignment.recused? ? 'usa-tag bg-error' : '' %>">
                           <%= "#{assignment.evaluator.first_name} #{assignment.evaluator.last_name}" %>
                         </span>
                       </div>
-                      <% if ['assigned', 'recused'].include?(assignment.status) %>
-                        <div class="text-right">
-                          <span class="margin-x-1"><%= evaluator_score(assignment).formatted_score %>%</span>         
-                          <span class="usa-tag padding-x-1 <%= evaluation_submission_assignment_color(assignment) %>">
-                            <%= assignment.evaluation_status.to_s.titleize %>
-                          </span>
-                        </div>
-                      <% end %>
+                      <div class="text-right">
+                        <span class="margin-x-1"><%= evaluator_score(assignment).formatted_score %></span>         
+                        <span class="usa-tag padding-x-1 <%= evaluation_submission_assignment_color(assignment) %>">
+                          <%= assignment.evaluation_status.to_s.titleize %>
+                        </span>
+                      </div>
                     </div>
                   <% end %>
                 </div>
