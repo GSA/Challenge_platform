@@ -31,7 +31,7 @@ class SubmissionsController < ApplicationController
 
   def handle_comments_update
     if @submission.update!(submission_params)
-      flash.now[:success] = I18n.t("comments_saved")
+      flash.now[:success] = I18n.t("submission_updated")
       render :show, submission: @submission
     else
       render :show, status: :unprocessable_entity, submission: @submission
