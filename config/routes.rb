@@ -10,7 +10,21 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: "dashboard#index"
 
-  resources :evaluations, only: [:index]
+  resources :evaluations, only: [:index, :show, :edit] do
+    member do
+      patch 'save_draft'
+      patch 'mark_complete'
+    end
+    collection do
+      post 'save_draft'
+      post 'mark_complete'
+    end
+  end
+
+  resources :evaluator_submission_assignments, only: [] do
+    resources :evaluations, only: [:new]
+  end
+
   resources :evaluation_forms do
     member do
       get 'confirmation'

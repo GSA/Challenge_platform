@@ -23,7 +23,8 @@ class EvaluationScore < ApplicationRecord
     message: I18n.t("evaluation_scores.unique_evaluation_for_evaluation_criterion_error")
   }
 
-  validates :score, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
+  validates :score, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :score, presence: true, if: -> { evaluation.completed_at.present? }
   validates :score_override, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
   validates :comment, presence: true, if: -> { evaluation.evaluation_form.comments_required? }
   validates :comment, length: { maximum: 3000 }, allow_nil: true
