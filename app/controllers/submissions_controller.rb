@@ -9,7 +9,7 @@ class SubmissionsController < ApplicationController
 
   def update
     if @submission.update!(submission_params)
-      flash.now[:success] = I18n.t("comments_saved")
+      flash.now[:success] = I18n.t("submission_updated")
       render :show, submission: @submission
     else
       render :show, status: :unprocessable_entity, submission: @submission
@@ -19,7 +19,7 @@ class SubmissionsController < ApplicationController
   private
 
   def submission_params
-    params.require(:submission).permit(:comments)
+    params.require(:submission).permit(:comments, :judging_status)
   end
 
   # User access enforced by role

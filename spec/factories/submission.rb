@@ -8,5 +8,6 @@ FactoryBot.define do
 
     title { Faker::Lorem.sentence }
     status { "draft" }
+    external_url { "www.example.com" }
   end
 end
