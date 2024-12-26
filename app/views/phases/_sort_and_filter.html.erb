@@ -6,14 +6,22 @@
           <li class="radius-md">
             <button
               type="button"
-              class="usa-accordion__button usa-nav__link usa-current"
+              class="usa-accordion__button"
               aria-expanded="false"
-              aria-controls="basic-nav-section-one"
-              style="background-color: transparent; border: none; padding: 0;"
+              aria-controls="sort-and-filter"
+              style="background-color: white; border: none; padding: 0;"
             >
-              <span class="text-primary font-sans-md text-underline" style="text-decoration-thickness: 2px;">Sort & Filter</span>
+              <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Sort & Filter</span>
+              <%= image_tag "images/usa-icons/arrow_drop_down.svg", 
+                  class: "usa-icon icon-down", 
+                  alt: "", 
+                  aria: { hidden: true } %>
+              <%= image_tag "images/usa-icons/arrow_drop_up.svg", 
+                  class: "usa-icon icon-up", 
+                  alt: "", 
+                  aria: { hidden: true } %>
             </button>
-            <ul id="basic-nav-section-one" class="usa-nav__submenu text-no-wrap bg-transparent font-sans-xs width-auto" 
+            <ul id="sort-and-filter" class="usa-nav__submenu text-no-wrap bg-white font-sans-xs width-auto" 
                 style="position: absolute; top: 100%; left: 0; z-index: 1000; max-height: 80vh; overflow-y: auto;">
               <% menu_items = [
                 { label: "Evaluation progress: Completed", value: "status=completed" },
@@ -29,7 +37,7 @@
               ] %>
               <% menu_items.each do |item| %>
                 <li class="usa-nav__submenu-item bg-primary-darker margin-y-2px">
-                  <a href="#" class="text-white text-no-underline menu-item display-flex flex-align-center padding-y-05 padding-x-1 width-full" 
+                  <a href="#" class="text-white text-no-underline menu-item display-flex flex-align-center padding-y-05 padding-x-105 width-full" 
                     data-action="click->sort-filter-menu#toggle" 
                     data-sort-filter-menu-target="menuItem" 
                     data-filter-value="<%= item[:value] %>">
@@ -37,7 +45,7 @@
                         width: 18, 
                         height: 18, 
                         alt: "Selected", 
-                        class: "icon-white checkmark margin-left-neg-1 padding-top-05", 
+                        class: "icon-white checkmark margin-left-neg-3 padding-top-2px tablet:padding-top-05 tablet:margin-left-neg-1", 
                         style: "display: none;" %>
                     <span class="text-white"><%= item[:label] %></span>
                   </a>
