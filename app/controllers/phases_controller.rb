@@ -33,7 +33,7 @@ class PhasesController < ApplicationController
   def include_evaluator_associations
     return unless @submissions.any? && evaluator_assignments?
 
-    @submissions = @submissions.includes(:evaluators, evaluator_submission_assignments: :evaluator)
+    @submissions = @submissions.includes(evaluator_submission_assignments: :evaluator)
   end
 
   def evaluator_assignments?
