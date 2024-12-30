@@ -9,4 +9,8 @@ module SubmissionsHelper
   def selected_to_advance?(submission)
     submission.judging_status.in?(%w[winner])
   end
+
+  def available_evaluators(submission)
+    submission.phase.evaluators - submission.evaluators || []
+  end  
 end

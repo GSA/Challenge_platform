@@ -1,3 +1,4 @@
+<% @available_evaluators = available_evaluators(@submission) %>
 <div class="usa-accordion">
   <% rand = SecureRandom.hex(8) %>
   <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
@@ -12,19 +13,23 @@
   </h2>
 
   <div class="usa-accordion__content background-primary-lighter" id="<%= rand %>">
-    <% @available_evaluators.each do |evaluator| %>
-            <div class="float-left">
-                <%= "#{evaluator.first_name} #{evaluator.last_name}" %> <br/>
-                <%= evaluator.email %>
-            </div> 
-            <div class="float-right">
-                <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
-                  <%= f.hidden_field :evaluator_id, value: evaluator.id %>
-                  <%= f.hidden_field :submission_id, value: @submission.id %>
-                  <%= f.submit "Assign" %>
-                <% end %>
-            </div>
+    <% unless @available_evaluators.empty? %>
+      <% @available_evaluators.each do |evaluator| %>
+              <div class="float-left">
+                  <%= "#{evaluator.first_name} #{evaluator.last_name}" %> <br/>
+                  <%= evaluator.email %>
+              </div> 
+              <div class="float-right">
+                  <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
+                    <%= f.hidden_field :evaluator_id, value: evaluator.id %>
+                    <%= f.hidden_field :submission_id, value: @submission.id %>
+                    <%= f.submit "Assign" %>
+                  <% end %>
+              </div>
 
-    <% end %>
+      <% end %>
+    <% else %>
+      No available evaluators.
+    <% end %>  
   </div>
 </div>
