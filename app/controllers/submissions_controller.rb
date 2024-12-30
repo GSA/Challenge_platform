@@ -30,7 +30,7 @@ class SubmissionsController < ApplicationController
 
   def handle_successful_update(format)
     format.html do
-      flash[:success] = I18n.t("comments_saved")
+      flash[:success] = I18n.t("submission_updated")
       redirect_to submission_path(@submission.phase)
     end
     format.json { render json: { submission: @submission } }
