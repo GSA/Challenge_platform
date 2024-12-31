@@ -58,7 +58,7 @@ en:
     process_evaluator_invitation:
       already_added: "%{email} has already been added as an evaluator for this phase."
       invalid_role: "%{email} does not have a valid evaluator role."
-      role_change_needed: "%{email} requires a role change to evaluator before being added to this phase."
+      role_change_needed: "%{email} requires a role change to evaluator. Please contact an admin."
       add_success: "%{email} has been added as an evaluator for this phase."
       add_failure: "Failed to add %{email} as an evaluator."
       invitation_sent: "Invitation sent to %{email} for this challenge phase."
