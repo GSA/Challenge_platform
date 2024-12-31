@@ -233,5 +233,65 @@ RSpec.describe "Submissions" do
         end
       end
     end
+
+    context 'when paginating submissions' do
+      let!(:submissions) do
+        (1..25).map do |n|
+          create(:submission, challenge: challenge, phase: phase)
+        end
+      end
+
+      it 'returns first page of submissions' do
+        get submissions_phase_path(phase)
+        expect(response.body).to have_css('tr[data-submission-id]', count: 20)
+      end
+
+      it 'returns next page of submissions via JSON' do
+        get submissions_phase_path(phase, format: :json, page: 2)
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_css('tr[data-submission-id]', count: 5)
+      end
+
+      context 'when sorting by average score' do
+        let!(:scored_submissions) do
+          submissions[0..24].each_with_index do |submission, index|
+            create(:evaluation,
+              evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: submission),
+              total_score: (index + 1) * 20
+            )
+          end
+        end
+
+        it 'paginates correctly when sorted by score' do
+          get submissions_phase_path(phase, format: :json, page: 1, sort: 'average_score_high_to_low')
+          expect(response).to have_http_status(:success)
+          first_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
+          expect(first_page_scores.count).to eq(20)
+          expect(first_page_scores.map(&:to_i)).to eq(first_page_scores.map(&:to_i).sort.reverse)
+
+          get submissions_phase_path(phase, format: :json, page: 2, sort: 'average_score_high_to_low')
+          expect(response).to have_http_status(:success)
+          second_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
+          expect(second_page_scores.count).to eq(5)
+          expect(second_page_scores.map(&:to_i)).to eq(second_page_scores.map(&:to_i).sort.reverse)
+        end
+      end
+
+      context 'when filtering submissions' do
+        let!(:eligible_submissions) do
+          submissions[0..22].each { |s| s.update!(judging_status: 'selected') }
+        end
+
+        it 'paginates correctly with eligible filter' do
+          get submissions_phase_path(phase, format: :json, page: 1, eligible_for_evaluation: 'true')
+          expect(response).to have_http_status(:success)
+          expect(response.body.scan(/data-submission-id="(\d+)"/).flatten.count).to eq(20)
+
+          get submissions_phase_path(phase, format: :json, page: 2, eligible_for_evaluation: 'true')
+          expect(response).to have_http_status(:success)
+          expect(response.body.scan(/data-submission-id="(\d+)"/).flatten.count).to eq(3)
+        end
+      end
+    end
   end
 end
