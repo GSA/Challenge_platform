@@ -45,34 +45,44 @@ class EvaluatorManagementService
   private
 
   def add_existing_user_as_evaluator(user)
-    if @phase.evaluators.include?(user)
-      return {
-        success: true,
-        message: I18n.t('evaluators.process_evaluator_invitation.already_added',
-                        email: user.email)
-      }
-    end
-
-    unless User::VALID_EVALUATOR_ROLES.include?(user.role)
-      return {
-        success: false,
-        message: I18n.t('evaluators.process_evaluator_invitation.invalid_role',
-                        email: user.email)
-      }
-    end
+    return user_already_added(user) if @phase.evaluators.include?(user)
+    return invalid_role(user) unless User::VALID_EVALUATOR_ROLES.include?(user.role)
 
     if user.role != 'evaluator'
-      user.update!(status: 'role_change_needed')
-      cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user: user)
-      return {
-        success: true,
-        message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed',
-                       email: user.email)
-      }
+      handle_role_change_needed(user)
+    else
+      handle_evaluator_creation(user)
     end
+  end
 
-    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
+  def user_already_added(user)
+    {
+      success: true,
+      message: I18n.t('evaluators.process_evaluator_invitation.already_added',
+                      email: user.email)
+    }
+  end
 
+  def invalid_role(user)
+    {
+      success: false,
+      message: I18n.t('evaluators.process_evaluator_invitation.invalid_role',
+                      email: user.email)
+    }
+  end
+
+  def handle_role_change_needed(user)
+    user.update!(status: 'role_change_needed')
+    create_challenge_phase_evaluator(user)
+    {
+      success: true,
+      message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed',
+                      email: user.email)
+    }
+  end
+
+  def handle_evaluator_creation(user)
+    cpe = create_challenge_phase_evaluator(user)
     if cpe.persisted?
       {
         success: true,
@@ -86,6 +96,10 @@ class EvaluatorManagementService
                         email: user.email)
       }
     end
+  end
+
+  def create_challenge_phase_evaluator(user)
+    ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
   end
 
   def handle_invitation(email, invitation_params)
