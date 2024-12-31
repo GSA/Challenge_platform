@@ -56,35 +56,26 @@ class EvaluatorManagementService
   end
 
   def user_already_added(user)
-    { success: true,
-      message: I18n.t('evaluators.process_evaluator_invitation.already_added',
-                      email: user.email) }
+    { success: true, message: I18n.t('evaluators.process_evaluator_invitation.already_added', email: user.email) }
   end
 
   def invalid_role(user)
-    { success: false,
-      message: I18n.t('evaluators.process_evaluator_invitation.invalid_role',
-                      email: user.email) }
+    { success: false, message: I18n.t('evaluators.process_evaluator_invitation.invalid_role', email: user.email) }
   end
 
   def handle_role_change_needed(user)
     user.update!(status: 'role_change_needed')
     create_challenge_phase_evaluator(user)
     { success: true,
-      message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed',
-                      email: user.email) }
+      message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed', email: user.email) }
   end
 
   def handle_evaluator_creation(user)
     cpe = create_challenge_phase_evaluator(user)
     if cpe.persisted?
-      { success: true,
-        message: I18n.t('evaluators.process_evaluator_invitation.add_success',
-                        email: user.email) }
+      { success: true, message: I18n.t('evaluators.process_evaluator_invitation.add_success', email: user.email) }
     else
-      { success: false,
-        message: I18n.t('evaluators.process_evaluator_invitation.add_failure',
-                        email: user.email) }
+      { success: false, message: I18n.t('evaluators.process_evaluator_invitation.add_failure', email: user.email) }
     end
   end
 
@@ -99,24 +90,16 @@ class EvaluatorManagementService
 
   def create_new_invitation(invitation_params)
     invitation = @challenge.evaluator_invitations.new(
-      invitation_params.merge(
-        phase: @phase,
-        last_invite_sent: Time.current
-      )
+      invitation_params.merge( phase: @phase, last_invite_sent: Time.current )
     )
     if invitation.save
-      {
-        success: true,
+      { success: true,
         message: I18n.t(
           'evaluators.process_evaluator_invitation.invitation_sent',
           email: invitation_params[:email]
-        )
-      }
+        ) }
     else
-      {
-        success: false,
-        message: invitation.errors.full_messages.join(", ")
-      }
+      { success: false, message: invitation.errors.full_messages.join(", ") }
     end
   end
 
