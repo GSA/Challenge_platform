@@ -48,11 +48,7 @@ class EvaluatorManagementService
     return user_already_added(user) if @phase.evaluators.include?(user)
     return invalid_role(user) unless User::VALID_EVALUATOR_ROLES.include?(user.role)
 
-    if user.role == 'evaluator'
-      handle_evaluator_creation(user)
-    else
-      handle_role_change_needed(user)
-    end
+    user.role == 'evaluator' ? handle_evaluator_creation(user) : handle_role_change_needed(user)
   end
 
   def user_already_added(user)
