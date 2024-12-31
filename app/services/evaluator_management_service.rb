@@ -65,22 +65,17 @@ class EvaluatorManagementService
 
   def handle_role_change_needed(user)
     user.update!(status: 'role_change_needed')
-    create_challenge_phase_evaluator(user)
-    { success: true,
-      message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed', email: user.email) }
+    ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
+    { success: true, message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed', email: user.email) }
   end
 
   def handle_evaluator_creation(user)
-    cpe = create_challenge_phase_evaluator(user)
+    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
     if cpe.persisted?
       { success: true, message: I18n.t('evaluators.process_evaluator_invitation.add_success', email: user.email) }
     else
       { success: false, message: I18n.t('evaluators.process_evaluator_invitation.add_failure', email: user.email) }
     end
-  end
-
-  def create_challenge_phase_evaluator(user)
-    ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
   end
 
   def handle_invitation(email, invitation_params)
@@ -90,7 +85,10 @@ class EvaluatorManagementService
 
   def create_new_invitation(invitation_params)
     invitation = @challenge.evaluator_invitations.new(
-      invitation_params.merge( phase: @phase, last_invite_sent: Time.current )
+      invitation_params.merge(
+        phase: @phase,
+        last_invite_sent: Time.current
+      )
     )
     if invitation.save
       { success: true,
