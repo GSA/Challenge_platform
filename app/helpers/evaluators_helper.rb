@@ -14,7 +14,14 @@ module EvaluatorsHelper
   def user_status(evaluator)
     return "Invite Sent" unless evaluator.is_a?(User)
 
-    evaluator.status == 'active' ? "Available" : "Awaiting Approval"
+    case evaluator.status
+    when 'active'
+      "Available"
+    when 'role_change_needed'
+      "Role Change Needed"
+    else
+      "Awaiting Approval" # pending
+    end
   end
 
   def assigned_submissions_count(evaluator, challenge, phase)

@@ -61,6 +61,16 @@ class EvaluatorManagementService
       }
     end
 
+    if user.role != 'evaluator'
+      user.update!(status: 'role_change_needed')
+      cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user: user)
+      return {
+        success: true,
+        message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed',
+                       email: user.email)
+      }
+    end
+
     cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
 
     if cpe.persisted?

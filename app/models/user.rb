@@ -95,6 +95,9 @@ class User < ApplicationRecord
   ROLES = %w[super_admin admin challenge_manager evaluator solver].freeze
   validates :role, inclusion: { in: ROLES }
 
+  USER_STATUSES = %w[pending active role_change_needed].freeze
+  validates :status, inclusion: { in: USER_STATUSES }
+
   # Finds, creates, or updates user from userinfo
   # Find in case of user with existing token matching userinfo["sub"]
   # Create in case of no token or email matching in userinfo
