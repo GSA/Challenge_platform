@@ -35,7 +35,7 @@
           <% end %>
         </div>
         <%= form.text_field :full_name, 
-          class: "usa-input #{input_error_class(form, :first_name)}", 
+          class: "usa-input #{input_error_class(form, :last_name)}", 
           required: true,
           autocomplete: "name",
           style: "border: 1.5px solid #565c65;",
@@ -44,7 +44,6 @@
           },
           value: form.object.full_name
         %>
-        <%= inline_error(form, :first_name) %>
         <%= inline_error(form, :last_name) %>
       </div>
 
