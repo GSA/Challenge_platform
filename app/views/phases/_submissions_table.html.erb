@@ -78,9 +78,8 @@
             <td data-label="Assigned Evaluators">
                 No evaluators assigned to this submission
             </td>
-            <% score, formatted_score = submission.average_score %>
-            <td data-label="Average Score" data-score="<%= score %>">
-              <%= formatted_score %>
+            <td data-label="Average Score" data-score="<%= score = submission.average_score %>">
+              <%= score %>
             </td>
             <td>
               <div class="display-flex flex-no-wrap grid-row grid-gap-1">
