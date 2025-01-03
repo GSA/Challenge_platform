@@ -36,7 +36,7 @@ class Submission < ApplicationRecord
   belongs_to :manager, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
-  has_many :evaluations, through: :evaluator_submission_assignments, dependent: :destroy
+  has_many :evaluations, dependent: :destroy
 
   # Fields
   attribute :title, :string
@@ -73,8 +73,7 @@ class Submission < ApplicationRecord
 
   def average_score
     avg = evaluations.average(:total_score)
-    score = avg ? avg.round : 0
-    [score, score.to_s]
+    avg ? avg.round : 0
   end
 
   def self.order_by_average_score(direction)
