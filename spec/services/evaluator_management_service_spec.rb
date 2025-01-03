@@ -11,7 +11,13 @@ RSpec.describe EvaluatorManagementService do
       let(:evaluator) { create(:user, role: 'evaluator') }
 
       it 'adds the user as an evaluator if not already added' do
-        result = service.process_evaluator_invitation(evaluator.email, {})
+        result = service.process_evaluator_invitation(
+          evaluator.email,
+          {
+            email: evaluator.email,
+            full_name: 'Santos Bickford'
+          }
+        )
         expect(result[:success]).to be true
         expect(result[:message]).to include('has been added as an evaluator')
         expect(ChallengePhasesEvaluator.where(challenge: challenge, phase: phase, user: evaluator).count).to eq(1)
@@ -30,6 +36,26 @@ RSpec.describe EvaluatorManagementService do
         result = service.process_evaluator_invitation(evaluator.email, {})
         expect(result[:success]).to be false
         expect(result[:message]).to include('does not have a valid evaluator role')
+      end
+
+      it 'requires full name when adding an existing user' do
+        result = service.process_evaluator_invitation(evaluator.email, { email: evaluator.email })
+        expect(result[:success]).to be false
+        expect(result[:message]).to eq('First and last name are required')
+      end
+
+      it 'updates user name when adding as evaluator' do
+        result = service.process_evaluator_invitation(
+          evaluator.email,
+          {
+            email: evaluator.email,
+            full_name: 'Santos Bickford'
+          }
+        )
+        expect(result[:success]).to be true
+        evaluator.reload
+        expect(evaluator.first_name).to eq('Santos')
+        expect(evaluator.last_name).to eq('Bickford')
       end
     end
 

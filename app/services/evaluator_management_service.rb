@@ -8,6 +8,7 @@ class EvaluatorManagementService
   end
 
   def process_evaluator_invitation(email, invitation_params)
+    @invitation_params = invitation_params
     user = User.find_by(email:)
     user ? add_existing_user_as_evaluator(user) : handle_invitation(email, invitation_params)
   end
@@ -44,6 +45,24 @@ class EvaluatorManagementService
 
   private
 
+  def update_name_for_existing_user(user)
+    names = @invitation_params[:full_name].to_s.strip.split(/\s+/, 2)
+    if names.length < 2
+      return {
+        success: false,
+        message: "First and last name are required"
+      }
+    end
+
+    first_name, last_name = names
+    user.update(
+      first_name: first_name,
+      last_name: last_name
+    )
+
+    { success: true }
+  end
+
   def add_existing_user_as_evaluator(user)
     if @phase.evaluators.include?(user)
       return {
@@ -60,6 +79,9 @@ class EvaluatorManagementService
                         email: user.email)
       }
     end
+
+    updated_name = update_name_for_existing_user(user)
+    return updated_name unless updated_name[:success]
 
     cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
 
@@ -101,7 +123,8 @@ class EvaluatorManagementService
     else
       {
         success: false,
-        message: invitation.errors.full_messages.join(", ")
+        message: invitation.errors.full_messages.join(", "),
+        evaluator_invitation: invitation
       }
     end
   end
