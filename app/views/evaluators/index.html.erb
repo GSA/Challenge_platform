@@ -2,39 +2,74 @@
   <div data-page="manage-evaluators">
   <%= render 'shared/back_link', path: phases_path(@phase) %>
     
-    <h1><%= @challenge.title %> - <%= @phase.title %></h1>
+    <h1><%= challenge_phase_title(@challenge, @phase) %></h1>
     <p>Create and manage a list of evaluators for the challenge.</p>
     <h2 class="padding-top-3">Add Evaluators</h2>
     <p>Evaluators will not be assigned to submissions until you assign in the submission detail view.</p>
-    <%= form_with(model: EvaluatorInvitation.new, url: phase_evaluators_path(@phase), method: :post, local: true) do |form| %>
+    <%= form_with(model: @evaluator_invitation || EvaluatorInvitation.new, url: phase_evaluators_path(@phase), method: :post, local: true, data: { controller: "evaluator-form modal" }, html: { novalidate: true }) do |form| %>
       <%= form.hidden_field :challenge_id, value: @challenge.id %>
       <%= form.hidden_field :phase_id, value: @phase.id %>
       <%= form.hidden_field :last_invite_sent, value: Time.current %>
+
+      <% if form.object.errors.any? %>
+        <div style="color: darkred">
+          <div class="usa-alert usa-alert--error" role="alert">
+            <div class="usa-alert__body">
+              <h3 class="usa-alert__heading">
+                <%= pluralize(form.object.errors.count, "error") %> prohibited this evaluator from being added:
+              </h3>
+              <ul>
+                <% form.object.errors.each do |error| %>
+                  <li><%= error.full_message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
       <div class="usa-form-group">
-        <%= form.label :first_name, class: "usa-label font-sans-md" do %>
-          <span class="text-bold">First Name</span><span class="text-red">*</span>
-        <% end %>
-        <div class="usa-hint font-sans-2xs text-normal">Add evaluator's first name.</div>
-        <%= form.text_field :first_name, class: "usa-input", required: true, autocomplete: "given-name", style: "border: 1.5px solid #565c65;" %>
+        <div class="display-flex flex-align-center text-bold">
+          <%= form.label :full_name, class: "usa-label font-sans-md #{label_error_class(form, :first_name)}" do %>
+            <span class="text-bold">First & Last Name</span><span class="text-red">*</span>
+          <% end %>
+        </div>
+        <%= form.text_field :full_name, 
+          class: "usa-input #{input_error_class(form, :first_name)}", 
+          required: true,
+          autocomplete: "name",
+          style: "border: 1.5px solid #565c65;",
+          data: {
+            action: "evaluator-form#validatePresence focusout->evaluator-form#validatePresence"
+          },
+          value: form.object.full_name
+        %>
+        <%= inline_error(form, :first_name) %>
+        <%= inline_error(form, :last_name) %>
       </div>
+
       <div class="usa-form-group">
-        <%= form.label :last_name, class: "usa-label font-sans-md" do %>
-          <span class="text-bold">Last Name</span><span class="text-red">*</span>
-        <% end %>
-        <div class="usa-hint font-sans-2xs text-normal">Add evaluator's last name.</div>
-        <%= form.text_field :last_name, class: "usa-input", required: true, autocomplete: "family-name", style: "border: 1.5px solid #565c65;" %>
+        <div class="display-flex flex-align-center text-bold">
+          <%= form.label :email, class: "usa-label font-sans-md #{label_error_class(form, :email)}" do %>
+            <span class="text-bold">Email Address</span><span class="text-red">*</span>
+          <% end %>
+        </div>
+        <%= form.email_field :email, 
+          class: "usa-input #{input_error_class(form, :email)}", 
+          required: true, 
+          autocomplete: "email",
+          style: "border: 1.5px solid #565c65;",
+          data: {
+            action: "evaluator-form#validatePresence focusout->evaluator-form#validatePresence"
+          }
+        %>
+        <%= inline_error(form, :email) %>        
       </div>
-      <div class="usa-form-group">
-        <%= form.label :email, class: "usa-label font-sans-md" do %>
-          <span class="text-bold">Email Address</span><span class="text-red">*</span>
-        <% end %>
-        <div class="usa-hint font-sans-2xs text-normal">Add a single email address for the individual.</div>
-        <%= form.email_field :email, class: "usa-input", required: true, autocomplete: "email", style: "border: 1.5px solid #565c65;" %>
-      </div>
+
       <%= form.button type: 'submit', class: "usa-button margin-top-5 margin-bottom-3" do %>
-        <%= image_tag('images/usa-icons/person.svg', class: "usa-icon--size-3 icon-white", alt: "Add evaluator") %>
+        <%= image_tag('images/usa-icons/person.svg', class: "usa-icon--size-3 icon-white", alt: "") %>
         <span>Add to evaluator list</span>
-      <% end %>    
+      <% end %>
     <% end %>
 
     <h2>Evaluator List</h2>

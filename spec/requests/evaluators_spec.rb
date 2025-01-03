@@ -190,7 +190,7 @@ RSpec.describe "Evaluators", type: :request do
         }
 
         expect(response).to render_template(:index)
-        expect(flash[:alert]).to eq('User does not have a valid evaluator role.')
+        expect(response.body).to include('User does not have a valid evaluator role.')
       end
     end
   end
