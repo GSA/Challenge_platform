@@ -56,8 +56,8 @@ class EvaluatorManagementService
 
     first_name, last_name = names
     user.update(
-      first_name: first_name,
-      last_name: last_name
+      first_name:,
+      last_name:
     )
 
     { success: true }
