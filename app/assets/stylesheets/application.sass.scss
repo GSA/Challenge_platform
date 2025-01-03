@@ -59,6 +59,13 @@ dialog::backdrop {
       }
     }
   }
+
+  @media (max-width: 64em) {
+    a:not(.usa-button):hover {
+      background-color: #005ea2;
+      color: white;
+    }
+  }
 }
 
 .usa-combo-box .border-secondary + input {
