@@ -8,8 +8,7 @@
 
 <%= render partial: "phases/sort_and_filter" %>
 
-<div data-controller="load-more" 
-     data-load-more-url-value="<%= submissions_phase_path(@phase, format: :json) %>"
+<div data-controller="load-more"
      data-load-more-total-count-value="<%= @filtered_count %>">
 
   <table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
