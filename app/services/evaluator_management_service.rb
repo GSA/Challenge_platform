@@ -62,7 +62,10 @@ class EvaluatorManagementService
   def handle_evaluator_role_requested(user)
     user.update!(status: 'evaluator_role_requested')
     ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
-    { success: true, message: I18n.t('evaluators.process_evaluator_invitation.evaluator_role_requested', email: user.email) }
+    {
+      success: true,
+      message: I18n.t('evaluators.process_evaluator_invitation.evaluator_role_requested', email: user.email)
+    }
   end
 
   def handle_evaluator_creation(user)
