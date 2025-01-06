@@ -90,10 +90,14 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
 
   def handle_successful_update(new_status)
     flash[:success] = t("evaluator_submission_assignments.#{new_status}.success")
-    respond_to do |format|
-      format.html { redirect_to_assignment_path }
-      format.json { render json: { success: true, message: flash[:success] } }
-    end
+    if request.referrer && request.referrer.include?("submissions") 
+      redirect_to request.referrer
+    else   
+      respond_to do |format|
+        format.html { redirect_to_assignment_path }
+        format.json { render json: { success: true, message: flash[:success] } }
+      end
+    end  
   end
 
   def handle_failed_update(new_status)

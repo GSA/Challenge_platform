@@ -22,7 +22,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @submission.evaluators.each do |evaluator| %>
+            <% @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]).each do |evaluator| %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                 <th scope="row" data-label="Evaluator name" class="text-top">
                   <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span>
@@ -31,9 +31,9 @@
                 <td data-label="Score" class="text-top"></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
-                    <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
-                      <%= f.hidden_field :evaluator_id, value: evaluator.id %>
-                      <%= f.hidden_field :submission_id, value: @submission.id %>
+                    <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first.id), method: "PATCH" do |f| %>
+                      <%= f.hidden_field :phase_id, value: @submission.phase.id %>
+                      <%= f.hidden_field :status, value: "unassigned" %>
                       <%= f.submit "Unassign" %>
                     <% end %>
                   </div>
