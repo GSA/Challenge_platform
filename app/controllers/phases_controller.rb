@@ -33,7 +33,8 @@ class PhasesController < ApplicationController
   end
 
   def set_submission_statuses
-    @not_started = @submissions.where.missing(:evaluations)
+    @not_started = @submissions.left_joins(evaluator_submission_assignments: :evaluation).
+      where('evaluations.id IS NULL').distinct
     @in_progress = @submissions.joins(evaluator_submission_assignments: :evaluation).
       where(evaluations: { completed_at: nil }).distinct
     @completed = @submissions.joins(evaluator_submission_assignments: :evaluation).
