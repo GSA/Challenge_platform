@@ -21,10 +21,6 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     end
   end
 
-  def unassign
-    
-  end  
-
   def index
     @evaluator_assignments = @phase.evaluator_submission_assignments.includes(:submission).where(user_id: @evaluator.id)
     @assigned_submissions = @evaluator_assignments.
