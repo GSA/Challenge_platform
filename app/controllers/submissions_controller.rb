@@ -5,8 +5,7 @@ class SubmissionsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_submission, only: [:show, :update]
 
-  def show
-  end  
+  def show; end
 
   def update
     if @submission.update!(submission_params)

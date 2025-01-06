@@ -8,7 +8,6 @@ describe "A11y", :js do
     let(:challenge) { create_challenge(user: user, title: "Boston Tea Party Cleanup") }
     let(:submission) { create(:submission, manager: user, challenge: challenge) }
 
-
     before { system_login_user(user) }
 
     it "submission details page is accessible" do

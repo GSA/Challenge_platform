@@ -8,19 +8,6 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   before_action :set_assignment, only: [:update]
   before_action :set_submission, only: [:create]
 
-  def create
-    @evaluator_submission_assignment = EvaluatorSubmissionAssignment.new(
-      user_id: params["evaluator_id"],
-      submission_id: @submission.id,
-      status: :assigned
-      )
-    if @evaluator_submission_assignment.save
-      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignment_saved")
-    else
-      redirect_to confirmation_evaluation_form_path(@evaluator_submission_assignment), notice: I18n.t("evaluation_form_saved")
-    end
-  end
-
   def index
     @evaluator_assignments = @phase.evaluator_submission_assignments.includes(:submission).where(user_id: @evaluator.id)
     @assigned_submissions = @evaluator_assignments.
@@ -31,6 +18,20 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       where(status: %i[unassigned recused_unassigned]).
       ordered_by_status
     @submissions_count = calculate_submissions_count(@assigned_submissions)
+  end
+
+  def create
+    @evaluator_submission_assignment = EvaluatorSubmissionAssignment.new(
+      user_id: params["evaluator_id"],
+      submission_id: @submission.id,
+      status: :assigned
+    )
+    if @evaluator_submission_assignment.save
+      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignment_saved")
+    else
+      redirect_to confirmation_evaluation_form_path(@evaluator_submission_assignment),
+                  notice: I18n.t("evaluation_form_saved")
+    end
   end
 
   # update only the status of the evaluation submission assignment to unassign or reassign an evaluator
@@ -65,7 +66,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
 
   def set_submission
     @submission = @phase.submissions.find(params[:submission_id])
-  end  
+  end
 
   def status_from_params
     status = params[:status] || params.dig(:evaluator_submission_assignment, :status)
@@ -85,19 +86,19 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   end
 
   def handle_successful_update(new_status)
-    flash[:success] = t("evaluator_submission_assignments.#{new_status}.success")
-    if request.referrer && request.referrer.include?("submissions") 
-      redirect_to request.referrer
-    else   
+    flash.now[:success] = t("evaluator_submission_assignments.#{new_status}.success")
+    if request.referer&.include?("submissions")
+      redirect_to request.referer
+    else
       respond_to do |format|
         format.html { redirect_to_assignment_path }
         format.json { render json: { success: true, message: flash[:success] } }
       end
-    end  
+    end
   end
 
   def handle_failed_update(new_status)
-    flash[:error] = t("evaluator_submission_assignments.#{new_status}.failure")
+    flash.now[:error] = t("evaluator_submission_assignments.#{new_status}.failure")
     respond_to do |format|
       format.html { redirect_to_assignment_path }
       format.json { render json: { success: false, message: flash[:error] }, status: :unprocessable_entity }
