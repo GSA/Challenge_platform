@@ -18,9 +18,14 @@ export default class extends Controller {
     try {
       const url = new URL(window.location.href)
       url.searchParams.set('page', this.pageValue)
-      url.searchParams.set('format', 'json')
+      url.searchParams.set('partial', 'true')
       
-      const response = await fetch(url)
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'text/html',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
       if (!response.ok) throw new Error('Network response was not ok')
       
       const html = await response.text()

@@ -22,11 +22,14 @@ class PhasesController < ApplicationController
     @submissions = paginate_submissions(@submissions)
 
     respond_to do |format|
-      format.html
-      format.json do
-        render partial: 'submissions_table_rows',
-               locals: { submissions: @submissions },
-               formats: [:html]
+      format.html do
+        if params[:partial]
+          render partial: 'submissions_table_rows',
+                 locals: { submissions: @submissions },
+                 formats: [:html]
+        else
+          render :submissions
+        end
       end
     end
   end

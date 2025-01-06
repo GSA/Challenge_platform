@@ -244,12 +244,14 @@ RSpec.describe "Submissions" do
       it 'returns first page of submissions' do
         get submissions_phase_path(phase)
         expect(response.body).to have_css('tr[data-submission-id]', count: 20)
+        expect(response.body).to have_button('Load more')
       end
 
-      it 'returns next page of submissions via JSON' do
-        get submissions_phase_path(phase, format: :json, page: 2)
+      it 'returns next page of submissions via partial' do
+        get submissions_phase_path(phase, page: 2, partial: true)
         expect(response).to have_http_status(:success)
         expect(response.body).to have_css('tr[data-submission-id]', count: 5)
+        expect(response.body).not_to have_button('Load more')
       end
 
       context 'when sorting by average score' do
@@ -263,13 +265,14 @@ RSpec.describe "Submissions" do
         end
 
         it 'paginates correctly when sorted by score' do
-          get submissions_phase_path(phase, format: :json, page: 1, sort: 'average_score_high_to_low')
+          get submissions_phase_path(phase, page: 1, sort: 'average_score_high_to_low')
           expect(response).to have_http_status(:success)
           first_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
           expect(first_page_scores.count).to eq(20)
           expect(first_page_scores.map(&:to_i)).to eq(first_page_scores.map(&:to_i).sort.reverse)
+          expect(response.body).to have_button('Load more')
 
-          get submissions_phase_path(phase, format: :json, page: 2, sort: 'average_score_high_to_low')
+          get submissions_phase_path(phase, page: 2, partial: true, sort: 'average_score_high_to_low')
           expect(response).to have_http_status(:success)
           second_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
           expect(second_page_scores.count).to eq(5)
@@ -283,11 +286,12 @@ RSpec.describe "Submissions" do
         end
 
         it 'paginates correctly with eligible filter' do
-          get submissions_phase_path(phase, format: :json, page: 1, eligible_for_evaluation: 'true')
+          get submissions_phase_path(phase, page: 1, eligible_for_evaluation: 'true')
           expect(response).to have_http_status(:success)
           expect(response.body.scan(/data-submission-id="(\d+)"/).flatten.count).to eq(20)
+          expect(response.body).to have_button('Load more')
 
-          get submissions_phase_path(phase, format: :json, page: 2, eligible_for_evaluation: 'true')
+          get submissions_phase_path(phase, page: 2, partial: true, eligible_for_evaluation: 'true')
           expect(response).to have_http_status(:success)
           expect(response.body.scan(/data-submission-id="(\d+)"/).flatten.count).to eq(3)
         end
