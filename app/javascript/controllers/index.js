@@ -7,12 +7,6 @@ import { application } from "./application";
 import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller";
 application.register("delete-evaluator-modal", DeleteEvaluatorModalController);
 
-import UnassignEvaluatorSubmissionModalController from "./unassign_evaluator_submission_modal_controller";
-application.register(
-  "unassign-evaluator-submission-modal",
-  UnassignEvaluatorSubmissionModalController
-);
-
 import EvaluationCriteriaController from "./evaluation_criteria_controller";
 application.register("evaluation-criteria", EvaluationCriteriaController);
 
@@ -27,3 +21,9 @@ application.register("submission-details", SubmissionDetailsController);
 
 import ModalController from "./modal_controller";
 application.register("modal", ModalController);
+
+import SortFilterMenuController from "./sort_filter_menu_controller";
+application.register("sort-filter-menu", SortFilterMenuController);
+
+import UnassignEvaluatorSubmissionModalController from "./unassign_evaluator_submission_modal_controller";
+application.register("unassign-evaluator-submission-modal", UnassignEvaluatorSubmissionModalController);
