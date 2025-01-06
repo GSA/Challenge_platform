@@ -11,6 +11,8 @@ module SubmissionsHelper
   end
 
   def available_evaluators(submission)
-    submission.phase.evaluators - submission.evaluators + submission.evaluators.where("evaluator_submission_assignments.status" => ["unassigned"])
+    submission.phase.evaluators - 
+    submission.evaluators + 
+    submission.evaluators.where("evaluator_submission_assignments.status" => ["unassigned"])
   end
 end
