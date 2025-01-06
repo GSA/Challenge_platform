@@ -17,6 +17,21 @@ class PhasesController < ApplicationController
 
     apply_filters
     apply_sorting
+
+    @filtered_count = @submissions.unscope(:group).distinct.count(:id)
+    @submissions = paginate_submissions(@submissions)
+
+    respond_to do |format|
+      format.html do
+        if params[:partial]
+          render partial: 'submissions_table_rows',
+                 locals: { submissions: @submissions },
+                 formats: [:html]
+        else
+          render :submissions
+        end
+      end
+    end
   end
 
   private
@@ -101,5 +116,11 @@ class PhasesController < ApplicationController
     when 'submission_id_low_to_high'
       @submissions = @submissions.order(id: :asc)
     end
+  end
+
+  def paginate_submissions(submissions)
+    page = (params[:page] || 1).to_i
+    per_page = 20
+    submissions.offset((page - 1) * per_page).limit(per_page)
   end
 end

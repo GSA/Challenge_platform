@@ -19,6 +19,9 @@ application.register("hotdog", HotdogController);
 import SubmissionDetailsController from "./submission_details_controller";
 application.register("submission-details", SubmissionDetailsController);
 
+import LoadMoreController from "./load_more_controller";
+application.register("load-more", LoadMoreController);
+
 import ModalController from "./modal_controller";
 application.register("modal", ModalController);
 
