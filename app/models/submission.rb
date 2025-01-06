@@ -99,7 +99,7 @@ class Submission < ApplicationRecord
 
     return unless advancement_checkbox_disabled?
 
-    errors.add(:judging_status, "can't be selected to advance if not all evaluations are complete")
+    errors.add(:judging_status, "can't be selected to advance until all evaluations are complete")
   end
 
   def can_be_ineligible_for_evaluation
