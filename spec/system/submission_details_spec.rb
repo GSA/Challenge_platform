@@ -20,11 +20,20 @@ describe "A11y", :js do
 
     it "allows manipulation of judging status" do
       visit submission_path(submission)
+      evaluator = create(:user, role: 'evaluator')
 
       find_by_id('eligible-for-evaluation').click
       click_on('Save')
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.judging_status).to eq('selected')
+
+      assigned_submission = create(:evaluator_submission_assignment,
+        submission: updated_submission,
+        evaluator: evaluator,
+        status: :assigned)
+      create(:evaluation,
+        evaluator_submission_assignment: assigned_submission,
+        completed_at: Time.current)
 
       find_by_id('selected-to-advance').click
       click_on('Save')
