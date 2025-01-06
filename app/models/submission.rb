@@ -75,12 +75,12 @@ class Submission < ApplicationRecord
     winner?
   end
 
-  def eligibility_deselection_disabled?
+  def evaluators_assigned?
     evaluator_submission_assignments.exists?(status: [:assigned, :recused])
   end
 
-  def advancement_checkbox_disabled?
-    !eligible_for_evaluation? || !all_evaluations_completed? || evaluators.empty?
+  def evaluations_missing_or_incomplete?
+    !eligible_for_evaluation? || !all_evaluations_completed? || evaluator_submission_assignments.empty?
   end
 
   private
@@ -92,18 +92,13 @@ class Submission < ApplicationRecord
   end
 
   def can_be_selected_to_advance
-    unless judging_status_was == 'selected'
-      errors.add(:judging_status, "can't be selected to advance when not eligible for evaluation")
-      return
-    end
-
-    return unless advancement_checkbox_disabled?
+    return unless evaluations_missing_or_incomplete?
 
     errors.add(:judging_status, "can't be selected to advance until all evaluations are complete")
   end
 
   def can_be_ineligible_for_evaluation
-    return unless eligibility_deselection_disabled?
+    return unless evaluators_assigned?
 
     errors.add(:judging_status, "must remain eligible for evaluation when evaluators are assigned")
   end
