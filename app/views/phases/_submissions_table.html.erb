@@ -6,7 +6,12 @@
   <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator.text') %>
 <% end %>
 
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+<%= render partial: "phases/sort_and_filter" %>
+
+<div data-controller="load-more"
+     data-load-more-total-count-value="<%= @filtered_count %>">
+
+  <table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
     <thead>
       <tr>
         <th scope="col">Submission ID</th>
@@ -14,80 +19,20 @@
         <th scope="col">Selected to Advance</th>
         <th scope="col">Assigned Evaluators</th>
         <th scope="col">Average Score</th>
+        <th scope="col"><span class="usa-sr-only">View Submission</span></th>
       </tr>
     </thead>
-    <tbody>
-      <% @submissions.each do |submission| %>
-          <tr>
-            <th data-label="Submission ID" scope="row">
-              <span class="mobile-lg:display-none">Submission ID </span><%= submission.id %>
-            </th>
-            <td data-label="Eligible for Evaluation">
-              <div class="display-flex flex-align-center">  
-                <% if submission.eligible_for_evaluation? %>
-                    <input type="checkbox" disabled checked class="display-none mobile-lg:display-block">
-                    <div class="mobile-lg:display-none">
-                        <%= image_tag(
-                            "images/usa-icons/verified.svg",
-                            class: "usa-icon--size-3 margin-right-1",
-                            alt: ""
-                        )%>
-                        <span class="text-top">Eligible for Evaluation</span>
-                    </div>    
-                <% else  %>
-                    <input type="checkbox" disabled class="display-none mobile-lg:display-block">
-                    <div class="mobile-lg:display-none">
-                        <%= image_tag(
-                            "images/usa-icons/highlight_off.svg",
-                            class: "usa-icon--size-3 margin-right-1",
-                            alt: ""
-                        )%>
-                        <span class="text-top">Not Eligible for Evaluation</span>
-                    </div>    
-                <% end %>
-              </div>  
-            </td>
-            <td data-label="Selected to Advance">
-              <div class="display-flex flex-align-center">  
-                <% if submission.selected_to_advance? %>
-                    <input type="checkbox" disabled checked class="display-none mobile-lg:display-block">
-                    <div class="mobile-lg:display-none">
-                        <%= image_tag(
-                            "images/usa-icons/star.svg",
-                            class: "usa-icon--size-3 margin-right-1",
-                            alt: ""
-                        )%>
-                        <span class="text-top">Selected to Advance</span>
-                    </div>
-                <% else  %>
-                    <input type="checkbox" disabled class="display-none mobile-lg:display-block">
-                    <div class="mobile-lg:display-none">
-                        <%= image_tag(
-                            "images/usa-icons/star_outline.svg",
-                            class: "usa-icon--size-3 margin-right-1",
-                            alt: ""
-                        )%>
-                        <span class="text-top">Not Selected to Advance</span>
-                    </div>    
-                <% end %>
-              </div>  
-            </td>
-            <td data-label="Assigned Evaluators">
-                No evaluators assigned to this submission
-            </td>
-            <td>
-                N/A
-            </td>
-            <td>
-              <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-                <%= link_to submission_path(submission) do %>
-                    <button class="usa-button font-body-2xs text-no-wrap">
-                        View Submission
-                    </button>
-                <% end %>    
-              </div>  
-            </td>  
-          </tr>
-      <% end %>  
+    <tbody data-load-more-target="container">
+      <%= render partial: "submissions_table_rows", locals: { submissions: @submissions } %>
     </tbody>
   </table>
+
+  <div class="display-flex flex-justify-center margin-top-6 margin-bottom-6 width-full">
+    <button class="usa-button mobile:width-mobile" 
+            data-load-more-target="loadMoreButton"
+            data-action="click->load-more#loadMore"
+            aria-label="Load more submissions">
+      Load more
+    </button>
+  </div>
+</div>
