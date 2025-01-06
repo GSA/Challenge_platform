@@ -105,6 +105,6 @@ class Submission < ApplicationRecord
   def can_be_ineligible_for_evaluation
     return unless eligibility_deselection_disabled?
 
-    errors.add(:judging_status, "can't deselect evaluation eligibility when there are evaluators assigned")
+    errors.add(:judging_status, "must remain eligible for evaluation when evaluators are assigned")
   end
 end
