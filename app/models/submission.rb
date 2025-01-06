@@ -101,6 +101,7 @@ class Submission < ApplicationRecord
     return unless evaluators_assigned?
 
     errors.add(:judging_status, "must remain eligible for evaluation when evaluators are assigned")
+  end
 
   def average_score
     avg = evaluations.average(:total_score)
