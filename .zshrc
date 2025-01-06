@@ -1,1 +1,0 @@
-export PHOENIX_URI="localhost:4000"
