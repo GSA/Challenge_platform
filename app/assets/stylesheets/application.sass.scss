@@ -22,6 +22,52 @@ dialog::backdrop {
   background-color: #4d8055;
 }
 
+.usa-nav__primary {
+  button.usa-accordion__button {
+    &::before,
+    &::after,
+    span::after {
+      display: none !important;
+      content: none !important;
+      -webkit-mask: none !important;
+      mask: none !important;
+    }
+
+    .usa-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      fill: #005ea2;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+
+      @media (min-width: 64em) {
+        margin-left: -16px;
+      }
+    }
+
+    .icon-up {
+      display: none;
+    }
+
+    &[aria-expanded="true"] {
+      .icon-down {
+        display: none;
+      }
+      .icon-up {
+        display: inline-block;
+      }
+    }
+  }
+
+  @media (max-width: 64em) {
+    a:not(.usa-button):hover {
+      background-color: #005ea2;
+      color: white;
+    }
+  }
+}
+
 .usa-combo-box .border-secondary + input {
   border: 1px solid red;
 }
