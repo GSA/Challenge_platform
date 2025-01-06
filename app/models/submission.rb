@@ -67,8 +67,29 @@ class Submission < ApplicationRecord
   }
   scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
 
+  scope :order_by_average_score, lambda { |direction|
+    direction_sql = direction == :desc ? 'DESC' : 'ASC'
+
+    joins(
+      "LEFT JOIN evaluations ON evaluations.submission_id = submissions.id " \
+      "AND evaluations.completed_at IS NOT NULL"
+    ).
+      group('submissions.id').
+      order(
+        Arel.sql(
+          "COALESCE(ROUND(AVG(evaluations.total_score)), 0) #{direction_sql}, " \
+          "submissions.id #{direction_sql}"
+        )
+      )
+  }
+
   def eligible_for_evaluation?
     selected? or winner?
+  end
+
+  def average_score
+    avg = evaluations.average(:total_score)
+    avg ? avg.round : 0
   end
 
   def selected_to_advance?
@@ -101,26 +122,5 @@ class Submission < ApplicationRecord
     return unless evaluators_assigned?
 
     errors.add(:judging_status, "must remain eligible for evaluation when evaluators are assigned")
-  end
-
-  def average_score
-    avg = evaluations.average(:total_score)
-    avg ? avg.round : 0
-  end
-
-  def self.order_by_average_score(direction)
-    direction_sql = direction == :desc ? 'DESC' : 'ASC'
-
-    joins(
-      "LEFT JOIN evaluations ON evaluations.submission_id = submissions.id " \
-      "AND evaluations.completed_at IS NOT NULL"
-    ).
-      group('submissions.id').
-      order(
-        Arel.sql(
-          "COALESCE(ROUND(AVG(evaluations.total_score)), 0) #{direction_sql}, " \
-          "submissions.id #{direction_sql}"
-        )
-      )
   end
 end
