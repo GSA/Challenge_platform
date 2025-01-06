@@ -156,8 +156,8 @@ RSpec.describe "Submissions" do
 
           expect(response).to have_http_status(:unprocessable_entity)
           expect(submission.reload.judging_status).to eq('selected')
-          expect(JSON.parse(response.body)['errors']).to include(
-            "judging_status" => ["can't deselect evaluation eligibility when there are evaluators assigned"]
+          expect(response.parsed_body['errors']).to include(
+            "judging_status" => ["must remain eligible for evaluation when evaluators are assigned"]
           )
         end
 
@@ -190,13 +190,13 @@ RSpec.describe "Submissions" do
 
           expect(response).to have_http_status(:unprocessable_entity)
           expect(submission.reload.judging_status).to eq('selected')
-          expect(JSON.parse(response.body)['errors']).to include(
-            "judging_status" => ["can't be selected to advance if not all evaluations are complete"]
+          expect(response.parsed_body['errors']).to include(
+            "judging_status" => ["can't be selected to advance until all evaluations are complete"]
           )
         end
       end
 
-      context "updating comments" do
+      context "when updating comments" do
         it "successfully updates comments" do
           patch submission_path(submission), params: {
             submission: { comments: "Comment about submission here" }
@@ -260,9 +260,9 @@ RSpec.describe "Submissions" do
 
           expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
           expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{selected_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{completed_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{selected_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
         end
 
         it 'shows only completed submissions' do
@@ -270,9 +270,9 @@ RSpec.describe "Submissions" do
 
           expect(response.body).to have_css("[data-submission-id='#{completed_submission.id}']")
           expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{not_started_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{eligible_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{not_started_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{eligible_submission.id}']")
         end
       end
 
@@ -282,50 +282,50 @@ RSpec.describe "Submissions" do
 
           expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
           expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{not_started_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{completed_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{not_started_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
         end
 
         it 'displays only selected to advance submissions' do
           get submissions_phase_path(phase), params: { selected_to_advance: 'true' }
 
           expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{eligible_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{not_started_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{in_progress_submission.id}']")
-          expect(response.body).not_to have_css("[data-submission-id='#{completed_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{eligible_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{not_started_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
         end
       end
 
       context 'when sorting submissions' do
         before do
           create(:evaluation,
-            evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: in_progress_submission),
-            total_score: 80
-          )
+                 evaluator_submission_assignment: create(:evaluator_submission_assignment,
+                                                         submission: in_progress_submission),
+                 total_score: 80)
 
           create(:evaluation,
-            evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: completed_submission),
-            total_score: 90
-          )
+                 evaluator_submission_assignment: create(:evaluator_submission_assignment,
+                                                         submission: completed_submission),
+                 total_score: 90)
         end
 
         it 'orders submissions by score high to low' do
           get submissions_phase_path(phase), params: { sort: 'average_score_high_to_low' }
 
-          expect(response.body).to have_selector(
-            "tr[data-submission-id='#{completed_submission.id}']" \
-            " ~ tr[data-submission-id='#{in_progress_submission.id}']"
+          expect(response.body).to have_css(
+            "tr[data-submission-id='#{completed_submission.id}'] " \
+            "~ tr[data-submission-id='#{in_progress_submission.id}']"
           )
         end
 
         it 'orders submissions by score low to high' do
           get submissions_phase_path(phase), params: { sort: 'average_score_low_to_high' }
 
-          expect(response.body).to have_selector(
-            "tr[data-submission-id='#{in_progress_submission.id}']" \
-            " ~ tr[data-submission-id='#{completed_submission.id}']"
+          expect(response.body).to have_css(
+            "tr[data-submission-id='#{in_progress_submission.id}'] " \
+            "~ tr[data-submission-id='#{completed_submission.id}']"
           )
         end
       end
@@ -348,16 +348,15 @@ RSpec.describe "Submissions" do
         get submissions_phase_path(phase, page: 2, partial: true)
         expect(response).to have_http_status(:success)
         expect(response.body).to have_css('tr[data-submission-id]', count: 5)
-        expect(response.body).not_to have_button('Load more')
+        expect(response.body).to have_no_button('Load more')
       end
 
       context 'when sorting by average score' do
         let!(:scored_submissions) do
           submissions[0..24].each_with_index do |submission, index|
             create(:evaluation,
-              evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: submission),
-              total_score: (index + 1) * 20
-            )
+                   evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: submission),
+                   total_score: (index + 1) * 20)
           end
         end
 
