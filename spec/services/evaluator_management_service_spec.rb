@@ -62,15 +62,15 @@ RSpec.describe EvaluatorManagementService do
     context 'with an existing user needing role change' do
       let(:solver) { create(:user, role: 'solver', status: 'active') }
 
-      it 'sets status to role_change_needed when user is not an evaluator role' do
+      it 'sets status to evaluator_role_requested when user is not an evaluator role' do
         result = service.process_evaluator_invitation(solver.email, {})
 
         expect(result[:success]).to be true
         expect(result[:message]).to include('requires a role change to evaluator')
-        expect(solver.reload.status).to eq('role_change_needed')
+        expect(solver.reload.status).to eq('evaluator_role_requested')
       end
 
-      it 'does not set role_change_needed for users with evaluator role' do
+      it 'does not set evaluator_role_requested for users with evaluator role' do
         evaluator = create(:user, role: 'evaluator', status: 'active')
         result = service.process_evaluator_invitation(evaluator.email, {})
 

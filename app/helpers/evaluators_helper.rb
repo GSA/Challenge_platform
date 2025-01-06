@@ -17,7 +17,7 @@ module EvaluatorsHelper
     case evaluator.status
     when 'active'
       "Available"
-    when 'role_change_needed'
+    when 'evaluator_role_requested'
       "Role Change Needed"
     else
       "Awaiting Approval" # pending

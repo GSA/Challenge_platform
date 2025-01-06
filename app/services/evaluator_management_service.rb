@@ -48,7 +48,7 @@ class EvaluatorManagementService
     return user_already_added(user) if @phase.evaluators.include?(user)
     return invalid_role(user) unless User::VALID_EVALUATOR_ROLES.include?(user.role)
 
-    user.role == 'evaluator' ? handle_evaluator_creation(user) : handle_role_change_needed(user)
+    user.role == 'evaluator' ? handle_evaluator_creation(user) : handle_evaluator_role_requested(user)
   end
 
   def user_already_added(user)
@@ -59,10 +59,10 @@ class EvaluatorManagementService
     { success: false, message: I18n.t('evaluators.process_evaluator_invitation.invalid_role', email: user.email) }
   end
 
-  def handle_role_change_needed(user)
-    user.update!(status: 'role_change_needed')
+  def handle_evaluator_role_requested(user)
+    user.update!(status: 'evaluator_role_requested')
     ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
-    { success: true, message: I18n.t('evaluators.process_evaluator_invitation.role_change_needed', email: user.email) }
+    { success: true, message: I18n.t('evaluators.process_evaluator_invitation.evaluator_role_requested', email: user.email) }
   end
 
   def handle_evaluator_creation(user)
