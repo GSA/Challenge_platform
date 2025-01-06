@@ -6,7 +6,12 @@
   <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator.text') %>
 <% end %>
 
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full">
+<%= render partial: "phases/sort_and_filter" %>
+
+<div data-controller="load-more"
+     data-load-more-total-count-value="<%= @filtered_count %>">
+
+  <table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
     <thead>
       <tr>
         <th scope="col">Submission ID</th>
@@ -14,118 +19,20 @@
         <th scope="col">Selected to Advance</th>
         <th scope="col">Assigned Evaluators</th>
         <th scope="col">Average Score</th>
+        <th scope="col"><span class="usa-sr-only">View Submission</span></th>
       </tr>
     </thead>
-    <tbody>
-      <% @submissions.each do |submission| %>
-          <tr data-controller="submission-judging-status">
-            <th data-label="Submission ID" scope="row">
-              <span class="mobile-lg:display-none">Submission ID </span><%= submission.id %>
-            </th>
-            <td data-label="Eligible for Evaluation">
-              <div class="display-flex flex-align-center margin-bottom-5">
-                <div class="usa-checkbox">
-                  <%= form_with(
-                      model: submission,
-                      url: submission_path(submission),
-                      method: :patch,
-                      id: "eligibility_form_#{submission.id}",
-                      data: { 
-                        submission_judging_status_target: "eligibilityForm"
-                      }) do |f| %>
-                    <fieldset class="usa-fieldset margin-0">
-                      <legend class="usa-sr-only">Eligibility for evaluation</legend>
-                      <%= f.check_box :judging_status,
-                          id: "eligible_for_evaluation_#{submission.id}",
-                          disabled: submission.evaluators_assigned?,
-                          checked: submission.eligible_for_evaluation?,
-                          class: "usa-checkbox__input",
-                          data: {
-                            action: "change->submission-judging-status#toggleEligibility",
-                            submission_judging_status_target: "eligibilityCheckbox"
-                          }
-                      %>
-                      <%= f.label :judging_status,
-                          "Toggle eligibility for evaluation",
-                          for: "eligible_for_evaluation_#{submission.id}",
-                          class: "usa-checkbox__label",
-                          style: "font-size: 0;" %>
-                    </fieldset>
-                  <% end %>
-                </div>
-              </div>
-            </td>
-
-            <td data-label="Selected to Advance">
-              <div class="display-flex flex-align-center margin-bottom-5">
-                <div class="usa-checkbox">
-                  <%= form_with(
-                      model: submission,
-                      url: submission_path(submission),
-                      method: :patch,
-                      id: "advancement_form_#{submission.id}",
-                      data: { 
-                        submission_judging_status_target: "advancementForm"
-                      }) do |f| %>
-                    <fieldset class="usa-fieldset margin-0">
-                      <legend class="usa-sr-only">Selected to advance status</legend>
-                      <%= f.check_box :judging_status,
-                          id: "selected_to_advance_#{submission.id}",
-                          disabled: submission.evaluations_missing_or_incomplete?,
-                          checked: submission.selected_to_advance?,
-                          class: "usa-checkbox__input",
-                          data: {
-                            action: "change->submission-judging-status#toggleAdvancement",
-                            submission_judging_status_target: "advancementCheckbox"
-                          }
-                      %>
-                      <%= f.label :judging_status,
-                          "Toggle selected to advance status",
-                          for: "selected_to_advance_#{submission.id}",
-                          class: "usa-checkbox__label",
-                          style: "font-size: 0;" %>
-                    </fieldset>
-                  <% end %>
-                </div>
-              </div>
-            </td>
-            <td data-label="Assigned Evaluators">
-              <% active_assignments = submission.evaluator_submission_assignments.select { |a| ['assigned', 'recused'].include?(a.status) } %>
-              <% if active_assignments.any? %>
-                <div class="display-flex flex-column">
-                  <% active_assignments.each do |assignment| %>
-                    <div class="margin-bottom-05 display-flex flex-row flex-justify">
-                      <div class="flex-fill">
-                        <span class="<%= assignment.recused? ? 'usa-tag bg-error' : '' %>">
-                          <%= "#{assignment.evaluator.first_name} #{assignment.evaluator.last_name}" %>
-                        </span>
-                      </div>
-                      <div class="text-right">
-                        <span class="margin-x-1"><%= evaluator_score(assignment).formatted_score %></span>         
-                        <span class="usa-tag padding-x-1 <%= evaluation_submission_assignment_color(assignment) %>">
-                          <%= assignment.evaluation_status.to_s.titleize %>
-                        </span>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              <% else %>
-                <span class="font-body-xs text-no-wrap">No evaluators assigned to this submission</span>
-              <% end %>
-            </td>
-            <td data-label="Average Score" data-score="<%= average_score(submission).raw_score %>">
-              <%= average_score(submission).formatted_score %>
-            </td>
-            <td>
-              <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-                <%= link_to submission_path(submission) do %>
-                    <button class="usa-button font-body-2xs text-no-wrap margin-y-1">
-                        View Submission
-                    </button>
-                <% end %>    
-              </div>  
-            </td>
-          </tr>
-      <% end %>  
+    <tbody data-load-more-target="container">
+      <%= render partial: "submissions_table_rows", locals: { submissions: @submissions } %>
     </tbody>
   </table>
+
+  <div class="display-flex flex-justify-center margin-top-6 margin-bottom-6 width-full">
+    <button class="usa-button mobile:width-mobile" 
+            data-load-more-target="loadMoreButton"
+            data-action="click->load-more#loadMore"
+            aria-label="Load more submissions">
+      Load more
+    </button>
+  </div>
+</div>
