@@ -95,7 +95,7 @@ class User < ApplicationRecord
   ROLES = %w[super_admin admin challenge_manager evaluator solver].freeze
   validates :role, inclusion: { in: ROLES }
 
-  USER_STATUSES = %w[pending active role_change_needed].freeze
+  USER_STATUSES = %w[pending active suspended revoked deactivated decertified evaluator_role_requested].freeze
   validates :status, inclusion: { in: USER_STATUSES }
 
   # Finds, creates, or updates user from userinfo
