@@ -37,7 +37,7 @@
                       <legend class="usa-sr-only">Eligibility for evaluation</legend>
                       <%= f.check_box :judging_status,
                           id: "eligible_for_evaluation_#{submission.id}",
-                          disabled: submission.eligibility_deselection_disabled?,
+                          disabled: submission.evaluators_assigned?,
                           checked: submission.eligible_for_evaluation?,
                           class: "usa-checkbox__input",
                           data: {
@@ -71,7 +71,7 @@
                       <legend class="usa-sr-only">Selected to advance status</legend>
                       <%= f.check_box :judging_status,
                           id: "selected_to_advance_#{submission.id}",
-                          disabled: submission.advancement_checkbox_disabled?,
+                          disabled: submission.evaluations_missing_or_incomplete?,
                           checked: submission.selected_to_advance?,
                           class: "usa-checkbox__input",
                           data: {
