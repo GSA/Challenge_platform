@@ -4,7 +4,8 @@
 module EvaluationsHelper
   Score = Struct.new(:raw_score, :formatted_score, :display_score)
 
-  def evaluator_score(assignment) # individual evaluator score
+  # individual evaluator score
+  def evaluator_score(assignment)
     score = display_score(assignment)
     return Score.new(0, "0", "N/A") if score == 'N/A'
 

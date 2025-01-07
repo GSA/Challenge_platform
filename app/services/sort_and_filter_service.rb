@@ -2,12 +2,12 @@
 
 # This service handles sort and filtering submissions.
 class SortAndFilterService
-  def initialize(submissions, params, not_started, in_progress, completed)
+  def initialize(submissions, params, submission_statuses = {})
     @submissions = submissions
     @params = params
-    @not_started = not_started
-    @in_progress = in_progress
-    @completed = completed
+    @not_started = submission_statuses[:not_started]
+    @in_progress = submission_statuses[:in_progress]
+    @completed = submission_statuses[:completed]
   end
 
   def sort_and_filter

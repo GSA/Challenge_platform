@@ -18,9 +18,11 @@ class PhasesController < ApplicationController
     @submissions = SortAndFilterService.new(
       @submissions,
       params,
-      @not_started,
-      @in_progress,
-      @completed
+      {
+        not_started: @not_started,
+        in_progress: @in_progress,
+        completed: @completed
+      }
     ).sort_and_filter
 
     @filtered_count = @submissions.unscope(:group).distinct.count(:id)
