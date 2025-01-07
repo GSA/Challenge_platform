@@ -1,11 +1,11 @@
 <h1><%= challenge_phase_title(@phase.challenge, @phase) %></h1>
 <p class="text-normal">View challenge submissions and manage evaluation progress.</p>
 
+<%= render partial: "submissions_stats" %>
+<%= render partial: "submissions_table", locals: { submissions: @submissions } %>
+
 <% if @submissions.empty? %>
-  <div class="text-normal">
-    <p>This challenge phase does not currently have any submissions.</p>
+  <div class="text-normal display-flex flex-justify-center margin-y-6">
+    <p>No submissions found.</p>
   </div>
-<% else %>
-  <%= render partial: "submissions_stats" %>
-  <%= render partial: "submissions_table" %>
 <% end %>
