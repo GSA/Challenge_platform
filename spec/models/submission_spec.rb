@@ -69,4 +69,42 @@ RSpec.describe Submission, type: :model do
       end
     end
   end
+
+  describe "#available_evaluators" do
+    let(:challenge) { create(:challenge) }
+    let(:phase) { create(:phase, challenge:) }
+    let(:evaluator) do
+      evaluator = create(:user, role: "evaluator")
+      evaluator.challenge_phases_evaluators.create(challenge:, phase:)
+      evaluator
+    end
+    let(:submission) { create(:submission, challenge:, phase:) }
+
+    it "includes evaluators that have not been assigned yet" do
+      expect(submission.phase.evaluators).to include(evaluator)
+      expect(EvaluatorSubmissionAssignment.find_by(evaluator:)).to be_nil
+      expect(submission.available_evaluators).to include(evaluator)
+    end
+
+    it "includes evaluators that have been unassigned from the submission" do
+      expect(submission.phase.evaluators).to include(evaluator)
+      submission.evaluator_submission_assignments.create(evaluator:, submission:, status: "unassigned")
+      expect(submission.available_evaluators).to include(evaluator)
+    end
+
+    it "does not include evaluators that have been assigned" do
+      expect(submission.phase.evaluators).to include(evaluator)
+      submission.evaluator_submission_assignments.create(evaluator:, submission:, status: "assigned")
+      expect(submission.available_evaluators).not_to include(evaluator)
+    end
+
+    it "does not include evaluators that have recused" do
+      expect(submission.phase.evaluators).to include(evaluator)
+      esa = submission.evaluator_submission_assignments.create(evaluator:, submission:, status: "recused")
+      expect(submission.available_evaluators).not_to include(evaluator)
+      # unassigned after recusing
+      esa.update!(status: "recused_unassigned")
+      expect(submission.available_evaluators).not_to include(evaluator)
+    end
+  end
 end
