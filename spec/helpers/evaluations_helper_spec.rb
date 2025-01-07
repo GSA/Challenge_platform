@@ -97,8 +97,27 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
 
     it 'calculates average score from completed evaluations' do
-      evaluation1 = create(:evaluation, submission: submission, total_score: 80, completed_at: Time.current)
-      evaluation2 = create(:evaluation, submission: submission, total_score: 90, completed_at: Time.current)
+      assignment1 = create(:evaluator_submission_assignment,
+        submission: submission,
+        status: :assigned
+      )
+      assignment2 = create(:evaluator_submission_assignment,
+        submission: submission,
+        status: :assigned
+      )
+
+      create(:evaluation,
+        evaluator_submission_assignment: assignment1,
+        submission: submission,
+        total_score: 80,
+        completed_at: Time.current
+      )
+      create(:evaluation,
+        evaluator_submission_assignment: assignment2,
+        submission: submission,
+        total_score: 90,
+        completed_at: Time.current
+      )
 
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(85)
@@ -146,36 +165,38 @@ RSpec.describe EvaluationsHelper, type: :helper do
   end
 
   describe '#calculate_submissions_count' do
-    it 'returns correct counts for different statuses' do
-      completed_eval = double('completed_evaluation')
-      allow(completed_eval).to receive(:completed_at).and_return(Time.current)
-      allow(completed_eval).to receive(:present?).and_return(true)
+    let(:evaluator) { create(:user, role: :evaluator) }
+    let(:phase) { create(:phase) }
 
-      in_progress_eval = double('in_progress_evaluation')
-      allow(in_progress_eval).to receive(:completed_at).and_return(nil)
-      allow(in_progress_eval).to receive(:present?).and_return(true)
+    def create_assignment_with_status(status, evaluation_status = nil)
+      assignment = create(:evaluator_submission_assignment,
+        evaluator: evaluator,
+        submission: create(:submission, phase: phase),
+        status: status
+      )
 
-      assignments = [
-        double('not_started_assignment',
-          evaluation: nil,
-          assigned?: true,
-          recused?: false
-        ),
-        double('completed_assignment',
-          evaluation: completed_eval,
-          assigned?: true,
-          recused?: false
-        ),
-        double('in_progress_assignment',
-          evaluation: in_progress_eval,
-          assigned?: true,
-          recused?: false
-        ),
-        double('recused_assignment',
-          evaluation: nil,
-          assigned?: false,
-          recused?: true
+      case evaluation_status
+      when :completed
+        create(:evaluation,
+          evaluator_submission_assignment: assignment,
+          completed_at: Time.current
         )
+      when :in_progress
+        create(:evaluation,
+          evaluator_submission_assignment: assignment,
+          completed_at: nil
+        )
+      end
+
+      assignment
+    end
+
+    it 'returns correct counts for different statuses' do
+      assignments = [
+        create_assignment_with_status(:assigned),               # not started
+        create_assignment_with_status(:assigned, :completed),   # completed
+        create_assignment_with_status(:assigned, :in_progress), # in progress
+        create_assignment_with_status(:recused)                 # recused
       ]
 
       counts = helper.calculate_submissions_count(assignments)
@@ -185,6 +206,23 @@ RSpec.describe EvaluationsHelper, type: :helper do
         "not_started" => 1,
         "recused" => 1,
         "total" => 4
+      })
+    end
+
+    it 'excludes recused assignments from other status counts' do
+      assignments = [
+        create_assignment_with_status(:recused, :completed),   # recused
+        create_assignment_with_status(:recused, :in_progress), # recused
+        create_assignment_with_status(:assigned, :completed)
+      ]
+
+      counts = helper.calculate_submissions_count(assignments)
+      expect(counts).to eq({
+        "completed" => 1,
+        "in_progress" => 0,
+        "not_started" => 0,
+        "recused" => 2,
+        "total" => 3
       })
     end
   end

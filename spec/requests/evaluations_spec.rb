@@ -99,7 +99,38 @@ RSpec.describe "Evaluations" do
         end
 
         it "shows submission counts" do
+          create(:evaluation,
+            evaluator_submission_assignment: assignment,
+            completed_at: Time.current
+          )
+
+          in_progress_submission = create(:submission, phase: phase)
+          in_progress_assignment = create(:evaluator_submission_assignment,
+            submission: in_progress_submission,
+            evaluator: evaluator,
+            status: :assigned
+          )
+          create(:evaluation,
+            evaluator_submission_assignment: in_progress_assignment,
+            completed_at: nil
+          )
+
+          not_started_submission = create(:submission, phase: phase)
+          create(:evaluator_submission_assignment,
+            submission: not_started_submission,
+            evaluator: evaluator,
+            status: :assigned
+          )
+
           get submissions_evaluation_path(phase)
+
+          expect(response.body).to include("Completed")
+          expect(response.body).to include("In Progress")
+          expect(response.body).to include("Not Started")
+
+          expect(response.body).to include('<span class="font-sans-xl text-success-dark text-bold">1</span>')
+          expect(response.body).to include('<span class="font-sans-xl text-accent-warm-dark text-bold">1</span>')
+          expect(response.body).to include('<span class="font-sans-xl text-error-dark text-bold">1</span>')
         end
       end
 
