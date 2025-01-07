@@ -6,7 +6,8 @@ describe "A11y", :js do
   describe "Logged-in as a Challenge Manager" do
     let(:user) { create_user(role: "challenge_manager") }
     let(:challenge) { create_challenge(user: user, title: "Boston Tea Party Cleanup") }
-    let(:submission) { create(:submission, manager: user, challenge: challenge) }
+    let(:phase) { create(:phase, challenge: challenge) }
+    let(:submission) { create(:submission, manager: user, challenge: challenge, phase: phase, status: "submitted") }
 
     before { system_login_user(user) }
 
@@ -39,6 +40,21 @@ describe "A11y", :js do
       click_on('Save')
       updated_submission = Submission.find(submission.id)
       expect(updated_submission.comments).to eq(comments)
+    end
+
+    it "displays a list of available evaluators" do
+      evaluator1 = create_user(role: "evaluator")
+      evaluator2 = create_user(role: "evaluator")
+      challenge.challenge_phases_evaluators.create(user: evaluator1, phase: phase)
+      challenge.challenge_phases_evaluators.create(user: evaluator2, phase: phase)
+      evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
+      visit submission_path(submission)
+      find_by_id('eligible-for-evaluation').click
+      click_on('Save')
+
+      expect(page).to have_content("Available Evaluators")
+      expect(page).to have_content(evaluator1.email)
+      expect(page).to have_content(evaluator1.email)
     end
   end
 end
