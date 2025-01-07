@@ -314,7 +314,7 @@ RSpec.describe "Submissions" do
       context 'when paginating submissions' do
         let!(:submissions) do
           (1..25).map do |n|
-            create(:submission, challenge: challenge, phase: phase)
+            create(:submission, challenge: challenge, phase: phase, title: "submission #{n}")
           end
         end
 
@@ -332,7 +332,7 @@ RSpec.describe "Submissions" do
         end
 
         context 'when sorting by average score' do
-          let!(:scored_submissions) do
+          before do
             submissions[0..24].each_with_index do |submission, index|
               create(:evaluation,
                      evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: submission),
@@ -357,7 +357,7 @@ RSpec.describe "Submissions" do
         end
 
         context 'when filtering submissions' do
-          let!(:eligible_submissions) do
+          before do
             submissions[0..22].each { |s| s.update!(judging_status: 'selected') }
           end
 
