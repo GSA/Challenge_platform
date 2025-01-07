@@ -1,4 +1,3 @@
-<% @available_evaluators = available_evaluators(@submission) %>
 <div class="usa-accordion">
   <% rand = SecureRandom.hex(8) %>
   <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
@@ -13,8 +12,8 @@
   </h2>
 
   <div class="usa-accordion__content background-primary-lighter" id="<%= rand %>">
-    <% unless @available_evaluators.empty? %>
-      <% @available_evaluators.each do |evaluator| %>
+    <% if @submission.available_evaluators.any? %>
+      <% @submission.available_evaluators.each do |evaluator| %>
               <div class="float-left">
                   <%= "#{evaluator.first_name} #{evaluator.last_name}" %> <br/>
                   <%= evaluator.email %>

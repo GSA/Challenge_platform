@@ -63,6 +63,12 @@ class Submission < ApplicationRecord
   }
   scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
 
+  # Phase evaluators not currently assigned or recused on the submission
+  def available_evaluators
+    unavailable_evaluators = evaluators.where.not("evaluator_submission_assignments.status" => "unassigned")
+    phase.evaluators.where.not(id: unavailable_evaluators)
+  end
+
   def eligible_for_evaluation?
     selected? or winner?
   end
