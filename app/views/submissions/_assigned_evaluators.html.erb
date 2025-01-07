@@ -31,9 +31,10 @@
                 <td data-label="Score" class="text-top"></td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
-                    <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first.id), method: "PATCH" do |f| %>
+                    <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
+                    <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
                       <%= f.hidden_field :phase_id, value: @submission.phase.id %>
-                      <%= f.hidden_field :status, value: "unassigned" %>
+                      <%= f.hidden_field :status, value: assignment.recused? ? "recused_unassigned" : "unassigned" %>
                       <%= f.submit "Unassign", class: "usa-button usa-button--outline font-body-2xs" %>
                     <% end %>
                   </div>
