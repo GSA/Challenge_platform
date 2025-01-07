@@ -6,10 +6,14 @@ describe "A11y", :js do
   describe "Logged-in as a Challenge Manager" do
     let(:user) { create_user(role: "challenge_manager") }
     let(:challenge) { create_challenge(user: user, title: "Boston Tea Party Cleanup") }
-    let(:submission) { create(:submission, manager: user, challenge: challenge) }
+    let(:phase) { create(:phase, challenge: challenge) }
+    let(:submission) { create(:submission, manager: user, challenge:, phase:) }
+    let(:fake_comments) { Faker::Lorem.sentence }
 
-
-    before { system_login_user(user) }
+    before do
+      create(:challenge_manager, challenge:, user:)
+      system_login_user(user)
+    end
 
     it "submission details page is accessible" do
       visit submission_path(submission)
@@ -18,28 +22,38 @@ describe "A11y", :js do
       expect(page).to(be_axe_clean)
     end
 
-    it "allows manipulation of judging status" do
+    it "allows marking judging status eligible for evaluation" do
       visit submission_path(submission)
 
+      eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
+      expect(eligible_input).not_to be_checked
       find_by_id('eligible-for-evaluation').click
-      click_on('Save')
-      updated_submission = Submission.find(submission.id)
-      expect(updated_submission.judging_status).to eq('selected')
+      click_on "Save"
+      expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
+      eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
+      expect(eligible_input).to be_checked
+      expect(submission.reload.judging_status).to eq("selected")
+    end
 
+    it "allows marking judging status selected to advance" do
+      # evaluations must exist and all be completed before selecting the submission to advance
+      evaluator = create_user(role: "evaluator")
+      submission.update(judging_status: :selected)
+      assignment = create(:evaluator_submission_assignment, status: :assigned, evaluator:, submission:)
+      create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+
+      visit submission_path(submission)
       find_by_id('selected-to-advance').click
-      click_on('Save')
-      updated_submission = Submission.find(submission.id)
-      expect(updated_submission.judging_status).to eq('winner')
+      click_on "Save"
+      expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
+      expect(submission.reload.judging_status).to eq("winner")
     end
 
     it "saves comments" do
       visit submission_path(submission)
-      comments = Faker::Lorem.sentence
-
-      fill_in "Comments and notes:", with: comments
-      click_on('Save')
-      updated_submission = Submission.find(submission.id)
-      expect(updated_submission.comments).to eq(comments)
+      fill_in "Comments and notes:", with: fake_comments
+      click_on "Save"
+      assert_text(fake_comments)
     end
   end
 end
