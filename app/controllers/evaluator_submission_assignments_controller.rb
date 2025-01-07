@@ -27,9 +27,9 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       status: :assigned
     )
     if @evaluator_submission_assignment.save
-      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignment.assigned.success")
+      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignments.assigned.success")
     else
-      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignment.assigned.failure")
+      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignments.assigned.failure")
     end
   end
 
