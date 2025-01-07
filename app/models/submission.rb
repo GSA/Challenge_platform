@@ -88,7 +88,11 @@ class Submission < ApplicationRecord
   end
 
   def average_score
-    avg = evaluations.average(:total_score)
+    avg = evaluations.joins(:evaluator_submission_assignment).
+      where(evaluator_submission_assignments: { status: :assigned }).
+      where.not(completed_at: nil).
+      average(:total_score)
+
     avg ? avg.round : 0
   end
 
