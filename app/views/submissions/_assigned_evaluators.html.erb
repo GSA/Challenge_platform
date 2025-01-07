@@ -34,7 +34,7 @@
                     <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first.id), method: "PATCH" do |f| %>
                       <%= f.hidden_field :phase_id, value: @submission.phase.id %>
                       <%= f.hidden_field :status, value: "unassigned" %>
-                      <%= f.submit "Unassign" %>
+                      <%= f.submit "Unassign", class: "usa-button usa-button--outline font-body-2xs" %>
                     <% end %>
                   </div>
                 </td>

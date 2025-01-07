@@ -25,13 +25,13 @@
                     <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
                       <%= f.hidden_field :phase_id, value: @submission.phase.id %>
                       <%= f.hidden_field :status, value: "assigned" %>
-                      <%= f.submit "Reassign" %>
+                      <%= f.submit "Reassign", class: "usa-button font-body-2xs" %>
                     <% end %>
                   <% else %>
                     <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
                       <%= f.hidden_field :evaluator_id, value: evaluator.id %>
                       <%= f.hidden_field :submission_id, value: @submission.id %>
-                      <%= f.submit "Assign" %>
+                      <%= f.submit "Assign", class: "usa-button font-body-2xs" %>
                     <% end %>
                   <% end %>  
               </div>
