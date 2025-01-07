@@ -43,9 +43,13 @@ describe "A11y", :js do
       create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
 
       visit submission_path(submission)
+      selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
+      expect(selected_input).not_to be_checked
       find_by_id('selected-to-advance').click
       click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
+      selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
+      expect(selected_input).to be_checked
       expect(submission.reload.judging_status).to eq("winner")
     end
 
