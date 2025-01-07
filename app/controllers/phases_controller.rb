@@ -15,7 +15,7 @@ class PhasesController < ApplicationController
     set_submission_counts
     set_submission_statuses
 
-    @submissions = SortAndFilterService.new(
+    @submissions = SubmissionsSortAndFilterService.new(
       @submissions,
       params,
       {

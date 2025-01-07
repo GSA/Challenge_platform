@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This service handles sort and filtering submissions.
-class SortAndFilterService
+class SubmissionsSortAndFilterService
   def initialize(submissions, params, submission_statuses = {})
     @submissions = submissions
     @params = params
