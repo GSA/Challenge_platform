@@ -35,9 +35,13 @@ module EvaluationsHelper
   end
 
   def average_score(submission)
+    assigned_evaluations = submission.evaluator_submission_assignments.assigned
+
+    return Score.new(0, "0", "N/A") if assigned_evaluations.empty?
+
     completed_evaluations = submission.evaluations.where.not(completed_at: nil)
 
-    unless completed_evaluations.any?
+    unless completed_evaluations.count == assigned_evaluations.count
       return Score.new(0, "0", "N/A")
     end
 
@@ -86,11 +90,11 @@ module EvaluationsHelper
   end
 
   def count_completed(assignments)
-    assignments.count { |a| a.evaluation&.completed_at.present? }
+    assignments.count { |a| a.assigned? && a.evaluation&.completed_at.present? }
   end
 
   def count_in_progress(assignments)
-    assignments.count { |a| a.evaluation.present? && a.evaluation.completed_at.nil? }
+    assignments.count { |a| a.assigned? && a.evaluation.present? && a.evaluation.completed_at.nil? }
   end
 
   def count_not_started(assignments)
