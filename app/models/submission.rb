@@ -108,7 +108,6 @@ class Submission < ApplicationRecord
 
   def all_evaluations_completed?
     evaluator_submission_assignments.
-      includes(:evaluation).
       all? { |assignment| assignment.evaluation_status == :completed }
   end
 
