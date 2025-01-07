@@ -82,7 +82,7 @@ RSpec.describe Submission, type: :model do
 
     it "includes evaluators that have not been assigned yet" do
       expect(submission.phase.evaluators).to include(evaluator)
-      expect(EvaluatorSubmissionAssignment.find_by(evaluator:)).to be_nil
+      expect(EvaluatorSubmissionAssignment.find_by(evaluator:, submission:)).to be_nil
       expect(submission.available_evaluators).to include(evaluator)
     end
 
