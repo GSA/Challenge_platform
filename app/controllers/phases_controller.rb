@@ -11,7 +11,7 @@ class PhasesController < ApplicationController
 
   def submissions
     @submissions = @phase.submissions.order(:id)
-    
+
     include_evaluator_associations
 
     set_submission_counts
