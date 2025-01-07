@@ -57,6 +57,7 @@ describe "A11y", :js do
       visit submission_path(submission)
       fill_in "Comments and notes:", with: fake_comments
       click_on "Save"
+      expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       assert_text(fake_comments)
     end
   end
