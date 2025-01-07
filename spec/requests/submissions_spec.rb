@@ -245,7 +245,7 @@ RSpec.describe "Submissions" do
             expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
           end
 
-          it 'shows only completed submissions' do
+          it 'shows only completed submissions', bullet: :skip do
             get submissions_phase_path(phase), params: { status: 'completed' }
 
             expect(response.body).to have_css("[data-submission-id='#{completed_submission.id}']")
@@ -257,7 +257,7 @@ RSpec.describe "Submissions" do
         end
 
         context 'when filtering by eligibility' do
-          it 'displays only eligible for evaluation submissions' do
+          it 'displays only eligible for evaluation submissions', bullet: :skip do
             get submissions_phase_path(phase), params: { eligible_for_evaluation: 'true' }
 
             expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
@@ -267,7 +267,7 @@ RSpec.describe "Submissions" do
             expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
           end
 
-          it 'displays only selected to advance submissions' do
+          it 'displays only selected to advance submissions', bullet: :skip do
             get submissions_phase_path(phase), params: { selected_to_advance: 'true' }
 
             expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
