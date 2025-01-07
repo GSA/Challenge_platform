@@ -43,8 +43,8 @@
         data-submission-details-target="judgingStatusHidden"
         />
         <div class="usa-form-group">
-            <%= form.label :comments, "Comments and notes:", class: "usa-label" %>
-            <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments %>
+            <%= form.label :comments, "Comments and notes:", class: "usa-label", for: "#{rand}-comments" %>
+            <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments, id: "#{rand}-comments" %>
         </div>
         <button type="submit" name="commit" class="usa-button font-body-2xs text-no-wrap margin-y-2">
             Save
