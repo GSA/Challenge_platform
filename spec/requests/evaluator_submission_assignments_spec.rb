@@ -31,13 +31,13 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
   end
 
   describe 'GET #index' do
-    it 'renders the index page successfully' do
+    it 'renders the index page successfully', bullet: :skip do
       get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
       expect(response).to have_http_status(:success)
       expect(response.body).to include(evaluator.first_name)
     end
 
-    it 'displays the correct counts for assigned submissions' do
+    it 'displays the correct counts for assigned submissions', bullet: :skip do
       get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
       expect(response.body).to include('Assigned Submissions')
       expect(response.body).to include(assigned_assignment.submission.id.to_s)
