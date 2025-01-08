@@ -73,8 +73,7 @@ describe "A11y", :js do
 
       expect(page).to have_content("Available Evaluators")
       expect(page).to have_content(evaluator1.email)
-      expect(page).to have_content(evaluator1.email)
-      EvaluatorSubmissionAssignment.delete_all
+      expect(page).to have_content(evaluator2.email)
     end
 
     it "assigns and unassigns an evaluator to the submission" do
@@ -84,6 +83,8 @@ describe "A11y", :js do
       visit submission_path(submission)
       find_by_id('eligible-for-evaluation').click
       click_on('Save')
+
+      expect(page).to have_content("You currently do not have any evaluators assigned to this submission.")
 
       click_on('Assign')
       expect(page).to have_css("p.usa-alert__text", text: "Evaluator assigned successfully")

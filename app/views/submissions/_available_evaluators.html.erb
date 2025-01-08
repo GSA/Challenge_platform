@@ -11,33 +11,43 @@
     </button>
   </h2>
 
-  <div class="usa-accordion__content background-primary-lighter" id="<%= rand %>">
+  <div class="usa-accordion__content bg-base-lighter width-full" id="<%= rand %>">
     <% if @submission.available_evaluators.any? %>
-      <% @submission.available_evaluators.each do |evaluator| %>
-              <div class="float-left">
+      <% @submission.available_evaluators.each_with_index do |evaluator, i| %>
+        <div class="display-flex flex-justify margin-y-1">
+              <div style="word-break: break-all">
                   <%= "#{evaluator.first_name} #{evaluator.last_name}" %> <br/>
                   <%= evaluator.email %>
               </div> 
-              <div class="float-right">
+              <div>
                   <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
                   <% if assignment %>
                     <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
                       <%= f.hidden_field :phase_id, value: @submission.phase.id %>
                       <%= f.hidden_field :status, value: "assigned" %>
-                      <%= f.submit "Reassign", class: "usa-button font-body-2xs" %>
+                      <%= f.submit "Reassign", class: "usa-button font-body-2xs margin-top-1" %>
                     <% end %>
                   <% else %>
                     <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
                       <%= f.hidden_field :evaluator_id, value: evaluator.id %>
                       <%= f.hidden_field :submission_id, value: @submission.id %>
-                      <%= f.submit "Assign", class: "usa-button font-body-2xs" %>
+                      <%= f.submit "Assign", class: "usa-button font-body-2xs margin-top-1" %>
                     <% end %>
                   <% end %>  
               </div>
-
+          </div>
+          <% if i < @submission.available_evaluators.length - 1 %>
+            <hr/>
+          <% end %>  
       <% end %>
     <% else %>
-      No available evaluators.
+      <div class="usa-alert usa-alert--warning">
+        <div class="usa-alert__body">
+          <p class="usa-alert__text font-body-2xs">
+            There are no evaluators available for this submission. Please visit Evaluation Panel section to manage your list of available evaluators.
+          </p>
+        </div>
+      </div>
     <% end %>  
   </div>
 </div>

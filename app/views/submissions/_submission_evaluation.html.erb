@@ -4,5 +4,7 @@
 <% else %>
     <%= render partial: 'assigned_evaluators' %>
     <%= render partial: 'available_evaluators' %>
-    <%= link_to "Manage Evaluators", phase_evaluators_path(@submission.phase), class: "float-right margin-y-1"  %>
+    <div class="display-flex flex-justify-end">
+      <%= link_to "Manage Evaluators", phase_evaluators_path(@submission.phase), class: "margin-y-1"  %>
+    </div>  
 <% end %>
