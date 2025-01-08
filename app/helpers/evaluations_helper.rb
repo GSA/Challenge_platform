@@ -36,7 +36,9 @@ module EvaluationsHelper
 
     return Score.new(0, "0", "N/A") if assigned_evaluations.empty?
 
-    completed_evaluations = submission.evaluations.where.not(completed_at: nil)
+    completed_evaluations = submission.evaluations.
+      where(evaluator_submission_assignment: assigned_evaluations).
+      where.not(completed_at: nil)
 
     unless completed_evaluations.count == assigned_evaluations.count
       return Score.new(0, "0", "N/A")

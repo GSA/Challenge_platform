@@ -126,8 +126,24 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
 
     it "does not include recused scores in the average" do
-      assigned = create(:evaluator_submission_assignment, :assigned, :completed, submission:)
-      recused = create(:evaluator_submission_assignment, :recused, :assigned, :completed, submission:)
+      submission = create(:submission)
+
+      assigned = create(:evaluator_submission_assignment, :assigned, submission: submission)
+      create(:evaluation,
+        evaluator_submission_assignment: assigned,
+        submission: submission,
+        total_score: 60,
+        completed_at: Time.current
+      )
+
+      recused = create(:evaluator_submission_assignment, :recused, submission: submission)
+      create(:evaluation,
+        evaluator_submission_assignment: recused,
+        submission: submission,
+        total_score: 80,
+        completed_at: Time.current
+      )
+
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(assigned.evaluation.total_score)
     end
