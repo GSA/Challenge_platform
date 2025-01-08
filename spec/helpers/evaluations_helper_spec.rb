@@ -124,6 +124,13 @@ RSpec.describe EvaluationsHelper, type: :helper do
       expect(result.formatted_score).to eq("85")
       expect(result.display_score).to eq("85")
     end
+
+    it "does not include recused scores in the average" do
+      assigned = create(:evaluator_submission_assignment, :assigned, :completed, submission:)
+      recused = create(:evaluator_submission_assignment, :recused, :assigned, :completed, submission:)
+      result = helper.average_score(submission)
+      expect(result.raw_score).to eq(assigned.evaluation.total_score)
+    end
   end
 
   describe '#assigned_submissions_count' do
@@ -168,35 +175,13 @@ RSpec.describe EvaluationsHelper, type: :helper do
     let(:evaluator) { create(:user, role: :evaluator) }
     let(:phase) { create(:phase) }
 
-    def create_assignment_with_status(status, evaluation_status = nil)
-      assignment = create(:evaluator_submission_assignment,
-        evaluator: evaluator,
-        submission: create(:submission, phase: phase),
-        status: status
-      )
-
-      case evaluation_status
-      when :completed
-        create(:evaluation,
-          evaluator_submission_assignment: assignment,
-          completed_at: Time.current
-        )
-      when :in_progress
-        create(:evaluation,
-          evaluator_submission_assignment: assignment,
-          completed_at: nil
-        )
-      end
-
-      assignment
-    end
-
     it 'returns correct counts for different statuses' do
       assignments = [
-        create_assignment_with_status(:assigned),               # not started
-        create_assignment_with_status(:assigned, :completed),   # completed
-        create_assignment_with_status(:assigned, :in_progress), # in progress
-        create_assignment_with_status(:recused)                 # recused
+        create(:evaluator_submission_assignment, :assigned),               # not started
+        create(:evaluator_submission_assignment, :assigned, :completed),   # completed evaluation
+        create(:evaluator_submission_assignment, :assigned, :in_progress), # in progress
+        create(:evaluator_submission_assignment, :recused),                # recused
+        create(:evaluator_submission_assignment, :recused, :completed)     # completed and recused
       ]
 
       counts = helper.calculate_submissions_count(assignments)
@@ -204,16 +189,16 @@ RSpec.describe EvaluationsHelper, type: :helper do
         "completed" => 1,
         "in_progress" => 1,
         "not_started" => 1,
-        "recused" => 1,
-        "total" => 4
+        "recused" => 2,
+        "total" => 5
       })
     end
 
     it 'excludes recused assignments from other status counts' do
       assignments = [
-        create_assignment_with_status(:recused, :completed),   # recused
-        create_assignment_with_status(:recused, :in_progress), # recused
-        create_assignment_with_status(:assigned, :completed)
+        create(:evaluator_submission_assignment, :recused, :completed),   # recused
+        create(:evaluator_submission_assignment, :recused, :in_progress), # recused
+        create(:evaluator_submission_assignment, :assigned, :completed)
       ]
 
       counts = helper.calculate_submissions_count(assignments)
