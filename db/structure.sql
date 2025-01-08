@@ -1109,7 +1109,7 @@ CREATE TABLE public.submissions (
     description_delta text,
     brief_description_delta text,
     pdf_reference character varying(255),
-    comments text
+    comments character varying
 );
 
 
