@@ -7,7 +7,7 @@
             type="checkbox"
             id="<%= "#{rand}-judging-status-selected" %>"
             value="selected"
-            <%= "disabled" if @submission.judging_status == "winner" %>
+            <%= "disabled" if @submission.evaluators_assigned? %>
             <%= "checked" if @submission.judging_status.in?(["selected", "winner"]) %>
             data-action="change->submission-details#eligibleCheck"
             data-submission-details-target="eligibleCheckbox"
@@ -24,7 +24,7 @@
             class="usa-checkbox__input usa-checkbox__input--tile"
             id="<%= "#{rand}-judging-status-winner" %>"
             type="checkbox"
-            <%= "disabled" unless @submission.judging_status.in?(["selected", "winner"]) %>
+            <%= "disabled" if @submission.evaluations_missing_or_incomplete? %>
             <%= "checked" if @submission.judging_status == "winner" %>
             data-action="change->submission-details#selectedCheck"
             data-submission-details-target="winnerCheckbox"
