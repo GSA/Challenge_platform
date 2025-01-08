@@ -70,7 +70,7 @@ class EvaluationsController < ApplicationController
 
     @evaluator_submission_assignment = find_evaluator_submission_assignment
 
-    return unauthorized_redirect unless can_access_evaluation?
+    unauthorized_redirect unless can_access_evaluation?
   end
 
   def find_or_initialize_evaluation

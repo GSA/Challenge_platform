@@ -59,11 +59,13 @@ class EvaluationScore < ApplicationRecord
   def validate_numeric_score
     max_score = evaluation_criterion.points_or_weight
 
-    if score.nil?
-      errors.add(:score, "cannot be blank")
-    elsif score && score > max_score
+    validate_score_presence
+
+    if score && score > max_score
       errors.add(:score, "must be less than or equal to #{max_score}")
-    elsif score_override && score_override > max_score
+    end
+    
+    if score_override && score_override > max_score
       errors.add(:score_override, "must be less than or equal to #{max_score}")
     end
   end
@@ -73,12 +75,18 @@ class EvaluationScore < ApplicationRecord
     range_end = evaluation_criterion.option_range_end
     valid_range = (range_start..range_end)
 
-    if score.nil?
-      errors.add(:score, "cannot be blank")
-    elsif score && valid_range.exclude?(score)
+    validate_score_presence
+
+    if score && valid_range.exclude?(score)
       errors.add(:score, "must be within the range #{range_start} to #{range_end}")
-    elsif score_override && valid_range.exclude?(score_override)
+    end
+
+    if score_override && valid_range.exclude?(score_override)
       errors.add(:score_override, "must be within the range #{range_start} to #{range_end}")
     end
+  end
+
+  def validate_score_presence
+    errors.add(:score, "cannot be blank") if score.nil?
   end
 end
