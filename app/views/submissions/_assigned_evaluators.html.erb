@@ -1,0 +1,58 @@
+<div class="usa-accordion">
+  <% rand = SecureRandom.hex(8) %>
+  <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
+    <button
+      type="button"
+      class="usa-accordion__button display-flex flex-justify icon-white"
+      aria-expanded="true"
+      aria-controls="<%= rand %>"
+    >
+      <div>Assigned Evaluators</div>
+    </button>
+  </h2>
+
+  <div class="usa-accordion__content" id="<%= rand %>">
+    <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
+      <% if assigned_evaluators.any? %>
+        <table class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
+            <thead>
+              <tr>
+                <th scope="col">Evaluator name</th>
+                <th scope="col">Evaluation Status</th>
+                <th scope="col">Score</th>
+                <th scope="col" aria-label="Actions"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% assigned_evaluators.each do |evaluator| %>
+                <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
+                  <th scope="row" data-label="Evaluator name" class="text-top">
+                    <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span>
+                  </th>
+                  <td data-label="Evaluation Status" class="text-top"></td>
+                  <td data-label="Score" class="text-top"></td>
+                  <td data-label="">
+                    <div class="display-flex flex-no-wrap grid-row">
+                      <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
+                      <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
+                        <%= f.hidden_field :phase_id, value: @submission.phase.id %>
+                        <%= f.hidden_field :status, value: assignment.recused? ? "recused_unassigned" : "unassigned" %>
+                        <%= f.submit "Unassign", class: "usa-button usa-button--outline font-body-2xs" %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="usa-alert usa-alert--warning">
+            <div class="usa-alert__body">
+              <p class="usa-alert__text font-body-2xs">
+                You currently do not have any evaluators assigned to this submission. Please use the section below to review and assign available evaluators.
+              </p>
+            </div>
+          </div>
+        <% end %>  
+  </div>
+</div>
