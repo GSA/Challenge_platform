@@ -19,7 +19,7 @@
                   <span class="text-bold"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span><br/>
                   <%= evaluator.email %>
               </div> 
-              <div>
+              <div class="margin-left-05">
                   <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
                   <% if assignment %>
                     <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
