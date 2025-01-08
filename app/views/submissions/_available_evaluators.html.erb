@@ -16,7 +16,7 @@
       <% @submission.available_evaluators.each_with_index do |evaluator, i| %>
         <div class="display-flex flex-justify margin-y-1">
               <div style="word-break: break-all">
-                  <%= "#{evaluator.first_name} #{evaluator.last_name}" %> <br/>
+                  <span class="text-bold"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span><br/>
                   <%= evaluator.email %>
               </div> 
               <div>
