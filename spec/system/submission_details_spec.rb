@@ -65,6 +65,8 @@ describe "A11y", :js do
       find_by_id('eligible-for-evaluation').click
       click_on('Save')
 
+      expect(page).to have_content("You currently do not have any evaluators assigned to this submission.")
+
       click_on('Assign')
       expect(page).to have_css("p.usa-alert__text", text: "Evaluator assigned successfully")
 
