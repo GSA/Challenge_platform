@@ -54,8 +54,7 @@ describe "A11y", :js do
 
       expect(page).to have_content("Available Evaluators")
       expect(page).to have_content(evaluator1.email)
-      expect(page).to have_content(evaluator1.email)
-      EvaluatorSubmissionAssignment.delete_all
+      expect(page).to have_content(evaluator2.email)
     end
 
     it "assigns and unassigns an evaluator to the submission" do
