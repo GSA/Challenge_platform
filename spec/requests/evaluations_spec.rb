@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe "Evaluations" do
+  before(:all) do
+    Bullet.enable = false
+  end
+
+  after(:all) do
+    Bullet.enable = true
+  end
+
   describe "GET /index" do
     context "when logged in as an super admin" do
       before do
@@ -380,18 +388,20 @@ RSpec.describe "Evaluations" do
 
         evaluation_params = build_patch_evaluation_params(evaluation)
 
+        evaluation_params = evaluation_params.merge(additional_comments: "Test")
+
         # Nullify scores to test draft saving skipping validations
         evaluation_params[:evaluation_scores_attributes].each do |value|
           value[:score] = nil
           value[:comment] = nil
         end
 
-        patch save_draft_evaluation_path(evaluation, evaluation: evaluation_params)
+        patch save_draft_evaluation_path(evaluation, params: { evaluation: evaluation_params })
 
         updated_evaluation = assigns(:evaluation)
 
         expect(updated_evaluation).to be_persisted
-        expect(updated_evaluation.additional_comments).to eq("TEST")
+        expect(updated_evaluation.additional_comments).to eq("Test")
 
         expect(updated_evaluation.errors).to be_empty
         expect(updated_evaluation.completed_at).to be_nil
@@ -413,7 +423,7 @@ RSpec.describe "Evaluations" do
 
         evaluation_params = { additional_comments: "Test" }
 
-        patch save_draft_evaluation_path(evaluation, evaluation: evaluation_params)
+        patch save_draft_evaluation_path(evaluation, params: { evaluation: evaluation_params })
 
         expect(response).to redirect_to(evaluations_path)
         expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
@@ -440,7 +450,7 @@ RSpec.describe "Evaluations" do
 
         evaluation_params = { additional_comments: "Test" }
 
-        patch mark_complete_evaluation_path(evaluation, evaluation: evaluation_params)
+        patch mark_complete_evaluation_path(evaluation, params: { evaluation: evaluation_params })
 
         updated_evaluation = assigns(:evaluation)
 
@@ -473,7 +483,7 @@ RSpec.describe "Evaluations" do
           value[:comment] = nil
         end
 
-        patch mark_complete_evaluation_path(evaluation, evaluation: evaluation_params)
+        patch mark_complete_evaluation_path(evaluation, params: { evaluation: evaluation_params })
 
         failed_evaluation = assigns(:evaluation)
         expect(failed_evaluation.completed_at).to be_nil
@@ -497,7 +507,7 @@ RSpec.describe "Evaluations" do
 
         evaluation_params = { additional_comments: "Test" }
 
-        patch mark_complete_evaluation_path(evaluation, evaluation: evaluation_params)
+        patch mark_complete_evaluation_path(evaluation, params: { evaluation: evaluation_params })
 
         expect(response).to redirect_to(evaluations_path)
         expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
