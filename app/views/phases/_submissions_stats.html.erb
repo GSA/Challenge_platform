@@ -47,7 +47,7 @@
                 alt: ""
             )%>
             <span class="text-top">
-                <span class="text-primary"><%= @submissions.eligible_for_evaluation.count %> of <%= @submissions_count %></span>
+                <span class="text-primary"><%= @eligible_count %> of <%= @submissions_count %></span>
                 submissions selected for evaluation
             </span>
         </div>
@@ -58,7 +58,7 @@
                 alt: ""
             )%>
             <span class="text-top">
-                <span class="text-primary"><%= @submissions.winner.count %> of <%= @submissions.eligible_for_evaluation.count %></span>
+                <span class="text-primary"><%= @selected_count %> of <%= @eligible_count %></span>
                 submissions selected to advance
             </span>
         </div>
