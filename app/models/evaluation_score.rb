@@ -64,10 +64,11 @@ class EvaluationScore < ApplicationRecord
     if score && score > max_score
       errors.add(:score, "must be less than or equal to #{max_score}")
     end
-    
-    if score_override && score_override > max_score
-      errors.add(:score_override, "must be less than or equal to #{max_score}")
-    end
+
+    # This is written differently than above because of rubocop
+    return unless score_override && score_override > max_score
+
+    errors.add(:score_override, "must be less than or equal to #{max_score}")
   end
 
   def validate_range_score
@@ -81,9 +82,10 @@ class EvaluationScore < ApplicationRecord
       errors.add(:score, "must be within the range #{range_start} to #{range_end}")
     end
 
-    if score_override && valid_range.exclude?(score_override)
-      errors.add(:score_override, "must be within the range #{range_start} to #{range_end}")
-    end
+    # This is written differently than above because of rubocop
+    return unless score_override && valid_range.exclude?(score_override)
+
+    errors.add(:score_override, "must be within the range #{range_start} to #{range_end}")
   end
 
   def validate_score_presence
