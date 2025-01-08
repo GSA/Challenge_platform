@@ -6,7 +6,7 @@
     <p>Create and manage a list of evaluators for the challenge.</p>
     <h2 class="padding-top-3">Add Evaluators</h2>
     <p>Evaluators will not be assigned to submissions until you assign in the submission detail view.</p>
-    <%= form_with(model: @evaluator_invitation || EvaluatorInvitation.new, url: phase_evaluators_path(@phase), method: :post, local: true, data: { controller: "evaluator-form modal" }, html: { novalidate: true }) do |form| %>
+    <%= form_with(model: @evaluator_invitation || EvaluatorInvitation.new, url: phase_evaluators_path(@phase), method: :post, local: true, data: { controller: "form-validation modal" }, html: { novalidate: true }) do |form| %>
       <%= form.hidden_field :challenge_id, value: @challenge.id %>
       <%= form.hidden_field :phase_id, value: @phase.id %>
       <%= form.hidden_field :last_invite_sent, value: Time.current %>
@@ -40,7 +40,7 @@
           autocomplete: "name",
           style: "border: 1.5px solid #565c65;",
           data: {
-            action: "evaluator-form#validatePresence focusout->evaluator-form#validatePresence"
+            action: "form-validation#validatePresence focusout->form-validation#validatePresence"
           },
           value: form.object.full_name
         %>
@@ -59,7 +59,7 @@
           autocomplete: "email",
           style: "border: 1.5px solid #565c65;",
           data: {
-            action: "evaluator-form#validatePresence focusout->evaluator-form#validatePresence"
+            action: "form-validation#validatePresence focusout->form-validation#validatePresence"
           }
         %>
         <%= inline_error(form, :email) %>        

@@ -1,4 +1,4 @@
-<%= form_with(model: evaluation_form, data: { controller: "evaluation-form modal" }) do |form| %>
+<%= form_with(model: evaluation_form, data: { controller: "evaluation-form modal form-validation" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: darkred">
       <div class="usa-alert usa-alert--error" role="alert">
@@ -37,7 +37,7 @@
         <%= form.text_field :title,
           maxlength: 150,
           class: "usa-input #{input_error_class(form, :title)}",
-          data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"},
+          data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
           disabled: disabled %>
 
         <%= inline_error(form, :title) %>
@@ -57,7 +57,7 @@
             class: "usa-select #{input_error_class(form, :phase)}",
             title: 'challenge-combo',
             data: {
-              action: "evaluation-form#handleChallengeSelect evaluation-form#validatePresence focusout->evaluation-form#validatePresence",
+              action: "evaluation-form#handleChallengeSelect form-validation#validatePresence focusout->form-validation#validatePresence",
               field_name: "evaluation_form_phase"
             },
             disabled: disabled
@@ -77,7 +77,7 @@
             <span class="margin-right-05" style="color: darkred;">*</span>
           </div>
 
-          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field #{input_error_class(form, :instructions)}", maxlength: 3000, rows: "7", data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"}, disabled: disabled%>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field #{input_error_class(form, :instructions)}", maxlength: 3000, rows: "7", data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"}, disabled: disabled%>
           <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
         </div>
 
@@ -117,7 +117,7 @@
                 type="radio"
                 name="evaluation_form[scale_type]"
                 value="point"
-                data-action="click->evaluation-form#updateMaxPoints evaluation-form#validatePresence"
+                data-action="click->evaluation-form#updateMaxPoints form-validation#validatePresence"
                 data-field-name="evaluation_form_scale_type"
                 <%= 'checked' if evaluation_form.point_scoring? %>
                 <%= 'disabled' if disabled %>
@@ -131,7 +131,7 @@
                 type="radio"
                 name="evaluation_form[scale_type]"
                 value="weight"
-                data-action="click->evaluation-form#updateMaxPoints evaluation-form#validatePresence"
+                data-action="click->evaluation-form#updateMaxPoints form-validation#validatePresence"
                 data-field-name="evaluation_form_scale_type"
                 <%= 'checked' if evaluation_form.weighted_scoring? %>
                 <%= 'disabled' if disabled %>
@@ -208,7 +208,7 @@
             name="evaluation_form[closing_date]"
             aria-labelledby="evaluation_form_closing_date"
             aria-describedby="evaluation_form_closing_date_hint"
-            data-action="evaluation-form#validatePresence focusout->evaluation-form#validatePresence"
+            data-action="form-validation#validatePresence focusout->form-validation#validatePresence"
           />
         </div>
 
