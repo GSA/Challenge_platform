@@ -486,7 +486,10 @@ RSpec.describe "Evaluations" do
         patch mark_complete_evaluation_path(evaluation, params: { evaluation: evaluation_params })
 
         failed_evaluation = assigns(:evaluation)
+        evaluation_record = Evaluation.find_by(id: failed_evaluation.id)
+
         expect(failed_evaluation.completed_at).to be_nil
+        expect(evaluation_record.completed_at).to be_nil
 
         expect(response).to render_template(:edit)
         expect(response).to have_http_status(:unprocessable_entity)

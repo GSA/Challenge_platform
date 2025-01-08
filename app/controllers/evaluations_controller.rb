@@ -38,8 +38,6 @@ class EvaluationsController < ApplicationController
   def save_draft
     @evaluator_submission_assignment = @evaluation.evaluator_submission_assignment
 
-    return unauthorized_redirect unless can_access_evaluation?
-
     begin
       @evaluation.completed_at = nil
       @evaluation.save(validate: false)
@@ -52,14 +50,14 @@ class EvaluationsController < ApplicationController
   def mark_complete
     @evaluator_submission_assignment = @evaluation.evaluator_submission_assignment
 
-    return unauthorized_redirect unless can_access_evaluation?
-
     # TODO: Set total_score here when the evaluation is marked complete
 
-    if @evaluation.save()
-      @evaluation.update_column(:completed_at, Time.current)
+    @evaluation.completed_at = Time.current
+
+    if @evaluation.save
       handle_mark_complete_success
     else
+      @evaluation.completed_at = nil
       handle_mark_complete_failure
     end
   end
@@ -79,7 +77,7 @@ class EvaluationsController < ApplicationController
     if params[:id]
       Evaluation.includes([:evaluation_criteria]).find(params[:id])
     else
-      Evaluation.new()
+      Evaluation.new
     end
   end
 
