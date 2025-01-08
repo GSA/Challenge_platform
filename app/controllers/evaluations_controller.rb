@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # Controller for evaluations CRUD actions.
-# TODO: Needs to be simplified and made shorter for Rubocop
 class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[save_draft mark_complete]
@@ -17,7 +16,8 @@ class EvaluationsController < ApplicationController
       return redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.evaluator_submission_assignment_not_found")
     end
 
-    @evaluation_form = find_evaluation_form
+    phase = @evaluator_submission_assignment.phase
+    @evaluation_form = EvaluationForm.find_by(phase: phase)
 
     if @evaluation_form.nil?
       return redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.evaluation_form_not_found")
@@ -36,26 +36,21 @@ class EvaluationsController < ApplicationController
   end
 
   def save_draft
-    @evaluator_submission_assignment = @evaluation.evaluator_submission_assignment
+    @evaluation.completed_at = nil
+    @evaluation.save(validate: false)
 
-    begin
-      @evaluation.completed_at = nil
-      @evaluation.save(validate: false)
-      handle_save_draft_success
-    rescue ActiveRecord::RecordInvalid, ActiveRecord::NotNullViolation
-      handle_save_draft_failure
-    end
+    flash[:notice] = I18n.t("evaluations.notices.saved_draft")
+    redirect_to evaluations_path
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::NotNullViolation
+    handle_save_draft_failure
   end
 
   def mark_complete
-    @evaluator_submission_assignment = @evaluation.evaluator_submission_assignment
-
-    # TODO: Set total_score here when the evaluation is marked complete
-
     @evaluation.completed_at = Time.current
 
     if @evaluation.save
-      handle_mark_complete_success
+      flash[:notice] = I18n.t("evaluations.notices.marked_complete")
+      redirect_to evaluations_path
     else
       @evaluation.completed_at = nil
       handle_mark_complete_failure
@@ -92,18 +87,12 @@ class EvaluationsController < ApplicationController
       (@evaluation && @evaluation.user_id == current_user.id)
   end
 
-  def find_evaluation_form
-    @phase = @evaluator_submission_assignment.phase
-    EvaluationForm.find_by(phase: @phase)
-  end
-
   def build_evaluation
-    @submission = @evaluator_submission_assignment.submission
     @evaluation = Evaluation.new(
       user: current_user,
       evaluation_form: @evaluation_form,
-      submission: @submission,
-      evaluator_submission_assignment: @evaluator_submission_assignment
+      evaluator_submission_assignment: @evaluator_submission_assignment,
+      submission: @evaluator_submission_assignment.submission
     )
 
     @evaluation_form.evaluation_criteria.each do |criterion|
@@ -116,11 +105,6 @@ class EvaluationsController < ApplicationController
     redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.unauthorized")
   end
 
-  def handle_save_draft_success
-    flash[:notice] = I18n.t("evaluations.notices.saved_draft")
-    redirect_to evaluations_path
-  end
-
   def handle_save_draft_failure
     flash.now[:alert] =
       I18n.t("evaluations.alerts.save_draft_error", errors: @evaluation.errors.full_messages.to_sentence)
@@ -130,11 +114,6 @@ class EvaluationsController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
-  end
-
-  def handle_mark_complete_success
-    flash[:notice] = I18n.t("evaluations.notices.marked_complete")
-    redirect_to evaluations_path
   end
 
   def handle_mark_complete_failure
