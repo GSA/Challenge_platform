@@ -93,19 +93,6 @@ class Submission < ApplicationRecord
     selected? or winner?
   end
 
-  def selected_to_advance?
-    winner?
-  end
-
-  def average_score
-    avg = evaluations.average(:total_score)
-    avg ? avg.round : 0
-  end
-
-  def eligible_for_evaluation?
-    selected? or winner?
-  end
-
   def average_score
     avg = evaluations.joins(:evaluator_submission_assignment).
       where(evaluator_submission_assignments: { status: :assigned }).
