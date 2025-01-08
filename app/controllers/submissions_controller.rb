@@ -8,11 +8,12 @@ class SubmissionsController < ApplicationController
   def show; end
 
   def update
-    if @submission.update!(submission_params)
-      flash.now[:success] = I18n.t("submission_updated")
-      render :show, submission: @submission
-    else
-      render :show, status: :unprocessable_entity, submission: @submission
+    respond_to do |format|
+      if @submission.update(submission_params)
+        handle_successful_update(format)
+      else
+        handle_failed_update(format)
+      end
     end
   end
 
@@ -25,5 +26,18 @@ class SubmissionsController < ApplicationController
   # User access enforced by role
   def set_submission
     @submission = Submission.by_user(current_user).find(params[:id])
+  end
+
+  def handle_successful_update(format)
+    format.html do
+      flash[:success] = I18n.t("submission_updated")
+      redirect_to submission_path(@submission)
+    end
+    format.json { render json: { submission: @submission } }
+  end
+
+  def handle_failed_update(format)
+    format.html { render :show }
+    format.json { render json: { errors: @submission.errors }, status: :unprocessable_entity }
   end
 end

@@ -84,4 +84,12 @@ RSpec.configure do |config|
   config.before(:suite) do
     FactoryBot.reload
   end
+
+  config.before(:each, bullet: :skip) do
+    Bullet.enable = false
+  end
+
+  config.after(:each, bullet: :skip) do
+    Bullet.enable = true
+  end
 end

@@ -48,6 +48,10 @@ class Submission < ApplicationRecord
 
   # Validations
   validates :title, presence: true
+  validate :can_be_selected_to_advance,
+           if: -> { judging_status_change == %w[selected winner] }
+  validate :can_be_ineligible_for_evaluation,
+           if: -> { judging_status_change == %w[selected not_selected] }
 
   scope :by_user, lambda { |user|
     case user.role
@@ -63,20 +67,7 @@ class Submission < ApplicationRecord
   }
   scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
 
-  def eligible_for_evaluation?
-    selected? or winner?
-  end
-
-  def selected_to_advance?
-    winner?
-  end
-
-  def average_score
-    avg = evaluations.average(:total_score)
-    avg ? avg.round : 0
-  end
-
-  def self.order_by_average_score(direction)
+  scope :order_by_average_score, lambda { |direction|
     direction_sql = direction == :desc ? 'DESC' : 'ASC'
 
     joins(
@@ -90,5 +81,49 @@ class Submission < ApplicationRecord
           "submissions.id #{direction_sql}"
         )
       )
+  }
+
+  def eligible_for_evaluation?
+    selected? or winner?
+  end
+
+  def average_score
+    avg = evaluations.joins(:evaluator_submission_assignment).
+      where(evaluator_submission_assignments: { status: :assigned }).
+      where.not(completed_at: nil).
+      average(:total_score)
+
+    avg ? avg.round : 0
+  end
+
+  def selected_to_advance?
+    winner?
+  end
+
+  def evaluators_assigned?
+    evaluator_submission_assignments.exists?(status: [:assigned, :recused])
+  end
+
+  def evaluations_missing_or_incomplete?
+    !eligible_for_evaluation? || !all_evaluations_completed? || evaluator_submission_assignments.empty?
+  end
+
+  private
+
+  def all_evaluations_completed?
+    evaluator_submission_assignments.
+      all? { |assignment| assignment.evaluation_status == :completed }
+  end
+
+  def can_be_selected_to_advance
+    return unless evaluations_missing_or_incomplete?
+
+    errors.add(:judging_status, "can't be selected to advance until all evaluations are complete")
+  end
+
+  def can_be_ineligible_for_evaluation
+    return unless evaluators_assigned?
+
+    errors.add(:judging_status, "must remain eligible for evaluation when evaluators are assigned")
   end
 end
