@@ -1,0 +1,10 @@
+<h2>Submission Evaluation</h2>
+<% if @submission.phase.evaluation_form.nil? %>
+  <%= render 'shared/alert_error', alert_heading: t('alerts.no_evaluation_form.heading'), alert_text: t('alerts.no_evaluation_form.text') %>
+<% else %>
+    <%= render partial: 'assigned_evaluators' %>
+    <%= render partial: 'available_evaluators' %>
+    <div class="display-flex flex-justify-end">
+      <%= link_to "Manage Evaluators", phase_evaluators_path(@submission.phase), class: "margin-y-1"  %>
+    </div>  
+<% end %>
