@@ -16,11 +16,14 @@ application.register("evaluation-form", EvaluationFormController);
 import HotdogController from "./hotdog_controller";
 application.register("hotdog", HotdogController);
 
+import LoadMoreController from "./load_more_controller";
+application.register("load-more", LoadMoreController);
+
 import SubmissionDetailsController from "./submission_details_controller";
 application.register("submission-details", SubmissionDetailsController);
 
-import LoadMoreController from "./load_more_controller";
-application.register("load-more", LoadMoreController);
+import SubmissionJudgingStatusController from "./submission_judging_status_controller";
+application.register("submission-judging-status", SubmissionJudgingStatusController);
 
 import ModalController from "./modal_controller";
 application.register("modal", ModalController);

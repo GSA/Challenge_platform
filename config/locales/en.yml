@@ -34,7 +34,7 @@ en:
   evaluation_form_saved: "Evaluation form was saved successfully."
   evaluator_submission_assignment_saved: "Submission assignment was saved succesfully."
   comments_saved: "Comments saved succesfully."
-  submission_updated: "Submission was updated succesfully."
+  submission_updated: "Submission was updated successfully."
   login_error: "There was an issue with logging in. Please try again."
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
