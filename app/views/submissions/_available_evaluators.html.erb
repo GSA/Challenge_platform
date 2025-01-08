@@ -11,7 +11,7 @@
     </button>
   </h2>
 
-  <div class="usa-accordion__content background-primary-lighter" id="<%= rand %>">
+  <div class="usa-accordion__content background-primary-lighter width-full" id="<%= rand %>">
     <% if @submission.available_evaluators.any? %>
       <% @submission.available_evaluators.each do |evaluator| %>
               <div class="float-left">
@@ -37,7 +37,13 @@
 
       <% end %>
     <% else %>
-      No available evaluators.
+      <div class="usa-alert usa-alert--warning">
+        <div class="usa-alert__body">
+          <p class="usa-alert__text font-body-2xs">
+            There are no evaluators available for this submission. Please visit Evaluation Panel section to manage your list of available evaluators.
+          </p>
+        </div>
+      </div>
     <% end %>  
   </div>
 </div>
