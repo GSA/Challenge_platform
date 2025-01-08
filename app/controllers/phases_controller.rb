@@ -10,28 +10,25 @@ class PhasesController < ApplicationController
   end
 
   def submissions
-    @submissions = @phase.submissions
+    @submissions = @phase.submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
 
     set_submission_counts
     set_submission_statuses
 
-    apply_filters
-    apply_sorting
+    @submissions = SubmissionsSortAndFilterService.new(
+      @submissions,
+      params,
+      {
+        not_started: @not_started,
+        in_progress: @in_progress,
+        completed: @completed
+      }
+    ).sort_and_filter
 
     @filtered_count = @submissions.unscope(:group).distinct.count(:id)
     @submissions = paginate_submissions(@submissions)
 
-    respond_to do |format|
-      format.html do
-        if params[:partial]
-          render partial: 'submissions_table_rows',
-                 locals: { submissions: @submissions },
-                 formats: [:html]
-        else
-          render :submissions
-        end
-      end
-    end
+    render_response
   end
 
   private
@@ -39,6 +36,10 @@ class PhasesController < ApplicationController
   def set_phase
     @phase = Phase.where(challenge: current_user.challenge_manager_challenges).find(params[:id])
     @challenge = @phase.challenge
+  end
+
+  def evaluator_assignments?
+    EvaluatorSubmissionAssignment.exists?(submission_id: @submissions.select(:id))
   end
 
   def set_submission_counts
@@ -62,65 +63,23 @@ class PhasesController < ApplicationController
     }
   end
 
-  def apply_filters
-    filter_by_eligibility
-    filter_by_status
-  end
-
-  def filter_by_eligibility
-    return unless params[:eligible_for_evaluation] == 'true' ||
-                  params[:selected_to_advance] == 'true'
-
-    @submissions = apply_eligibility_filter(@submissions)
-  end
-
-  def filter_by_status
-    return unless params[:status]
-
-    @submissions = apply_status_filter(@submissions)
-  end
-
-  def apply_status_filter(submissions)
-    case params[:status]
-    when 'not_started' then @not_started
-    when 'in_progress' then @in_progress
-    when 'completed'   then @completed
-    when 'recused'     then filter_recused_submissions
-    else submissions
-    end
-  end
-
-  def filter_recused_submissions
-    @submissions.joins(:evaluator_submission_assignments).
-      where(evaluator_submission_assignments: { status: :recused })
-  end
-
-  def apply_eligibility_filter(submissions)
-    if params[:selected_to_advance] == 'true'
-      submissions.where(judging_status: %w[winner])
-    elsif params[:eligible_for_evaluation] == 'true'
-      submissions.where(judging_status: %w[selected winner])
-    else
-      submissions
-    end
-  end
-
-  def apply_sorting
-    case params[:sort]
-    when 'average_score_high_to_low'
-      @submissions = @submissions.order_by_average_score(:desc)
-    when 'average_score_low_to_high'
-      @submissions = @submissions.order_by_average_score(:asc)
-    when 'submission_id_high_to_low'
-      @submissions = @submissions.order(id: :desc)
-    when 'submission_id_low_to_high'
-      @submissions = @submissions.order(id: :asc)
-    end
-  end
-
   def paginate_submissions(submissions)
     page = (params[:page] || 1).to_i
     per_page = 20
     submissions.offset((page - 1) * per_page).limit(per_page)
+  end
+
+  def render_response
+    respond_to do |format|
+      format.html do
+        if params[:partial]
+          render partial: 'submissions_table_rows',
+                 locals: { submissions: @submissions },
+                 formats: [:html]
+        else
+          render :submissions
+        end
+      end
+    end
   end
 end
