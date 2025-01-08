@@ -4,8 +4,9 @@
 class EvaluatorSubmissionAssignmentsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_challenge_and_phase
-  before_action :set_evaluator, only: [:index]
+  before_action :set_evaluator, only: [:index, :create]
   before_action :set_assignment, only: [:update]
+  before_action :set_submission, only: [:create]
 
   def index
     @evaluator_assignments = @phase.evaluator_submission_assignments.includes(:submission).where(user_id: @evaluator.id)
@@ -17,6 +18,19 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       where(status: %i[unassigned recused_unassigned]).
       ordered_by_status
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
+  end
+
+  def create
+    @evaluator_submission_assignment = EvaluatorSubmissionAssignment.new(
+      user_id: params["evaluator_id"],
+      submission_id: @submission.id,
+      status: :assigned
+    )
+    if @evaluator_submission_assignment.save
+      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignments.assigned.success")
+    else
+      redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignments.assigned.failure")
+    end
   end
 
   # update only the status of the evaluation submission assignment to unassign or reassign an evaluator
@@ -49,6 +63,10 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     @assignment = @phase.evaluator_submission_assignments.find(params[:id])
   end
 
+  def set_submission
+    @submission = @phase.submissions.find(params[:submission_id])
+  end
+
   def status_from_params
     status = params[:status] || params.dig(:evaluator_submission_assignment, :status)
     status&.to_sym
@@ -68,9 +86,13 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
 
   def handle_successful_update(new_status)
     flash[:success] = t("evaluator_submission_assignments.#{new_status}.success")
-    respond_to do |format|
-      format.html { redirect_to_assignment_path }
-      format.json { render json: { success: true, message: flash[:success] } }
+    if request&.referer&.include?("submissions")
+      redirect_to request.referer
+    else
+      respond_to do |format|
+        format.html { redirect_to_assignment_path }
+        format.json { render json: { success: true, message: flash[:success] } }
+      end
     end
   end
 

@@ -30,7 +30,7 @@ Rails.application.routes.draw do
         post 'resend_invite'
       end
     end
-    resources :evaluator_submission_assignments, only: [:index, :update]
+    resources :evaluator_submission_assignments, only: [:index, :update, :create]
   end
   resources :submissions, only: [:index, :show, :update]
 
