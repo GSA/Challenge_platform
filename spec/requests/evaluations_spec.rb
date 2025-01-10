@@ -206,7 +206,7 @@ RSpec.describe "Evaluations" do
 
         expect(response).to render_template(:new)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(flash[:alert]).to match(I18n.t("evaluations.alerts.save_draft_error"))
+        expect(flash[:alert]).to match(I18n.t("evaluations.alerts.save_draft_error", errors: evaluation.errors.full_messages.to_sentence))
       end
     end
   end

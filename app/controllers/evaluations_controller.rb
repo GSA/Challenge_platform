@@ -16,8 +16,7 @@ class EvaluationsController < ApplicationController
       return redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.evaluator_submission_assignment_not_found")
     end
 
-    phase = @evaluator_submission_assignment.phase
-    @evaluation_form = EvaluationForm.find_by(phase:)
+    @evaluation_form = EvaluationForm.find_by(phase: @evaluator_submission_assignment.phase)
 
     if @evaluation_form.nil?
       return redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.evaluation_form_not_found")
