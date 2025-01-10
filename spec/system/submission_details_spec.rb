@@ -7,7 +7,7 @@ describe "A11y", :js do
     let(:user) { create_user(role: "challenge_manager") }
     let(:challenge) { create_challenge(user: user, title: "Boston Tea Party Cleanup") }
     let(:phase) { create(:phase, challenge: challenge) }
-    let(:submission) { create(:submission, challenge:, phase:, manager: user, status: "submitted") }
+    let(:submission) { create(:submission, challenge:, phase:, status: "submitted") }
     let(:fake_comments) { Faker::Lorem.sentence }
 
     before do
