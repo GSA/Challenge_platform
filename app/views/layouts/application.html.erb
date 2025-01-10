@@ -22,13 +22,15 @@
   </head>
 
   <body>
+    <a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
     <%= render "layouts/header" %>
     <% if logged_in? %>
       <%= render "layouts/utility_menu" %>
     <% end %>  
     <%= render "shared/flash" %>
 
-    <main class="grid-container">
+    <main id="main-content" class="grid-container" tabindex="-1">
       <%= yield %>
     </main>
     
