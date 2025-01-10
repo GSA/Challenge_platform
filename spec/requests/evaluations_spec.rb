@@ -142,5 +142,35 @@ RSpec.describe "Evaluations" do
         end
       end
     end
+
+    context "when logged in as an evaluator not associated with the challenge phase" do
+      let(:unassociated_evaluator) { create(:user, role: 'evaluator') }
+      let(:other_challenge) { create(:challenge) }
+      let(:other_phase) { create(:phase, challenge: other_challenge) }
+
+      before do
+        log_in_user(unassociated_evaluator)
+        ChallengePhasesEvaluator.create!(
+          challenge: other_challenge,
+          phase: other_phase,
+          user: unassociated_evaluator
+        )
+        ChallengePhasesEvaluator.create!(
+          challenge: challenge,
+          phase: phase,
+          user: evaluator
+        )
+      end
+
+      it "cannot access a challenge phase when not associated" do
+        get submissions_evaluation_path(phase)
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "can access their associated phase" do
+        get submissions_evaluation_path(other_phase)
+        expect(response).to have_http_status(:success)
+      end
+    end
   end
 end
