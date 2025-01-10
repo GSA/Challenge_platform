@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'uri'
 
 # LoginGov manages authentication with the external login.gov service
@@ -105,11 +106,12 @@ class LoginGov
   end
 
   def validate_jwks_uri(uri)
-    allowed_hostnames = ["trusted-domain.com"]
+    idp_host = URI.parse(config[:idp_host]).host
+    allowed_hostnames = [idp_host]
     uri_host = URI.parse(uri).host
-    unless allowed_hostnames.include?(uri_host)
-      raise LoginApiError.new("Invalid jwks_uri", code: 400, body: "The jwks_uri is not allowed.")
-    end
+    return if allowed_hostnames.include?(uri_host)
+
+    raise LoginApiError.new("Invalid jwks_uri", code: 400, body: "The jwks_uri is not allowed.")
   end
 
   def read_private_key
