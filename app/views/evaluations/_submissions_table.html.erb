@@ -1,0 +1,44 @@
+<%= render 'shared/assignment_stats', heading: 'Total Submissions' %>
+
+<table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header margin-bottom-10">
+  <thead>
+    <tr>
+      <th scope="col">Submission ID</th>
+      <th scope="col">My evaluation status</th>
+      <th scope="col">My score</th>
+      <th scope="col">Average Score</th>
+      <th scope="col"><span class="usa-sr-only">Evaluate</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @assigned_submissions.each do |assignment| %>
+      <tr>
+        <th data-label="Submission ID" scope="row">
+          <span class="mobile-lg:display-none">Submission ID</span><%= assignment.submission.id %>
+        </th>
+        <td data-label="My evaluation status">
+          <div class="display-flex flex-align-center">
+            <span class="usa-tag padding-x-1 <%= evaluation_submission_assignment_status_color(assignment) %>">
+              <%= assignment.evaluation_status.to_s.titleize %>
+            </span>
+          </div>  
+        </td>
+        <td data-label="My score">
+          <div class="display-flex flex-align-center">  
+            <%= evaluator_score(assignment).formatted_score %>
+          </div>  
+        </td>
+        <td data-label="Average Score">
+          <%= average_score(assignment.submission).display_score %>
+        </td>
+        <td>
+          <div class="display-flex flex-no-wrap grid-row grid-gap-1">
+            <button class="usa-button font-body-2xs width-full text-no-wrap">
+                Evaluate
+            </button>
+          </div>  
+        </td>  
+      </tr>
+    <% end %>  
+  </tbody>
+</table>

@@ -23,7 +23,7 @@ end
 
 RSpec.shared_examples "a page with dashboard content for an evaluator" do
   it "has the right subtitles for an evaluator" do
-    expect(response.body).to include("View submissions assigned to me and provide evaluations.")
+    expect(response.body).to include("View and evaluate submissions assigned to me.")
     expect(response.body).to include("Learn how to make the most of the platform.")
   end
 end

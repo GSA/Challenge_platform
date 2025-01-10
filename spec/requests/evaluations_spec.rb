@@ -63,4 +63,114 @@ RSpec.describe "Evaluations" do
       end
     end
   end
+
+  describe "GET /evaluations/:id/submissions" do
+    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:challenge) { create(:challenge) }
+    let(:phase) { create(:phase, challenge: challenge) }
+    let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+
+    context "when logged in as an evaluator" do
+      before do
+        log_in_user(evaluator)
+        ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+      end
+
+      context "with assigned submissions" do
+        let!(:submission) { create(:submission, phase: phase) }
+        let!(:assignment) do
+          create(:evaluator_submission_assignment,
+                submission: submission,
+                evaluator: evaluator,
+                status: :assigned)
+        end
+
+        it "displays the submissions page successfully" do
+          get submissions_evaluation_path(phase)
+
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include("View challenge submissions assigned to me and complete evaluations.")
+        end
+
+        it "shows assigned submissions" do
+          get submissions_evaluation_path(phase)
+
+          expect(response.body).to include(submission.id.to_s)
+        end
+
+        it "shows submission counts" do
+          create(:evaluation,
+            evaluator_submission_assignment: assignment,
+            completed_at: Time.current
+          )
+
+          in_progress_submission = create(:submission, phase: phase)
+          in_progress_assignment = create(:evaluator_submission_assignment,
+            submission: in_progress_submission,
+            evaluator: evaluator,
+            status: :assigned
+          )
+          create(:evaluation,
+            evaluator_submission_assignment: in_progress_assignment,
+            completed_at: nil
+          )
+
+          not_started_submission = create(:submission, phase: phase)
+          create(:evaluator_submission_assignment,
+            submission: not_started_submission,
+            evaluator: evaluator,
+            status: :assigned
+          )
+
+          get submissions_evaluation_path(phase)
+
+          expect(response.body).to include("Completed")
+          expect(response.body).to include("In Progress")
+          expect(response.body).to include("Not Started")
+
+          expect(response.body).to include('<span class="font-sans-xl text-success-dark text-bold">1</span>')
+          expect(response.body).to include('<span class="font-sans-xl text-accent-warm-dark text-bold">1</span>')
+          expect(response.body).to include('<span class="font-sans-xl text-error-dark text-bold">1</span>')
+        end
+      end
+
+      context "with no submissions" do
+        it "shows empty state message" do
+          get submissions_evaluation_path(phase)
+
+          expect(response.body).to include("This challenge phase does not currently have any submissions.")
+        end
+      end
+    end
+
+    context "when logged in as an evaluator not associated with the challenge phase" do
+      let(:unassociated_evaluator) { create(:user, role: 'evaluator') }
+      let(:other_challenge) { create(:challenge) }
+      let(:other_phase) { create(:phase, challenge: other_challenge) }
+
+      before do
+        log_in_user(unassociated_evaluator)
+        ChallengePhasesEvaluator.create!(
+          challenge: other_challenge,
+          phase: other_phase,
+          user: unassociated_evaluator
+        )
+        ChallengePhasesEvaluator.create!(
+          challenge: challenge,
+          phase: phase,
+          user: evaluator
+        )
+      end
+
+      it "cannot access a challenge phase when not associated" do
+        get submissions_evaluation_path(phase)
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "can access their associated phase" do
+        get submissions_evaluation_path(other_phase)
+        expect(response).to have_http_status(:success)
+      end
+    end
+  end
 end
