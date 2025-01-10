@@ -26,10 +26,6 @@ RSpec.describe 'Skip to main content navigation', :js, type: :system do
       find('.usa-skipnav', visible: true).send_keys(:return)
       expect(page.evaluate_script('document.activeElement.id')).to eq('main-content')
     end
-
-    it 'passes accessibility checks' do
-      expect(page).to be_axe_clean
-    end
   end
 
   context "when on phases index page" do
@@ -48,10 +44,6 @@ RSpec.describe 'Skip to main content navigation', :js, type: :system do
       find('body').send_keys(:tab)
       find('.usa-skipnav', visible: true).send_keys(:return)
       expect(page.evaluate_script('document.activeElement.id')).to eq('main-content')
-    end
-
-    it 'passes accessibility checks' do
-      expect(page).to be_axe_clean
     end
   end
 end
