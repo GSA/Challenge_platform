@@ -18,7 +18,7 @@ require 'rails_helper'
 
 RSpec.describe Evaluation, type: :model do
   let(:user) { create(:user, :evaluator) }
-  let(:submission) { create(:submission, manager: user) }
+  let(:submission) { create(:submission) }
   let(:evaluator_submission_assignment) { create(:evaluator_submission_assignment, evaluator: user) }
   let(:evaluation_form) { create(:evaluation_form) }
   let(:evaluation) { create(:evaluation, user:, evaluation_form:, submission:, evaluator_submission_assignment:) }
