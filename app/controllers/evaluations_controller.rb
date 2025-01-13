@@ -102,7 +102,7 @@ class EvaluationsController < ApplicationController
   def find_evaluator_submission_assignment
     return @evaluation.evaluator_submission_assignment if @evaluation&.evaluator_submission_assignment.present?
 
-    EvaluatorSubmissionAssignment.find_by(id: params[:evaluator_submission_assignment_id])
+    EvaluatorSubmissionAssignment.find_by(submission_id: params[:submission_id], user_id: current_user.id)
   end
 
   def can_access_evaluation?
@@ -132,7 +132,7 @@ class EvaluationsController < ApplicationController
       I18n.t("evaluations.alerts.save_draft_error", errors: @evaluation.errors.full_messages.to_sentence)
 
     if @evaluation.new_record?
-      redirect_to new_evaluator_submission_assignment_evaluation_path(@evaluator_submission_assignment.id)
+      redirect_to new_submission_evaluation_path(@evaluator_submission_assignment.submission_id)
     else
       redirect_to edit_evaluation_path(@evaluation.id)
     end
@@ -143,7 +143,7 @@ class EvaluationsController < ApplicationController
       I18n.t("evaluations.alerts.mark_complete_error", errors: @evaluation.errors.full_messages.to_sentence)
 
     if @evaluation.new_record?
-      redirect_to new_evaluator_submission_assignment_evaluation_path(@evaluator_submission_assignment.id)
+      redirect_to new_submission_evaluation_path(@evaluator_submission_assignment.submission_id)
     else
       redirect_to edit_evaluation_path(@evaluation.id)
     end

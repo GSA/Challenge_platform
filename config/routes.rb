@@ -22,10 +22,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :evaluator_submission_assignments, only: [] do
-    resources :evaluations, only: [:new]
-  end
-
   resources :evaluation_forms do
     member do
       get 'confirmation'
@@ -43,7 +39,9 @@ Rails.application.routes.draw do
     end
     resources :evaluator_submission_assignments, only: [:index, :update, :create]
   end
-  resources :submissions, only: [:index, :show, :update]
+  resources :submissions, only: [:index, :show, :update] do
+    resources :evaluations, only: [:new]
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

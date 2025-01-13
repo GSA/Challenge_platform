@@ -185,7 +185,7 @@ RSpec.describe "Evaluations" do
     end
   end
 
-  # new_evaluator_submission_assignment_evaluation_path
+  # new_submission_evaluation_path
   describe "GET /evaluator_submission_assignments/:evaluator_submission_assignment_id/evaluations/new" do
     context "when logged in as an evaluator" do
       let(:current_user) { create_user(role: "evaluator") }
@@ -196,9 +196,7 @@ RSpec.describe "Evaluations" do
       it "takes me to the new evaluation page if I was assigned to the submission" do
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
-        get new_evaluator_submission_assignment_evaluation_path(
-          evaluator_submission_assignment_id: evaluator_submission_assignment.id
-        )
+        get new_submission_evaluation_path(evaluator_submission_assignment.submission_id)
 
         expect(response).to have_http_status(:success)
 
@@ -219,16 +217,14 @@ RSpec.describe "Evaluations" do
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
         create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
-        get new_evaluator_submission_assignment_evaluation_path(
-          evaluator_submission_assignment_id: evaluator_submission_assignment.id
-        )
+        get new_submission_evaluation_path(evaluator_submission_assignment.submission_id)
 
         expect(response).to redirect_to(evaluations_path)
         expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.evaluator_submission_assignment_not_found"))
       end
 
       it "redirects me to my evaluations if the submission assignment was not found" do
-        get new_evaluator_submission_assignment_evaluation_path(evaluator_submission_assignment_id: "missing")
+        get new_submission_evaluation_path("missing")
 
         expect(response).to redirect_to(evaluations_path)
         expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.evaluator_submission_assignment_not_found"))
@@ -238,9 +234,7 @@ RSpec.describe "Evaluations" do
         # No evaluation form is currently created for the phase by default in the factory
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
 
-        get new_evaluator_submission_assignment_evaluation_path(
-          evaluator_submission_assignment_id: evaluator_submission_assignment.id
-        )
+        get new_submission_evaluation_path(evaluator_submission_assignment.submission_id)
         expect(response).to redirect_to(evaluations_path)
       end
     end
@@ -356,7 +350,7 @@ RSpec.describe "Evaluations" do
 
         failed_evaluation = assigns(:evaluation)
 
-        expect(response).to redirect_to(new_evaluator_submission_assignment_evaluation_path(evaluator_submission_assignment.id))
+        expect(response).to redirect_to(new_submission_evaluation_path(evaluator_submission_assignment.submission_id))
         expect(flash[:alert]).to match(I18n.t("evaluations.alerts.mark_complete_error",
                                               errors: failed_evaluation.errors.full_messages.to_sentence))
       end
