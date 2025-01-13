@@ -48,6 +48,7 @@ class EvaluationsController < ApplicationController
 
   def edit
     @evaluation = Evaluation.find_by(id: params[:id])
+    @evaluator_submission_assignment = find_evaluator_submission_assignment
     return unauthorized_redirect unless can_access_evaluation?
 
     render :edit
@@ -131,7 +132,7 @@ class EvaluationsController < ApplicationController
   end
 
   def handle_save_draft_failure
-    flash.now[:alert] =
+    flash[:alert] =
       I18n.t("evaluations.alerts.save_draft_error", errors: @evaluation.errors.full_messages.to_sentence)
 
     if @evaluation.new_record?
@@ -142,7 +143,7 @@ class EvaluationsController < ApplicationController
   end
 
   def handle_mark_complete_failure
-    flash.now[:alert] =
+    flash[:alert] =
       I18n.t("evaluations.alerts.mark_complete_error", errors: @evaluation.errors.full_messages.to_sentence)
 
     if @evaluation.new_record?

@@ -351,6 +351,7 @@ RSpec.describe "Evaluations" do
         failed_evaluation = assigns(:evaluation)
 
         expect(response).to redirect_to(new_submission_evaluation_path(evaluator_submission_assignment.submission_id))
+        follow_redirect!
         expect(flash[:alert]).to match(I18n.t("evaluations.alerts.mark_complete_error",
                                               errors: failed_evaluation.errors.full_messages.to_sentence))
       end
@@ -368,6 +369,7 @@ RSpec.describe "Evaluations" do
         end.not_to change { Evaluation.count }
 
         expect(response).to redirect_to(evaluations_path)
+        follow_redirect!
         expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
       end
     end
@@ -391,6 +393,7 @@ RSpec.describe "Evaluations" do
                             evaluator_submission_assignment: evaluator_submission_assignment)
 
         get edit_evaluation_path(evaluation)
+        expect(response).to have_http_status(:success)
 
         evaluation = assigns(:evaluation)
 
@@ -417,6 +420,7 @@ RSpec.describe "Evaluations" do
                             completed_at: Time.current)
 
         get edit_evaluation_path(evaluation)
+        expect(response).to have_http_status(:success)
 
         evaluation = assigns(:evaluation)
 
@@ -572,6 +576,7 @@ RSpec.describe "Evaluations" do
         expect(evaluation_record.completed_at).to be_nil
 
         expect(response).to redirect_to(edit_evaluation_path(evaluation.id))
+        follow_redirect!
         expect(flash[:alert]).to match(I18n.t("evaluations.alerts.mark_complete_error",
                                               errors: failed_evaluation.errors.full_messages.to_sentence))
       end
