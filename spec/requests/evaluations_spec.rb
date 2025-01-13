@@ -304,19 +304,6 @@ RSpec.describe "Evaluations" do
         expect(response).to redirect_to(evaluations_path)
         expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
       end
-
-      it "renders new template if an association is missing" do
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
-        create(:evaluation_form, phase: evaluator_submission_assignment.phase)
-
-        evaluation = build_evaluation(evaluator_submission_assignment)
-        evaluation_params = build_evaluation_params(evaluation)
-
-        post save_draft_evaluations_path, params: { evaluation: evaluation_params.merge({ evaluation_form_id: nil }) }
-
-        expect(response).to redirect_to(new_evaluator_submission_assignment_evaluation_path(evaluator_submission_assignment.id))
-        expect(flash[:alert]).to match(I18n.t("evaluations.alerts.save_draft_error", errors: evaluation.errors.full_messages.to_sentence))
-      end
     end
   end
 

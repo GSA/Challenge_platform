@@ -52,12 +52,13 @@ class EvaluationsController < ApplicationController
 
   def save_draft
     @evaluation.completed_at = nil
-    @evaluation.save(validate: false)
 
-    flash[:notice] = I18n.t("evaluations.notices.saved_draft")
-    redirect_to evaluations_path
-  rescue ActiveRecord::RecordInvalid, ActiveRecord::NotNullViolation
-    handle_save_draft_failure
+    if @evaluation.save(validate: false)
+      flash[:notice] = I18n.t("evaluations.notices.saved_draft")
+      redirect_to evaluations_path
+    else
+      handle_save_draft_failure
+    end
   end
 
   def mark_complete
