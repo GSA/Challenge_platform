@@ -545,7 +545,6 @@ RSpec.describe "Evaluations" do
         expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
       end
 
-      # TODO: Needs fix
       it "does not allow me to mark my existing evaluation as complete if it fails validations", bullet: :skip do
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
