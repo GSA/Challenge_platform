@@ -314,8 +314,7 @@ RSpec.describe "Evaluations" do
 
         post save_draft_evaluations_path, params: { evaluation: evaluation_params.merge({ evaluation_form_id: nil }) }
 
-        expect(response).to render_template(:new)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to redirect_to(new_evaluator_submission_assignment_evaluation_path(evaluator_submission_assignment.id))
         expect(flash[:alert]).to match(I18n.t("evaluations.alerts.save_draft_error", errors: evaluation.errors.full_messages.to_sentence))
       end
     end
@@ -370,8 +369,7 @@ RSpec.describe "Evaluations" do
 
         failed_evaluation = assigns(:evaluation)
 
-        expect(response).to render_template(:new)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to redirect_to(new_evaluator_submission_assignment_evaluation_path(evaluator_submission_assignment.id))
         expect(flash[:alert]).to match(I18n.t("evaluations.alerts.mark_complete_error",
                                               errors: failed_evaluation.errors.full_messages.to_sentence))
       end
@@ -593,8 +591,7 @@ RSpec.describe "Evaluations" do
         expect(failed_evaluation.completed_at).to be_nil
         expect(evaluation_record.completed_at).to be_nil
 
-        expect(response).to render_template(:edit)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to redirect_to(edit_evaluation_path(evaluation.id))
         expect(flash[:alert]).to match(I18n.t("evaluations.alerts.mark_complete_error",
                                               errors: failed_evaluation.errors.full_messages.to_sentence))
       end

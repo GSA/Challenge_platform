@@ -131,9 +131,9 @@ class EvaluationsController < ApplicationController
       I18n.t("evaluations.alerts.save_draft_error", errors: @evaluation.errors.full_messages.to_sentence)
 
     if @evaluation.new_record?
-      render :new, status: :unprocessable_entity
+      redirect_to new_evaluator_submission_assignment_evaluation_path(@evaluator_submission_assignment.id)
     else
-      render :edit, status: :unprocessable_entity
+      redirect_to edit_evaluation_path(@evaluation.id)
     end
   end
 
@@ -142,9 +142,9 @@ class EvaluationsController < ApplicationController
       I18n.t("evaluations.alerts.mark_complete_error", errors: @evaluation.errors.full_messages.to_sentence)
 
     if @evaluation.new_record?
-      render :new, status: :unprocessable_entity
+      redirect_to new_evaluator_submission_assignment_evaluation_path(@evaluator_submission_assignment.id)
     else
-      render :edit, status: :unprocessable_entity
+      redirect_to edit_evaluation_path(@evaluation.id)
     end
   end
 
