@@ -5,7 +5,9 @@ class SubmissionsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_submission, only: [:show, :update]
 
-  def show; end
+  def show
+    @assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"])
+  end
 
   def update
     respond_to do |format|
