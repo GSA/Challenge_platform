@@ -4,8 +4,24 @@
 class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[save_draft mark_complete]
+  before_action :set_phase, only: [:submissions]
 
-  def index; end
+  def index
+    @challenges = Challenge.joins(phases: :challenge_phases_evaluators).
+      where(challenge_phases_evaluators: { user_id: current_user.id }).
+      includes(phases: [:evaluation_form]).
+      distinct
+  end
+
+  def submissions
+    @assigned_submissions = @phase.evaluator_submission_assignments.
+      where(evaluator: current_user).
+      where(status: %i[assigned recused]).
+      includes(:submission, :evaluation).
+      ordered_by_status
+
+    @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
+  end
 
   def show; end
 
@@ -65,6 +81,13 @@ class EvaluationsController < ApplicationController
     @evaluator_submission_assignment = find_evaluator_submission_assignment
 
     unauthorized_redirect unless can_access_evaluation?
+  end
+
+  def set_phase
+    @phase = Phase.joins(:challenge_phases_evaluators).
+      where(challenge_phases_evaluators: { user_id: current_user.id }).
+      find(params[:id])
+    @challenge = @phase.challenge
   end
 
   def find_or_initialize_evaluation

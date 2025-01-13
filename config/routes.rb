@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   resources :evaluations, only: [:index, :show, :edit] do
     member do
+      get :submissions
       patch 'save_draft'
       patch 'mark_complete'
     end

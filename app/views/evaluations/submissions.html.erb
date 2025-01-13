@@ -1,0 +1,12 @@
+<%= render 'shared/back_link', path: evaluations_path %>
+
+<h1><%= challenge_phase_title(@phase.challenge, @phase) %></h1>
+<p class="text-normal">View challenge submissions assigned to me and complete evaluations.</p>
+
+<% if @assigned_submissions.empty? %>
+  <div class="text-normal">
+    <p>This challenge phase does not currently have any submissions.</p>
+  </div>
+<% else %>
+  <%= render partial: "submissions_table" %>
+<% end %>
