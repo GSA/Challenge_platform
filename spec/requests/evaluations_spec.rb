@@ -626,7 +626,7 @@ RSpec.describe "Evaluations" do
     submission = evaluator_submission_assignment.submission
 
     evaluation = Evaluation.new(
-      user: user,
+      # user: user,
       evaluation_form: evaluation_form,
       submission: submission,
       evaluator_submission_assignment: evaluator_submission_assignment
@@ -641,7 +641,7 @@ RSpec.describe "Evaluations" do
 
   def build_evaluation_params(evaluation)
     {
-      user_id: evaluation.user_id,
+      # user_id: evaluation.user_id,
       evaluator_submission_assignment_id: evaluation.evaluator_submission_assignment_id,
       submission_id: evaluation.evaluator_submission_assignment.submission_id,
       evaluation_form_id: evaluation.evaluation_form_id,

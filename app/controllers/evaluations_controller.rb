@@ -94,7 +94,7 @@ class EvaluationsController < ApplicationController
     if params[:id]
       Evaluation.includes([:evaluation_criteria]).find(params[:id])
     else
-      Evaluation.new
+      Evaluation.new(user_id: current_user.id)
     end
   end
 
@@ -105,8 +105,7 @@ class EvaluationsController < ApplicationController
   end
 
   def can_access_evaluation?
-    (@evaluator_submission_assignment && @evaluator_submission_assignment.user_id == current_user.id) ||
-      (@evaluation && @evaluation.user_id == current_user.id)
+    @evaluator_submission_assignment && @evaluator_submission_assignment.user_id == current_user.id
   end
 
   def build_evaluation
