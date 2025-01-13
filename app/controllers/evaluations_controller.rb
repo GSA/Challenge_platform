@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: Reenable rubocop after refactor/shortening controller code or moving some functionality into service
+# rubocop:disable all
+
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
@@ -166,3 +169,5 @@ class EvaluationsController < ApplicationController
     )
   end
 end
+# TODO: Remove this after above refactor
+# rubocop:enable all
