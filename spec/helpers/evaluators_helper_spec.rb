@@ -19,8 +19,14 @@ RSpec.describe EvaluatorsHelper, type: :helper do
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(3)
     end
 
-    it 'returns 0 for non-User evaluators' do
-      expect(helper.assigned_submissions_count(nil, challenge, phase)).to eq(0)
+    it 'returns "Available" for active users' do
+      user = create(:user, status: 'active')
+      expect(helper.user_status(user)).to eq("Available")
+    end
+
+    it 'returns "Awaiting Approval" for non-active users' do
+      user = create(:user, status: 'pending')
+      expect(helper.user_status(user)).to eq("Awaiting Approval")
     end
 
     it 'returns 0 when there are no assigned submissions' do
@@ -41,9 +47,15 @@ RSpec.describe EvaluatorsHelper, type: :helper do
       create(:evaluator_submission_assignment, evaluator: evaluator,
                                                submission: create(:submission, challenge: challenge, phase: phase), status: :unassigned)
       create(:evaluator_submission_assignment, evaluator: evaluator,
-                                               submission: create(:submission, challenge: challenge, phase: phase), status: :recused)
+                                               submission: create(:submission, challenge: challenge, phase: phase), status: :recused_unassigned)
 
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(1)
+    end
+  end
+
+  describe '#user_status' do
+    it 'returns "Invite Sent" for non-User objects' do
+      expect(helper.user_status(nil)).to eq("Invite Sent")
     end
   end
 

@@ -17,7 +17,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     @unassigned_submissions = @evaluator_assignments.
       where(status: %i[unassigned recused_unassigned]).
       ordered_by_status
-    @submissions_count = calculate_submissions_count(@assigned_submissions)
+    @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
   def create
@@ -110,28 +110,4 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       evaluator_id: params[:evaluator_id]
     )
   end
-
-  def calculate_submissions_count(assignments)
-    counts = count_by_status(assignments)
-    counts.merge("total" => calculate_total(counts))
-  end
-
-  def count_by_status(assignments)
-    {
-      "completed" => count_completed(assignments),
-      "in_progress" => count_in_progress(assignments),
-      "not_started" => count_not_started(assignments),
-      "recused" => count_recused(assignments)
-    }
-  end
-
-  def count_completed(assignments) = assignments.count { |a| a.evaluation&.completed_at.present? }
-
-  def count_in_progress(assignments) = assignments.count { |a| a.evaluation.present? && a.evaluation.completed_at.nil? }
-
-  def count_not_started(assignments) = assignments.count { |a| a.assigned? && a.evaluation.nil? }
-
-  def count_recused(assignments) = assignments.count(&:recused?)
-
-  def calculate_total(counts) = counts.values.sum
 end
