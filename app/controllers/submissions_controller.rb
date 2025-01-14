@@ -7,6 +7,12 @@ class SubmissionsController < ApplicationController
 
   def show
     @assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"])
+
+    @assigned_evaluations = @submission.evaluator_submission_assignments.
+      where(status: %i[assigned recused]).
+      ordered_by_status
+
+    @evaluations_count = helpers.calculate_submissions_count(@assigned_evaluations)
   end
 
   def update
