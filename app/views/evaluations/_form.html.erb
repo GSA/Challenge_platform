@@ -1,0 +1,7 @@
+<%= form_with(model: @evaluation, method: form_method, data: { controller: "evaluation modal" }) do |f| %>
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <p>Placeholder form in app/views/evaluations/_form.html.erb</p>
+
+  <%= f.submit "Save Draft", formaction: draft_action %>
+  <%= f.submit "Mark Complete", formaction: complete_action %>
+<% end %>

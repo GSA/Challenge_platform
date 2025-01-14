@@ -438,7 +438,7 @@ CREATE TABLE public.evaluation_scores (
     id bigint NOT NULL,
     evaluation_id bigint NOT NULL,
     evaluation_criterion_id bigint NOT NULL,
-    score integer NOT NULL,
+    score integer,
     score_override integer,
     comment text,
     comment_override text,
@@ -2465,6 +2465,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20241223190634),
 (20241217164258),
 (20241125060011),
 (20241120024946),
