@@ -62,6 +62,43 @@ RSpec.describe "Evaluations" do
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
+
+    context "when logged in as an evaluator" do
+      let(:evaluator) { create_and_log_in_user(role: 'evaluator') }
+      let(:challenge) { create(:challenge) }
+      let(:phase) { create(:phase, challenge: challenge) }
+
+      before do
+        ChallengePhasesEvaluator.create!(
+          challenge: challenge,
+          phase: phase,
+          user: evaluator
+        )
+      end
+
+      it "only shows challenges with assigned submissions" do
+        submission = create(:submission, phase: phase)
+        create(:evaluator_submission_assignment,
+          submission: submission,
+          evaluator: evaluator,
+          status: :assigned
+        )
+
+        # Create another challenge/phase where evaluator is added but has no assignments
+        other_challenge = create(:challenge)
+        other_phase = create(:phase, challenge: other_challenge)
+        ChallengePhasesEvaluator.create!(
+          challenge: other_challenge,
+          phase: other_phase,
+          user: evaluator
+        )
+
+        get evaluations_path
+
+        expect(response.body).to include(challenge.title)
+        expect(response.body).not_to include(other_challenge.title)
+      end
+    end
   end
 
   describe "GET /evaluations/:id/submissions" do

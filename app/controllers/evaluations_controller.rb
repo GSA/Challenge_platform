@@ -10,8 +10,11 @@ class EvaluationsController < ApplicationController
   before_action :set_phase, only: [:submissions]
 
   def index
-    @challenges = Challenge.joins(phases: :challenge_phases_evaluators).
-      where(challenge_phases_evaluators: { user_id: current_user.id }).
+    @challenges = Challenge.joins(phases: { submissions: :evaluator_submission_assignments }).
+      where(evaluator_submission_assignments: {
+        user_id: current_user.id,
+        status: [:assigned, :recused]
+      }).
       includes(phases: [:evaluation_form]).
       distinct
   end
