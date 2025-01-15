@@ -63,21 +63,21 @@ class EvaluatorManagementService
     else
       name_errors = temp_invitation.errors.messages.slice(:first_name, :last_name)
       first_error_field, first_error_message = name_errors.first
-      {
-        success: false,
+      { success: false,
         message: "#{first_error_field.to_s.humanize} #{first_error_message.first}",
-        errors: name_errors
-      }
+        errors: name_errors }
     end
   end
 
   def add_existing_user_as_evaluator(user)
     if @phase.evaluators.include?(user)
-      return { success: true, message: I18n.t('evaluators.process_evaluator_invitation.already_added', email: user.email) }
+      return { success: true,
+               message: I18n.t('evaluators.process_evaluator_invitation.already_added', email: user.email) }
     end
 
     unless User::VALID_EVALUATOR_ROLES.include?(user.role)
-      return { success: false, message: I18n.t('evaluators.process_evaluator_invitation.invalid_role', email: user.email) }
+      return { success: false,
+               message: I18n.t('evaluators.process_evaluator_invitation.invalid_role', email: user.email) }
     end
 
     updated_name = update_name_for_existing_user(user)
@@ -86,17 +86,13 @@ class EvaluatorManagementService
     cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
 
     if cpe.persisted?
-      {
-        success: true,
+      { success: true,
         message: I18n.t('evaluators.process_evaluator_invitation.add_success',
-                        email: user.email)
-      }
+                        email: user.email) }
     else
-      {
-        success: false,
+      { success: false,
         message: I18n.t('evaluators.process_evaluator_invitation.add_failure',
-                        email: user.email)
-      }
+                        email: user.email) }
     end
   end
 
@@ -113,13 +109,11 @@ class EvaluatorManagementService
       )
     )
     if invitation.save
-      {
-        success: true,
+      { success: true,
         message: I18n.t(
           'evaluators.process_evaluator_invitation.invitation_sent',
           email: invitation_params[:email]
-        )
-      }
+        ) }
     else
       { success: false, message: invitation.errors.full_messages.join(", "), evaluator_invitation: invitation }
     end
