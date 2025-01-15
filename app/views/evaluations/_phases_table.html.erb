@@ -9,36 +9,32 @@
     </tr>
   </thead>
   <tbody>
-    <% @challenges.each do |challenge| %>
-      <% challenge.phases.each do |phase| %>
-        <tr>
-          <th data-label="Challenge Title" scope="row" class="text-top">
-            <%= challenge_phase_title(challenge, phase) %>
-          </th>
-          <td data-label="Assigned to me" class="text-top">
-            <%= assigned_submissions_count(current_user, challenge, phase) %>
-          </td>
-          <td data-label="Remaining to evaluate" class="text-top">
-            <%= remaining_evaluations_count(current_user, challenge, phase) %>
-          </td>
-          <td data-label="Due by" class="text-top">
-            <% if phase.evaluation_form %>
-              <%= phase.evaluation_form.closing_date %>
-            <% else %>
-              N/A
+    <% @phases.each do |phase| %>
+      <tr>
+        <th data-label="Challenge Title" scope="row" class="text-top">
+          <%= challenge_phase_title(phase.challenge, phase) %>
+        </th>
+        <td data-label="Assigned to me" class="text-top">
+          <%= assigned_submissions_count(current_user, phase.challenge, phase) %>
+        </td>
+        <td data-label="Remaining to evaluate" class="text-top">
+          <%= remaining_evaluations_count(current_user, phase.challenge, phase) %>
+        </td>
+        <td data-label="Due by" class="text-top">
+          <% if phase.evaluation_form %>
+            <%= phase.evaluation_form.closing_date %>
+          <% else %>
+            N/A
+          <% end %>
+        </td>
+        <td>
+          <div class="display-flex flex-column grid-row grid-gap-1 padding-bottom-2">
+            <%= link_to submissions_evaluation_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full" do %>
+              View Submissions
             <% end %>
-          </td>
-          <td>
-            <div class="display-flex flex-column grid-row grid-gap-1 padding-bottom-2">
-              <%= link_to submissions_evaluation_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full" do %>
-                View Submissions
-              <% end %>
-            </div>
-            </div>  
-          </td>
-          </td>  
-        </tr>
-      <% end %>  
-    <% end %>  
+          </div>
+        </td>  
+      </tr>
+    <% end %>
   </tbody>
 </table>
