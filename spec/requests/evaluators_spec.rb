@@ -176,21 +176,31 @@ RSpec.describe "Evaluators", type: :request do
     end
 
     context 'when adding an existing user with an invalid role' do
-      let(:existing_user) { create(:user, role: 'admin') }
+      let(:existing_user) { create(:user,
+        role: 'admin',
+        email: 'admin_active@example.com',
+        first_name: 'Admin',
+        last_name: 'Active'
+      ) }
 
       it 'does not add the user as an evaluator and returns an error' do
-        expect(evaluator_service_double).to receive(:process_evaluator_invitation).and_return({ success: false,
-                                                                                                message: 'User does not have a valid evaluator role.' })
+        expect(evaluator_service_double).to receive(:process_evaluator_invitation).and_return({
+          success: false,
+          message: "#{existing_user.email} does not have a valid evaluator role."
+        })
 
         post phase_evaluators_path(phase), params: {
           evaluator_invitation: {
             email: existing_user.email,
-            phase_id: phase.id
+            phase_id: phase.id,
+            challenge_id: challenge.id,
+            last_invite_sent: Time.current,
+            full_name: "#{existing_user.first_name} #{existing_user.last_name}"
           }
         }
 
         expect(response).to render_template(:index)
-        expect(response.body).to include('User does not have a valid evaluator role.')
+        expect(response.body).to include("#{existing_user.email} does not have a valid evaluator role.")
       end
     end
   end
