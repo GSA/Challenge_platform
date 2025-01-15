@@ -17,11 +17,15 @@ class EvaluatorInvitationService
     if invitation.update(last_invite_sent: Time.current)
       {
         success: true,
-        message: I18n.t('evaluators.process_evaluator_invitation.invitation_resent',
-        email: invitation.email)
+        message: I18n.t(
+          'evaluators.process_evaluator_invitation.invitation_resent',
+          email: invitation.email
+        )
       }
     else
-      { success: false, message: I18n.t('evaluators.resend_invite.failure') }
+      {
+        success: false, message: I18n.t('evaluators.resend_invite.failure')
+      }
     end
   end
 
@@ -40,7 +44,8 @@ class EvaluatorInvitationService
         message: I18n.t(
           'evaluators.process_evaluator_invitation.invitation_sent',
           email: invitation_params[:email]
-        ) }
+        )
+      }
     else
       { success: false, message: invitation.errors.full_messages.join(", "), evaluator_invitation: invitation }
     end
