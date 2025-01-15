@@ -65,29 +65,38 @@ class EvaluatorManagementService
   end
 
   def add_existing_user_as_evaluator(user)
-    if @phase.evaluators.include?(user)
-      return { success: true,
-               message: I18n.t('evaluators.process_evaluator_invitation.already_added', email: user.email) }
-    end
-
-    unless User::VALID_EVALUATOR_ROLES.include?(user.role)
-      return { success: false,
-               message: I18n.t('evaluators.process_evaluator_invitation.invalid_role', email: user.email) }
-    end
-
+    return user_already_added(user) if @phase.evaluators.include?(user)
+    return invalid_role(user) unless User::VALID_EVALUATOR_ROLES.include?(user.role)
+    
     updated_name = update_name_for_existing_user(user)
     return updated_name unless updated_name[:success]
 
-    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
+    user.role == 'evaluator' ? handle_evaluator_creation(user) : handle_evaluator_role_requested(user)
+  end
 
+  def user_already_added(user)
+    { success: true, message: I18n.t('evaluators.process_evaluator_invitation.already_added', email: user.email) }
+  end
+
+  def invalid_role(user)
+    { success: false, message: I18n.t('evaluators.process_evaluator_invitation.invalid_role', email: user.email) }
+  end
+
+  def handle_evaluator_role_requested(user)
+    user.update!(status: 'evaluator_role_requested')
+    ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
+    {
+      success: true,
+      message: I18n.t('evaluators.process_evaluator_invitation.evaluator_role_requested', email: user.email)
+    }
+  end
+
+  def handle_evaluator_creation(user)
+    cpe = ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
     if cpe.persisted?
-      { success: true,
-        message: I18n.t('evaluators.process_evaluator_invitation.add_success',
-                        email: user.email) }
+      { success: true, message: I18n.t('evaluators.process_evaluator_invitation.add_success', email: user.email) }
     else
-      { success: false,
-        message: I18n.t('evaluators.process_evaluator_invitation.add_failure',
-                        email: user.email) }
+      { success: false, message: I18n.t('evaluators.process_evaluator_invitation.add_failure', email: user.email) }
     end
   end
 
