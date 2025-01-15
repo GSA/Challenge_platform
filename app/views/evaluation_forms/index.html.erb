@@ -2,15 +2,13 @@
 <p class="text-normal">Manage existing evaluation forms and create new evaluation forms.</p>
 
 <p>
-  <%= link_to new_evaluation_form_path, class: "width-full tablet:width-auto" do %>
-    <button class="usa-button font-body-2xs text-no-wrap" style="background-color: #4d8055">
-      <%= image_tag(
-        "images/usa-icons/content_copy.svg",
-        class: "usa-icon icon-white",
-        alt: "evaluation forms"
-      )%>
-      Create New Evaluation Form
-    </button>
+  <%= link_to new_evaluation_form_path, class: "usa-button button-green font-body-2xs text-no-wrap width-full tablet:width-auto" do %>
+    <%= image_tag(
+      "images/usa-icons/content_copy.svg",
+      class: "usa-icon icon-white",
+      alt: "evaluation forms"
+    )%>
+    Create New Evaluation Form
   <% end %>
 </p>
 
