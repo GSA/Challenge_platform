@@ -55,7 +55,10 @@ class EvaluatorManagementService
     )
 
     if temp_invitation.valid?
-      user.update( first_name: temp_invitation.first_name, last_name: temp_invitation.last_name )
+      user.update(
+        first_name: temp_invitation.first_name,
+        last_name: temp_invitation.last_name
+      )
       { success: true }
     else
       name_errors = temp_invitation.errors.messages.slice(:first_name, :last_name)
@@ -70,19 +73,11 @@ class EvaluatorManagementService
 
   def add_existing_user_as_evaluator(user)
     if @phase.evaluators.include?(user)
-      return {
-        success: true,
-        message: I18n.t('evaluators.process_evaluator_invitation.already_added',
-                        email: user.email)
-      }
+      return { success: true, message: I18n.t('evaluators.process_evaluator_invitation.already_added', email: user.email) }
     end
 
     unless User::VALID_EVALUATOR_ROLES.include?(user.role)
-      return {
-        success: false,
-        message: I18n.t('evaluators.process_evaluator_invitation.invalid_role',
-                        email: user.email)
-      }
+      return { success: false, message: I18n.t('evaluators.process_evaluator_invitation.invalid_role', email: user.email) }
     end
 
     updated_name = update_name_for_existing_user(user)
@@ -126,11 +121,7 @@ class EvaluatorManagementService
         )
       }
     else
-      {
-        success: false,
-        message: invitation.errors.full_messages.join(", "),
-        evaluator_invitation: invitation
-      }
+      { success: false, message: invitation.errors.full_messages.join(", "), evaluator_invitation: invitation }
     end
   end
 
