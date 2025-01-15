@@ -13,6 +13,9 @@ application.register("evaluation-criteria", EvaluationCriteriaController);
 import EvaluationFormController from "./evaluation_form_controller";
 application.register("evaluation-form", EvaluationFormController);
 
+import ExportSubmissionsController from "./export_submissions_controller";
+application.register("export-submissions", ExportSubmissionsController);
+
 import HotdogController from "./hotdog_controller";
 application.register("hotdog", HotdogController);
 

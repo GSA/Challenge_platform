@@ -71,3 +71,19 @@ dialog::backdrop {
 .usa-combo-box .border-secondary + input {
   border: 1px solid red;
 }
+
+.usa-prose .usa-checkbox {
+  .usa-checkbox__label::before {
+    border-radius: 0 !important;
+    left: 1rem !important;
+  }
+
+  .usa-checkbox__input:checked + .usa-checkbox__label::before {
+    border-radius: 0 !important;
+  }
+
+  .usa-checkbox__label {
+    padding-left: 3rem !important;
+    text-align: left !important;
+  }
+}

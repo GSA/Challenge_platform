@@ -1,3 +1,7 @@
+<div data-controller="export-submissions-modal"
+     data-export-submissions-modal-challenge-id-value="<%= @challenge.id %>"
+     data-export-submissions-modal-phase-id-value="<%= @phase.id %>">
+
 <% if @phase.evaluation_form.nil? %>
   <%= render 'shared/alert_error', alert_heading: t('alerts.no_evaluation_form.heading'), alert_text: t('alerts.no_evaluation_form.text') %>
 <% end %>
@@ -6,7 +10,16 @@
   <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator.text') %>
 <% end %>
 
-<%= render partial: "phases/sort_and_filter" %>
+<div class="grid-container padding-x-0">
+  <div class="grid-row">
+    <div class="grid-col-6">
+      <%= render partial: "phases/sort_and_filter" %>
+    </div>
+    <div class="grid-col-6">
+      <%= render partial: "phases/export_submissions" %>
+    </div>
+  </div>
+</div>
 
 <div data-controller="load-more"
      data-load-more-total-count-value="<%= @filtered_count %>">
