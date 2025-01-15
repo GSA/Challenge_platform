@@ -22,6 +22,8 @@ class Evaluation < ApplicationRecord
   belongs_to :submission
   belongs_to :evaluator_submission_assignment
   has_many :evaluation_scores, dependent: :destroy
+  has_many :evaluation_criteria, through: :evaluation_form
+  accepts_nested_attributes_for :evaluation_scores
 
   validates :user_id,
             uniqueness: { scope: [:evaluation_form_id, :submission_id],
