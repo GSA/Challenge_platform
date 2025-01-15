@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
-# This service handles evaluator invitation as well as adding and removing evalutors to challenge phases.
+# This service handles adding and removing evalutors to and from challenge phases.
 class EvaluatorManagementService
   def initialize(challenge, phase)
     @challenge = challenge
     @phase = phase
+    @invitation_service = EvaluatorInvitationService.new(challenge, phase)
   end
 
   def process_evaluator_invitation(email, invitation_params)
     @invitation_params = invitation_params
     user = User.find_by(email:)
-    user ? add_existing_user_as_evaluator(user) : handle_invitation(email, invitation_params)
+    user ? add_existing_user_as_evaluator(user) : @invitation_service.handle_invitation(email, invitation_params)
   end
 
   def remove_evaluator(evaluator_type, evaluator_id)
@@ -33,14 +34,8 @@ class EvaluatorManagementService
     { success: true, message: I18n.t('evaluators.accept_evaluator_invitation.success') }
   end
 
-  # TODO: Implement sending the actual invitation email here
   def resend_invitation(invitation)
-    if invitation.update(last_invite_sent: Time.current)
-      { success: true,
-        message: I18n.t('evaluators.process_evaluator_invitation.invitation_resent', email: invitation.email) }
-    else
-      { success: false, message: I18n.t('evaluators.resend_invite.failure') }
-    end
+    @invitation_service.resend_invitation(invitation)
   end
 
   private
@@ -93,29 +88,6 @@ class EvaluatorManagementService
       { success: false,
         message: I18n.t('evaluators.process_evaluator_invitation.add_failure',
                         email: user.email) }
-    end
-  end
-
-  def handle_invitation(email, invitation_params)
-    existing_invitation = @challenge.evaluator_invitations.find_by(email:, phase: @phase)
-    existing_invitation ? resend_invitation(existing_invitation) : create_new_invitation(invitation_params)
-  end
-
-  def create_new_invitation(invitation_params)
-    invitation = @challenge.evaluator_invitations.new(
-      invitation_params.merge(
-        phase: @phase,
-        last_invite_sent: Time.current
-      )
-    )
-    if invitation.save
-      { success: true,
-        message: I18n.t(
-          'evaluators.process_evaluator_invitation.invitation_sent',
-          email: invitation_params[:email]
-        ) }
-    else
-      { success: false, message: invitation.errors.full_messages.join(", "), evaluator_invitation: invitation }
     end
   end
 
