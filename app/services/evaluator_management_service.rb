@@ -46,21 +46,29 @@ class EvaluatorManagementService
   private
 
   def update_name_for_existing_user(user)
-    names = @invitation_params[:full_name].to_s.strip.split(/\s+/, 2)
-    if names.length < 2
-      return {
-        success: false,
-        message: "First and last name are required"
-      }
-    end
-
-    first_name, last_name = names
-    user.update(
-      first_name:,
-      last_name:
+    temp_invitation = EvaluatorInvitation.new(
+      full_name: @invitation_params[:full_name],
+      email: user.email,
+      challenge: @challenge,
+      phase: @phase,
+      last_invite_sent: Time.current
     )
 
-    { success: true }
+    if temp_invitation.valid?
+      user.update(
+        first_name: temp_invitation.first_name,
+        last_name: temp_invitation.last_name
+      )
+      { success: true }
+    else
+      name_errors = temp_invitation.errors.messages.slice(:first_name, :last_name)
+      first_error_field, first_error_message = name_errors.first
+      {
+        success: false,
+        message: "#{first_error_field.to_s.humanize} #{first_error_message.first}",
+        errors: name_errors
+      }
+    end
   end
 
   def add_existing_user_as_evaluator(user)
