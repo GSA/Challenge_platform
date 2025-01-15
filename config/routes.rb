@@ -10,7 +10,18 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: "dashboard#index"
 
-  resources :evaluations, only: [:index]
+  resources :evaluations, only: [:index, :show, :edit] do
+    member do
+      get :submissions
+      patch 'save_draft'
+      patch 'mark_complete'
+    end
+    collection do
+      post 'save_draft'
+      post 'mark_complete'
+    end
+  end
+
   resources :evaluation_forms do
     member do
       get 'confirmation'
@@ -28,7 +39,9 @@ Rails.application.routes.draw do
     end
     resources :evaluator_submission_assignments, only: [:index, :update, :create]
   end
-  resources :submissions, only: [:index, :show, :update]
+  resources :submissions, only: [:index, :show, :update] do
+    resources :evaluations, only: [:new]
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

@@ -9,16 +9,20 @@ FactoryBot.define do
 
     # Evaluator is a FactoryBot param containing attributes from the factory record
     after(:build) do |evaluation_score, _evaluator|
-      criterion = evaluation_score.evaluation_criterion
-
-      case criterion.scoring_type
-      when "numeric"
-        evaluation_score.score = rand(0..criterion.points_or_weight)
-      when "rating", "binary"
-        evaluation_score.score = rand(criterion.option_range_start..criterion.option_range_end)
-      else
-        raise ArgumentError, "Invalid scoring type '#{criterion.scoring_type}' for evaluation criterion"
-      end
+      valid_score_for_criterion(evaluation_score)
     end
+  end
+end
+
+def valid_score_for_criterion(evaluation_score)
+  criterion = evaluation_score.evaluation_criterion
+
+  case criterion.scoring_type
+  when "numeric"
+    evaluation_score.score = rand(0..criterion.points_or_weight)
+  when "rating", "binary"
+    evaluation_score.score = rand(criterion.option_range_start..criterion.option_range_end)
+  else
+    raise ArgumentError, "Invalid scoring type '#{criterion.scoring_type}' for evaluation criterion"
   end
 end

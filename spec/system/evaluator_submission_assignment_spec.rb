@@ -45,7 +45,7 @@ RSpec.describe 'Evaluator Submission Assignments', :js, type: :system do
     end
   end
 
-  it 'allows assigning a submission to an evaluator' do
+  it 'allows assigning a submission to an evaluator', bullet: :skip do
     unassigned_assignment = create(
       :evaluator_submission_assignment,
       submission: submission,

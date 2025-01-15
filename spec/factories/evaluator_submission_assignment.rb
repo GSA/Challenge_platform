@@ -5,5 +5,21 @@ FactoryBot.define do
     association :submission
 
     status { %w[assigned unassigned recused].sample }
+
+    trait :assigned do
+      status { "assigned" }
+    end
+
+    trait :recused do
+      status { "recused" }
+    end
+
+    trait :in_progress do
+      association :evaluation
+    end
+
+    trait :completed do
+      association :evaluation, :completed
+    end
   end
 end

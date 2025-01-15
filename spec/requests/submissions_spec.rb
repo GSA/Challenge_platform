@@ -190,7 +190,7 @@ RSpec.describe "Submissions" do
           get submissions_phase_path(phase)
           expect(response.body).to include("Boston Tea Party Cleanup")
           # total submission count
-          expect(response.body).to have_css("h3.text-primary", text: "Total Submissions")
+          expect(response.body).to have_css("h2.text-primary", text: "Total Submissions")
           expect(response.body).to have_css("span.font-sans-3xl.text-primary.text-bold", text: "2")
           # selected to advance
           expect(response.body).to have_css("span.text-primary", text: "1 of 2")
@@ -229,9 +229,9 @@ RSpec.describe "Submissions" do
             expect(response.body).to have_css("[data-submission-id='#{submission.id}']")
           end
 
-          expect(response.body).to have_css('.text-secondary-dark.text-bold', text: '2')  # not_started, eligible
-          expect(response.body).to have_css('.text-orange.text-bold', text: '1')          # in_progress
-          expect(response.body).to have_css('.text-green.text-bold', text: '2')           # completed, selected
+          expect(response.body).to have_css('.text-secondary-dark.text-bold', text: '2')   # not_started, eligible
+          expect(response.body).to have_css('.text-accent-warm-dark.text-bold', text: '1') # in_progress
+          expect(response.body).to have_css('.text-green.text-bold', text: '2')            # completed, selected
         end
 
         context 'when filtering submissions' do

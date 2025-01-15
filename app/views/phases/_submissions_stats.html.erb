@@ -11,9 +11,9 @@
                 <span class="font-sans-3xl text-primary text-bold"><%= @submissions_count %></span>
             </div>
             <div>
-                <h3 class="usa-summary-box__heading text-primary margin-bottom-05" id="summary-box-key-information">
+                <h2 class="usa-summary-box__heading text-primary margin-bottom-05" id="summary-box-key-information">
                 Total Submissions
-                </h3>
+                </h2>
                 <p class="usa-summary-box__text text-primary-darker text-bold">
                 Evaluations due by <%= @phase.evaluation_form&.closing_date&.strftime('%m/%d/%Y') || "N/A" %>
                 </p>
@@ -26,15 +26,15 @@
         <div class="display-flex flex-row tablet:margin-left-auto">
             <div class="text-center margin-right-5">
             <span class="font-sans-xl text-green text-bold"><%= @submissions_by_status[:completed] || 0 %></span><br>
-            <span class="text-base-sm text-green text-bold">Completed</span>
+            <span class="font-sans-lg text-green text-bold">Completed</span>
             </div>
             <div class="text-center margin-right-5">
-            <span class="font-sans-xl text-orange text-bold"><%= @submissions_by_status[:in_progress] || 0 %></span><br>
-            <span class="text-base-sm text-orange text-bold">In Progress</span>
+            <span class="font-sans-xl text-accent-warm-dark  text-bold"><%= @submissions_by_status[:in_progress] || 0 %></span><br>
+            <span class="font-sans-lg text-accent-warm-dark text-bold">In Progress</span>
             </div>
             <div class="text-center margin-right-2">
             <span class="font-sans-xl text-secondary-dark text-bold"><%= @submissions_by_status[:not_started] || 0 %></span><br>
-            <span class="text-base-sm text-secondary-dark text-bold">Not Started</span>
+            <span class="font-sans-lg text-secondary-dark text-bold">Not Started</span>
             </div>
         </div>
         </div>

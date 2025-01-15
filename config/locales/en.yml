@@ -88,6 +88,15 @@ en:
   evaluations: 
     unique_user_for_evaluation_form_and_submission_error: "already has an evaluation for this form and submission"
     unique_evaluator_submission_assignment: "already has an evaluation"
+    alerts:
+      evaluator_submission_assignment_not_found: "No assignment found for this submission"
+      evaluation_form_not_found: "No evaluation form found for this submission"
+      save_draft_error:  "Failed to save evaluation as draft: %{errors}."
+      mark_complete_error: "Failed to mark evaluation as complete: %{errors}."
+      unauthorized: "No assignment found for this submission"
+    notices:
+      saved_draft: "Evaluation saved as draft"
+      marked_complete: "Evaluation complete"
   evaluation_scores:
     unique_evaluation_for_evaluation_criterion_error: "already has a score for this evaluation criterion"
   alerts:
