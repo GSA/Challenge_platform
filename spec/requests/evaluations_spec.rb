@@ -65,38 +65,56 @@ RSpec.describe "Evaluations" do
 
     context "when logged in as an evaluator" do
       let(:evaluator) { create_and_log_in_user(role: 'evaluator') }
-      let(:challenge) { create(:challenge) }
-      let(:phase) { create(:phase, challenge: challenge) }
+
+      let(:challenge) { create(:challenge, title: "Challenge with Assignments", is_multi_phase: false) }
+      let(:phase) { challenge.phases.first }
+
+      let(:other_challenge) { create(:challenge, title: "Challenge without Assignments", is_multi_phase: false) }
+      let(:other_phase) { other_challenge.phases.first }
 
       before do
-        ChallengePhasesEvaluator.create!(
-          challenge: challenge,
-          phase: phase,
-          user: evaluator
-        )
+        ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+        ChallengePhasesEvaluator.create!(challenge: other_challenge, phase: other_phase, user: evaluator)
       end
 
-      it "only shows challenges with assigned submissions" do
-        submission = create(:submission, phase: phase)
+      it "only shows challenges with assigned or recused submissions" do
+        assigned_submission = create(:submission, phase: phase, challenge: challenge)
         create(:evaluator_submission_assignment,
-          submission: submission,
+          submission: assigned_submission,
           evaluator: evaluator,
           status: :assigned
         )
 
-        # Create another challenge/phase where evaluator is added but has no assignments
-        other_challenge = create(:challenge)
-        other_phase = create(:phase, challenge: other_challenge)
-        ChallengePhasesEvaluator.create!(
-          challenge: other_challenge,
-          phase: other_phase,
-          user: evaluator
+        recused_submission = create(:submission, phase: phase, challenge: challenge)
+        create(:evaluator_submission_assignment,
+          submission: recused_submission,
+          evaluator: evaluator,
+          status: :recused
+        )
+
+        unassigned_submission = create(:submission, phase: phase, challenge: challenge)
+        create(:evaluator_submission_assignment,
+          submission: unassigned_submission,
+          evaluator: evaluator,
+          status: :unassigned
+        )
+
+        recused_unassigned_submission = create(:submission, phase: phase, challenge: challenge)
+        create(:evaluator_submission_assignment,
+          submission: recused_unassigned_submission,
+          evaluator: evaluator,
+          status: :recused_unassigned
         )
 
         get evaluations_path
 
         expect(response.body).to include(challenge.title)
         expect(response.body).not_to include(other_challenge.title)
+        expect(response.body.scan(/data-label="Challenge Title"/).count).to eq(1)
+        expect(response.body).to have_css('td[data-label="Assigned to me"]')
+        expect(response.body).to have_css('td[data-label="Assigned to me"]', text: '2')
+        expect(response.body).to have_css('td[data-label="Remaining to evaluate"]')
+        expect(response.body).to have_css('td[data-label="Remaining to evaluate"]', text: '2')
       end
     end
   end
