@@ -67,7 +67,7 @@ class EvaluatorManagementService
   def add_existing_user_as_evaluator(user)
     return user_already_added(user) if @phase.evaluators.include?(user)
     return invalid_role(user) unless User::VALID_EVALUATOR_ROLES.include?(user.role)
-    
+
     updated_name = update_name_for_existing_user(user)
     return updated_name unless updated_name[:success]
 
