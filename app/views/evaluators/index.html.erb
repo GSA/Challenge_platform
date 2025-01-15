@@ -30,12 +30,12 @@
 
       <div class="usa-form-group">
         <div class="display-flex flex-align-center text-bold">
-          <%= form.label :full_name, class: "usa-label font-sans-md #{label_error_class(form, :first_name)}" do %>
+          <%= form.label :full_name, class: "usa-label font-sans-md #{label_error_class(form, [:first_name, :last_name])}" do %>
             <span class="text-bold">First & Last Name</span><span class="text-red">*</span>
           <% end %>
         </div>
         <%= form.text_field :full_name, 
-          class: "usa-input #{input_error_class(form, :last_name)}", 
+          class: "usa-input #{input_error_class(form, [:first_name, :last_name])}", 
           required: true,
           autocomplete: "name",
           style: "border: 1.5px solid #565c65;",
