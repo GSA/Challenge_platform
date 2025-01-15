@@ -73,6 +73,10 @@ class EvaluatorsController < ApplicationController
     @evaluator_invitations = @phase.evaluator_invitations
     @existing_evaluators = @phase.evaluators
 
+    unless @evaluator_invitation.valid?
+      return
+    end
+
     if result[:evaluator_invitation].present?
       @evaluator_invitation = result[:evaluator_invitation]
     else
