@@ -37,45 +37,52 @@
         <h2 class="usa-modal__heading maxw-card-lg margin-x-auto" id="export-modal-heading">
           Please select what data you would like to export.
         </h2>
+        <p id="export-modal-description" class="usa-sr-only">
+          Select from export submissions options submissions CSV, submission attachments zip, and evaluations CSV.
+        </p>        
         <div class="usa-prose margin-y-2">
-          <div class="usa-checkbox">
-            <input
-              class="usa-checkbox__input"
-              id="submissions-csv"
-              type="checkbox"
-              name="export-options"
-              value="submissions"
-            />
-            <label class="usa-checkbox__label padding-2 radius-md border-2px border-base-light width-full" for="submissions-csv">
-              Submissions (CSV)
-            </label>
-          </div>
+          <fieldset class="usa-fieldset">
+            <legend class="usa-sr-only">Export submissions options</legend>     
 
-          <div class="usa-checkbox margin-top-2">
-            <input
-              class="usa-checkbox__input"
-              id="attachments-zip"
-              type="checkbox"
-              name="export-options"
-              value="attachments"
-            />
-            <label class="usa-checkbox__label padding-2 radius-md border-2px border-base-light width-full" for="attachments-zip">
-              Submission attachments (zip)
-            </label>
-          </div>
+            <div class="usa-checkbox">
+              <input
+                class="usa-checkbox__input"
+                id="submissions-csv"
+                type="checkbox"
+                name="export-options"
+                value="submissions"
+              />
+              <label class="usa-checkbox__label padding-2 radius-md border-2px border-base-light width-full" for="submissions-csv">
+                Submissions (CSV)
+              </label>
+            </div>
 
-          <div class="usa-checkbox margin-top-2">
-            <input
-              class="usa-checkbox__input"
-              id="evaluations-csv"
-              type="checkbox"
-              name="export-options"
-              value="evaluations"
-            />
-            <label class="usa-checkbox__label padding-2 radius-md border-2px border-base-light width-full" for="evaluations-csv">
-              Evaluations (CSV)
-            </label>
-          </div>
+            <div class="usa-checkbox margin-top-2">
+              <input
+                class="usa-checkbox__input"
+                id="attachments-zip"
+                type="checkbox"
+                name="export-options"
+                value="attachments"
+              />
+              <label class="usa-checkbox__label padding-2 radius-md border-2px border-base-light width-full" for="attachments-zip">
+                Submission attachments (zip)
+              </label>
+            </div>
+
+            <div class="usa-checkbox margin-top-2">
+              <input
+                class="usa-checkbox__input"
+                id="evaluations-csv"
+                type="checkbox"
+                name="export-options"
+                value="evaluations"
+              />
+              <label class="usa-checkbox__label padding-2 radius-md border-2px border-base-light width-full" for="evaluations-csv">
+                Evaluations (CSV)
+              </label>
+            </div>
+          </fieldset>
         </div>
         <div class="usa-modal__footer">
           <ul class="usa-button-group display-flex flex-column">
