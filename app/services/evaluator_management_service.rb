@@ -55,10 +55,7 @@ class EvaluatorManagementService
     )
 
     if temp_invitation.valid?
-      user.update(
-        first_name: temp_invitation.first_name,
-        last_name: temp_invitation.last_name
-      )
+      user.update( first_name: temp_invitation.first_name, last_name: temp_invitation.last_name )
       { success: true }
     else
       name_errors = temp_invitation.errors.messages.slice(:first_name, :last_name)
