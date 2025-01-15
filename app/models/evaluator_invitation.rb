@@ -25,10 +25,13 @@ class EvaluatorInvitation < ApplicationRecord
 
   validates :email, uniqueness: { scope: [:challenge_id, :phase_id] }
 
-  def full_name=(name)
+  def self.split_full_name(name)
     names = name.to_s.strip.split(/\s+/, 2)
-    self.first_name = names[0]
-    self.last_name = names[1]
+    [names[0], names[1]]
+  end
+
+  def full_name=(name)
+    self.first_name, self.last_name = self.class.split_full_name(name)
   end
 
   def full_name
