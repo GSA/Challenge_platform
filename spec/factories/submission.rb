@@ -6,7 +6,7 @@ FactoryBot.define do
     association :submitter, factory: :user
 
     title { Faker::Lorem.sentence }
-    status { "draft" }
+    status { "submitted" }
     external_url { "www.example.com" }
   end
 end

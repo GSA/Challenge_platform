@@ -22,7 +22,8 @@
 class Phase < ApplicationRecord
   belongs_to :challenge
   # More relations from phoenix app
-  has_many :submissions, dependent: :destroy
+  has_many :all_submissions, class_name: "Submission", dependent: :destroy
+  has_many :submissions, -> { where(status: "submitted") }
   has_many :evaluator_submission_assignments, through: :submissions
   has_one :evaluation_form, dependent: :destroy
   # has_one :winner, class_name: 'PhaseWinner'
