@@ -47,6 +47,13 @@
                   </td>
                   <td data-label="">
                     <div class="display-flex flex-no-wrap grid-row">
+                      <% if assignment&.evaluation&.completed_at %>
+                        <%= link_to(evaluation_path(evaluation)) do %>
+                          <button class="usa-button font-body-2xs text-no-wrap">
+                            View Evaluation
+                          </button>
+                        <% end %>
+                      <% end %>
                       <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
                         <%= f.hidden_field :phase_id, value: @submission.phase.id %>
                         <%= f.hidden_field :status, value: assignment.recused? ? "recused_unassigned" : "unassigned" %>
