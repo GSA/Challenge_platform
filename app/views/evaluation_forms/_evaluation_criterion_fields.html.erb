@@ -32,7 +32,7 @@
       disabled: is_template || form_disabled,
       data: {
         "evaluation-criteria-target": "titleField",
-        "action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"
+        "action": "form-validation#validatePresence focusout->form-validation#validatePresence"
         }
     %>
 
@@ -55,7 +55,7 @@
         disabled: is_template || form_disabled,
         data: {
           "evaluation-criteria-target": "descriptionField",
-          "action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"
+          "action": "form-validation#validatePresence focusout->form-validation#validatePresence"
         }
       %>
       <span class="usa-character-count__message">You can enter up to 1000 characters</span>
@@ -83,7 +83,7 @@
         "evaluation-criteria-target": "pointsOrWeightField",
         action: "
           input->evaluation-criteria#checkPointsOrWeightMax blur->evaluation-criteria#checkPointsOrWeightMax
-          evaluation-form#validatePresence focusout->evaluation-form#validatePresence
+          form-validation#validatePresence focusout->form-validation#validatePresence
         "
       }
     %>
@@ -111,7 +111,7 @@
                 disabled: is_template || form_disabled,
                 data: {
                   "evaluation-criteria-target": "scoringTypeRadio",
-                  action: "click->evaluation-criteria#toggleScoringType evaluation-form#validatePresence",
+                  action: "click->evaluation-criteria#toggleScoringType form-validation#validatePresence",
                   field_name: criteria_field_id(f, "scoring_type", is_template)
                 }
             %>
@@ -187,7 +187,7 @@
               value: f.object.option_labels[index.to_s],
               disabled: disabledOptionLabel || form_disabled,
               data: {
-                "action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence",
+                "action": "form-validation#validatePresence focusout->form-validation#validatePresence",
                 "evaluation-criteria-target": "optionLabelInput"
               }
             %>
