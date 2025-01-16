@@ -2,14 +2,14 @@
 
 # Helpers for rendering various form elements and errors
 module FormHelper
-  def label_error_class(form, field)
+  def label_error_class(form, fields)
     object = form.object
-    object.errors[field].present? ? "text-secondary" : ""
+    Array(fields).any? { |field| object.errors[field].present? } ? "text-secondary" : ""
   end
 
-  def input_error_class(form, field)
+  def input_error_class(form, fields)
     object = form.object
-    object.errors[field].present? ? "border-secondary" : ""
+    Array(fields).any? { |field| object.errors[field].present? } ? "border-secondary" : ""
   end
 
   def inline_error(form, field)

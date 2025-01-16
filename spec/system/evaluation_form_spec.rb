@@ -375,7 +375,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       visit edit_evaluation_form_path(closed_evaluation_form)
 
       # Add expectation in spec to satisfy rubocop
-      expect(page).to have_css("form[data-controller='evaluation-form modal']")
+      expect(page).to have_css("form[data-controller='evaluation-form modal form-validation']")
       check_all_non_hidden_inputs_disabled_except_end_date
     end
   end
@@ -794,7 +794,7 @@ end
 
 # Checks that all non hidden or end date fields are disabled
 def check_all_non_hidden_inputs_disabled_except_end_date
-  within("form[data-controller='evaluation-form modal']") do
+  within("form[data-controller='evaluation-form modal form-validation']") do
     all("input:not([type='hidden']), textarea, select").each do |field|
       if field[:id] == "evaluation_form_closing_date"
         expect(field).not_to be_disabled, "Expected #{field[:id]} to not be disabled"
