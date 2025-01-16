@@ -62,6 +62,102 @@ RSpec.describe "Evaluations" do
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
+
+    context "when logged in as an evaluator" do
+      let(:evaluator) { create_and_log_in_user(role: 'evaluator') }
+
+      let(:challenge_with_submissions) { create(:challenge, title: "Challenge with Submissions", is_multi_phase: false) }
+      let(:phase_with_submissions) { challenge_with_submissions.phases.first }
+
+      let(:multi_phase_challenge) { create(:challenge, title: "Multi-Phase Challenge", is_multi_phase: true) }
+      let(:phase1) { create(:phase, challenge: multi_phase_challenge) }
+      let(:phase2) { create(:phase, challenge: multi_phase_challenge) }
+
+      let(:challenge_without_submissions) { create(:challenge, title: "Challenge without Submissions", is_multi_phase: false) }
+      let(:phase_without_submissions) { challenge_without_submissions.phases.first }
+
+      before do
+        ChallengePhasesEvaluator.create!(challenge: challenge_with_submissions, phase: phase_with_submissions, user: evaluator)
+        ChallengePhasesEvaluator.create!(challenge: multi_phase_challenge, phase: phase1, user: evaluator)
+        ChallengePhasesEvaluator.create!(challenge: challenge_without_submissions, phase: phase_without_submissions, user: evaluator)
+      end
+
+      it "only shows phases with assigned or recused submissions" do
+        # Submissions for single phase challenge
+        assigned_submission = create(:submission, phase: phase_with_submissions, challenge: challenge_with_submissions)
+        create(:evaluator_submission_assignment,
+          submission: assigned_submission,
+          evaluator: evaluator,
+          status: :assigned
+        )
+
+        recused_submission = create(:submission, phase: phase_with_submissions, challenge: challenge_with_submissions)
+        create(:evaluator_submission_assignment,
+          submission: recused_submission,
+          evaluator: evaluator,
+          status: :recused
+        )
+
+        unassigned_submission = create(:submission, phase: phase_with_submissions, challenge: challenge_with_submissions)
+        create(:evaluator_submission_assignment,
+          submission: unassigned_submission,
+          evaluator: evaluator,
+          status: :unassigned
+        )
+
+        recused_unassigned_submission = create(:submission, phase: phase_with_submissions, challenge: challenge_with_submissions)
+        create(:evaluator_submission_assignment,
+          submission: recused_unassigned_submission,
+          evaluator: evaluator,
+          status: :recused_unassigned
+        )
+
+        # Submissions for multi-phase challenge
+        multi_phase_submission = create(:submission, phase: phase1, challenge: multi_phase_challenge)
+        create(:evaluator_submission_assignment,
+          submission: multi_phase_submission,
+          evaluator: evaluator,
+          status: :assigned
+        )
+
+        multi_phase_recused_submission = create(:submission, phase: phase1, challenge: multi_phase_challenge)
+        create(:evaluator_submission_assignment,
+          submission: multi_phase_recused_submission,
+          evaluator: evaluator,
+          status: :recused
+        )
+
+        multi_phase_unassigned_submission = create(:submission, phase: phase1, challenge: multi_phase_challenge)
+        create(:evaluator_submission_assignment,
+          submission: multi_phase_unassigned_submission,
+          evaluator: evaluator,
+          status: :unassigned
+        )
+
+        multi_phase_recused_unassigned_submission = create(:submission, phase: phase1, challenge: multi_phase_challenge)
+        create(:evaluator_submission_assignment,
+          submission: multi_phase_recused_unassigned_submission,
+          evaluator: evaluator,
+          status: :recused_unassigned
+        )
+
+        get evaluations_path
+
+        expect(response.body).to include(challenge_with_submissions.title)
+        expect(response.body).not_to include(challenge_without_submissions.title)
+
+        expect(response.body.scan(/data-label="Challenge Title"/).count).to eq(2)
+        expect(response.body.scan(/#{multi_phase_challenge.title}/).count).to eq(1)
+
+        within("#phase_#{phase_with_submissions.id}") do
+          expect(page).to have_css('td[data-label="Assigned to me"]', text: '2')
+        end
+
+        within("#phase_#{phase1.id}") do
+          expect(page).to have_css('td[data-label="Assigned to me"]', text: '2')
+        end
+      end
+    end
   end
 
   describe "GET /evaluations/:id/submissions" do
@@ -128,9 +224,9 @@ RSpec.describe "Evaluations" do
           expect(response.body).to include("In Progress")
           expect(response.body).to include("Not Started")
 
-          expect(response.body).to include('<span class="font-sans-xl text-success-dark text-bold">1</span>')
-          expect(response.body).to include('<span class="font-sans-xl text-accent-warm-dark text-bold">1</span>')
-          expect(response.body).to include('<span class="font-sans-xl text-error-dark text-bold">1</span>')
+          expect(response.body).to include('<span class="font-sans-xl text-success-dark text-bold display-block">1</span>')
+          expect(response.body).to include('<span class="font-sans-xl text-accent-warm-dark text-bold display-block">1</span>')
+          expect(response.body).to include('<span class="font-sans-xl text-error-dark text-bold display-block">1</span>')
         end
       end
 
