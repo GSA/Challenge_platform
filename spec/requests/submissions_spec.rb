@@ -185,6 +185,7 @@ RSpec.describe "Submissions" do
 
         it "renders submission statistics" do
           create(:submission, challenge: challenge, phase: phase)
+          create(:submission, challenge: challenge, phase: phase, status: "draft")
           create(:submission, challenge: challenge, phase: phase, judging_status: "selected")
 
           get submissions_phase_path(phase)
@@ -198,6 +199,7 @@ RSpec.describe "Submissions" do
       end
 
       context 'when viewing submissions' do
+        let!(:draft_submission) { create(:submission, challenge: challenge, phase: phase, status: "draft") }
         let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase) }
         let!(:in_progress_submission) do
           submission = create(:submission, challenge: challenge, phase: phase)
@@ -221,13 +223,15 @@ RSpec.describe "Submissions" do
           submission
         end
 
-        it 'displays all submissions and their status counts' do
+        it 'displays all submissions with status: "submitted" and their status counts' do
           get submissions_phase_path(phase)
 
           [not_started_submission, in_progress_submission, completed_submission,
            eligible_submission, selected_submission].each do |submission|
             expect(response.body).to have_css("[data-submission-id='#{submission.id}']")
           end
+          # except the drafts
+          expect(response.body).not_to have_css("[data-submission-id='#{draft_submission.id}']")
 
           expect(response.body).to have_css('.text-secondary-dark.text-bold', text: '2')   # not_started, eligible
           expect(response.body).to have_css('.text-accent-warm-dark.text-bold', text: '1') # in_progress
