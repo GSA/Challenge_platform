@@ -25,7 +25,7 @@ RSpec.describe EvaluatorManagementService do
 
       it 'does not add the user if already an evaluator' do
         create(:challenge_phases_evaluator, challenge: challenge, phase: phase, user: evaluator)
-        result = service.process_evaluator_invitation(evaluator.email, {})
+        result = service.process_evaluator_invitation(evaluator.email, { email: evaluator.email, full_name: 'Santos Bickford' })
         expect(result[:success]).to be true
         expect(result[:message]).to include('has already been added as an evaluator')
         expect(ChallengePhasesEvaluator.where(challenge: challenge, phase: phase, user: evaluator).count).to eq(1)
@@ -33,7 +33,7 @@ RSpec.describe EvaluatorManagementService do
 
       it 'does not add the user with an invalid role' do
         evaluator.update(role: 'admin')
-        result = service.process_evaluator_invitation(evaluator.email, {})
+        result = service.process_evaluator_invitation(evaluator.email, { email: evaluator.email, full_name: 'Lois Lane' })
         expect(result[:success]).to be false
         expect(result[:message]).to include('does not have a valid evaluator role')
       end
@@ -89,7 +89,10 @@ RSpec.describe EvaluatorManagementService do
       let(:solver) { create(:user, role: 'solver', status: 'active') }
 
       it 'sets status to evaluator_role_requested when user is not an evaluator role' do
-        result = service.process_evaluator_invitation(solver.email, {})
+        result = service.process_evaluator_invitation(
+          solver.email,
+          { email: solver.email, full_name: 'Mickey Lee' }
+        )
 
         expect(result[:success]).to be true
         expect(result[:message]).to include('requires a role change to evaluator')
@@ -98,7 +101,10 @@ RSpec.describe EvaluatorManagementService do
 
       it 'does not set evaluator_role_requested for users with evaluator role' do
         evaluator = create(:user, role: 'evaluator', status: 'active')
-        result = service.process_evaluator_invitation(evaluator.email, {})
+        result = service.process_evaluator_invitation(
+          evaluator.email,
+          { email: solver.email, full_name: 'Daisy Donald' }
+        )
 
         expect(result[:success]).to be true
         expect(evaluator.reload.status).to eq('active')
