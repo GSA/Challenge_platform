@@ -1,3 +1,7 @@
+<% if @submission.evaluator_submission_assignments.recused.exists? %>
+  <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator_submission.text') %>
+<% end %>
+
 <div class="usa-accordion">
   <% rand = SecureRandom.hex(8) %>
   <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
@@ -28,6 +32,9 @@
                 <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
                 <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                   <th scope="row" data-label="Evaluator name" class="text-top">
+                    <% if assignment.status == "recused" %>
+                      <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
+                    <% end %>
                     <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span>
                   </th>
                   <td data-label="Evaluation Status" class="text-top">
