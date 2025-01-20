@@ -6,7 +6,7 @@
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
-  before_action :set_evaluation_and_submission_assignment, only: %i[save_draft mark_complete]
+  before_action :set_evaluation_and_submission_assignment, only: %i[create update]
   before_action :set_phase, only: [:submissions]
 
   def index
@@ -29,7 +29,12 @@ class EvaluationsController < ApplicationController
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
-  def show; end
+  def show 
+    @evaluation = Evaluation.find_by(id: params[:id])
+    return unauthorized_redirect unless can_access_evaluation?
+
+    render :show
+  end
 
   def new
     @evaluator_submission_assignment = find_evaluator_submission_assignment
@@ -50,37 +55,42 @@ class EvaluationsController < ApplicationController
   end
 
   def edit
-    @evaluation = Evaluation.find_by(id: params[:id])
+    @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
     @evaluator_submission_assignment = find_evaluator_submission_assignment
     return unauthorized_redirect unless can_access_evaluation?
 
     render :edit
   end
 
-  def save_draft
-    @evaluation.completed_at = nil
-
-    if @evaluation.save(validate: false)
+  def create
+    if save_evaluation
       flash[:notice] = I18n.t("evaluations.notices.saved_draft")
-      redirect_to evaluations_path
+      redirect_to submissions_evaluation_path(@evaluation.submission)
     else
-      handle_save_draft_failure
+      render :new, status: :unprocessable_entity
     end
   end
 
-  def mark_complete
-    @evaluation.completed_at = Time.current
-
-    if @evaluation.save
-      flash[:notice] = I18n.t("evaluations.notices.marked_complete")
-      redirect_to evaluations_path
+  def update
+    if save_evaluation
+      flash[:notice] = params[:commit] == "Mark Complete" ? I18n.t("evaluations.notices.marked_complete") : I18n.t("evaluations.notices.saved_draft")
+      redirect_to submissions_evaluation_path(@evaluation.submission)
     else
-      @evaluation.completed_at = nil
-      handle_mark_complete_failure
+      render :edit
     end
   end
 
   private
+
+  def save_evaluation 
+    if params[:subaction] == "mark_complete"
+      @evaluation.completed_at = Time.now
+      @evaluation.save
+    else
+      @evaluation.completed_at = nil
+      @evaluation.save(validate: false)
+    end
+  end
 
   def set_evaluation_and_submission_assignment
     @evaluation = find_or_initialize_evaluation
@@ -100,7 +110,7 @@ class EvaluationsController < ApplicationController
 
   def find_or_initialize_evaluation
     if params[:id]
-      Evaluation.includes([:evaluation_criteria]).find(params[:id])
+      Evaluation.includes([evaluation_scores: :evaluation_criterion]).find(params[:id])
     else
       Evaluation.new(user_id: current_user.id)
     end
@@ -129,34 +139,10 @@ class EvaluationsController < ApplicationController
     end
   end
 
-  # Redirect Helpers
   def unauthorized_redirect
     redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.unauthorized")
   end
 
-  def handle_save_draft_failure
-    flash[:alert] =
-      I18n.t("evaluations.alerts.save_draft_error", errors: @evaluation.errors.full_messages.to_sentence)
-
-    if @evaluation.new_record?
-      redirect_to new_submission_evaluation_path(@evaluator_submission_assignment.submission_id)
-    else
-      redirect_to edit_evaluation_path(@evaluation.id)
-    end
-  end
-
-  def handle_mark_complete_failure
-    flash[:alert] =
-      I18n.t("evaluations.alerts.mark_complete_error", errors: @evaluation.errors.full_messages.to_sentence)
-
-    if @evaluation.new_record?
-      redirect_to new_submission_evaluation_path(@evaluator_submission_assignment.submission_id)
-    else
-      redirect_to edit_evaluation_path(@evaluation.id)
-    end
-  end
-
-  # Params
   def evaluation_params
     params.require(:evaluation).permit(
       :user_id,

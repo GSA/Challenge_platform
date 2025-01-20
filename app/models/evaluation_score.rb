@@ -59,8 +59,6 @@ class EvaluationScore < ApplicationRecord
   def validate_numeric_score
     max_score = evaluation_criterion.points_or_weight
 
-    validate_score_presence
-
     if score && score > max_score
       errors.add(:score, "must be less than or equal to #{max_score}")
     end
@@ -75,8 +73,6 @@ class EvaluationScore < ApplicationRecord
     range_start = evaluation_criterion.option_range_start
     range_end = evaluation_criterion.option_range_end
     valid_range = (range_start..range_end)
-
-    validate_score_presence
 
     if score && valid_range.exclude?(score)
       errors.add(:score, "must be within the range #{range_start} to #{range_end}")

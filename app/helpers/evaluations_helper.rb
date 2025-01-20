@@ -107,4 +107,39 @@ module EvaluationsHelper
   def calculate_total(counts)
     counts.values.sum
   end
+
+  def evaluation_link(assignment)
+    evaluation = assignment.evaluation
+
+    link_path = if evaluation
+                  edit_evaluation_path(evaluation)
+                else
+                  new_submission_evaluation_path(assignment.submission)
+                end
+
+    link_to("Evaluate", link_path, class: "usa-button font-body-2xs width-full text-no-wrap")
+  end
+
+  def evaluation_score_input(score_fields, criterion)
+    content_tag(:div) do
+      case criterion.scoring_type
+      when 'numeric'
+        concat(score_fields.number_field(:score, min: 0, max: criterion.points_or_weight))
+      when 'rating'
+        (criterion.option_range_start..criterion.option_range_end).each do |value|
+          concat(content_tag(:div) do
+            concat(score_fields.radio_button(:score, value))
+            concat(score_fields.label("score_#{value}", criterion.option_labels[value.to_s] || value))
+          end)
+        end
+      when 'binary'
+        [0, 1].each do |value|
+          concat(content_tag(:div) do
+            concat(score_fields.radio_button(:score, value))
+            concat(score_fields.label("score_#{value}", value == 1 ? 'Yes' : 'No'))
+          end)
+        end
+      end
+    end
+  end
 end

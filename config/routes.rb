@@ -10,15 +10,9 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: "dashboard#index"
 
-  resources :evaluations, only: [:index, :show, :edit] do
+  resources :evaluations, only: [:index, :show, :edit, :create, :update] do
     member do
       get :submissions
-      patch 'save_draft'
-      patch 'mark_complete'
-    end
-    collection do
-      post 'save_draft'
-      post 'mark_complete'
     end
   end
 
@@ -39,6 +33,7 @@ Rails.application.routes.draw do
     end
     resources :evaluator_submission_assignments, only: [:index, :update, :create]
   end
+
   resources :submissions, only: [:index, :show, :update] do
     resources :evaluations, only: [:new]
   end

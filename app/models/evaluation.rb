@@ -25,6 +25,8 @@ class Evaluation < ApplicationRecord
   has_many :evaluation_criteria, through: :evaluation_form
   accepts_nested_attributes_for :evaluation_scores
 
+  validates_associated :evaluation_scores
+
   validates :user_id,
             uniqueness: { scope: [:evaluation_form_id, :submission_id],
                           message: I18n.t("evaluations.unique_user_for_evaluation_form_and_submission_error") }
@@ -40,11 +42,20 @@ class Evaluation < ApplicationRecord
 
   validate :user_has_valid_role
 
+  before_save :ensure_all_scores_exist
+
   private
 
   def user_has_valid_role
     return if User::VALID_EVALUATOR_ROLES.include?(user.role)
 
     errors.add(:user, "must have a valid evaluator role")
+  end
+
+  def ensure_all_scores_exist
+    missing_criteria = evaluation_form.evaluation_criteria.where.not(id: evaluation_scores.pluck(:evaluation_criterion_id))
+    missing_criteria.each do |criterion|
+      evaluation_scores.build(evaluation_criterion: criterion)
+    end
   end
 end
