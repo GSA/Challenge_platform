@@ -31,6 +31,18 @@ class PhasesController < ApplicationController
     render_response
   end
 
+  def export_submissions
+    authorize_user('challenge_manager')
+    service = SubmissionExportService.new(@phase, params[:options])
+    csv_data = service.export
+
+    respond_to do |format|
+      format.csv do
+        send_data csv_data, type: 'text/csv'
+      end
+    end
+  end
+
   private
 
   def set_phase
