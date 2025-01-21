@@ -3,7 +3,7 @@
     <div class="grid-row flex-justify-end">
       <div class="grid-col-6 display-flex flex-justify-end padding-top-105">
         <nav aria-label="export submissions" class="tablet:usa-nav display-flex">
-          <ul class="usa-nav__primary usa-accordion" style="position: relative;">
+          <ul class="usa-nav__primary usa-accordion">
             <li class="radius-md">
               <button
                 type="button"
@@ -11,6 +11,9 @@
                 aria-expanded="false"
                 style="background-color: white; border: none; padding: 0;"
                 data-action="click->export-submissions#open"
+                data-phase-id="<%= @phase.id %>"
+                data-challenge-title="<%= @challenge.title %>"
+                data-phase-number="<%= phase_number(@challenge, @phase) %>"
               >
                 <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Export</span>
                 <%= image_tag "images/usa-icons/file_download.svg", 
@@ -64,6 +67,7 @@
                 type="checkbox"
                 name="export-options"
                 value="attachments"
+                disabled
               />
               <label class="usa-checkbox__label padding-2 radius-md border-2px border-base-light width-full" for="attachments-zip">
                 Submission attachments (zip)
@@ -90,7 +94,8 @@
               <button
                 type="button"
                 class="usa-button"
-                data-action="click->export-submissions#exportSubmissions">
+                data-action="click->export-submissions#exportSubmissions"
+              >
                 Export
               </button>
             </li>
