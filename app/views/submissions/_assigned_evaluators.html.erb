@@ -1,5 +1,7 @@
 <% if @submission.evaluator_submission_assignments.recused.exists? %>
-  <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator_submission.text') %>
+  <div class="margin-bottom-2">
+    <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator_submission.text') %>
+  </div>
 <% end %>
 
 <div class="usa-accordion">
@@ -15,7 +17,7 @@
     </button>
   </h2>
 
-  <div class="usa-accordion__content" id="<%= rand %>">
+  <div class="usa-accordion__content overflow-hidden" id="<%= rand %>">
     <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
       <% if assigned_evaluators.any? %>
         <table class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
@@ -46,10 +48,10 @@
                     <span class="margin-x-1"><%= evaluator_score(assignment).formatted_score %></span>
                   </td>
                   <td data-label="">
-                    <div class="display-flex flex-no-wrap grid-row">
+                    <div class="display-flex flex-wrap">
                       <% if assignment&.evaluation&.completed_at %>
-                        <%= link_to(evaluation_path(evaluation)) do %>
-                          <button class="usa-button font-body-2xs text-no-wrap">
+                        <%= link_to(evaluation_path(assignment.evaluation)) do %>
+                          <button class="usa-button font-body-3xs text-no-wrap padding-x-1 margin-bottom-1">
                             View Evaluation
                           </button>
                         <% end %>
