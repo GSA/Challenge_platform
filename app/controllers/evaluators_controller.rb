@@ -13,6 +13,8 @@ class EvaluatorsController < ApplicationController
   end
 
   def create
+    @evaluator_invitation = EvaluatorInvitation.new(evaluator_invitation_params)
+
     result = evaluator_service.process_evaluator_invitation(
       evaluator_invitation_params[:email],
       evaluator_invitation_params
@@ -20,12 +22,11 @@ class EvaluatorsController < ApplicationController
 
     if result[:success]
       redirect_to phase_evaluators_path(@phase), notice: result[:message]
-    else
-      flash.now[:alert] = result[:message]
-      @evaluator_invitations = @phase.evaluator_invitations
-      @existing_evaluators = @phase.evaluators
-      render :index
+      return
     end
+
+    handle_failed_invitation(result)
+    render :index, status: :unprocessable_entity
   end
 
   def destroy
@@ -64,7 +65,22 @@ class EvaluatorsController < ApplicationController
 
   def evaluator_invitation_params
     params.require(:evaluator_invitation).permit(
-      :first_name, :last_name, :email, :challenge_id, :phase_id, :last_invite_sent
+      :full_name, :email, :challenge_id, :phase_id, :last_invite_sent
     )
+  end
+
+  def handle_failed_invitation(result)
+    @evaluator_invitations = @phase.evaluator_invitations
+    @existing_evaluators = @phase.evaluators
+
+    unless @evaluator_invitation.valid?
+      return
+    end
+
+    if result[:evaluator_invitation].present?
+      @evaluator_invitation = result[:evaluator_invitation]
+    else
+      @evaluator_invitation.errors.add(:base, result[:message])
+    end
   end
 end
