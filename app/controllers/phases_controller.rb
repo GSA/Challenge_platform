@@ -38,7 +38,7 @@ class PhasesController < ApplicationController
 
     respond_to do |format|
       format.csv do
-        send_data csv_data, type: 'text/csv'
+        send_data(csv_data, type: 'text/csv')
       end
     end
   end

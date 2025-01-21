@@ -34,12 +34,49 @@ export default class extends Controller {
     }
   }
 
-  async exportSubmissions(event) {
-    event.preventDefault();
-  
-    const selectedOptions = Array.from(
+  getSelectedOptions() {
+    return Array.from(
       document.querySelectorAll('input[name="export-options"]:checked')
     ).map(checkbox => checkbox.value);
+  }
+
+  createFilename(option, sanitizedTitle) {
+    return `${sanitizedTitle}_${option}_${new Date().toISOString().split('T')[0]}.csv`;
+  }
+
+  sanitizeTitle() {
+    const title = `${this.challengeTitleValue} - Phase ${this.phaseNumberValue}`;
+    return title.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  }
+
+  async downloadCSV(blob, filename) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
+
+  async fetchExportData(option) {
+    const params = new URLSearchParams({ options: option, format: 'csv' });
+    const response = await fetch(`/phases/${this.phaseIdValue}/export_submissions?${params}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/csv',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+    
+    if (!response.ok) throw new Error('Export failed');
+    return response.blob();
+  }
+
+  async exportSubmissions(event) {
+    event.preventDefault();
+    const selectedOptions = this.getSelectedOptions();
   
     if (selectedOptions.length === 0) {
       alert('Please select at least one export option');
@@ -47,35 +84,12 @@ export default class extends Controller {
     }
   
     try {
+      const sanitizedTitle = this.sanitizeTitle();
+      
       for (const option of selectedOptions) {
-        const params = new URLSearchParams({
-          options: option,
-          format: 'csv'
-        });
-        
-        const response = await fetch(`/phases/${this.phaseIdValue}/export_submissions?${params}`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'text/csv',
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-        
-        if (!response.ok) throw new Error('Export failed');
-        
-        const blob = await response.blob();
-        const title = `${this.challengeTitleValue} - Phase ${this.phaseNumberValue}`;
-        const sanitizedTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-        
-        const filename = `${sanitizedTitle}_${option}_${new Date().toISOString().split('T')[0]}.csv`;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+        const blob = await this.fetchExportData(option);
+        const filename = this.createFilename(option, sanitizedTitle);
+        await this.downloadCSV(blob, filename);
       }
       
       this.close();
