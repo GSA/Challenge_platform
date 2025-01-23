@@ -6,7 +6,9 @@
 
 <h3>Uploaded Files:</h3>
 <% @submission&.documents.each do |document| %>
-    <%= link_to document.display_name, document.external_url, target: "_blank", download:true %>
+    <p class="text-normal">
+        <%= link_to document.display_name, document.external_url, target: "_blank", download:true %>
+    </p>
 <% end %>    
 
 <h3>External URL:</h3>
