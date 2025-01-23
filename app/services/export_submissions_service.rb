@@ -3,7 +3,7 @@
 require 'csv'
 
 # This service handles exporting submissions and evaluations into a csv.
-class SubmissionExportService
+class ExportSubmissionsService
   def initialize(phase, options)
     @phase = phase
     @options = options&.split(',') || []
@@ -40,10 +40,10 @@ class SubmissionExportService
   def submission_data(submission)
     [
       submission.id,
-      submission.title,
-      sanitize_text(submission.brief_description),
-      sanitize_text(submission.description),
-      submission.external_url,
+      submission.title || '',
+      sanitize_text(submission.brief_description) || '',
+      sanitize_text(submission.description) || '',
+      submission.external_url || '',
       submission.status,
       submission.inserted_at,
       submission.updated_at,
@@ -72,10 +72,10 @@ class SubmissionExportService
   def evaluation_data(submission, assignment)
     [
       submission.id,
-      "#{assignment.evaluator.first_name} #{assignment.evaluator.last_name}",
+      "#{assignment.evaluator.first_name || ''} #{assignment.evaluator.last_name || ''}",
       assignment.evaluator.email,
       assignment.evaluation_status.to_s.titleize,
-      assignment.evaluation&.total_score
+      assignment.evaluation&.total_score || ''
     ]
   end
 

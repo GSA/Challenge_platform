@@ -33,7 +33,7 @@ class PhasesController < ApplicationController
 
   def export_submissions
     authorize_user('challenge_manager')
-    service = SubmissionExportService.new(@phase, params[:options])
+    service = ExportSubmissionsService.new(@phase, params[:options])
     csv_data = service.export
 
     respond_to do |format|
