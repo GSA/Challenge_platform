@@ -61,6 +61,30 @@ RSpec.describe ExportSubmissionsService do
         expect(row['Evaluation Status']).to eq(assignment.evaluation_status.to_s.titleize)
         expect(row['Score']).to eq(assignment.evaluation&.total_score&.to_s || '')
       end
+
+      it 'exports a row for each evaluator evaluation of the same submission' do
+        evaluation.update!(total_score: 90)
+
+        evaluator2 = create(:user, role: 'evaluator', first_name: 'Santos', last_name: 'Bickford')
+        assignment2 = create(:evaluator_submission_assignment,
+          submission: submission,
+          evaluator: evaluator2,
+          status: :assigned
+        )
+        create(:evaluation,
+          evaluator_submission_assignment: assignment2,
+          total_score: 85
+        )
+
+        evaluator_rows = parsed_csv.select { |row| row['Submission ID'] == submission.id.to_s }
+        expect(evaluator_rows.length).to eq(2)
+
+        expect(evaluator_rows[0]['Evaluator Name']).to eq("#{evaluator.first_name} #{evaluator.last_name}")
+        expect(evaluator_rows[0]['Score']).to eq('90')
+
+        expect(evaluator_rows[1]['Evaluator Name']).to eq('Santos Bickford')
+        expect(evaluator_rows[1]['Score']).to eq('85')
+      end
     end
 
     context 'when exporting both submissions and evaluations' do
