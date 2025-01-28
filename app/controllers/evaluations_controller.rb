@@ -64,7 +64,13 @@ class EvaluationsController < ApplicationController
 
   def create
     if save_evaluation
-      flash[:notice] = I18n.t("evaluations.notices.saved_draft")
+      flash[:notice] =
+        if params[:subaction] == "mark_complete"
+          I18n.t("evaluations.notices.marked_complete")
+        else
+          I18n.t("evaluations.notices.saved_draft")
+        end
+
       redirect_to submissions_evaluation_path(@evaluation.submission)
     else
       render :new, status: :unprocessable_entity

@@ -365,7 +365,7 @@ RSpec.describe "Evaluations" do
           expect(score.comment).to be_nil
         end
 
-        expect(response).to redirect_to(evaluations_path)
+        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission))
         expect(flash[:notice]).to eq(I18n.t('evaluations.notices.saved_draft'))
       end
 
@@ -393,8 +393,7 @@ RSpec.describe "Evaluations" do
     end
   end
 
-  # evaluations_path
-  describe "POST /evaluations/mark_complete" do
+  describe "POST /evaluations" do
     context "when logged in as an evaluator" do
       let(:current_user) { create_user(role: "evaluator") }
 
@@ -419,7 +418,7 @@ RSpec.describe "Evaluations" do
           expect(score.score).not_to be_nil
         end
 
-        expect(response).to redirect_to(evaluations_path)
+        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission))
         expect(flash[:notice]).to eq(I18n.t("evaluations.notices.marked_complete"))
       end
 
@@ -544,8 +543,7 @@ RSpec.describe "Evaluations" do
     end
   end
 
-  # evaluations_path
-  describe "PATCH /evaluations/:id/save_draft" do
+  describe "PATCH /evaluations/:id" do
     context "when logged in as an evaluator" do
       let(:current_user) { create_user(role: "evaluator") }
 

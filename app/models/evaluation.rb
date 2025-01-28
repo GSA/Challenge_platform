@@ -55,7 +55,7 @@ class Evaluation < ApplicationRecord
 
   def ensure_all_scores_exist
     missing_criteria =
-      evaluation_form.evaluation_criteria.where.not(id: evaluation_scores.pluck(:evaluation_criterion_id))
+      evaluation_form.evaluation_criteria.where.not(id: evaluation_scores.map{|s| s.evaluation_criterion_id})
     missing_criteria.each do |criterion|
       evaluation_scores.build(evaluation_criterion: criterion)
     end
