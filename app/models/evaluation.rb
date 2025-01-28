@@ -43,6 +43,7 @@ class Evaluation < ApplicationRecord
   validate :user_has_valid_role
 
   before_save :ensure_all_scores_exist
+  before_save :calculate_total_score
 
   private
 
@@ -53,9 +54,22 @@ class Evaluation < ApplicationRecord
   end
 
   def ensure_all_scores_exist
-    missing_criteria = evaluation_form.evaluation_criteria.where.not(id: evaluation_scores.pluck(:evaluation_criterion_id))
+    missing_criteria =
+      evaluation_form.evaluation_criteria.where.not(id: evaluation_scores.pluck(:evaluation_criterion_id))
     missing_criteria.each do |criterion|
       evaluation_scores.build(evaluation_criterion: criterion)
     end
+  end
+
+  def calculate_total_score
+    return if evaluation_scores.blank?
+
+    # Ensure all scores have calculated values before summing
+    self.total_score = if evaluation_scores.any? { |score| score.calculated_score.blank? }
+                         nil
+                       else
+                         pp evaluation_scores
+                         evaluation_scores.sum(&:calculated_score).round(2)
+                       end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: Reenable rubocop after refactor/shortening controller code or moving some functionality into service
-# rubocop:disable all
+# rubocop:disable Metrics/ClassLength
 
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
@@ -12,9 +12,9 @@ class EvaluationsController < ApplicationController
   def index
     @phases = Phase.joins(:evaluator_submission_assignments).
       where(evaluator_submission_assignments: {
-        user_id: current_user.id,
-        status: [:assigned, :recused]
-      }).
+              user_id: current_user.id,
+              status: [:assigned, :recused]
+            }).
       includes(:challenge, :evaluation_form).
       distinct
   end
@@ -29,7 +29,7 @@ class EvaluationsController < ApplicationController
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
-  def show 
+  def show
     @evaluation = Evaluation.find_by(id: params[:id])
     return unauthorized_redirect unless can_access_evaluation?
 
@@ -73,23 +73,35 @@ class EvaluationsController < ApplicationController
 
   def update
     if save_evaluation
-      flash[:notice] = params[:commit] == "Mark Complete" ? I18n.t("evaluations.notices.marked_complete") : I18n.t("evaluations.notices.saved_draft")
+      flash[:notice] =
+        if params[:subaction] == "mark_complete"
+          I18n.t("evaluations.notices.marked_complete")
+        else
+          I18n.t("evaluations.notices.saved_draft")
+        end
+
       redirect_to submissions_evaluation_path(@evaluation.submission)
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
   private
 
-  def save_evaluation 
+  def save_evaluation
     if params[:subaction] == "mark_complete"
-      @evaluation.completed_at = Time.now
-      @evaluation.save
+      @evaluation.completed_at = Time.current
+      unless @evaluation.save
+        # Reset completed at if validation fales
+        @evaluation.completed_at = nil
+        return false
+      end
     else
       @evaluation.completed_at = nil
       @evaluation.save(validate: false)
     end
+    
+    true
   end
 
   def set_evaluation_and_submission_assignment
@@ -160,4 +172,4 @@ class EvaluationsController < ApplicationController
   end
 end
 # TODO: Remove this after above refactor
-# rubocop:enable all
+# rubocop:enable Metrics/ClassLength

@@ -9,6 +9,7 @@
 #  evaluation_criterion_id :bigint           not null
 #  score                   :integer          not null
 #  score_override          :integer
+#  calculated_score        :decimal
 #  comment                 :text
 #  comment_override        :text
 #  created_at              :datetime         not null
@@ -32,6 +33,8 @@ class EvaluationScore < ApplicationRecord
                                allow_nil: true
 
   validate :score_within_criterion_limits
+
+  before_save :set_calculated_score
 
   def effective_score
     score_override || score
@@ -86,5 +89,28 @@ class EvaluationScore < ApplicationRecord
 
   def validate_score_presence
     errors.add(:score, "cannot be blank") if score.nil?
+  end
+
+  def set_calculated_score
+    return if effective_score.blank?
+
+    self.calculated_score = calculate_score
+  end
+
+  def calculate_score
+    points = evaluation_criterion.points_or_weight
+
+    case evaluation_criterion.scoring_type
+    when "binary"
+      effective_score == 1 ? points : 0
+    when "numeric"
+      # Another way to ensure the calculated score is at most the max points for the criterion
+      [effective_score, points].min
+    when "rating"
+      best_option = evaluation_criterion.option_range_end
+      (points / best_option) * effective_score
+    else
+      0
+    end.round(2)
   end
 end

@@ -25,6 +25,8 @@
 
     <h2><%= "Criterion: #{criterion.title} (#{criterion.points_or_weight} points)" %></h2>
     <h3><%= criterion.description %></h3>
+  
+    <h3><%= "Your Score: #{score_fields.object.calculated_score}" %></h3>
 
     <%= score_fields.hidden_field :evaluation_criterion_id %>
 
