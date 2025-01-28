@@ -68,7 +68,6 @@ class Evaluation < ApplicationRecord
     self.total_score = if evaluation_scores.any? { |score| score.calculated_score.blank? }
                          nil
                        else
-                         pp evaluation_scores
                          evaluation_scores.sum(&:calculated_score).round(2)
                        end
   end
