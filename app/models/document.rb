@@ -20,6 +20,14 @@ class Document < ApplicationRecord
   belongs_to :user
   belongs_to :submission
 
+  def external_url
+    if ENV["RAILS_ENV"] == "production" || ENV["RAILS_ENV"] == "staging"
+      prod_external_url
+    else
+      dev_external_url
+    end    
+  end  
+
   def dev_external_url
     "#{ENV.fetch('PHOENIX_URI')}/uploads/documents/#{key}#{extension}"
   end
