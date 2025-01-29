@@ -40,7 +40,7 @@ Rails.application.routes.draw do
     resources :evaluator_submission_assignments, only: [:index, :update, :create]
   end
   resources :submissions, only: [:index, :show, :update] do
-    resources :evaluations, only: [:new]
+    resources :evaluations, only: [:new, :show]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

@@ -8,6 +8,7 @@ class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[save_draft mark_complete]
   before_action :set_phase, only: [:submissions]
+  before_action :set_submission, only: [:show]
 
   def index
     @phases = Phase.joins(:evaluator_submission_assignments).
@@ -96,6 +97,10 @@ class EvaluationsController < ApplicationController
       where(challenge_phases_evaluators: { user_id: current_user.id }).
       find(params[:id])
     @challenge = @phase.challenge
+  end
+
+  def set_submission
+    @submission = Submission.by_user(current_user).find(params[:submission_id])
   end
 
   def find_or_initialize_evaluation
