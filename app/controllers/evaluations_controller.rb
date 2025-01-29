@@ -106,7 +106,7 @@ class EvaluationsController < ApplicationController
       @evaluation.completed_at = nil
       @evaluation.save(validate: false)
     end
-    
+
     true
   end
 

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 # View helpers for calculating evaluation & submission details.
 module EvaluationsHelper
   STATUS_COLORS = {
@@ -124,22 +125,30 @@ module EvaluationsHelper
     content_tag(:div) do
       case criterion.scoring_type
       when 'numeric'
-        concat(score_fields.number_field(:score, min: 0, max: criterion.points_or_weight))
+        score_fields.number_field(:score, min: 0, max: criterion.points_or_weight)
       when 'rating'
-        (criterion.option_range_start..criterion.option_range_end).each do |value|
-          concat(content_tag(:div) do
-            concat(score_fields.radio_button(:score, value))
-            concat(score_fields.label("score_#{value}", criterion.option_labels[value.to_s] || value))
-          end)
-        end
+        rating_options(criterion).each { |value, label| concat(score_radio_input(score_fields, value, label)) }
       when 'binary'
-        [0, 1].each do |value|
-          concat(content_tag(:div) do
-            concat(score_fields.radio_button(:score, value))
-            concat(score_fields.label("score_#{value}", value == 1 ? 'Yes' : 'No'))
-          end)
-        end
+        binary_options.each { |value, label| concat(score_radio_input(score_fields, value, label)) }
       end
     end
   end
+
+  def rating_options(criterion)
+    (criterion.option_range_start..criterion.option_range_end).map do |value|
+      [value, criterion.option_labels[value.to_s] || value]
+    end
+  end
+
+  def binary_options
+    [[0, 'No'], [1, 'Yes']]
+  end
+
+  def score_radio_input(score_fields, value, label)
+    content_tag(:div) do
+      concat(score_fields.radio_button(:score, value))
+      concat(score_fields.label("score_#{value}", label))
+    end
+  end
 end
+# rubocop:enable Metrics/ModuleLength
