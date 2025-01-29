@@ -126,22 +126,17 @@ module EvaluationsHelper
       case criterion.scoring_type
       when 'numeric'
         score_fields.number_field(:score, min: 0, max: criterion.points_or_weight)
-      when 'rating'
-        rating_options(criterion).each { |value, label| concat(score_radio_input(score_fields, value, label)) }
-      when 'binary'
-        binary_options.each { |value, label| concat(score_radio_input(score_fields, value, label)) }
+      # When rating or binary. Maybe change later if input styles are different
+      else
+        score_options(criterion).each { |value, label| concat(score_radio_input(score_fields, value, label)) }
       end
     end
   end
 
-  def rating_options(criterion)
+  def score_options(criterion)
     (criterion.option_range_start..criterion.option_range_end).map do |value|
       [value, criterion.option_labels[value.to_s] || value]
     end
-  end
-
-  def binary_options
-    [[0, 'No'], [1, 'Yes']]
   end
 
   def score_radio_input(score_fields, value, label)
