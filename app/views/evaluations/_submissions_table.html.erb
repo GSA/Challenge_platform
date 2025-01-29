@@ -33,9 +33,12 @@
         </td>
         <td>
           <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-            <button class="usa-button font-body-2xs width-full text-no-wrap">
+            <% unless assignment.recused? %>
+              <%= link_to submission_evaluation_path(assignment.submission), 
+                  class: "usa-button font-body-2xs width-full text-no-wrap" do %>
                 Evaluate
-            </button>
+              <% end %>
+            <% end %>
           </div>  
         </td>  
       </tr>
