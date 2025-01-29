@@ -38,6 +38,10 @@ export default class extends Controller {
 
   unassignEvaluatorSubmission() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const button = document.querySelector(`[data-assignment-id='${this.assignmentIdValue}']`);
+    const currentStatus = button?.dataset.currentStatus;
+    const newStatus = currentStatus === 'recused' ? 'recused_unassigned' : 'unassigned';
+  
     fetch(`/phases/${this.phaseIdValue}/evaluator_submission_assignments/${this.assignmentIdValue}`, {
       method: 'PATCH',
       headers: {
@@ -46,7 +50,9 @@ export default class extends Controller {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        evaluator_submission_assignment: { status: 'unassigned' }
+        evaluator_submission_assignment: { 
+          status: newStatus
+        }
       })
     })
     .then(response => response.json())
