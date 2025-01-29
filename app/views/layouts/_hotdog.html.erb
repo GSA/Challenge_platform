@@ -4,20 +4,30 @@
         <%= render partial: right %>
     </div>
     <div class="bg-primary-darker margin-y-1 width-full cursor-pointer padding-1" data-action="click->hotdog#burgerCollapse" data-hotdog-target="burgerCollapse">
-        <%= image_tag('images/usa-icons/arrow_upward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05", alt: "Hide #{name}") %>
-        <span class="text-white width-15 display-inline-block">Hide <%= name %></span>
+        <div class="display-flex">
+            <div class="display-flex flex-align-center">
+                <%= image_tag('images/usa-icons/arrow_upward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05 margin-right-1", alt: "Hide #{name}") %>
+                <span class="text-white width-15 display-inline-block">Hide <%= name %></span>
+            </div>
+            <%= render 'submissions/open_in_new_tab' %>
+        </div>
     </div>
     <div class="bg-primary-darker margin-y-1 width-full cursor-pointer display-none padding-1" data-action="click->hotdog#burgerExpand" data-hotdog-target="burgerExpand">
-        <%= image_tag('images/usa-icons/arrow_downward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05", alt: "Show #{name}") %>
-        <span class="text-white width-15 display-inline-block">Show <%= name %></span>
+        <div class="display-flex">
+            <div class="display-flex flex-align-center">
+                <%= image_tag('images/usa-icons/arrow_downward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05 margin-right-1", alt: "Show #{name}") %>
+                <span class="text-white width-15 display-inline-block">Show <%= name %></span>
+            </div>
+            <%= render 'submissions/open_in_new_tab' %>
+        </div>
     </div>    
-    <%= render partial: left %>
+    <%= render partial: left, locals: local_assigns[:evaluation_form_locals] %>
 </div>
 
 <%# hotdog orientation, for tablet and above %>
 <div class="display-none tablet:display-flex flex-row width-full border-top-1px" data-controller="hotdog">
     <div class="width-half" data-hotdog-target="leftPane">
-        <%= render partial: left %>
+        <%= render partial: left, locals: local_assigns[:evaluation_form_locals] %>
     </div>  
     <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer" data-action="click->hotdog#hotdogCollapse" data-hotdog-target="hotdogCollapse">
         <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Hide #{name}") %>

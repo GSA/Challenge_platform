@@ -1,4 +1,12 @@
+<%= render 'shared/back_link', path: submissions_phase_path(@phase) %>
+
 <h1>Submission ID <%= @submission.id %></h1>
 <h2 class="font-body-sm text-normal">View submission information and assign evaluators to evaluate the submission.</h2>
 
-<%= render partial: "layouts/hotdog", locals: {left: 'submissions/submission_details', right: 'submissions/submission_materials', name: 'Submission Materials'} %>
+<% if params[:submission_materials_only] %>
+  <div class="padding-top-2 padding-bottom-4">
+    <%= render partial: 'submissions/submission_materials' %>
+  </div>
+<% else %>
+    <%= render partial: "layouts/hotdog", locals: {left: 'submissions/submission_details', right: 'submissions/submission_materials', name: 'Submission Materials'} %>
+<% end %>

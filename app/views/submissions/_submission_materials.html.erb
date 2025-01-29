@@ -1,3 +1,7 @@
+<div class="desktop:display-block tablet:display-block display-none">
+  <%= render partial: 'submissions/open_in_new_tab' unless params[:submission_materials_only] %>
+</div>
+
 <h3>Brief Description:</h3>
 <p class="text-normal"><%= @submission.brief_description %></p>
 
