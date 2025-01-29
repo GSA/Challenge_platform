@@ -1,0 +1,14 @@
+<button
+  type="button"
+  data-action="click->evaluator-recusal-modal#open"
+  data-assignment-id="<%= assignment.id %>"
+  data-phase-id="<%= assignment.phase.id %>"
+  aria-controls="evaluator-recusal-modal"
+  style="background-color: white; border: none; padding: 0; margin-top: 1rem; margin-bottom: 2rem; cursor: pointer;"
+  class="display-flex flex-align-center"
+>
+  <%= image_tag "images/usa-icons/cancel.svg",
+      class: "usa-icon--size-3 icon-primary-blue",
+      alt: "" %> 
+  <span class="text-primary text-bold font-sans-md text-underline padding-left-1" style="text-decoration-thickness: 2px;">Need to recuse from evaluation?</span>
+</button>
