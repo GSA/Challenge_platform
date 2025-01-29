@@ -20,8 +20,19 @@ class Document < ApplicationRecord
   belongs_to :user
   belongs_to :submission
 
-  def external_url
+  def dev_external_url
     "#{ENV.fetch('PHOENIX_URI')}/uploads/documents/#{key}#{extension}"
+  end
+
+  def key_url
+    "documents/#{key}#{extension}"
+  end
+
+  def prod_external_url
+    s3 = Fog::Storage.new(provider: 'AWS', region: ENV.fetch('AWS_REGION'),
+                          aws_access_key_id: ENV.fetch('AWS_ACCESS_KEY_ID'), aws_secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY'))
+    directory = s3.directories.new(key: ENV.fetch('AWS_BUCKET_NAME'))
+    directory.files.new(key: key_url).url(Time.zone.now + 60) # link good for 60 seconds
   end
 
   def display_name
