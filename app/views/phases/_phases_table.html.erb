@@ -17,7 +17,7 @@
               <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
             </th>
             <td data-label="Number of Submissions" class="text-top">
-              <%= phase.submissions_count %>
+              <%= phase.submissions.count %>
             </td>
             <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
