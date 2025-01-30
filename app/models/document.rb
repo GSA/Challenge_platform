@@ -21,14 +21,14 @@ class Document < ApplicationRecord
   belongs_to :submission
 
   def external_url
-    if ENV["RAILS_ENV"] == "production" || ENV["RAILS_ENV"] == "staging"
-      prod_external_url
+    if Rails.env.production? || Rails.env.staging?
+      s3_link
     else
-      dev_external_url
+      file_system_link
     end
   end
 
-  def dev_external_url
+  def file_system_link
     "#{ENV.fetch('PHOENIX_URI')}/uploads/documents/#{key}#{extension}"
   end
 
@@ -36,7 +36,7 @@ class Document < ApplicationRecord
     "documents/#{key}#{extension}"
   end
 
-  def prod_external_url
+  def s3_link
     s3 = Fog::Storage.new(provider: 'AWS', region: ENV.fetch('AWS_REGION'),
                           aws_access_key_id: ENV.fetch('AWS_ACCESS_KEY_ID'),
                           aws_secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY'))

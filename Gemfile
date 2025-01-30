@@ -105,4 +105,4 @@ gem "faker", "~> 3.4"
 
 gem "rails-reverse-proxy"
 
-gem "fog", "~> 1.38"
+gem "fog-aws"
