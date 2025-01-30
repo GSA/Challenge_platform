@@ -32,7 +32,7 @@ class Submission < ApplicationRecord
   # Associations
   belongs_to :challenge
   belongs_to :phase, counter_cache: true
-  counter_culture :phase, column_name: Proc.new {|model| model.deleted_at ? nil : 'active_submissions_count' }
+  counter_culture :phase, column_name: proc { |model| model.deleted_at ? nil : 'active_submissions_count' }
   belongs_to :submitter, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
