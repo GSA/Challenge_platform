@@ -1,13 +1,13 @@
 <%= render 'shared/assignment_stats', heading: 'Total Submissions' %>
 
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header margin-bottom-10">
+<table aria-label="List of Submissions to Evaluate" class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header margin-bottom-10">
   <thead>
     <tr>
       <th scope="col">Submission ID</th>
       <th scope="col">My evaluation status</th>
       <th scope="col">My score</th>
       <th scope="col">Average Score</th>
-      <th scope="col"><span class="usa-sr-only">Evaluate</span></th>
+      <th scope="col" aria-label="Evaluate" aria-hidden="true">&nbsp;</th>
     </tr>
   </thead>
   <tbody>
