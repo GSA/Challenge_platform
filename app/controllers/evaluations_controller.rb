@@ -30,7 +30,14 @@ class EvaluationsController < ApplicationController
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
-  def show; end
+  def show
+    @evaluator_submission_assignment = find_evaluator_submission_assignment
+    return unauthorized_redirect unless can_access_evaluation?
+
+    @evaluation = Evaluation.find_or_initialize_by(
+      evaluator_submission_assignment: @evaluator_submission_assignment
+    )
+  end
 
   def new
     @evaluator_submission_assignment = find_evaluator_submission_assignment
@@ -78,6 +85,23 @@ class EvaluationsController < ApplicationController
     else
       @evaluation.completed_at = nil
       handle_mark_complete_failure
+    end
+  end
+
+  def recuse
+    @evaluator_submission_assignment = find_evaluator_submission_assignment
+    return unauthorized_redirect unless can_access_evaluation?
+
+    begin
+      destroy_recused_evaluation
+      if recuse_evaluator
+        flash[:notice] = I18n.t("evaluations.recusal.success")
+        redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase)
+      else
+        handle_recusal_failure
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      handle_recusal_failure
     end
   end
 
@@ -134,6 +158,14 @@ class EvaluationsController < ApplicationController
     end
   end
 
+  def recuse_evaluator
+    @evaluator_submission_assignment&.update(status: :recused)
+  end
+
+  def destroy_recused_evaluation
+    @evaluator_submission_assignment.evaluation&.destroy!
+  end
+
   # Redirect Helpers
   def unauthorized_redirect
     redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.unauthorized")
@@ -176,6 +208,11 @@ class EvaluationsController < ApplicationController
         comment comment_override
       ]
     )
+  end
+
+  def handle_recusal_failure
+    flash[:alert] = I18n.t("evaluations.recusal.failure")
+    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase)
   end
 end
 # TODO: Remove this after above refactor
