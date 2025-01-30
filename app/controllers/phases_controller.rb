@@ -6,7 +6,7 @@ class PhasesController < ApplicationController
   before_action :set_phase, except: [:index]
 
   def index
-    @challenges = current_user.challenge_manager_challenges.includes([phases: [:evaluation_form, :submissions]])
+    @challenges = current_user.challenge_manager_challenges.includes([phases: [:evaluation_form]])
   end
 
   def submissions
