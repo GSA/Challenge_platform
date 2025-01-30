@@ -97,6 +97,9 @@ en:
     notices:
       saved_draft: "Evaluation saved as draft"
       marked_complete: "Evaluation complete"
+    recusal:
+      success: "Recused successfully"
+      failure: "Failed to recuse from submission"
   evaluation_scores:
     unique_evaluation_for_evaluation_criterion_error: "already has a score for this evaluation criterion"
   alerts:
