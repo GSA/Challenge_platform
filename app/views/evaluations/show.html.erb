@@ -15,7 +15,9 @@
       evaluation_form_locals: {
         form_method: :post,
         draft_action: save_draft_evaluations_path,
-        complete_action: mark_complete_evaluations_path
+        complete_action: mark_complete_evaluations_path,
+        assignment: @evaluator_submission_assignment,
+        evaluation: @evaluation
       }
   } %>
 <% end %>

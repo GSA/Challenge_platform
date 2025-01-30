@@ -1,7 +1,13 @@
-<%= form_with(model: @evaluation, method: form_method, data: { controller: "evaluation modal" }) do |f| %>
-  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-  <p>Placeholder form in app/views/evaluations/_form.html.erb</p>
+<div data-controller="evaluator-recusal-modal">
+  <%= render 'evaluator_recusal_button', assignment: local_assigns[:assignment] if local_assigns[:assignment] %>
+  
+  <%= form_with(model: @evaluation || Evaluation.new, method: form_method, data: { controller: "evaluation modal" }) do |f| %>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <p>Placeholder form in app/views/evaluations/_form.html.erb</p>
 
-  <%= f.submit "Save Draft", formaction: draft_action %>
-  <%= f.submit "Mark Complete", formaction: complete_action %>
-<% end %>
+    <%= f.submit "Save Draft", formaction: draft_action %>
+    <%= f.submit "Mark Complete", formaction: complete_action %>
+  <% end %>
+  
+  <%= render 'evaluator_recusal_modal' %>
+</div>
