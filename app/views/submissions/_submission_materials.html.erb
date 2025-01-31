@@ -4,6 +4,13 @@
 <h3>Description:</h3>
 <p class="text-normal"><%= @submission.description %></p>
 
+<h3>Uploaded Files:</h3>
+<% @submission&.documents.each do |document| %>
+    <p class="text-normal">
+        <%= link_to document.display_name, document.external_url, target: "_blank", download:true %>
+    </p>
+<% end %>    
+
 <h3>External URL:</h3>
 <a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
 
