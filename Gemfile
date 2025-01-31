@@ -104,3 +104,5 @@ gem "factory_bot", "~> 6.5"
 gem "faker", "~> 3.4"
 
 gem "rails-reverse-proxy"
+
+gem "fog-aws"
