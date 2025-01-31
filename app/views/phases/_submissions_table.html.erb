@@ -10,14 +10,12 @@
   <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator.text') %>
 <% end %>
 
-<div class="grid-container padding-x-0">
-  <div class="grid-row">
-    <div class="grid-col-6">
-      <%= render partial: "phases/sort_and_filter" %>
-    </div>
-    <div class="grid-col-6">
-      <%= render partial: "phases/export_submissions" %>
-    </div>
+<div class="display-flex flex-justify padding-right-2 tablet:padding-x-0 width-full">
+  <div>
+    <%= render partial: "phases/sort_and_filter" %>
+  </div>
+  <div>
+    <%= render partial: "phases/export_submissions" %>
   </div>
 </div>
 

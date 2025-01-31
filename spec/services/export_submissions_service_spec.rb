@@ -48,7 +48,7 @@ RSpec.describe ExportSubmissionsService do
       it 'includes the correct headers' do
         expected_headers = [
           'Submission ID', 'Evaluator Name', 'Evaluator Email',
-          'Evaluation Status', 'Score'
+          'Evaluation Status', 'Total Score'
         ]
         expect(parsed_csv.headers).to eq(expected_headers)
       end

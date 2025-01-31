@@ -10,16 +10,8 @@ class ExportSubmissionsService
   end
 
   def export
-    if @options.include?('submissions') && @options.include?('evaluations')
-      {
-        submissions: create_submissions_csv,
-        evaluations: create_evaluations_csv
-      }
-    elsif @options.include?('submissions')
-      create_submissions_csv
-    elsif @options.include?('evaluations')
-      create_evaluations_csv
-    end
+    return create_submissions_csv if @options.include?('submissions')
+    return create_evaluations_csv if @options.include?('evaluations')
   end
 
   private
@@ -65,7 +57,7 @@ class ExportSubmissionsService
   def evaluations_headers
     [
       'Submission ID', 'Evaluator Name', 'Evaluator Email',
-      'Evaluation Status', 'Score'
+      'Evaluation Status', 'Total Score'
     ]
   end
 
