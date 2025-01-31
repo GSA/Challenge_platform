@@ -29,13 +29,6 @@ class EvaluationsController < ApplicationController
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
-  def show
-    @evaluation = Evaluation.find_by(id: params[:id])
-    return unauthorized_redirect unless can_access_evaluation?
-
-    render :show
-  end
-
   def new
     @evaluator_submission_assignment = find_evaluator_submission_assignment
 
@@ -71,7 +64,7 @@ class EvaluationsController < ApplicationController
           I18n.t("evaluations.notices.saved_draft")
         end
 
-      redirect_to submissions_evaluation_path(@evaluation.submission)
+      redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
       render :new, status: :unprocessable_entity
     end
@@ -86,7 +79,7 @@ class EvaluationsController < ApplicationController
           I18n.t("evaluations.notices.saved_draft")
         end
 
-      redirect_to submissions_evaluation_path(@evaluation.submission)
+      redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -98,7 +91,7 @@ class EvaluationsController < ApplicationController
     if params[:subaction] == "mark_complete"
       @evaluation.completed_at = Time.current
       unless @evaluation.save
-        # Reset completed at if validation fales
+        # Reset completed at if validation fails
         @evaluation.completed_at = nil
         return false
       end

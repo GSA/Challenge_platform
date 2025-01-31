@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: "dashboard#index"
 
-  resources :evaluations, only: [:index, :show, :edit, :create, :update] do
+  resources :evaluations, only: %i[index edit create update] do
     member do
       get :submissions
     end
@@ -50,7 +50,7 @@ Rails.application.routes.draw do
     end
   end
 
-  match '/assets/*path.:ext' => 'pages#assets', via: [:get]
-  match '/*path' => 'pages#index', via: [:get]
-  match '/' => 'pages#root', via: [:get]
+  get '/assets/*path.:ext' => 'pages#assets'
+  get '/*path' => 'pages#index'
+  get '/' => 'pages#root'
 end

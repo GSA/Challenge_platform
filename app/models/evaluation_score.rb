@@ -87,10 +87,6 @@ class EvaluationScore < ApplicationRecord
     errors.add(:score_override, "must be within the range #{range_start} to #{range_end}")
   end
 
-  def validate_score_presence
-    errors.add(:score, "cannot be blank") if score.nil?
-  end
-
   def set_calculated_score
     return if effective_score.blank?
 

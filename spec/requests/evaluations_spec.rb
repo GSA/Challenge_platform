@@ -266,17 +266,6 @@ RSpec.describe "Evaluations" do
     end
   end
 
-  # evaluation_path
-  describe "GET /evaluations/:id" do
-    context "when logged in as an evaluator" do
-      it "allows me to view a draft evaluation I created"
-
-      it "allows me to view a completed evaluation I created"
-
-      it "does not allow me to view an evaluation I didn't create"
-    end
-  end
-
   # new_submission_evaluation_path
   describe "GET /evaluator_submission_assignments/:evaluator_submission_assignment_id/evaluations/new" do
     context "when logged in as an evaluator" do
@@ -365,7 +354,7 @@ RSpec.describe "Evaluations" do
           expect(score.comment).to be_nil
         end
 
-        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission))
+        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission.phase_id))
         expect(flash[:notice]).to eq(I18n.t('evaluations.notices.saved_draft'))
       end
 
@@ -418,7 +407,7 @@ RSpec.describe "Evaluations" do
           expect(score.score).not_to be_nil
         end
 
-        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission))
+        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission.phase_id))
         expect(flash[:notice]).to eq(I18n.t("evaluations.notices.marked_complete"))
       end
 
@@ -439,7 +428,7 @@ RSpec.describe "Evaluations" do
           post evaluations_path, params: { evaluation: evaluation_params, subaction: "mark_complete" }
         end.not_to change { Evaluation.count }
 
-        failed_evaluation = assigns(:evaluation)
+        assigns(:evaluation)
 
         expect(response).to render_template(:new)
         expect(assigns(:evaluation).errors).not_to be_empty
@@ -580,7 +569,7 @@ RSpec.describe "Evaluations" do
         expect(updated_evaluation.errors).to be_empty
         expect(updated_evaluation.completed_at).to be_nil
 
-        expect(response).to redirect_to(submissions_evaluation_path(updated_evaluation.submission))
+        expect(response).to redirect_to(submissions_evaluation_path(updated_evaluation.submission.phase_id))
         expect(flash[:notice]).to include(I18n.t("evaluations.notices.saved_draft"))
       end
 
@@ -634,7 +623,7 @@ RSpec.describe "Evaluations" do
         expect(updated_evaluation.errors).to be_empty
         expect(updated_evaluation.completed_at).not_to be_nil
 
-        expect(response).to redirect_to(submissions_evaluation_path(updated_evaluation.submission))
+        expect(response).to redirect_to(submissions_evaluation_path(updated_evaluation.submission.phase_id))
         expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
       end
 
