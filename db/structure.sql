@@ -443,8 +443,7 @@ CREATE TABLE public.evaluation_scores (
     comment text,
     comment_override text,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    calculated_score numeric(10,2)
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -2466,6 +2465,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250202220815),
 (20250120045732),
 (20250120043934),
 (20241223190634),

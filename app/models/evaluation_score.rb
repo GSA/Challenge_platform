@@ -34,14 +34,31 @@ class EvaluationScore < ApplicationRecord
 
   validate :score_within_criterion_limits
 
-  before_save :set_calculated_score
-
   def effective_score
     score_override || score
   end
 
   def effective_comment
     comment_override || comment
+  end
+
+  def calculated_score
+    return if effective_score.blank?
+
+    points = evaluation_criterion.points_or_weight
+
+    case evaluation_criterion.scoring_type
+    when "binary"
+      effective_score == 1 ? points : 0
+    when "numeric"
+      # Another way to ensure the calculated score is at most the max points for the criterion
+      [effective_score, points].min
+    when "rating"
+      best_option = evaluation_criterion.option_range_end
+      (points / best_option) * effective_score
+    else
+      0
+    end.round(2)
   end
 
   private
@@ -85,28 +102,5 @@ class EvaluationScore < ApplicationRecord
     return unless score_override && valid_range.exclude?(score_override)
 
     errors.add(:score_override, "must be within the range #{range_start} to #{range_end}")
-  end
-
-  def set_calculated_score
-    return if effective_score.blank?
-
-    self.calculated_score = calculate_score
-  end
-
-  def calculate_score
-    points = evaluation_criterion.points_or_weight
-
-    case evaluation_criterion.scoring_type
-    when "binary"
-      effective_score == 1 ? points : 0
-    when "numeric"
-      # Another way to ensure the calculated score is at most the max points for the criterion
-      [effective_score, points].min
-    when "rating"
-      best_option = evaluation_criterion.option_range_end
-      (points / best_option) * effective_score
-    else
-      0
-    end.round(2)
   end
 end
