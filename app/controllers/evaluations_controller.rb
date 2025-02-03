@@ -93,8 +93,8 @@ class EvaluationsController < ApplicationController
     return unauthorized_redirect unless can_access_evaluation?
 
     begin
-      destroy_recused_evaluation
       if recuse_evaluator
+        destroy_recused_evaluation
         flash[:notice] = I18n.t("evaluations.recusal.success")
         redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase)
       else
