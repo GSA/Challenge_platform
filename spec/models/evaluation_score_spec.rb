@@ -44,6 +44,7 @@ RSpec.describe EvaluationScore, type: :model do
 
   describe "score validations for numeric criterion" do
     it "is valid if score is equal to or less than criterion points_or_weight" do
+      # TODO: Add calculated score checks and helper?
       evaluation_criterion = create(:evaluation_criterion, :numeric)
       points_or_weight = evaluation_criterion.points_or_weight
       evaluation_score = create(:evaluation_score, evaluation_criterion:)

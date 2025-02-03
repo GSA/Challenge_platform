@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 # View helpers for calculating evaluation & submission details.
 module EvaluationsHelper
   STATUS_COLORS = {
@@ -107,4 +108,42 @@ module EvaluationsHelper
   def calculate_total(counts)
     counts.values.sum
   end
+
+  def evaluation_link(assignment)
+    evaluation = assignment.evaluation
+
+    link_path = if evaluation
+                  edit_evaluation_path(evaluation)
+                else
+                  new_submission_evaluation_path(assignment.submission)
+                end
+
+    link_to("Evaluate", link_path, class: "usa-button font-body-2xs width-full text-no-wrap")
+  end
+
+  def evaluation_score_input(score_fields, criterion)
+    content_tag(:div) do
+      case criterion.scoring_type
+      when 'numeric'
+        score_fields.number_field(:score, min: 0, max: criterion.points_or_weight)
+      # When rating or binary. Maybe change later if input styles are different
+      else
+        score_options(criterion).each { |value, label| concat(score_radio_input(score_fields, value, label)) }
+      end
+    end
+  end
+
+  def score_options(criterion)
+    (criterion.option_range_start..criterion.option_range_end).map do |value|
+      [value, criterion.option_labels[value.to_s] || value]
+    end
+  end
+
+  def score_radio_input(score_fields, value, label)
+    content_tag(:div) do
+      concat(score_fields.radio_button(:score, value))
+      concat(score_fields.label("score_#{value}", label))
+    end
+  end
 end
+# rubocop:enable Metrics/ModuleLength

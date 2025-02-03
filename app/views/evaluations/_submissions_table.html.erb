@@ -1,6 +1,6 @@
 <%= render 'shared/assignment_stats', heading: 'Total Submissions' %>
 
-<table class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header margin-bottom-10">
+<table aria-label="List of Submissions to Evaluate" class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header margin-bottom-10">
   <thead>
     <tr>
       <th scope="col">Submission ID</th>
@@ -33,12 +33,7 @@
         </td>
         <td>
           <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-            <% unless assignment.recused? %>
-              <%= link_to submission_evaluation_path(assignment.submission), 
-                  class: "usa-button font-body-2xs width-full text-no-wrap" do %>
-                Evaluate
-              <% end %>
-            <% end %>
+            <%= evaluation_link(assignment) unless assignment.recused? %>
           </div>  
         </td>  
       </tr>

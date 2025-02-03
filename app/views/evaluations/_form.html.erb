@@ -1,7 +1,77 @@
-<%= form_with(model: @evaluation, method: form_method, data: { controller: "evaluation modal" }) do |f| %>
-  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-  <p>Placeholder form in app/views/evaluations/_form.html.erb</p>
+<%= form_with(model: @evaluation, data: { controller: "evaluation modal" }) do |form| %>
+  <% if @evaluation.errors.any? %>
+    <div style="color: darkred">
+      <div class="usa-alert usa-alert--error" role="alert">
+        <div class="usa-alert__body">
+          <h2 class="usa-alert__heading"><%= pluralize(@evaluation.errors.count, "error") %> prohibited this evaluation from being saved:</h2>
+          <ul>
+            <% @evaluation.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
-  <%= f.submit "Save Draft", formaction: draft_action %>
-  <%= f.submit "Mark Complete", formaction: complete_action %>
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+  <%= form.hidden_field :submission_id %>
+  <%= form.hidden_field :evaluator_submission_assignment_id %>
+  <%= form.hidden_field :evaluation_form_id %>
+
+  <%= form.fields_for :evaluation_scores do |score_fields, index| %>
+    <% criterion = score_fields.object.evaluation_criterion %>
+
+    <h2><%= "Criterion: #{criterion.title} (#{criterion.points_or_weight} points)" %></h2>
+    <h3><%= criterion.description %></h3>
+  
+    <h3><%= "Your Score: #{score_fields.object.calculated_score}" %></h3>
+
+    <%= score_fields.hidden_field :evaluation_criterion_id %>
+
+    <div class="usa-form-group">
+      <div class="display-flex flex-align-center text-bold">
+        <%= score_fields.label :score, "Score", class: "margin-right-05 #{label_error_class(score_fields, :score)}" %>
+        <span class="margin-right-05" style="color: darkred;">*</span>
+      </div>
+
+      <%= evaluation_score_input(score_fields, criterion) %>
+
+      <%= inline_error(score_fields, :score) %>
+    </div>
+
+    <div class="usa-form-group">
+      <div class="display-flex flex-align-center text-bold">
+        <%= score_fields.label :comment, "Comment", class: "margin-right-05 #{label_error_class(score_fields, :comments)}" %>
+        <span class="margin-right-05" style="color: darkred;">*</span>
+      </div>
+
+      <%= score_fields.text_field :comment,
+        maxlength: 150,
+        class: "usa-input #{input_error_class(score_fields, :comment)}",
+        data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
+
+      <%= inline_error(score_fields, :comment) %>
+    </div>
+  <% end %>
+
+  <div class="usa-form-group">
+    <div class="display-flex flex-align-center text-bold">
+      <%= form.label :additional_comments, "Additional Comments", class: "margin-right-05 #{label_error_class(form, :additional_comments)}" %>
+      <span class="margin-right-05" style="color: darkred;">*</span>
+    </div>
+
+    <%= form.text_field :additional_comments,
+      maxlength: 150,
+      class: "usa-input #{input_error_class(form, :additional_comments)}",
+      data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
+
+    <%= inline_error(form, :additional_comments) %>
+  </div>
+
+  <br/>
+
+  <%= form.button "Save Draft", name: "subaction", value: "save_draft", type: "submit" %>
+  <%= form.button "Mark Complete", name: "subaction", value: "mark_complete", type: "submit" %>
 <% end %>
