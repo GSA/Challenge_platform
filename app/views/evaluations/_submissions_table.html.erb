@@ -34,12 +34,8 @@
         <td>
           <div class="display-flex flex-no-wrap grid-row grid-gap-1">
             <% unless assignment.recused? %>
-              <%= link_to submission_evaluation_path(assignment.submission), 
-                  class: "usa-button font-body-2xs width-full text-no-wrap" do %>
-                Evaluate
-              <% end %>
+              <%= evaluation_link(assignment) %>
             <% end %>
-            <%= evaluation_link(assignment) %>
           </div>  
         </td>  
       </tr>
