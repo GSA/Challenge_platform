@@ -66,14 +66,14 @@ RSpec.describe EvaluatorsHelper, type: :helper do
 
     context 'when assignment is completed and has an evaluation with a total score' do
       it 'returns the total score' do
-        create(:evaluation, evaluator_submission_assignment: assignment, total_score: 85, completed_at: Time.current)
-        expect(helper.display_score(assignment)).to eq(85)
+        evaluation = create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+        expect(helper.display_score(assignment)).to eq(evaluation.total_score)
       end
     end
 
     context 'when assignment is not completed' do
       it 'returns N/A for in-progress evaluation' do
-        create(:evaluation, evaluator_submission_assignment: assignment, total_score: 85, completed_at: nil)
+        create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
         expect(helper.display_score(assignment)).to eq('N/A')
       end
 

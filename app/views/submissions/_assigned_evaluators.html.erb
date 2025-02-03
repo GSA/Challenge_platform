@@ -20,13 +20,13 @@
   <div class="usa-accordion__content overflow-hidden" id="<%= rand %>">
     <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
       <% if assigned_evaluators.any? %>
-        <table class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
+        <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
             <thead>
               <tr>
                 <th scope="col">Evaluator name</th>
                 <th scope="col">Evaluation Status</th>
                 <th scope="col">Score</th>
-                <th scope="col" aria-label="Actions"></th>
+                <th scope="col"><span class="usa-sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody>
