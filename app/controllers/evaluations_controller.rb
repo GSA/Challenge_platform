@@ -108,7 +108,7 @@ class EvaluationsController < ApplicationController
     @evaluation.assign_attributes(evaluation_params)
     fetch_evaluator_submission_assignment
 
-    return unauthorized_redirect unless can_access_evaluation?
+    unauthorized_redirect unless can_access_evaluation?
   end
 
   def set_phase
@@ -127,7 +127,8 @@ class EvaluationsController < ApplicationController
   end
 
   def fetch_evaluator_submission_assignment
-    @evaluator_submission_assignment = @evaluation&.evaluator_submission_assignment ||
+    @evaluator_submission_assignment =
+      @evaluation&.evaluator_submission_assignment ||
       EvaluatorSubmissionAssignment.find_by(submission_id: params[:submission_id], user_id: current_user.id)
     @submission = @evaluator_submission_assignment&.submission
     @evaluator_submission_assignment
