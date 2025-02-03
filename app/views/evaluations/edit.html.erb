@@ -1,7 +1,10 @@
-<div class="usa-card__container col-md-6">
-  <div class="usa-card__body">
-    <h1>Evaluations Edit</h1>
+<%= render 'shared/back_link', path: submissions_evaluation_path(@submission) %>
 
-    <%= render "form", form_method: :patch %>
-  </div>
-</div>
+<h1>Submission ID <%= @submission.id %></h1>
+<h2 class="font-body-sm text-normal">View submission materials and provide your scores to evaluate the submission.</h2>
+
+<%= render partial: "layouts/hotdog", locals: {
+  name: 'Submission Materials',
+  left: 'evaluations/form',
+  right: 'submission_materials/right_panel'
+} %>

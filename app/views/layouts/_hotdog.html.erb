@@ -21,13 +21,13 @@
             <%= render 'submissions/open_in_new_tab' %>
         </div>
     </div>    
-    <%= render partial: left, locals: local_assigns[:evaluation_form_locals] %>
+    <%= render partial: left %>
 </div>
 
 <%# hotdog orientation, for tablet and above %>
 <div class="display-none tablet:display-flex flex-row width-full border-top-1px" data-controller="hotdog">
     <div class="width-half" data-hotdog-target="leftPane">
-        <%= render partial: left, locals: local_assigns[:evaluation_form_locals] %>
+        <%= render partial: left %>
     </div>  
     <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer" data-action="click->hotdog#hotdogCollapse" data-hotdog-target="hotdogCollapse">
         <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Hide #{name}") %>
