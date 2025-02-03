@@ -9,7 +9,7 @@
                 <%= image_tag('images/usa-icons/arrow_upward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05 margin-right-1", alt: "Hide #{name}") %>
                 <span class="text-white width-15 display-inline-block">Hide <%= name %></span>
             </div>
-            <%= render 'submissions/open_in_new_tab' %>
+            <%= render additional_action if additional_action %>
         </div>
     </div>
     <div class="bg-primary-darker margin-y-1 width-full cursor-pointer display-none padding-1" data-action="click->hotdog#burgerExpand" data-hotdog-target="burgerExpand">
@@ -18,7 +18,7 @@
                 <%= image_tag('images/usa-icons/arrow_downward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05 margin-right-1", alt: "Show #{name}") %>
                 <span class="text-white width-15 display-inline-block">Show <%= name %></span>
             </div>
-            <%= render 'submissions/open_in_new_tab' %>
+            <%= render additional_action if additional_action %>
         </div>
     </div>    
     <%= render partial: left %>

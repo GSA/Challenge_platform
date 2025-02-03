@@ -4,7 +4,8 @@
 <h2 class="font-body-sm text-normal">View submission information and assign evaluators to evaluate the submission.</h2>
 
 <%= render partial: "layouts/hotdog", locals: {
+  name: 'Submission Materials',
   left: 'submissions/submission_details',
   right: 'submission_materials/right_panel',
-  name: 'Submission Materials'
+  additional_action: 'submissions/open_in_new_tab'
 } %>
