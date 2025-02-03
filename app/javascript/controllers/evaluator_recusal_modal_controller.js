@@ -1,40 +1,21 @@
-import { Controller } from "@hotwired/stimulus"
+import ModalController from "./modal_controller"
 
-export default class extends Controller {
-  static targets = ["modal"]
+export default class extends ModalController {
   static values = {
     assignmentId: String
   }
 
-  connect() {
-    this.modalTarget.addEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
-  disconnect() {
-    this.modalTarget.removeEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
   open(event) {
-    event.preventDefault();
-    this.assignmentIdValue = event.currentTarget.dataset.assignmentId;
-    this.modalTarget.showModal();
+    event.preventDefault()
+    this.assignmentIdValue = event.currentTarget.dataset.assignmentId
+    this.modalTarget.showModal()
   }
 
-  close() {
-    this.modalTarget.close();
-  }
-
-  handleOutsideClick(event) {
-    if (event.target === this.modalTarget) {
-      this.close();
-    }
-  }
-
-  evaluatorRecusal() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-    const pathMatch = window.location.pathname.match(/\/submissions\/(\d+)\/evaluations\/(\d+)/);
+  evaluatorRecusal(event) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content
+    const pathMatch = window.location.pathname.match(/\/submissions\/(\d+)\/evaluations\/(\d+)/)
   
-    const [_, submissionId, evaluationId] = pathMatch;
+    const [_, submissionId, evaluationId] = pathMatch
   
     fetch(`/submissions/${submissionId}/evaluations/${evaluationId}/recuse`, {
       method: 'PATCH',
@@ -48,15 +29,15 @@ export default class extends Controller {
     })
     .then(response => {
       if (response.redirected) {
-        window.location.href = response.url;
+        window.location.href = response.url
       } else {
-        throw new Error('Failed to recuse from evaluation');
+        throw new Error('Failed to recuse from evaluation')
       }
     })
     .catch(() => {
-      alert('Failed to recuse from evaluation');
-    });
+      alert('Failed to recuse from evaluation')
+    })
     
-    this.close();
+    this.cancel(event)
   }
 }
