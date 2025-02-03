@@ -36,9 +36,8 @@ Rails.application.routes.draw do
 
   resources :submissions, only: [:show, :update] do
     resources :evaluations, only: [:new]
+    get :materials, on: :member, to: "submission_materials#show"
   end
-
-  resources :submission_materials, only: [:show]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

@@ -20,6 +20,11 @@ class ApplicationController < ActionController::Base
     !!current_user
   end
 
+  # Authorizes the current_user if they have one of the roles or if they are an admin.
+  # Suitable for use in before_action.
+  # 
+  # * CAUTION: caller is responsible for ensuring all roles have access to all authorized routes in the implementing controller.
+  # * NOTE: method redirects on auth failure.
   def authorize_user(*roles)
     return if roles.include?(current_user&.role) || %w[super_admin admin].include?(current_user&.role)
 
