@@ -13,11 +13,11 @@ export default class extends ModalController {
 
   evaluatorRecusal(event) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content
-    const pathMatch = window.location.pathname.match(/\/submissions\/(\d+)\/evaluations\/(\d+)/)
+    const pathMatch = window.location.pathname.match(/\/submissions\/(\d+)/)
+
+    const [_, submissionId] = pathMatch
   
-    const [_, submissionId, evaluationId] = pathMatch
-  
-    fetch(`/submissions/${submissionId}/evaluations/${evaluationId}/recuse`, {
+    fetch(`/submissions/${submissionId}/evaluations/new/recuse`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
