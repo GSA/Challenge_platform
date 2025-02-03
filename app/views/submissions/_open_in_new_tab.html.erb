@@ -1,6 +1,6 @@
 <div class="display-flex flex-justify-end desktop:margin-bottom-2 padding-left-5">
   <% path = current_user.role == 'evaluator' ? 
-              submission_evaluation_path(@submission, submission_materials_only: true) : 
+              new_submission_evaluation_path(@submission, submission_materials_only: true) : 
               submission_path(@submission, submission_materials_only: true) %>
 
   <%= link_to path, 
