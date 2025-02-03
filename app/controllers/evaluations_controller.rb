@@ -8,7 +8,6 @@ class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[create update]
   before_action :set_phase, only: [:submissions]
-  before_action :set_submission, only: [:new]
 
   def index
     @phases = Phase.joins(:evaluator_submission_assignments).
@@ -31,7 +30,7 @@ class EvaluationsController < ApplicationController
   end
 
   def new
-    @evaluator_submission_assignment = find_evaluator_submission_assignment
+    fetch_evaluator_submission_assignment
 
     if @evaluator_submission_assignment.nil? || !can_access_evaluation?
       return redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.evaluator_submission_assignment_not_found")
@@ -45,17 +44,15 @@ class EvaluationsController < ApplicationController
 
     build_evaluation
 
-    render :new
+    render :show
   end
 
   def edit
     @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
-    @evaluator_submission_assignment = find_evaluator_submission_assignment
+    fetch_evaluator_submission_assignment
     return unauthorized_redirect unless can_access_evaluation?
 
-    @submission = @evaluation.submission
-
-    render :edit
+    render :show
   end
 
   def create
@@ -69,8 +66,7 @@ class EvaluationsController < ApplicationController
 
       redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
-      @submission = @evaluation.submission
-      render :new, status: :unprocessable_entity
+      render :show, status: :unprocessable_entity
     end
   end
 
@@ -85,8 +81,7 @@ class EvaluationsController < ApplicationController
 
       redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
-      @submission = @evaluation.submission
-      render :edit, status: :unprocessable_entity
+      render :show, status: :unprocessable_entity
     end
   end
 
@@ -128,8 +123,7 @@ class EvaluationsController < ApplicationController
   def set_evaluation_and_submission_assignment
     @evaluation = find_or_initialize_evaluation
     @evaluation.assign_attributes(evaluation_params)
-
-    @evaluator_submission_assignment = find_evaluator_submission_assignment
+    fetch_evaluator_submission_assignment
 
     unauthorized_redirect unless can_access_evaluation?
   end
@@ -141,10 +135,6 @@ class EvaluationsController < ApplicationController
     @challenge = @phase.challenge
   end
 
-  def set_submission
-    @submission = Submission.find_by(id: params[:submission_id])
-  end
-
   def find_or_initialize_evaluation
     if params[:id]
       Evaluation.includes([evaluation_scores: :evaluation_criterion]).find(params[:id])
@@ -153,10 +143,12 @@ class EvaluationsController < ApplicationController
     end
   end
 
-  def find_evaluator_submission_assignment
-    return @evaluation.evaluator_submission_assignment if @evaluation&.evaluator_submission_assignment.present?
-
-    EvaluatorSubmissionAssignment.find_by(submission_id: params[:submission_id], user_id: current_user.id)
+  def fetch_evaluator_submission_assignment
+    @evaluator_submission_assignment =
+      @evaluation&.evaluator_submission_assignment ||
+      EvaluatorSubmissionAssignment.find_by(submission_id: params[:submission_id], user_id: current_user.id)
+    @submission = @evaluator_submission_assignment&.submission
+    @evaluator_submission_assignment
   end
 
   def can_access_evaluation?

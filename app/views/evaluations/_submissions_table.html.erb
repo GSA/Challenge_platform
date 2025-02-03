@@ -33,9 +33,7 @@
         </td>
         <td>
           <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-            <% unless assignment.recused? %>
-              <%= evaluation_link(assignment) %>
-            <% end %>
+            <%= evaluation_link(assignment) unless assignment.recused? %>
           </div>  
         </td>  
       </tr>

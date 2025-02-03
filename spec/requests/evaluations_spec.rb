@@ -430,7 +430,7 @@ RSpec.describe "Evaluations" do
 
         assigns(:evaluation)
 
-        expect(response).to render_template(:new)
+        expect(response).to render_template(:show)
         expect(assigns(:evaluation).errors).not_to be_empty
       end
 
@@ -653,7 +653,7 @@ RSpec.describe "Evaluations" do
         expect(failed_evaluation.completed_at).to be_nil
         expect(evaluation_record.completed_at).to be_nil
 
-        expect(response).to render_template(:edit)
+        expect(response).to render_template(:show)
         expect(assigns(:evaluation).errors).not_to be_empty
       end
 
