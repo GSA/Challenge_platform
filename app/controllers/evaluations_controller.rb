@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
 # TODO: Reenable rubocop after refactor/shortening controller code or moving some functionality into service
-# rubocop:disable all
+# rubocop:disable Metrics/ClassLength
 
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
-  before_action :set_evaluation_and_submission_assignment, only: %i[save_draft mark_complete]
+  before_action :set_evaluation_and_submission_assignment, only: %i[create update]
   before_action :set_phase, only: [:submissions]
   before_action :set_submission, only: [:show]
 
   def index
     @phases = Phase.joins(:evaluator_submission_assignments).
       where(evaluator_submission_assignments: {
-        user_id: current_user.id,
-        status: [:assigned, :recused]
-      }).
+              user_id: current_user.id,
+              status: [:assigned, :recused]
+            }).
       includes(:challenge, :evaluation_form).
       distinct
   end
@@ -28,15 +28,6 @@ class EvaluationsController < ApplicationController
       ordered_by_status
 
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
-  end
-
-  def show
-    @evaluator_submission_assignment = find_evaluator_submission_assignment
-    return unauthorized_redirect unless can_access_evaluation?
-
-    @evaluation = Evaluation.find_or_initialize_by(
-      evaluator_submission_assignment: @evaluator_submission_assignment
-    )
   end
 
   def new
@@ -58,33 +49,40 @@ class EvaluationsController < ApplicationController
   end
 
   def edit
-    @evaluation = Evaluation.find_by(id: params[:id])
+    @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
     @evaluator_submission_assignment = find_evaluator_submission_assignment
     return unauthorized_redirect unless can_access_evaluation?
 
     render :edit
   end
 
-  def save_draft
-    @evaluation.completed_at = nil
+  def create
+    if save_evaluation
+      flash[:notice] =
+        if params[:subaction] == "mark_complete"
+          I18n.t("evaluations.notices.marked_complete")
+        else
+          I18n.t("evaluations.notices.saved_draft")
+        end
 
-    if @evaluation.save(validate: false)
-      flash[:notice] = I18n.t("evaluations.notices.saved_draft")
-      redirect_to evaluations_path
+      redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
-      handle_save_draft_failure
+      render :new, status: :unprocessable_entity
     end
   end
 
-  def mark_complete
-    @evaluation.completed_at = Time.current
+  def update
+    if save_evaluation
+      flash[:notice] =
+        if params[:subaction] == "mark_complete"
+          I18n.t("evaluations.notices.marked_complete")
+        else
+          I18n.t("evaluations.notices.saved_draft")
+        end
 
-    if @evaluation.save
-      flash[:notice] = I18n.t("evaluations.notices.marked_complete")
-      redirect_to evaluations_path
+      redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
-      @evaluation.completed_at = nil
-      handle_mark_complete_failure
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -106,6 +104,22 @@ class EvaluationsController < ApplicationController
   end
 
   private
+
+  def save_evaluation
+    if params[:subaction] == "mark_complete"
+      @evaluation.completed_at = Time.current
+      unless @evaluation.save
+        # Reset completed at if validation fails
+        @evaluation.completed_at = nil
+        return false
+      end
+    else
+      @evaluation.completed_at = nil
+      @evaluation.save(validate: false)
+    end
+
+    true
+  end
 
   def set_evaluation_and_submission_assignment
     @evaluation = find_or_initialize_evaluation
@@ -129,7 +143,7 @@ class EvaluationsController < ApplicationController
 
   def find_or_initialize_evaluation
     if params[:id]
-      Evaluation.includes([:evaluation_criteria]).find(params[:id])
+      Evaluation.includes([evaluation_scores: :evaluation_criterion]).find(params[:id])
     else
       Evaluation.new(user_id: current_user.id)
     end
@@ -171,29 +185,6 @@ class EvaluationsController < ApplicationController
     redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.unauthorized")
   end
 
-  def handle_save_draft_failure
-    flash[:alert] =
-      I18n.t("evaluations.alerts.save_draft_error", errors: @evaluation.errors.full_messages.to_sentence)
-
-    if @evaluation.new_record?
-      redirect_to new_submission_evaluation_path(@evaluator_submission_assignment.submission_id)
-    else
-      redirect_to edit_evaluation_path(@evaluation.id)
-    end
-  end
-
-  def handle_mark_complete_failure
-    flash[:alert] =
-      I18n.t("evaluations.alerts.mark_complete_error", errors: @evaluation.errors.full_messages.to_sentence)
-
-    if @evaluation.new_record?
-      redirect_to new_submission_evaluation_path(@evaluator_submission_assignment.submission_id)
-    else
-      redirect_to edit_evaluation_path(@evaluation.id)
-    end
-  end
-
-  # Params
   def evaluation_params
     params.require(:evaluation).permit(
       :user_id,
@@ -216,4 +207,4 @@ class EvaluationsController < ApplicationController
   end
 end
 # TODO: Remove this after above refactor
-# rubocop:enable all
+# rubocop:enable Metrics/ClassLength
