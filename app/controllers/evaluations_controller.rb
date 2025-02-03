@@ -43,12 +43,16 @@ class EvaluationsController < ApplicationController
     end
 
     build_evaluation
+
+    render :show
   end
 
   def edit
     @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
     fetch_evaluator_submission_assignment
     unauthorized_redirect unless can_access_evaluation?
+
+    render :show
   end
 
   def create
@@ -62,7 +66,7 @@ class EvaluationsController < ApplicationController
 
       redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
-      render :new, status: :unprocessable_entity
+      render :show, status: :unprocessable_entity
     end
   end
 
@@ -77,7 +81,7 @@ class EvaluationsController < ApplicationController
 
       redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
     else
-      render :edit, status: :unprocessable_entity
+      render :show, status: :unprocessable_entity
     end
   end
 
