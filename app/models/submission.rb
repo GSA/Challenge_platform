@@ -32,7 +32,6 @@ class Submission < ApplicationRecord
   # Associations
   belongs_to :challenge
   belongs_to :phase, counter_cache: true
-  counter_culture :phase, column_name: proc { |model| model.deleted_at ? nil : 'active_submissions_count' }
   belongs_to :submitter, class_name: 'User'
   has_many :evaluator_submission_assignments, dependent: :destroy
   has_many :evaluators, through: :evaluator_submission_assignments, class_name: "User"
@@ -55,7 +54,7 @@ class Submission < ApplicationRecord
            if: -> { judging_status_change == %w[selected not_selected] }
 
   scope :by_user, lambda { |user|
-    case user.role
+    by_user_role = case user.role
     when 'challenge_manager'
       where(challenge: user.challenge_manager_challenges)
     when 'evaluator'
@@ -65,6 +64,7 @@ class Submission < ApplicationRecord
     else
       none
     end
+    by_user_role.where(deleted_at: nil)
   }
   scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
 

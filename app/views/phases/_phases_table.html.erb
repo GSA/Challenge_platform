@@ -17,7 +17,7 @@
               <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
             </th>
             <td data-label="Number of Submissions" class="text-top">
-              <%= phase.active_submissions_count %>
+              <%= phase.submissions_count %>
             </td>
             <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
@@ -40,7 +40,7 @@
                 <%= link_to phase_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
                   Manage Evaluators
                 <% end %>
-                <% if phase.active_submissions_count > 0 %>
+                <% if phase.submissions_count > 0 %>
                   <%= link_to(submissions_phase_path(phase)) do %>
                     <button class="usa-button font-body-2xs text-no-wrap width-full">
                       View Submissions
