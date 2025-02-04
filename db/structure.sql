@@ -1860,6 +1860,13 @@ CREATE UNIQUE INDEX idx_on_user_id_evaluation_form_id_submission_id_f77140cf65 O
 
 
 --
+-- Name: idx_on_user_id_submission_id_08f83a00a6; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_on_user_id_submission_id_08f83a00a6 ON public.evaluator_submission_assignments USING btree (user_id, submission_id);
+
+
+--
 -- Name: index_challenge_phases_evaluators_on_challenge_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2466,6 +2473,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250204131151),
 (20250202220815),
 (20250130144731),
 (20250120045732),
