@@ -54,16 +54,17 @@ class Submission < ApplicationRecord
            if: -> { judging_status_change == %w[selected not_selected] }
 
   scope :by_user, lambda { |user|
-    by_user_role = case user.role
-    when 'challenge_manager'
-      where(challenge: user.challenge_manager_challenges)
-    when 'evaluator'
-      joins(:evaluators).where(evaluators: { id: user.id })
-    when 'solver'
-      where(submitter: user)
-    else
-      none
-    end
+    by_user_role =
+      case user.role
+      when 'challenge_manager'
+        where(challenge: user.challenge_manager_challenges)
+      when 'evaluator'
+        joins(:evaluators).where(evaluators: { id: user.id })
+      when 'solver'
+        where(submitter: user)
+      else
+        none
+      end
     by_user_role.where(deleted_at: nil)
   }
   scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
