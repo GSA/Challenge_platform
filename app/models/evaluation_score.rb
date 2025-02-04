@@ -9,6 +9,7 @@
 #  evaluation_criterion_id :bigint           not null
 #  score                   :integer          not null
 #  score_override          :integer
+#  calculated_score        :decimal
 #  comment                 :text
 #  comment_override        :text
 #  created_at              :datetime         not null
@@ -41,6 +42,25 @@ class EvaluationScore < ApplicationRecord
     comment_override || comment
   end
 
+  def calculated_score
+    return if effective_score.blank?
+
+    points = evaluation_criterion.points_or_weight
+
+    case evaluation_criterion.scoring_type
+    when "binary"
+      effective_score == 1 ? points : 0
+    when "numeric"
+      # Another way to ensure the calculated score is at most the max points for the criterion
+      [effective_score, points].min
+    when "rating"
+      best_option = evaluation_criterion.option_range_end
+      (points / best_option) * effective_score
+    else
+      0
+    end.round(2)
+  end
+
   private
 
   # TODO: Should these error messages be more generic instead of specific values
@@ -59,8 +79,6 @@ class EvaluationScore < ApplicationRecord
   def validate_numeric_score
     max_score = evaluation_criterion.points_or_weight
 
-    validate_score_presence
-
     if score && score > max_score
       errors.add(:score, "must be less than or equal to #{max_score}")
     end
@@ -76,8 +94,6 @@ class EvaluationScore < ApplicationRecord
     range_end = evaluation_criterion.option_range_end
     valid_range = (range_start..range_end)
 
-    validate_score_presence
-
     if score && valid_range.exclude?(score)
       errors.add(:score, "must be within the range #{range_start} to #{range_end}")
     end
@@ -86,9 +102,5 @@ class EvaluationScore < ApplicationRecord
     return unless score_override && valid_range.exclude?(score_override)
 
     errors.add(:score_override, "must be within the range #{range_start} to #{range_end}")
-  end
-
-  def validate_score_presence
-    errors.add(:score, "cannot be blank") if score.nil?
   end
 end

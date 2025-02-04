@@ -478,7 +478,7 @@ CREATE TABLE public.evaluations (
     evaluator_submission_assignment_id bigint NOT NULL,
     additional_comments text,
     revision_comments text,
-    total_score integer,
+    total_score numeric(10,2),
     completed_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -1110,7 +1110,7 @@ CREATE TABLE public.submissions (
     description_delta text,
     brief_description_delta text,
     pdf_reference character varying(255),
-    comments character varying
+    comments text
 );
 
 
@@ -2466,7 +2466,10 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250202220815),
 (20250130144731),
+(20250120045732),
+(20250120043934),
 (20241223190634),
 (20241217164258),
 (20241125060011),

@@ -51,17 +51,16 @@ RSpec.describe EvaluationsHelper, type: :helper do
 
     context 'when assignment is completed and has an evaluation with a total score' do
       it 'returns the correct score formats' do
-        create(:evaluation,
+        evaluation = create(:evaluation,
           evaluator_submission_assignment: assignment,
-          total_score: 85,
           completed_at: Time.current
         )
         allow(assignment).to receive(:evaluation_status).and_return(:completed)
 
         result = helper.evaluator_score(assignment)
-        expect(result.raw_score).to eq(85)
-        expect(result.formatted_score).to eq("85")
-        expect(result.display_score).to eq(85)
+        expect(result.raw_score).to eq(evaluation.total_score)
+        expect(result.formatted_score).to eq(evaluation.total_score.to_s)
+        expect(result.display_score).to eq(evaluation.total_score)
       end
     end
 
@@ -106,23 +105,24 @@ RSpec.describe EvaluationsHelper, type: :helper do
         status: :assigned
       )
 
-      create(:evaluation,
+      evaluation1 = create(:evaluation,
         evaluator_submission_assignment: assignment1,
         submission: submission,
-        total_score: 80,
         completed_at: Time.current
       )
-      create(:evaluation,
+      evaluation2 = create(:evaluation,
         evaluator_submission_assignment: assignment2,
         submission: submission,
-        total_score: 90,
         completed_at: Time.current
       )
 
+      average_score = (evaluation1.total_score + evaluation2.total_score) / 2
+      average_score = average_score ? average_score.round : 0
+
       result = helper.average_score(submission)
-      expect(result.raw_score).to eq(85)
-      expect(result.formatted_score).to eq("85")
-      expect(result.display_score).to eq("85")
+      expect(result.raw_score).to eq(average_score)
+      expect(result.formatted_score).to eq(average_score.to_s)
+      expect(result.display_score).to eq(average_score.to_s)
     end
 
     it "does not include recused scores in the average" do
@@ -180,10 +180,10 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
 
     it 'returns score for completed evaluations' do
-      evaluation = create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator, total_score: 85)
+      evaluation = create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator)
       allow(assignment).to receive(:evaluation_status).and_return(:completed)
       allow(assignment).to receive(:evaluation).and_return(evaluation)
-      expect(helper.display_score(assignment)).to eq(85)
+      expect(helper.display_score(assignment)).to eq(evaluation.total_score)
     end
   end
 
