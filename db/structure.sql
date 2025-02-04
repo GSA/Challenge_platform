@@ -843,7 +843,8 @@ CREATE TABLE public.phases (
     how_to_enter_delta text,
     inserted_at timestamp(0) without time zone NOT NULL,
     updated_at timestamp(0) without time zone NOT NULL,
-    submissions_count integer DEFAULT 0 NOT NULL
+    submissions_count integer DEFAULT 0 NOT NULL,
+    active_submissions_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -1109,7 +1110,7 @@ CREATE TABLE public.submissions (
     description_delta text,
     brief_description_delta text,
     pdf_reference character varying(255),
-    comments text
+    comments character varying
 );
 
 
@@ -2466,6 +2467,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 (20250202220815),
+(20250130144731),
 (20250120045732),
 (20250120043934),
 (20241223190634),
