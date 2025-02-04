@@ -1,7 +1,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -760,7 +759,7 @@ CREATE TABLE public.oban_jobs (
     attempted_by text[],
     discarded_at timestamp without time zone,
     priority integer DEFAULT 0 NOT NULL,
-    tags text[] DEFAULT ARRAY[]::text[],
+    tags character varying(255)[] DEFAULT ARRAY[]::character varying[],
     meta jsonb DEFAULT '{}'::jsonb,
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
