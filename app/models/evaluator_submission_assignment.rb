@@ -30,7 +30,7 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   validates :submission_id, uniqueness: {
     scope: :user_id,
-    message: I18n.t("evaluator_submission_assignment.uniqueness_error")
+    message: I18n.t("evaluator_submission_assignments.uniqueness_error")
   }
 
   enum :status, {
