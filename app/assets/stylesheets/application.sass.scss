@@ -71,3 +71,7 @@ dialog::backdrop {
 .usa-combo-box .border-secondary + input {
   border: 1px solid red;
 }
+
+.icon-primary-blue {
+  filter: brightness(0) saturate(100%) invert(19%) sepia(28%) saturate(2849%) hue-rotate(197deg) brightness(94%) contrast(87%);
+}
