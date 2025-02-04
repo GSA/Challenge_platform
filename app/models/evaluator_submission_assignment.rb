@@ -28,7 +28,8 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   has_one :phase, through: :submission
 
-  validates_uniqueness_of :submission_id, scope: :user_id, message: "This evaluator is already assigned to this submission."
+  validates :submission_id, uniqueness: { scope: :user_id,
+    message: "This evaluator is already assigned to this submission." }
 
   enum :status, {
     assigned: 0,
