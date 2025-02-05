@@ -4,6 +4,7 @@
 class SubmissionsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_submission, only: [:show, :update]
+  before_action :set_phase, only: [:show]
 
   def show; end
 
@@ -26,6 +27,10 @@ class SubmissionsController < ApplicationController
   # User access enforced by role
   def set_submission
     @submission = Submission.by_user(current_user).find(params[:id])
+  end
+
+  def set_phase
+    @phase = @submission.phase
   end
 
   def handle_successful_update(format)
