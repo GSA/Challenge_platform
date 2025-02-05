@@ -85,6 +85,7 @@ en:
     recused_unassigned:
       success: "Recused evaluator unassigned successfully"
       failure: "Failed to unassign evaluator"           
+    uniqueness_error: "This evaluator is already assigned to this submission."  
   evaluations: 
     unique_user_for_evaluation_form_and_submission_error: "already has an evaluation for this form and submission"
     unique_evaluator_submission_assignment: "already has an evaluation"

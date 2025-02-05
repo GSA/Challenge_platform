@@ -21,6 +21,16 @@ RSpec.describe EvaluatorSubmissionAssignment, type: :model do
     expect { assignment.save! }.to change { described_class.count }.by(1)
   end
 
+  it "cannot be created with duplicate user and submission ids" do
+    assignment = build(:evaluator_submission_assignment, submission:, evaluator: user)
+    expect(assignment).to be_valid
+    expect { assignment.save! }.to change { described_class.count }.by(1)
+
+    assignment2 = build(:evaluator_submission_assignment, submission:, evaluator: user)
+    expect(assignment2).not_to be_valid
+    expect(assignment2.errors[:submission_id]).to include("This evaluator is already assigned to this submission.")
+  end
+
   it "can be destroyed" do
     assignment = create(:evaluator_submission_assignment, submission:, evaluator: user)
     expect { assignment.destroy }.to change { described_class.count }.by(-1)
