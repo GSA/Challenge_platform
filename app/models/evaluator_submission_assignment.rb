@@ -28,6 +28,11 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   has_one :phase, through: :submission
 
+  validates :submission_id, uniqueness: {
+    scope: :user_id,
+    message: I18n.t("evaluator_submission_assignments.uniqueness_error")
+  }
+
   enum :status, {
     assigned: 0,
     unassigned: 1,
