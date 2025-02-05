@@ -1,8 +1,9 @@
 <button
   type="button"
   data-action="click->evaluator-recusal-modal#open"
-  data-assignment-id="<%= assignment.id %>"
-  data-phase-id="<%= assignment.phase.id %>"
+  data-assignment-id="<%= @evaluator_submission_assignment.id %>"
+  data-submission-id="<%= @evaluator_submission_assignment.submission.id %>"
+  data-evaluation-id="<%= @evaluation.id %>"
   aria-controls="evaluator-recusal-modal"
   style="background-color: white; border: none; padding: 0; margin-top: 1rem; margin-bottom: 2rem; cursor: pointer;"
   class="display-flex flex-align-center"

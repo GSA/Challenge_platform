@@ -1,7 +1,7 @@
 <div data-controller="evaluator-recusal-modal">
-  <%= render 'evaluator_recusal_button', assignment: local_assigns[:assignment] if local_assigns[:assignment] %>
+  <%= render 'evaluator_recusal_button' %>
 
-  <%= form_with(model: @evaluation || Evaluation.new, data: { controller: "evaluation modal" }) do |form| %>
+  <%= form_with(model: @evaluation, data: { controller: "evaluation modal" }) do |form| %>
     <% if @evaluation.errors.any? %>
       <div style="color: darkred">
         <div class="usa-alert usa-alert--error" role="alert">

@@ -2,29 +2,39 @@ import ModalController from "./modal_controller"
 
 export default class extends ModalController {
   static values = {
-    assignmentId: String
+    assignmentId: String,
+    submissionId: String,
+    evaluationId: String
   }
 
   open(event) {
     event.preventDefault()
     this.assignmentIdValue = event.currentTarget.dataset.assignmentId
+    this.submissionIdValue = event.currentTarget.dataset.submissionId
+    this.evaluationIdValue = event.currentTarget.dataset.evaluationId
     this.modalTarget.showModal()
   }
 
   evaluatorRecusal(event) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content
-    const pathMatch = window.location.pathname.match(/\/submissions\/(\d+)/)
-
-    const [_, submissionId] = pathMatch
-  
-    fetch(`/submissions/${submissionId}/evaluations/new/recuse`, {
+    const recusalPath = this.evaluationIdValue ? 
+      `/evaluations/${this.evaluationIdValue}/recuse` : 
+      `/submissions/${this.submissionIdValue}/evaluations/recuse`
+    
+    fetch(recusalPath, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken
+        'X-CSRF-Token': csrfToken,
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        submission_id: submissionId
+        evaluation_id: this.evaluationIdValue,
+        submission_id: this.submissionIdValue,
+        evaluator_submission_assignment: {
+          id: this.assignmentIdValue,
+          status: 'recused'
+        }
       })
     })
     .then(response => {

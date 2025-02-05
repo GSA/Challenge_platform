@@ -86,6 +86,7 @@ class EvaluationsController < ApplicationController
   end
 
   def recuse
+    @evaluation = Evaluation.find_by(id: params[:id], user_id: current_user.id)
     fetch_evaluator_submission_assignment
     return unauthorized_redirect unless can_access_evaluation?
 
@@ -93,11 +94,11 @@ class EvaluationsController < ApplicationController
       if recuse_evaluator
         destroy_recused_evaluation
         flash[:notice] = I18n.t("evaluations.recusal.success")
-        redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase)
+        redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: 303
       else
         handle_recusal_failure
       end
-    rescue ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::RecordInvalid
       handle_recusal_failure
     end
   end
@@ -199,7 +200,7 @@ class EvaluationsController < ApplicationController
 
   def handle_recusal_failure
     flash[:alert] = I18n.t("evaluations.recusal.failure")
-    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase)
+    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: 303
   end
 end
 # TODO: Remove this after above refactor

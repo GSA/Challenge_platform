@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   resources :evaluations, only: %i[index edit create update] do
     member do
       get :submissions
+      patch 'recuse'
     end
   end
 
@@ -36,9 +37,7 @@ Rails.application.routes.draw do
 
   resources :submissions, only: [:show, :update] do
     resources :evaluations, only: [:new] do
-      member do
-        patch 'recuse'
-      end
+      patch 'recuse', on: :collection
     end
     get :materials, on: :member, to: "submission_materials#show"
   end
