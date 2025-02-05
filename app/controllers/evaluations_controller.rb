@@ -36,6 +36,8 @@ class EvaluationsController < ApplicationController
       return redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.evaluator_submission_assignment_not_found")
     end
 
+    @submission = @evaluator_submission_assignment.submission
+
     @evaluation_form = EvaluationForm.find_by(phase: @evaluator_submission_assignment.phase)
 
     if @evaluation_form.nil?
@@ -50,6 +52,7 @@ class EvaluationsController < ApplicationController
   def edit
     @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
     @evaluator_submission_assignment = find_evaluator_submission_assignment
+    @submission = @evaluator_submission_assignment.submission
     return unauthorized_redirect unless can_access_evaluation?
 
     render :edit
@@ -109,6 +112,8 @@ class EvaluationsController < ApplicationController
 
     @evaluator_submission_assignment = find_evaluator_submission_assignment
 
+    @submission = @evaluation.submission
+
     unauthorized_redirect unless can_access_evaluation?
   end
 
@@ -155,6 +160,13 @@ class EvaluationsController < ApplicationController
   end
 
   def evaluation_params
+    evaluation_scores = params[:evaluation][:evaluation_scores_attributes]
+
+    # Normalize random hex keys to integer indexes rails understands for nested_attributes
+    params[:evaluation][:evaluation_scores_attributes] = evaluation_scores.transform_keys.with_index do |_key, index|
+      index.to_s
+    end
+
     params.require(:evaluation).permit(
       :user_id,
       :evaluator_submission_assignment_id,

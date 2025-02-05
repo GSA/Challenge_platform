@@ -1,7 +1,4 @@
-<div class="usa-card__container col-md-6">
-  <div class="usa-card__body">
-    <h1>Evaluations New</h1>
-
-    <%= render "form", form_method: :post %>
-  </div>
+<div>
+  <%= render "form_header" %>
+  <%= render partial: "layouts/hotdog", locals: {left: 'evaluations/form', right: 'submissions/submission_materials', name: 'Submission Materials'} %>
 </div>
