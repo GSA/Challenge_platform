@@ -36,10 +36,13 @@ RSpec.describe Submission, type: :model do
       it "returns only submissions for their challenges" do
         submission1 = create(:submission)
         submission2 = create(:submission)
-        user.challenge_manager_challenges << submission1.challenge << submission2.challenge
+        submission_deleted = create(:submission)
+        user.challenge_manager_challenges << submission1.challenge << submission2.challenge << submission_deleted.challenge
 
+        assert submission_deleted.destroy
         expect(described_class.by_user(user)).to include(submission1, submission2)
         expect(described_class.by_user(user)).not_to include(submission)
+        expect(described_class.by_user(user)).not_to include(submission_deleted)
       end
     end
 
@@ -49,11 +52,15 @@ RSpec.describe Submission, type: :model do
       it "returns only their own submissions" do
         submission1 = create(:submission)
         submission2 = create(:submission)
+        submission_deleted = create(:submission)
         submission1.evaluator_submission_assignments.create(evaluator:, status: "assigned")
         submission2.evaluator_submission_assignments.create(evaluator:, status: "assigned")
+        submission_deleted.evaluator_submission_assignments.create(evaluator:, status: "assigned")
 
+        assert submission_deleted.destroy
         expect(described_class.by_user(evaluator)).to include(submission1, submission2)
         expect(described_class.by_user(evaluator)).not_to include(submission)
+        expect(described_class.by_user(evaluator)).not_to include(submission_deleted)
       end
     end
 
@@ -63,9 +70,12 @@ RSpec.describe Submission, type: :model do
       it "returns only their own submissions" do
         submission1 = create(:submission, submitter: user)
         submission2 = create(:submission, submitter: user)
+        submission_deleted = create(:submission, submitter: user)
 
+        assert submission_deleted.destroy
         expect(described_class.by_user(user)).to include(submission1, submission2)
         expect(described_class.by_user(user)).not_to include(submission)
+        expect(described_class.by_user(user)).not_to include(submission_deleted)
       end
     end
   end
