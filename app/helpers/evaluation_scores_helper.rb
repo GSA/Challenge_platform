@@ -24,7 +24,7 @@ module EvaluationScoresHelper
     else # rating or binary
       content_tag(:div, class: "usa-fieldset") do
         score_options(criterion).each do |value, label|
-          concat(score_radio_input(score_fields, value, label, field_id, field_name))
+          concat(score_radio_input(score_fields, value, label, id: field_id, name: field_name))
         end
       end
     end
@@ -38,7 +38,7 @@ module EvaluationScoresHelper
     content_tag(:div, class: "display-flex flex-column") do
       # TODO: Should the lowest be 1?
       concat(score_fields.label(:score, "Enter a number between #{min} and #{max}", for: id))
-      concat(score_fields.number_field(:score, id: id, name: name, min: min, max: max, class: "usa-input width-10"))
+      concat(score_fields.number_field(:score, id:, name:, min:, max:, class: "usa-input width-10"))
     end
   end
 
@@ -48,9 +48,12 @@ module EvaluationScoresHelper
     end
   end
 
-  def score_radio_input(score_fields, value, label, id, name)
+  def score_radio_input(score_fields, value, label, opts = {})
+    id = opts[:id]
+    name = opts[:name]
+
     content_tag(:div, class: "usa-radio") do
-      concat(score_fields.radio_button(:score, value, id: "#{id}_#{value}", name: name,
+      concat(score_fields.radio_button(:score, value, id: "#{id}_#{value}", name:,
                                                       class: "usa-radio__input usa-radio__input--tile"))
       concat(score_fields.label("score_#{value}", label, for: "#{id}_#{value}", class: "usa-radio__label"))
     end
