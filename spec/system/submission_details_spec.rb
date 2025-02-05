@@ -76,6 +76,21 @@ describe "A11y", :js do
       expect(page).to have_content(evaluator2.email)
     end
 
+    it "does not show solvers in the available evaluators list" do
+      evaluator = create_user(role: "evaluator")
+      solver = create_user(role: "solver")
+      challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
+      challenge.challenge_phases_evaluators.create(user: solver, phase: phase)
+      evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
+      visit submission_path(submission)
+      find_by_id('eligible-for-evaluation').click
+      click_on('Save')
+
+      expect(page).to have_content("Available Evaluators")
+      expect(page).to have_content(evaluator.email)
+      expect(page).not_to have_content(solver.email)
+    end
+
     it "assigns and unassigns an evaluator to the submission" do
       evaluator = create_user(role: "evaluator")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
