@@ -336,7 +336,7 @@ RSpec.describe "Evaluations" do
         evaluation_params = build_evaluation_params(evaluation)
 
         # Nullify scores to test draft saving skipping validations
-        evaluation_params[:evaluation_scores_attributes].each do |value|
+        evaluation_params[:evaluation_scores_attributes].each_value do |value|
           value[:score] = nil
           value[:comment] = nil
         end
@@ -367,7 +367,7 @@ RSpec.describe "Evaluations" do
         evaluation_params = build_evaluation_params(evaluation)
 
         # Nullify scores to test draft saving skipping validations
-        evaluation_params[:evaluation_scores_attributes].each do |value|
+        evaluation_params[:evaluation_scores_attributes].each_value do |value|
           value[:score] = nil
           value[:comment] = nil
         end
@@ -419,7 +419,7 @@ RSpec.describe "Evaluations" do
         evaluation_params = build_evaluation_params(evaluation)
 
         # Nullify scores to test marking as complete fail validations
-        evaluation_params[:evaluation_scores_attributes].each do |value|
+        evaluation_params[:evaluation_scores_attributes].each_value do |value|
           value[:score] = nil
           value[:comment] = nil
         end
@@ -554,7 +554,7 @@ RSpec.describe "Evaluations" do
         evaluation_params = evaluation_params.merge(additional_comments: "Test")
 
         # Nullify scores to test draft saving skipping validations
-        evaluation_params[:evaluation_scores_attributes].each do |value|
+        evaluation_params[:evaluation_scores_attributes].each_value do |value|
           value[:score] = nil
           value[:comment] = nil
         end
@@ -640,7 +640,7 @@ RSpec.describe "Evaluations" do
         evaluation_params = build_patch_evaluation_params(evaluation)
 
         # Nullify scores to test draft saving skipping validations
-        evaluation_params[:evaluation_scores_attributes].each do |value|
+        evaluation_params[:evaluation_scores_attributes].each_value do |value|
           value[:score] = nil
           value[:comment] = nil
         end
@@ -703,12 +703,13 @@ RSpec.describe "Evaluations" do
       evaluator_submission_assignment_id: evaluation.evaluator_submission_assignment_id,
       submission_id: evaluation.evaluator_submission_assignment.submission_id,
       evaluation_form_id: evaluation.evaluation_form_id,
-      evaluation_scores_attributes: evaluation.evaluation_scores.map do |score|
-        {
-          evaluation_criterion_id: score.evaluation_criterion_id,
-          score: valid_score_for_criterion(score),
-          comment: Faker::Lorem.sentence
-        }
+      evaluation_scores_attributes: evaluation.evaluation_scores.to_h do |score|
+        [SecureRandom.hex(8),
+         {
+           evaluation_criterion_id: score.evaluation_criterion_id,
+           score: valid_score_for_criterion(score),
+           comment: Faker::Lorem.sentence
+         }]
       end
     }
   end
@@ -717,13 +718,14 @@ RSpec.describe "Evaluations" do
     {
       additional_comments: evaluation.additional_comments,
       revision_comments: evaluation.revision_comments,
-      evaluation_scores_attributes: evaluation.evaluation_scores.map do |score|
-        {
-          id: score.id,
-          evaluation_criterion_id: score.evaluation_criterion_id,
-          score: valid_score_for_criterion(score),
-          comment: Faker::Lorem.sentence
-        }
+      evaluation_scores_attributes: evaluation.evaluation_scores.to_h do |score, _i|
+        [SecureRandom.hex(8),
+         {
+           id: score.id,
+           evaluation_criterion_id: score.evaluation_criterion_id,
+           score: valid_score_for_criterion(score),
+           comment: Faker::Lorem.sentence
+         }]
       end
     }
   end

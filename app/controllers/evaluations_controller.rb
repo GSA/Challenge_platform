@@ -163,8 +163,10 @@ class EvaluationsController < ApplicationController
     evaluation_scores = params[:evaluation][:evaluation_scores_attributes]
 
     # Normalize random hex keys to integer indexes rails understands for nested_attributes
-    params[:evaluation][:evaluation_scores_attributes] = evaluation_scores.transform_keys.with_index do |_key, index|
-      index.to_s
+    if evaluation_scores.present?
+      params[:evaluation][:evaluation_scores_attributes] = evaluation_scores.transform_keys.with_index do |_key, index|
+        index.to_s
+      end
     end
 
     params.require(:evaluation).permit(
