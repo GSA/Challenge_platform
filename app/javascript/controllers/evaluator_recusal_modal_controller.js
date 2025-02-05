@@ -25,7 +25,7 @@ export default class extends ModalController {
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
-        'Accept': 'application/json'
+        'Accept': 'text/html'
       },
       body: JSON.stringify({
         evaluation_id: this.evaluationIdValue,
