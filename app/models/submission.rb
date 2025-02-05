@@ -88,7 +88,7 @@ class Submission < ApplicationRecord
   # Phase evaluators not currently assigned or recused on the submission
   def available_evaluators
     unavailable_evaluators = evaluators.where.not("evaluator_submission_assignments.status" => "unassigned")
-    phase.evaluators.where.not(id: unavailable_evaluators)
+    phase.evaluators.where.not(id: unavailable_evaluators).where(role: "evaluator")
   end
 
   def eligible_for_evaluation?
