@@ -7,14 +7,6 @@ export default class extends Controller {
     assignmentId: String
   }
 
-  connect() {
-    this.modalTarget.addEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
-  disconnect() {
-    this.modalTarget.removeEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
   open(event) {
     event.preventDefault();
     this.setValues(event.currentTarget.dataset);
@@ -23,12 +15,6 @@ export default class extends Controller {
 
   close() {
     this.modalTarget.close();
-  }
-
-  handleOutsideClick(event) {
-    if (event.target === this.modalTarget) {
-      this.close();
-    }
   }
 
   setValues(dataset) {
