@@ -676,6 +676,119 @@ RSpec.describe "Evaluations" do
         expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
       end
     end
+
+    # recuse on a new evaluation that has not been started
+    describe "PATCH /submissions/:submission_id/evaluations/recuse" do
+      context "when logged in as an evaluator" do
+        let(:current_user) { create_user(role: "evaluator") }
+        let(:challenge) { create(:challenge) }
+        let(:phase) { create(:phase, challenge: challenge) }
+        let(:submission) { create(:submission, phase: phase) }
+        let!(:evaluator_submission_assignment) do
+          create(:evaluator_submission_assignment,
+            submission: submission,
+            evaluator: current_user,
+            status: :assigned
+          )
+        end
+
+        before { log_in_user(current_user) }
+
+        it "successfully recuses without an evaluation" do
+          expect {
+            patch recuse_submission_evaluations_path(submission)
+          }.to change { evaluator_submission_assignment.reload.status }.from("assigned").to("recused")
+
+          expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))
+          expect(response).to redirect_to(submissions_evaluation_path(phase))
+        end
+
+        context "when recusal update fails" do
+          before do
+            allow_any_instance_of(EvaluationsController).to receive(:recuse_evaluator).and_return(false)
+          end
+
+          it "handles recusal failure" do
+            patch recuse_submission_evaluations_path(submission)
+
+            expect(flash[:alert]).to eq(I18n.t("evaluations.recusal.failure"))
+            expect(response).to redirect_to(submissions_evaluation_path(phase))
+          end
+        end
+      end
+    end
+
+    # recuse on an existing evaluation that is in progress or completed
+    describe "PATCH /evaluations/:id/recuse" do
+      context "when logged in as an evaluator" do
+        let(:current_user) { create_user(role: "evaluator") }
+        let(:challenge) { create(:challenge) }
+        let(:phase) { create(:phase, challenge: challenge) }
+        let(:submission) { create(:submission, phase: phase) }
+        let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+        let(:evaluator_submission_assignment) do
+          create(:evaluator_submission_assignment,
+            submission: submission,
+            evaluator: current_user,
+            status: :assigned
+          )
+        end
+        let!(:evaluation) do
+          create(:evaluation,
+            user: current_user,
+            evaluation_form: evaluation_form,
+            submission: submission,
+            evaluator_submission_assignment: evaluator_submission_assignment,
+            completed_at: Time.current
+          )
+        end
+
+        before { log_in_user(current_user) }
+
+        it "destroys evaluation when recusing" do
+          expect {
+            patch recuse_evaluation_path(evaluation)
+          }.to change { Evaluation.count }.by(-1)
+          .and change { evaluator_submission_assignment.reload.status }.to("recused")
+
+          expect(response).to redirect_to(submissions_evaluation_path(phase))
+          expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))
+        end
+
+        it "prevents unauthorized recusal of another evaluator's evaluation" do
+          other_evaluator = create(:user, :evaluator)
+          other_assignment = create(:evaluator_submission_assignment,
+            submission: submission,
+            evaluator: other_evaluator,
+            status: :assigned
+          )
+          other_evaluation = create(:evaluation,
+            user: other_evaluator,
+            evaluation_form: evaluation_form,
+            submission: submission,
+            evaluator_submission_assignment: other_assignment
+          )
+
+          patch recuse_evaluation_path(other_evaluation)
+
+          expect(response).to redirect_to(evaluations_path)
+          expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
+        end
+
+        context "when recusal update fails" do
+          before do
+            allow_any_instance_of(Evaluation).to receive(:destroy!).and_raise(ActiveRecord::RecordInvalid.new(evaluation))
+          end
+
+          it "handles recusal failure" do
+            patch recuse_evaluation_path(evaluation)
+
+            expect(flash[:alert]).to eq(I18n.t("evaluations.recusal.failure"))
+            expect(response).to redirect_to(submissions_evaluation_path(phase))
+          end
+        end
+      end
+    end
   end
 
   def build_evaluation(evaluator_submission_assignment)

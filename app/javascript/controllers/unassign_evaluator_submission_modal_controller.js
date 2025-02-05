@@ -7,14 +7,6 @@ export default class extends Controller {
     assignmentId: String
   }
 
-  connect() {
-    this.modalTarget.addEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
-  disconnect() {
-    this.modalTarget.removeEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
   open(event) {
     event.preventDefault();
     this.setValues(event.currentTarget.dataset);
@@ -25,38 +17,33 @@ export default class extends Controller {
     this.modalTarget.close();
   }
 
-  handleOutsideClick(event) {
-    if (event.target === this.modalTarget) {
-      this.close();
-    }
-  }
-
   setValues(dataset) {
     this.assignmentIdValue = dataset.assignmentId;
     this.phaseIdValue = dataset.phaseId;
   }
 
   unassignEvaluatorSubmission() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const button = document.querySelector(`[data-assignment-id='${this.assignmentIdValue}']`);
+    const newStatus = button?.dataset.currentStatus === 'recused' ? 'recused_unassigned' : 'unassigned';
+  
     fetch(`/phases/${this.phaseIdValue}/evaluator_submission_assignments/${this.assignmentIdValue}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken,
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        evaluator_submission_assignment: { status: 'unassigned' }
+        evaluator_submission_assignment: { status: newStatus }
       })
     })
     .then(response => response.json())
     .then(data => {
-      if (data.success) {
-        const evaluatorId = new URLSearchParams(window.location.search).get('evaluator_id');
-        window.location.href = `/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${evaluatorId}`;
-      } else {
+      if (!data.success) {
         throw new Error(data.message || 'Failed to unassign evaluator from submission');
       }
+      const evaluatorId = new URLSearchParams(window.location.search).get('evaluator_id');
+      window.location.href = `/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${evaluatorId}`;
     })
     .catch(error => {
       console.error('Error:', error);
