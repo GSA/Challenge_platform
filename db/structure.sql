@@ -2472,7 +2472,6 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-(20250205135218),
 (20250204131151),
 (20250202220815),
 (20250120045732),
