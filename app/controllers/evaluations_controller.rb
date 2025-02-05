@@ -189,21 +189,15 @@ class EvaluationsController < ApplicationController
   end
 
   def process_recusal
-    begin
-      if recuse_evaluator
-        destroy_recused_evaluation
-        handle_successful_recusal
-      else
-        handle_recusal_failure
-      end
-    rescue ActiveRecord::RecordInvalid
+    if recuse_evaluator
+      destroy_recused_evaluation
+      flash[:notice] = I18n.t("evaluations.recusal.success")
+      redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: 303
+    else
       handle_recusal_failure
     end
-  end
-
-  def handle_successful_recusal
-    flash[:notice] = I18n.t("evaluations.recusal.success")
-    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: 303
+  rescue ActiveRecord::RecordInvalid
+    handle_recusal_failure
   end
 
   def handle_recusal_failure
