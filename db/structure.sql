@@ -843,8 +843,7 @@ CREATE TABLE public.phases (
     how_to_enter_delta text,
     inserted_at timestamp(0) without time zone NOT NULL,
     updated_at timestamp(0) without time zone NOT NULL,
-    submissions_count integer DEFAULT 0 NOT NULL,
-    active_submissions_count integer DEFAULT 0 NOT NULL
+    submissions_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -2473,6 +2472,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250205135218),
 (20250204131151),
 (20250202220815),
 (20250120045732),
