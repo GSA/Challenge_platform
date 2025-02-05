@@ -16,37 +16,28 @@ export default class extends ModalController {
   }
 
   evaluatorRecusal(event) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content
     const recusalPath = this.evaluationIdValue ? 
       `/evaluations/${this.evaluationIdValue}/recuse` : 
       `/submissions/${this.submissionIdValue}/evaluations/recuse`
-    
+
     fetch(recusalPath, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken,
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
         'Accept': 'application/json'
       },
       body: JSON.stringify({
         evaluation_id: this.evaluationIdValue,
         submission_id: this.submissionIdValue,
-        evaluator_submission_assignment: {
-          id: this.assignmentIdValue,
-          status: 'recused'
-        }
+        evaluator_submission_assignment: { id: this.assignmentIdValue, status: 'recused' }
       })
     })
     .then(response => {
-      if (response.redirected) {
-        window.location.href = response.url
-      } else {
-        throw new Error('Failed to recuse from evaluation')
-      }
+      if (response.redirected) return window.location.href = response.url
+      throw new Error('Failed to recuse from evaluation')
     })
-    .catch(() => {
-      alert('Failed to recuse from evaluation')
-    })
+    .catch(() => alert('Failed to recuse from evaluation'))
     
     this.cancel(event)
   }

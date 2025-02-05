@@ -90,17 +90,7 @@ class EvaluationsController < ApplicationController
     fetch_evaluator_submission_assignment
     return unauthorized_redirect unless can_access_evaluation?
 
-    begin
-      if recuse_evaluator
-        destroy_recused_evaluation
-        flash[:notice] = I18n.t("evaluations.recusal.success")
-        redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: 303
-      else
-        handle_recusal_failure
-      end
-    rescue ActiveRecord::RecordInvalid
-      handle_recusal_failure
-    end
+    process_recusal
   end
 
   private
@@ -196,6 +186,24 @@ class EvaluationsController < ApplicationController
         comment comment_override
       ]
     )
+  end
+
+  def process_recusal
+    begin
+      if recuse_evaluator
+        destroy_recused_evaluation
+        handle_successful_recusal
+      else
+        handle_recusal_failure
+      end
+    rescue ActiveRecord::RecordInvalid
+      handle_recusal_failure
+    end
+  end
+
+  def handle_successful_recusal
+    flash[:notice] = I18n.t("evaluations.recusal.success")
+    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: 303
   end
 
   def handle_recusal_failure
