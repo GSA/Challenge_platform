@@ -86,7 +86,7 @@ class EvaluationsController < ApplicationController
   end
 
   def recuse
-    @evaluator_submission_assignment = find_evaluator_submission_assignment
+    fetch_evaluator_submission_assignment
     return unauthorized_redirect unless can_access_evaluation?
 
     begin
