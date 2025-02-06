@@ -48,20 +48,22 @@
                     <span class="margin-x-1"><%= evaluator_score(assignment).formatted_score %></span>
                   </td>
                   <td data-label="">
-                    <div class="display-flex flex-wrap">
-                      <% if assignment&.evaluation&.completed_at %>
-                        <%= link_to(edit_evaluation_path(assignment.evaluation)) do %>
-                          <button class="usa-button font-body-3xs text-no-wrap padding-x-1 margin-bottom-1">
-                            View Evaluation
-                          </button>
+                    <% unless @submission.winner? %>
+                      <div class="display-flex flex-wrap">
+                        <% if assignment&.evaluation&.completed_at %>
+                          <%= link_to(edit_evaluation_path(assignment.evaluation)) do %>
+                            <button class="usa-button font-body-3xs text-no-wrap padding-x-1 margin-bottom-1">
+                              View Evaluation
+                            </button>
+                          <% end %>
                         <% end %>
-                      <% end %>
-                      <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
-                        <%= f.hidden_field :phase_id, value: @submission.phase.id %>
-                        <%= f.hidden_field :status, value: assignment.recused? ? "recused_unassigned" : "unassigned" %>
-                        <%= f.submit "Unassign", class: "usa-button usa-button--outline font-body-2xs" %>
-                      <% end %>
-                    </div>
+                        <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
+                          <%= f.hidden_field :phase_id, value: @submission.phase.id %>
+                          <%= f.hidden_field :status, value: assignment.recused? ? "recused_unassigned" : "unassigned" %>
+                          <%= f.submit "Unassign", class: "usa-button usa-button--outline font-body-2xs" %>
+                        <% end %>
+                      </div>
+                    <% end %>  
                   </td>
                 </tr>
               <% end %>
