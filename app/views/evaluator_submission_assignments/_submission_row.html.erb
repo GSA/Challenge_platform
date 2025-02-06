@@ -17,7 +17,8 @@
       <%= button_tag "Unassign", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
         action: "click->unassign-evaluator-submission-modal#open",
         assignment_id: assignment.id,
-        phase_id: @phase.id
+        phase_id: @phase.id,
+        current_status: assignment.status
       } %>
     </div>
   </td>

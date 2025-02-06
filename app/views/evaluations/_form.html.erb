@@ -1,4 +1,6 @@
-<div class="padding-bottom-4">
+<div class="padding-bottom-4" data-controller="evaluator-recusal-modal">
+  <%= render 'evaluator_recusal_button' %>
+
   <h2><%= @evaluation.evaluation_form.title %></h2>
   <p><%= @evaluation.evaluation_form.instructions %></p>
 
@@ -108,4 +110,6 @@
       <%= form.button "Mark Complete", class: "usa-button", name: "subaction", value: "mark_complete", type: "submit" %>
     </div>
   <% end %>
+
+  <%= render 'evaluator_recusal_modal' %>
 </div>
