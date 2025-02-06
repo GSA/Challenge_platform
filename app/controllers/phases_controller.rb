@@ -50,7 +50,12 @@ class PhasesController < ApplicationController
 
   def set_submission_statuses
     @not_started = @submissions.left_joins(evaluator_submission_assignments: :evaluation).
-      where(evaluations: { id: nil }).distinct
+      where(evaluator_submission_assignments: { id: nil }).
+      or(
+      @submissions.left_joins(evaluator_submission_assignments: :evaluation)
+        .where(evaluator_submission_assignments: { status: [:assigned, :unassigned] })
+        .where(evaluations: { id: nil })
+      ).distinct
     @in_progress = @submissions.joins(evaluator_submission_assignments: :evaluation).
       where(evaluations: { completed_at: nil }).distinct
     @completed = @submissions.joins(evaluator_submission_assignments: :evaluation).
