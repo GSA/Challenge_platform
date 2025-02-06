@@ -49,23 +49,39 @@ class PhasesController < ApplicationController
   end
 
   def set_submission_statuses
-    @not_started = @submissions.left_joins(evaluator_submission_assignments: :evaluation).
-      where(evaluator_submission_assignments: { id: nil }).
-      or(
-      @submissions.left_joins(evaluator_submission_assignments: :evaluation)
-        .where(evaluator_submission_assignments: { status: [:assigned, :unassigned] })
-        .where(evaluations: { id: nil })
-      ).distinct
-    @in_progress = @submissions.joins(evaluator_submission_assignments: :evaluation).
-      where(evaluations: { completed_at: nil }).distinct
-    @completed = @submissions.joins(evaluator_submission_assignments: :evaluation).
-      where.not(evaluations: { completed_at: nil }).
-      where.not(id: @in_progress.select(:id)).distinct
+    set_status_queries
     @submissions_by_status = {
       not_started: @not_started.count,
       in_progress: @in_progress.count,
       completed: @completed.count
     }
+  end
+
+  def set_status_queries
+    @not_started = not_started_submissions
+    @in_progress = in_progress_submissions
+    @completed = completed_submissions
+  end
+
+  def not_started_submissions
+    @submissions.left_joins(evaluator_submission_assignments: :evaluation).
+      where(evaluator_submission_assignments: { id: nil }).
+      or(
+        @submissions.left_joins(evaluator_submission_assignments: :evaluation).
+          where(evaluator_submission_assignments: { status: [:assigned, :unassigned] }).
+          where(evaluations: { id: nil })
+      ).distinct
+  end
+
+  def in_progress_submissions
+    @submissions.joins(evaluator_submission_assignments: :evaluation).
+      where(evaluations: { completed_at: nil }).distinct
+  end
+
+  def completed_submissions
+    @submissions.joins(evaluator_submission_assignments: :evaluation).
+      where.not(evaluations: { completed_at: nil }).
+      where.not(id: @in_progress.select(:id)).distinct
   end
 
   def paginate_submissions(submissions)
