@@ -354,7 +354,7 @@ RSpec.describe "Evaluations" do
           expect(score.comment).to be_nil
         end
 
-        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission.phase_id))
+        expect(response).to redirect_to(confirmation_evaluation_path(saved_evaluation, subaction: "save_draft"))
         expect(flash[:notice]).to eq(I18n.t('evaluations.notices.saved_draft'))
       end
 
@@ -407,7 +407,7 @@ RSpec.describe "Evaluations" do
           expect(score.score).not_to be_nil
         end
 
-        expect(response).to redirect_to(submissions_evaluation_path(saved_evaluation.submission.phase_id))
+        expect(response).to redirect_to(confirmation_evaluation_path(saved_evaluation, subaction: "mark_complete"))
         expect(flash[:notice]).to eq(I18n.t("evaluations.notices.marked_complete"))
       end
 
@@ -569,7 +569,7 @@ RSpec.describe "Evaluations" do
         expect(updated_evaluation.errors).to be_empty
         expect(updated_evaluation.completed_at).to be_nil
 
-        expect(response).to redirect_to(submissions_evaluation_path(updated_evaluation.submission.phase_id))
+        expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "save_draft"))
         expect(flash[:notice]).to include(I18n.t("evaluations.notices.saved_draft"))
       end
 
@@ -623,7 +623,7 @@ RSpec.describe "Evaluations" do
         expect(updated_evaluation.errors).to be_empty
         expect(updated_evaluation.completed_at).not_to be_nil
 
-        expect(response).to redirect_to(submissions_evaluation_path(updated_evaluation.submission.phase_id))
+        expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "mark_complete"))
         expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
       end
 
