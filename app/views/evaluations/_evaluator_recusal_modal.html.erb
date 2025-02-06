@@ -1,0 +1,41 @@
+<dialog
+  id="evaluator-recusal-modal"
+  data-evaluator-recusal-modal-target="modal"
+  aria-labelledby="evaluator-recusal-modal-heading"
+  aria-describedby="evaluator-recusal-modal-description"
+  class="radius-lg"
+>
+  <div class="usa-modal__content maxw-mobile-lg">
+    <div class="usa-modal__main">
+      <h2 class="usa-modal__heading" id="evaluator-recusal-modal-heading">
+        Are you sure you want to recuse yourself from evaluation process for this submission?
+      </h2>
+      <div class="usa-prose">
+        <p id="evaluator-recusal-modal-description" data-evaluator-recusal-modal-target="modalDescription">
+          The submission will be removed from your assigned submissions list and a challenge manager may reach out to you for additional information.
+        </p>
+      </div>
+      <div class="usa-modal__footer">
+        <ul class="usa-button-group">
+          <li class="usa-button-group__item">
+          <button
+          type="button"
+          class="usa-button"
+          data-action="click->evaluator-recusal-modal#evaluatorRecusal">
+            Yes
+          </button>
+          </li>
+          <li class="usa-button-group__item padding-top-1 text-center">
+          <a
+            href="#"
+            class="usa-link"
+            data-action="click->evaluator-recusal-modal#cancel"
+          >
+            Back
+          </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</dialog>

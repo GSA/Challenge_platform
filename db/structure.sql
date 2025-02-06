@@ -478,7 +478,7 @@ CREATE TABLE public.evaluations (
     evaluator_submission_assignment_id bigint NOT NULL,
     additional_comments text,
     revision_comments text,
-    total_score integer,
+    total_score numeric(10,2),
     completed_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -1859,6 +1859,13 @@ CREATE UNIQUE INDEX idx_on_user_id_evaluation_form_id_submission_id_f77140cf65 O
 
 
 --
+-- Name: idx_on_user_id_submission_id_08f83a00a6; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_on_user_id_submission_id_08f83a00a6 ON public.evaluator_submission_assignments USING btree (user_id, submission_id);
+
+
+--
 -- Name: index_challenge_phases_evaluators_on_challenge_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2465,6 +2472,10 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250204131151),
+(20250202220815),
+(20250120045732),
+(20250120043934),
 (20241223190634),
 (20241217164258),
 (20241125060011),

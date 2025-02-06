@@ -5,6 +5,7 @@ RSpec.describe "Evaluators", type: :request do
   let(:challenge) { create(:challenge) }
   let(:phase) { create(:phase, challenge: challenge) }
   let(:evaluator) { create(:user, role: 'evaluator') }
+  let(:solver) { create(:user, role: 'solver') }
   let(:invitation) do
     create(:evaluator_invitation, challenge: challenge, phase: phase, email: 'invitation@example.com')
   end
@@ -22,10 +23,12 @@ RSpec.describe "Evaluators", type: :request do
       invitation # create existing invitation
       associate_challenge_manager_challenge
       associate_evaluator_challenge_phase
+      associate_solver_challenge_phase
       get phase_evaluators_path(phase)
 
       expect(response.body).to include(invitation.email)
       expect(response.body).to include(evaluator.email)
+      expect(response.body).to include(solver.email)
     end
   end
 
@@ -294,5 +297,9 @@ RSpec.describe "Evaluators", type: :request do
 
   def associate_evaluator_challenge_phase
     challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
+  end
+
+  def associate_solver_challenge_phase
+    challenge.challenge_phases_evaluators.create(user: solver, phase: phase)
   end
 end

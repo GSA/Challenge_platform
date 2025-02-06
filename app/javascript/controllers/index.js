@@ -13,6 +13,9 @@ application.register("evaluation-criteria", EvaluationCriteriaController);
 import EvaluationFormController from "./evaluation_form_controller";
 application.register("evaluation-form", EvaluationFormController);
 
+import EvaluatorRecusalModalController from "./evaluator_recusal_modal_controller";
+application.register("evaluator-recusal-modal", EvaluatorRecusalModalController);
+
 import ExportSubmissionsController from "./export_submissions_controller";
 application.register("export-submissions", ExportSubmissionsController);
 

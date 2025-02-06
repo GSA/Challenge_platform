@@ -10,15 +10,10 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: "dashboard#index"
 
-  resources :evaluations, only: [:index, :show, :edit] do
+  resources :evaluations, only: %i[index edit create update] do
     member do
       get :submissions
-      patch 'save_draft'
-      patch 'mark_complete'
-    end
-    collection do
-      post 'save_draft'
-      post 'mark_complete'
+      patch 'recuse'
     end
   end
 
@@ -40,8 +35,12 @@ Rails.application.routes.draw do
     end
     resources :evaluator_submission_assignments, only: [:index, :update, :create]
   end
-  resources :submissions, only: [:index, :show, :update] do
-    resources :evaluations, only: [:new]
+
+  resources :submissions, only: [:show, :update] do
+    resources :evaluations, only: [:new] do
+      patch 'recuse', on: :collection
+    end
+    get :materials, on: :member, to: "submission_materials#show"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -56,7 +55,7 @@ Rails.application.routes.draw do
     end
   end
 
-  match '/assets/*path.:ext' => 'pages#assets', via: [:get]
-  match '/*path' => 'pages#index', via: [:get]
-  match '/' => 'pages#root', via: [:get]
+  get '/assets/*path.:ext' => 'pages#assets'
+  get '/*path' => 'pages#index'
+  get '/' => 'pages#root'
 end
