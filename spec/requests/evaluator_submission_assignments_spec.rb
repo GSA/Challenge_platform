@@ -31,18 +31,35 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
   end
 
   describe 'GET #index' do
-    it 'renders the index page successfully', bullet: :skip do
+    it 'renders the index page successfully', bullet: :dont_raise do
       get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
       expect(response).to have_http_status(:success)
-      expect(response.body).to include(evaluator.first_name)
+      expect(response.body).to have_css("h2.text-primary", text: "Evaluator: #{evaluator.first_name}")
     end
 
-    it 'displays the correct counts for assigned submissions', bullet: :skip do
-      get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
-      expect(response.body).to include('Assigned Submissions')
-      expect(response.body).to include(assigned_assignment.submission.id.to_s)
-      expect(response.body).to include(unassigned_assignment.submission.id.to_s)
+    it 'renders the index with completed evaluations', bullet: :dont_raise do
+        evaluation = create(
+          :evaluation,
+          user: evaluator,
+          evaluation_form: evaluation_form,
+          submission: assigned_assignment.submission,
+          evaluator_submission_assignment: assigned_assignment,
+          completed_at: Time.current
+        )
+
+        get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_css("td[data-label='Evaluation status'] span.usa-tag.bg-success-dark", text: "Completed")
+        expect(response.body).to have_css("a[href='/evaluations/#{evaluation.id}']", text: "View Evaluation")
     end
+
+    it 'displays the correct counts for assigned submissions', bullet: :dont_raise do
+      get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
+      expect(response.body).to have_css('h3', text: 'Assigned Submissions')
+      expect(response.body).to have_css("td[data-label='Submission ID']", text: assigned_assignment.submission.id.to_s)
+      expect(response.body).to have_css("td[data-label='Submission ID']", text: unassigned_assignment.submission.id.to_s)
+    end
+
   end
 
   describe 'PATCH #update' do
