@@ -32,13 +32,17 @@ class PhasesController < ApplicationController
   end
 
   def export_submissions
-    authorize_user('challenge_manager')
     service = ExportSubmissionsService.new(@phase, params[:options])
-    csv_data = service.export
+    export_response = service.export
 
     respond_to do |format|
+      format.json do
+        if export_response.is_a?(Hash) && export_response[:redirect_url]
+          render json: export_response, status: :see_other
+        end
+      end
       format.csv do
-        send_data(csv_data, type: 'text/csv')
+        send_data(export_response, type: 'text/csv')
       end
     end
   end

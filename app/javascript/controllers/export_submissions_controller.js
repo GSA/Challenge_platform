@@ -8,14 +8,6 @@ export default class extends Controller {
     phaseNumber: String
   }
 
-  connect() {
-    this.modalTarget.addEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
-  disconnect() {
-    this.modalTarget.removeEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
   open(event) {
     event.preventDefault();
     this.phaseIdValue = event.currentTarget.dataset.phaseId;
@@ -28,50 +20,50 @@ export default class extends Controller {
     this.modalTarget.close();
   }
 
-  handleOutsideClick = (event) => {
-    if (event.target === this.modalTarget) {
-      this.close();
-    }
-  }
-
   getSelectedOptions() {
     return Array.from(
       document.querySelectorAll('input[name="export-options"]:checked')
     ).map(checkbox => checkbox.value);
   }
 
-  createFilename(option, sanitizedTitle) {
+  createFilename(option) {
+    const title = `${this.challengeTitleValue} - Phase ${this.phaseNumberValue}`;
+    const sanitizedTitle = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '');
+    
     return `${sanitizedTitle}_${option}_${new Date().toISOString().split('T')[0]}.csv`;
   }
 
-  sanitizeTitle() {
-    const title = `${this.challengeTitleValue} - Phase ${this.phaseNumberValue}`;
-    return title.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-  }
+  async downloadFile(option) {
+    const params = new URLSearchParams({ 
+      options: option,
+      filename: this.createFilename(option)
+    });
+  
+    const response = await fetch(
+      `/phases/${this.phaseIdValue}/export_submissions?${params}`,
+      { 
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      }
+    );
+  
+    if (!response.ok && response.status !== 303) {
+      throw new Error('Export failed');
+    }
+  
+    if (option === 'attachments') {
+      return { redirect_url: response.headers.get('Location') };
+    }
 
-  async downloadCSV(blob, filename) {
-    const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
+    a.href = `/phases/${this.phaseIdValue}/export_submissions.csv?${params}`;
+    a.download = this.createFilename(option);
     document.body.appendChild(a);
     a.click();
-    window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
-  }
-
-  async fetchExportData(option) {
-    const params = new URLSearchParams({ options: option, format: 'csv' });
-    const response = await fetch(`/phases/${this.phaseIdValue}/export_submissions?${params}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'text/csv',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
-    
-    if (!response.ok) throw new Error('Export failed');
-    return response.blob();
   }
 
   async exportSubmissions(event) {
@@ -84,14 +76,16 @@ export default class extends Controller {
     }
   
     try {
-      const sanitizedTitle = this.sanitizeTitle();
-      
-      for (const option of selectedOptions) {
-        const blob = await this.fetchExportData(option);
-        const filename = this.createFilename(option, sanitizedTitle);
-        await this.downloadCSV(blob, filename);
+      const csvOptions = selectedOptions.filter(option => option !== 'attachments');
+      for (const option of csvOptions) {
+        await this.downloadFile(option);
       }
-      
+  
+      if (selectedOptions.includes('attachments')) {
+        const result = await this.downloadFile('attachments');
+        window.open(result.redirect_url, '_blank');
+      }
+  
       this.close();
     } catch (error) {
       console.error('Export failed:', error);

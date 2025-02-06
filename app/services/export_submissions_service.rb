@@ -10,11 +10,24 @@ class ExportSubmissionsService
   end
 
   def export
+    return redirect_to_phoenix_submission_attachments if @options.include?('attachments')
     return create_submissions_csv if @options.include?('submissions')
     return create_evaluations_csv if @options.include?('evaluations')
   end
 
   private
+
+  # redirect to the phoenix app submission attachment export
+  def phoenix_submission_attachments_url
+    "#{Rails.configuration.phx_interop[:phx_uri]}/challenges/#{@phase.challenge.id}/phases/#{@phase.id}"
+  end
+
+  def redirect_to_phoenix_submission_attachments
+    {
+      redirect_url: phoenix_submission_attachments_url,
+      status: :see_other
+    }
+  end
 
   def sanitize_text(text)
     ActionView::Base.full_sanitizer.sanitize(text.to_s)

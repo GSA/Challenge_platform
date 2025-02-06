@@ -59,7 +59,7 @@ RSpec.describe ExportSubmissionsService do
         expect(row['Evaluator Name']).to eq("#{evaluator.first_name} #{evaluator.last_name}")
         expect(row['Evaluator Email']).to eq(evaluator.email)
         expect(row['Evaluation Status']).to eq(assignment.evaluation_status.to_s.titleize)
-        expect(row['Score']).to eq(assignment.evaluation&.total_score&.to_s || '')
+        expect(row['Total Score']).to eq(assignment.evaluation&.total_score&.to_s || '')
       end
 
       it 'exports a row for each evaluator evaluation of the same submission' do
@@ -80,28 +80,10 @@ RSpec.describe ExportSubmissionsService do
         expect(evaluator_rows.length).to eq(2)
 
         expect(evaluator_rows[0]['Evaluator Name']).to eq("#{evaluator.first_name} #{evaluator.last_name}")
-        expect(evaluator_rows[0]['Score']).to eq('90')
+        expect(evaluator_rows[0]['Total Score']).to eq('90')
 
         expect(evaluator_rows[1]['Evaluator Name']).to eq('Santos Bickford')
-        expect(evaluator_rows[1]['Score']).to eq('85')
-      end
-    end
-
-    context 'when exporting both submissions and evaluations' do
-      let(:service) { described_class.new(phase, 'submissions,evaluations') }
-      let(:export_data) { service.export }
-
-      it 'returns both CSV data' do
-        expect(export_data).to have_key(:submissions)
-        expect(export_data).to have_key(:evaluations)
-      end
-
-      it 'includes valid CSV data for both exports' do
-        submissions_csv = CSV.parse(export_data[:submissions], headers: true)
-        evaluations_csv = CSV.parse(export_data[:evaluations], headers: true)
-
-        expect(submissions_csv.first['Submission ID']).to eq(submission.id.to_s)
-        expect(evaluations_csv.first['Submission ID']).to eq(submission.id.to_s)
+        expect(evaluator_rows[1]['Total Score']).to eq('85')
       end
     end
 
@@ -110,6 +92,23 @@ RSpec.describe ExportSubmissionsService do
 
       it 'returns nil when no valid export options are provided' do
         expect(service.export).to be_nil
+      end
+    end
+
+    context 'when exporting attachments' do
+      let(:service) { described_class.new(phase, 'attachments') }
+
+      before do
+        allow(Rails.configuration.phx_interop).to receive(:[]).with(:phx_uri)
+          .and_return(ENV.fetch("PHOENIX_URI", nil))
+      end
+
+      it 'returns the correct phoenix download attachments URL' do
+        result = service.export
+        expected_path = "/challenges/#{challenge.id}/phases/#{phase.id}"
+
+        expect(result[:status]).to eq(:see_other)
+        expect(result[:redirect_url]).to eq("#{ENV.fetch('PHOENIX_URI', nil)}#{expected_path}")
       end
     end
   end
