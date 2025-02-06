@@ -10,9 +10,14 @@ class ExportSubmissionsService
   end
 
   def export
-    return redirect_to_phoenix_submission_attachments if @options.include?('attachments')
-    return create_submissions_csv if @options.include?('submissions')
-    return create_evaluations_csv if @options.include?('evaluations')
+    export_actions = {
+      'attachments' => :redirect_to_phoenix_submission_attachments,
+      'submissions' => :create_submissions_csv,
+      'evaluations' => :create_evaluations_csv
+    }
+
+    action = export_actions[@options.first]
+    send(action) if action
   end
 
   private

@@ -6,7 +6,7 @@ RSpec.describe ExportSubmissionsService do
   let!(:submission) { create(:submission, phase: phase) }
   let!(:evaluator) { create(:user) }
   let!(:assignment) { create(:evaluator_submission_assignment, submission: submission, evaluator: evaluator) }
-  let!(:evaluation) { create(:evaluation, evaluator_submission_assignment: assignment) }
+  let!(:evaluation) { create(:evaluation, evaluator_submission_assignment: assignment, total_score: 90, completed_at: nil) }
 
   describe '#export' do
     context 'when exporting submissions' do
@@ -63,8 +63,6 @@ RSpec.describe ExportSubmissionsService do
       end
 
       it 'exports a row for each evaluator evaluation of the same submission' do
-        evaluation.update!(total_score: 90)
-
         evaluator2 = create(:user, role: 'evaluator', first_name: 'Santos', last_name: 'Bickford')
         assignment2 = create(:evaluator_submission_assignment,
           submission: submission,
@@ -73,7 +71,8 @@ RSpec.describe ExportSubmissionsService do
         )
         create(:evaluation,
           evaluator_submission_assignment: assignment2,
-          total_score: 85
+          total_score: 85,
+          completed_at: Time.current
         )
 
         evaluator_rows = parsed_csv.select { |row| row['Submission ID'] == submission.id.to_s }
