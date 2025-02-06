@@ -12,49 +12,68 @@ export default class extends Controller {
   }
 
   calculateScore(event) {
-    const input = event.target || event;
-    let scoreValue = 0;
+    const input = this.getInputValue(event);
+    const criterionElement = this.getCriterionElement();
 
-    if (input.type === "radio") {
-      const checkedRadio = this.element.querySelector(
-        'input[type="radio"]:checked'
-      );
-      scoreValue = checkedRadio ? parseFloat(checkedRadio.value) : 0;
-    } else {
-      scoreValue = parseFloat(input.value) || 0;
-    }
-
-    const criterionElement = this.element.closest("[data-criterion]");
     if (!criterionElement) return;
 
-    const points = parseFloat(criterionElement.dataset.points) || 0;
+    const points = this.getPoints(criterionElement);
+    const scoreValue = this.getScoreValue(input, criterionElement, points);
+    this.updateCalculatedScore(criterionElement, scoreValue);
+
+    this.dispatch("scoreUpdated");
+  }
+
+  getInputValue(event) {
+    const input = event.target || event;
+    if (input.type === "radio") {
+      return this.getCheckedRadioValue();
+    }
+    return parseFloat(input.value) || 0;
+  }
+
+  getCheckedRadioValue() {
+    const checkedRadio = this.element.querySelector(
+      'input[type="radio"]:checked'
+    );
+    return checkedRadio ? parseFloat(checkedRadio.value) : 0;
+  }
+
+  getCriterionElement() {
+    return this.element.closest("[data-criterion]");
+  }
+
+  getPoints(criterionElement) {
+    return parseFloat(criterionElement.dataset.points) || 0;
+  }
+
+  getScoreValue(input, criterionElement, points) {
     const scoringType = criterionElement.dataset.scoringType;
-    let calculatedScore = 0;
+    let scoreValue = input;
 
     switch (scoringType) {
       case "binary":
-        calculatedScore = scoreValue === 1 ? points : 0;
+        scoreValue = input === 1 ? points : 0;
         break;
       case "numeric":
-        calculatedScore = Math.min(scoreValue, points);
+        scoreValue = Math.min(input, points);
         break;
       case "rating":
         const bestOption =
           parseFloat(criterionElement.dataset.optionRangeEnd) || 1;
-        calculatedScore = (points / bestOption) * scoreValue;
+        scoreValue = (points / bestOption) * input;
         break;
       default:
-        calculatedScore = 0;
+        scoreValue = 0;
     }
 
-    calculatedScore = Math.round(calculatedScore * 100) / 100;
+    return Math.round(scoreValue * 100) / 100;
+  }
 
+  updateCalculatedScore(criterionElement, scoreValue) {
     const scoreSpan = criterionElement.querySelector(".calculated-score");
     if (scoreSpan) {
-      scoreSpan.textContent = calculatedScore;
+      scoreSpan.textContent = scoreValue;
     }
-
-    // Dispatch an action for evaluation controller to recalculate total score
-    this.dispatch("scoreUpdated");
   }
 }
