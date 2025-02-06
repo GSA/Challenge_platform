@@ -38,7 +38,13 @@ module EvaluationScoresHelper
     content_tag(:div, class: "display-flex flex-column") do
       # TODO: Should the lowest be 1?
       concat(score_fields.label(:score, "Enter a number between #{min} and #{max}", for: id))
-      concat(score_fields.number_field(:score, id:, name:, min:, max:, class: "usa-input width-10"))
+      concat(score_fields.number_field(
+               :score, id:, name:, min:, max:, class: "usa-input width-10",
+                       data: {
+                         'evaluation-score-target': "scoreInput",
+                         action: "input->evaluation-score#calculateScore"
+                       }
+             ))
     end
   end
 
@@ -53,8 +59,13 @@ module EvaluationScoresHelper
     name = opts[:name]
 
     content_tag(:div, class: "usa-radio") do
-      concat(score_fields.radio_button(:score, value, id: "#{id}_#{value}", name:,
-                                                      class: "usa-radio__input usa-radio__input--tile"))
+      concat(score_fields.radio_button(
+               :score, value, id: "#{id}_#{value}", name:, class: "usa-radio__input usa-radio__input--tile",
+                              data: {
+                                'evaluation-score-target': "scoreInput",
+                                action: "change->evaluation-score#calculateScore"
+                              }
+             ))
       concat(score_fields.label("score_#{value}", label, for: "#{id}_#{value}", class: "usa-radio__label"))
     end
   end

@@ -17,7 +17,13 @@ import EvaluationFormController from "./evaluation_form_controller";
 application.register("evaluation-form", EvaluationFormController);
 
 import EvaluatorRecusalModalController from "./evaluator_recusal_modal_controller";
-application.register("evaluator-recusal-modal", EvaluatorRecusalModalController);
+application.register(
+  "evaluator-recusal-modal",
+  EvaluatorRecusalModalController
+);
+
+import EvaluationScoreController from "./evaluation_score_controller";
+application.register("evaluation-score", EvaluationScoreController);
 
 import FormValidationController from "./form_validation_controller";
 application.register("form-validation", FormValidationController);
