@@ -6,7 +6,7 @@ RSpec.describe ExportSubmissionsService do
   let!(:submission) { create(:submission, phase: phase) }
   let!(:evaluator) { create(:user) }
   let!(:assignment) { create(:evaluator_submission_assignment, submission: submission, evaluator: evaluator) }
-  let!(:evaluation) { create(:evaluation, evaluator_submission_assignment: assignment, total_score: 90, completed_at: nil) }
+  let!(:evaluation) { create(:evaluation, evaluator_submission_assignment: assignment) }
 
   describe '#export' do
     context 'when exporting submissions' do
@@ -59,21 +59,28 @@ RSpec.describe ExportSubmissionsService do
         expect(row['Evaluator Name']).to eq("#{evaluator.first_name} #{evaluator.last_name}")
         expect(row['Evaluator Email']).to eq(evaluator.email)
         expect(row['Evaluation Status']).to eq(assignment.evaluation_status.to_s.titleize)
-        expect(row['Total Score']).to eq(assignment.evaluation&.total_score&.to_s || '')
+        expect(row['Total Score']).to eq(assignment.evaluation&.total_score&.to_i&.to_s || '')
       end
 
       it 'exports a row for each evaluator evaluation of the same submission' do
+        evaluation_form = create(:evaluation_form)
+        create(:evaluation_criterion, evaluation_form: evaluation_form, points_or_weight: 90)
+
+        evaluation.update!(evaluation_form: evaluation_form)
+        evaluation.update_column(:total_score, 90)
+
         evaluator2 = create(:user, role: 'evaluator', first_name: 'Santos', last_name: 'Bickford')
         assignment2 = create(:evaluator_submission_assignment,
           submission: submission,
           evaluator: evaluator2,
           status: :assigned
         )
-        create(:evaluation,
+        evaluation2 = create(:evaluation,
           evaluator_submission_assignment: assignment2,
-          total_score: 85,
+          evaluation_form: evaluation_form,
           completed_at: Time.current
         )
+        evaluation2.update_column(:total_score, 85)
 
         evaluator_rows = parsed_csv.select { |row| row['Submission ID'] == submission.id.to_s }
         expect(evaluator_rows.length).to eq(2)

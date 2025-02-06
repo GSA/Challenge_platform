@@ -85,7 +85,7 @@ class ExportSubmissionsService
       "#{assignment.evaluator.first_name || ''} #{assignment.evaluator.last_name || ''}",
       assignment.evaluator.email,
       assignment.evaluation_status.to_s.titleize,
-      assignment.evaluation&.total_score || ''
+      assignment.evaluation&.total_score&.to_i&.to_s || ''
     ]
   end
 
