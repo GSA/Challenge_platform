@@ -29,6 +29,11 @@ class EvaluationsController < ApplicationController
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
+  def confirmation
+    @evaluation = Evaluation.find(params[:id])
+    @subaction = params[:subaction]
+  end
+
   def new
     fetch_evaluator_submission_assignment
 
@@ -66,7 +71,7 @@ class EvaluationsController < ApplicationController
           I18n.t("evaluations.notices.saved_draft")
         end
 
-      redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
+      redirect_to confirmation_evaluation_path(@evaluation, subaction: params[:subaction])
     else
       render :show, status: :unprocessable_entity
     end
@@ -81,7 +86,7 @@ class EvaluationsController < ApplicationController
           I18n.t("evaluations.notices.saved_draft")
         end
 
-      redirect_to submissions_evaluation_path(@evaluation.submission.phase_id)
+      redirect_to confirmation_evaluation_path(@evaluation, subaction: params[:subaction])
     else
       render :show, status: :unprocessable_entity
     end

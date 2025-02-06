@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   resources :evaluations, only: %i[index edit create update] do
     member do
+      get 'confirmation'
       get :submissions
       patch 'recuse'
     end
