@@ -85,11 +85,11 @@ RSpec.configure do |config|
     FactoryBot.reload
   end
 
-  config.before(:each, bullet: :skip) do
-    Bullet.enable = false
+  config.before(:each, bullet: :dont_raise) do
+    Bullet.raise = false
   end
 
-  config.after(:each, bullet: :skip) do
-    Bullet.enable = true
+  config.after(:each, bullet: :dont_raise) do
+    Bullet.raise = true
   end
 end
