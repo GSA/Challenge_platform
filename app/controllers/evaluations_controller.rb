@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 # TODO: Reenable rubocop after refactor/shortening controller code or moving some functionality into service
-# rubocop:disable Metrics/ClassLength
-
 # Controller for evaluations CRUD actions.
-class EvaluationsController < ApplicationController
+class EvaluationsController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[create update]
   before_action :set_phase, only: [:submissions]
@@ -223,5 +221,3 @@ class EvaluationsController < ApplicationController
     redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
   end
 end
-# TODO: Remove this after above refactor
-# rubocop:enable Metrics/ClassLength

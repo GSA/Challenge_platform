@@ -115,8 +115,20 @@
 
     <div class="display-flex flex-justify-center">
       <%= form.button "Save Draft", class: "usa-button usa-button--outline", name: "subaction", value: "save_draft", type: "submit" %>
-      <%= form.button "Mark Complete", class: "usa-button", name: "subaction", value: "mark_complete", type: "submit" %>
+      <%= form.button "Mark Complete", class: "usa-button", name: "subaction", value: "mark_complete", type: "submit", data: {"action": "modal#open", "modal-target-id": "complete"} %>
     </div>
+
+    <%= render "modals/confirmation", 
+      id: "complete",
+      heading: "Are you sure you want to complete your evaluation?",
+      description: "Completing evaluation for this submission will make your scores final and available for challenge managers. <b>Once the evaluation is completed it no longer can be edited.</b>",
+      confirm_text: "Yes",
+      cancel_text: "Back",
+      confirm_action: "submit",
+      confirm_data: [
+        {name: "subaction", value: "mark_complete"}
+      ]
+    %>
   <% end %>
 
   <%= render 'evaluator_recusal_modal' %>

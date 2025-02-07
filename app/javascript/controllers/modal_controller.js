@@ -31,7 +31,14 @@ export default class extends Controller {
       if (confirmRedirect) {
         window.location.href = confirmRedirect;
       } else if (confirmAction) {
-        this.invokeAction(confirmAction);
+        if (confirmAction === "submit") {
+          const form = modal.closest("form");
+          if (form) {
+            form.submit();
+          }
+        } else {
+          this.invokeAction(confirmAction);
+        }
         modal.close();
       } else {
         modal.close();
