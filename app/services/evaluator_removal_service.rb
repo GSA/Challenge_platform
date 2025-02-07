@@ -25,12 +25,10 @@ class EvaluatorRemovalService
       evaluator = User.find(evaluator_id)
       cpe = ChallengePhasesEvaluator.find_by(challenge: @challenge, phase: @phase, user: evaluator)
 
-      if cpe
-        delete_evaluator_assignments(evaluator)
-        delete_challenge_phase_evaluator(cpe)
-      else
-        next evaluator_not_found_response
-      end
+      next evaluator_not_found_response unless cpe
+
+      delete_evaluator_assignments(evaluator)
+      delete_challenge_phase_evaluator(cpe)
     end
   rescue ActiveRecord::RecordNotFound
     evaluator_not_found_response
