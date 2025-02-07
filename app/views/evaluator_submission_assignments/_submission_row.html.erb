@@ -12,7 +12,7 @@
   <td data-label="">
     <div class="display-flex flex-justify-end">
       <% if assignment.evaluation_status == :completed %>
-        <%= link_to "View Evaluation", submissions_path(@challenge), class: 'usa-button font-body-3xs margin-right-1' %>
+        <%= link_to "View Evaluation", evaluation_path(assignment.evaluation), class: 'usa-button font-body-3xs margin-right-1' %>
       <% end %>
       <%= button_tag "Unassign", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
         action: "click->unassign-evaluator-submission-modal#open",
