@@ -170,10 +170,6 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
     @evaluator_submission_assignment&.update(status: :recused)
   end
 
-  def destroy_recused_evaluation
-    @evaluator_submission_assignment.evaluation&.destroy!
-  end
-
   # Redirect Helpers
   def unauthorized_redirect
     redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.unauthorized")
@@ -206,7 +202,7 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
 
   def process_recusal
     if recuse_evaluator
-      destroy_recused_evaluation
+      @evaluator_submission_assignment.evaluation&.destroy!
       flash[:notice] = I18n.t("evaluations.recusal.success")
       redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
     else
