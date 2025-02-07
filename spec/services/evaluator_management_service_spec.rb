@@ -116,12 +116,124 @@ RSpec.describe EvaluatorManagementService do
     context 'when removing a user evaluator' do
       let(:evaluator) { create(:user, role: 'evaluator') }
       let!(:cpe) { create(:challenge_phases_evaluator, challenge: challenge, phase: phase, user: evaluator) }
+      let!(:submission1) { create(:submission, challenge: challenge, phase: phase) }
+      let!(:submission2) { create(:submission, challenge: challenge, phase: phase) }
+      let!(:submission_other_phase) { create(:submission, challenge: challenge, phase: create(:phase, challenge: challenge)) }
 
-      it 'removes the evaluator successfully' do
-        result = service.remove_evaluator('user', evaluator.id)
-        expect(result[:success]).to be true
-        expect(result[:message]).to include('Evaluator successfully removed')
-        expect(ChallengePhasesEvaluator.find_by(id: cpe.id)).to be_nil
+      context 'with multiple assignments and evaluations' do
+        let!(:assignment1) do
+          create(:evaluator_submission_assignment,
+                submission: submission1,
+                evaluator: evaluator,
+                status: :assigned)
+        end
+
+        let!(:assignment2) do
+          create(:evaluator_submission_assignment,
+                submission: submission2,
+                evaluator: evaluator,
+                status: :recused)
+        end
+
+        let!(:assignment_other_phase) do
+          create(:evaluator_submission_assignment,
+                submission: submission_other_phase,
+                evaluator: evaluator,
+                status: :assigned)
+        end
+
+        let!(:evaluation1) do
+          create(:evaluation,
+                evaluator_submission_assignment: assignment1,
+                submission: submission1,
+                user: evaluator)
+        end
+
+        let!(:evaluation2) do
+          create(:evaluation,
+                evaluator_submission_assignment: assignment2,
+                submission: submission2,
+                user: evaluator)
+        end
+
+        it 'removes only assignments and evaluations for the specified phase' do
+          expect {
+            result = service.remove_evaluator('user', evaluator.id)
+            expect(result[:success]).to be true
+          }.to change { ChallengePhasesEvaluator.count }.by(-1)
+            .and change { EvaluatorSubmissionAssignment.count }.by(-2)
+            .and change { Evaluation.count }.by(-2)
+
+          expect(ChallengePhasesEvaluator.find_by(id: cpe.id)).to be_nil
+          expect(EvaluatorSubmissionAssignment.find_by(id: assignment1.id)).to be_nil
+          expect(EvaluatorSubmissionAssignment.find_by(id: assignment2.id)).to be_nil
+          expect(Evaluation.find_by(id: evaluation1.id)).to be_nil
+          expect(Evaluation.find_by(id: evaluation2.id)).to be_nil
+
+          expect(EvaluatorSubmissionAssignment.find_by(id: assignment_other_phase.id)).to be_present
+        end
+      end
+
+      context 'with assignments but no evaluations' do
+        let!(:assignment_no_eval) do
+          create(:evaluator_submission_assignment,
+                submission: submission1,
+                evaluator: evaluator,
+                status: :assigned)
+        end
+
+        it 'removes assignments without evaluations' do
+          expect {
+            result = service.remove_evaluator('user', evaluator.id)
+            expect(result[:success]).to be true
+          }.to change { ChallengePhasesEvaluator.count }.by(-1)
+            .and change { EvaluatorSubmissionAssignment.count }.by(-1)
+            .and change { Evaluation.count }.by(0)
+
+          expect(ChallengePhasesEvaluator.find_by(id: cpe.id)).to be_nil
+          expect(EvaluatorSubmissionAssignment.find_by(id: assignment_no_eval.id)).to be_nil
+        end
+      end
+
+      context 'when evaluator has no assignments' do
+        it 'only removes the challenge phase evaluator record' do
+          expect {
+            result = service.remove_evaluator('user', evaluator.id)
+            expect(result[:success]).to be true
+          }.to change { ChallengePhasesEvaluator.count }.by(-1)
+            .and change { EvaluatorSubmissionAssignment.count }.by(0)
+            .and change { Evaluation.count }.by(0)
+
+          expect(ChallengePhasesEvaluator.find_by(id: cpe.id)).to be_nil
+        end
+      end
+
+      context 'with successful removal' do
+        it 'returns success message' do
+          result = service.remove_evaluator('user', evaluator.id)
+          expect(result[:success]).to be true
+          expect(result[:message]).to eq(I18n.t('evaluators.remove_user_evaluator.success'))
+        end
+      end
+
+      context 'when evaluator is not found' do
+        it 'returns not found message' do
+          result = service.remove_evaluator('user', -1)
+          expect(result[:success]).to be false
+          expect(result[:message]).to eq(I18n.t('evaluators.remove_user_evaluator.evaluator_not_found'))
+        end
+      end
+
+      context 'when cpe deletion fails' do
+        before do
+          allow_any_instance_of(ChallengePhasesEvaluator).to receive(:destroy).and_return(false)
+        end
+
+        it 'returns failure message' do
+          result = service.remove_evaluator('user', evaluator.id)
+          expect(result[:success]).to be false
+          expect(result[:message]).to eq(I18n.t('evaluators.remove_user_evaluator.failure'))
+        end
       end
     end
 
@@ -133,6 +245,34 @@ RSpec.describe EvaluatorManagementService do
         expect(result[:success]).to be true
         expect(result[:message]).to include('Evaluator invitation successfully removed')
         expect(EvaluatorInvitation.find_by(id: invitation.id)).to be_nil
+      end
+
+      context 'with successful removal' do
+        it 'returns success message' do
+          result = service.remove_evaluator('invitation', invitation.id)
+          expect(result[:success]).to be true
+          expect(result[:message]).to eq(I18n.t('evaluators.remove_evaluator_invitation.success'))
+        end
+      end
+
+      context 'when invitation is not found' do
+        it 'returns not found message' do
+          result = service.remove_evaluator('invitation', -1)
+          expect(result[:success]).to be false
+          expect(result[:message]).to eq(I18n.t('evaluators.remove_evaluator_invitation.invitation_not_found'))
+        end
+      end
+
+      context 'when invitation deletion fails' do
+        before do
+          allow_any_instance_of(EvaluatorInvitation).to receive(:destroy).and_return(false)
+        end
+
+        it 'returns failure message' do
+          result = service.remove_evaluator('invitation', invitation.id)
+          expect(result[:success]).to be false
+          expect(result[:message]).to eq(I18n.t('evaluators.remove_evaluator_invitation.failure'))
+        end
       end
     end
 

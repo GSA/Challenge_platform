@@ -101,15 +101,17 @@ class EvaluatorManagementService
   end
 
   def remove_user_evaluator(evaluator_id)
-    evaluator = User.find(evaluator_id)
-    cpe = ChallengePhasesEvaluator.find_by(challenge: @challenge, phase: @phase, user: evaluator)
-    if cpe.destroy
-      { success: true, message: I18n.t('evaluators.remove_user_evaluator.success') }
-    else
-      { success: false, message: I18n.t('evaluators.remove_user_evaluator.failure') }
+    ActiveRecord::Base.transaction do
+      evaluator = User.find(evaluator_id)
+      cpe = ChallengePhasesEvaluator.find_by(challenge: @challenge, phase: @phase, user: evaluator)
+
+      return evaluator_not_found_response unless cpe
+
+      delete_evaluator_assignments(evaluator)
+      delete_challenge_phase_evaluator(cpe)
     end
   rescue ActiveRecord::RecordNotFound
-    { success: false, message: I18n.t('evaluators.remove_user_evaluator.evaluator_not_found') }
+    evaluator_not_found_response
   rescue StandardError => e
     { success: false, message: "Error: #{e.message}" }
   end
@@ -125,5 +127,25 @@ class EvaluatorManagementService
     { success: false, message: I18n.t('evaluators.remove_evaluator_invitation.invitation_not_found') }
   rescue StandardError => e
     { success: false, message: "Error: #{e.message}" }
+  end
+
+  # deletes each evaluator submission assignment and its associated evaluation
+  def delete_evaluator_assignments(evaluator)
+    EvaluatorSubmissionAssignment.where(
+      user_id: evaluator.id,
+      submission_id: @phase.submissions.select(:id)
+    ).destroy_all
+  end
+
+  def delete_challenge_phase_evaluator(cpe)
+    if cpe.destroy
+      { success: true, message: I18n.t('evaluators.remove_user_evaluator.success') }
+    else
+      { success: false, message: I18n.t('evaluators.remove_user_evaluator.failure') }
+    end
+  end
+
+  def evaluator_not_found_response
+    { success: false, message: I18n.t('evaluators.remove_user_evaluator.evaluator_not_found') }
   end
 end
