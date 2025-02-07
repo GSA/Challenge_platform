@@ -23,27 +23,29 @@ export default class extends Controller {
 
   confirm(event) {
     const modal = this._getModal(event);
+    if (!modal) return;
 
-    if (modal) {
-      const confirmRedirect = modal.dataset.modalConfirmRedirect;
-      const confirmAction = modal.dataset.modalConfirmAction;
+    const { modalConfirmRedirect: redirect, modalConfirmAction: action } =
+      modal.dataset;
 
-      if (confirmRedirect) {
-        window.location.href = confirmRedirect;
-      } else if (confirmAction) {
-        if (confirmAction === "submit") {
-          const form = modal.closest("form");
-          if (form) {
-            form.submit();
-          }
-        } else {
-          this.invokeAction(confirmAction);
-        }
-        modal.close();
-      } else {
-        modal.close();
-        return true;
-      }
+    if (redirect) {
+      this._redirect(redirect);
+    } else if (action) {
+      this._handleAction(action, modal);
+    }
+
+    modal.close();
+  }
+
+  _redirect(url) {
+    window.location.href = url;
+  }
+
+  _handleAction(action, modal) {
+    if (action === "submit") {
+      modal.closest("form")?.submit();
+    } else {
+      this.invokeAction(action);
     }
   }
 
