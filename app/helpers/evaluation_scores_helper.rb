@@ -14,23 +14,23 @@ module EvaluationScoresHelper
     "#{prefix}[#{identifier}][#{attribute}]"
   end
 
-  def evaluation_score_input(score_fields, criterion, identifier)
+  def evaluation_score_input(score_fields, criterion, identifier, disabled)
     field_id = evaluation_score_id(score_fields, :score, identifier)
     field_name = evaluation_score_name(score_fields, :score, identifier)
 
     case criterion.scoring_type
     when 'numeric'
-      score_numeric_input(score_fields, field_id, field_name)
+      score_numeric_input(score_fields, field_id, field_name, disabled)
     else # rating or binary
       content_tag(:div, class: "usa-fieldset") do
         score_options(criterion).each do |value, label|
-          concat(score_radio_input(score_fields, value, label, id: field_id, name: field_name))
+          concat(score_radio_input(score_fields, value, label, id: field_id, name: field_name, disabled:))
         end
       end
     end
   end
 
-  def score_numeric_input(score_fields, id, name)
+  def score_numeric_input(score_fields, id, name, disabled)
     criterion = score_fields.object.evaluation_criterion
     min = 0
     max = criterion.points_or_weight
@@ -43,7 +43,7 @@ module EvaluationScoresHelper
                        data: {
                          'evaluation-score-target': "scoreInput",
                          action: "input->evaluation-score#calculateScore"
-                       }
+                       }, disabled:
              ))
     end
   end
@@ -57,6 +57,7 @@ module EvaluationScoresHelper
   def score_radio_input(score_fields, value, label, opts = {})
     id = opts[:id]
     name = opts[:name]
+    disabled = opts[:disabled]
 
     content_tag(:div, class: "usa-radio") do
       concat(score_fields.radio_button(
@@ -64,7 +65,8 @@ module EvaluationScoresHelper
                               data: {
                                 'evaluation-score-target': "scoreInput",
                                 action: "change->evaluation-score#calculateScore"
-                              }
+                              },
+                              disabled:
              ))
       concat(score_fields.label("score_#{value}", label, for: "#{id}_#{value}", class: "usa-radio__label"))
     end

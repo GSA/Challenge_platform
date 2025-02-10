@@ -185,19 +185,24 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
       end
     end
 
-    params.require(:evaluation).permit(
-      :user_id,
-      :evaluator_submission_assignment_id,
-      :submission_id,
-      :evaluation_form_id,
-      :additional_comments,
-      :revision_comments,
-      evaluation_scores_attributes: %i[
-        id evaluation_criterion_id
-        score score_override
-        comment comment_override
-      ]
-    )
+    if @evaluation&.completed_at.present?
+      params.require(:evaluation).permit(
+        :revision_comments,
+        evaluation_scores_attributes: %i[id score_override comment_override]
+      )
+    else
+      params.require(:evaluation).permit(:user_id,
+                                         :evaluator_submission_assignment_id,
+                                         :submission_id,
+                                         :evaluation_form_id,
+                                         :additional_comments,
+                                         :revision_comments,
+                                         evaluation_scores_attributes: %i[
+                                           id evaluation_criterion_id
+                                           score score_override
+                                           comment comment_override
+                                         ])
+    end
   end
 
   def process_recusal
