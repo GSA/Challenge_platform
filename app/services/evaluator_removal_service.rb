@@ -22,12 +22,8 @@ class EvaluatorRemovalService
 
   def remove_user_evaluator(evaluator_id)
     ActiveRecord::Base.transaction do
-      evaluator = User.find(evaluator_id)
-      cpe = ChallengePhasesEvaluator.find_by(challenge: @challenge, phase: @phase, user: evaluator)
-
-      next evaluator_not_found_response unless cpe
-
-      delete_evaluator_assignments(evaluator)
+      cpe = find_challenge_phase_evaluator(evaluator_id)
+      delete_evaluator_assignments(cpe.user)
       delete_challenge_phase_evaluator(cpe)
     end
   rescue ActiveRecord::RecordNotFound
@@ -67,5 +63,14 @@ class EvaluatorRemovalService
 
   def evaluator_not_found_response
     { success: false, message: I18n.t('evaluators.remove_user_evaluator.evaluator_not_found') }
+  end
+
+  def find_challenge_phase_evaluator(evaluator_id)
+    evaluator = User.find(evaluator_id)
+    ChallengePhasesEvaluator.find_by(
+      challenge: @challenge,
+      phase: @phase,
+      user: evaluator
+    )
   end
 end
