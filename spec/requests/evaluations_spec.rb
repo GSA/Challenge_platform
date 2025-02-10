@@ -513,7 +513,7 @@ RSpec.describe "Evaluations" do
         expect(score_criteria_ids).to match_array(criteria_ids)
       end
 
-      it "redirects me if I try to view an evaluation I did not create", bullet: :skip do
+      it "redirects me if I try to view an evaluation I did not create", bullet: :dont_raise do
         user = create(:user, :evaluator)
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
@@ -539,7 +539,7 @@ RSpec.describe "Evaluations" do
       before { log_in_user(current_user) }
 
       it "allows me to save a draft of my existing evaluation to skip validations and not set completed_at",
-         bullet: :skip do
+         bullet: :dont_raise do
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
@@ -573,7 +573,7 @@ RSpec.describe "Evaluations" do
         expect(flash[:notice]).to include(I18n.t("evaluations.notices.saved_draft"))
       end
 
-      it "does not allow me to save a draft of an evaluation I did not create", bullet: :skip do
+      it "does not allow me to save a draft of an evaluation I did not create", bullet: :dont_raise do
         user = create(:user, :evaluator)
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
@@ -601,7 +601,7 @@ RSpec.describe "Evaluations" do
 
       before { log_in_user(current_user) }
 
-      it "allows me to mark my existing evaluation as complete", bullet: :skip do
+      it "allows me to mark my existing evaluation as complete", bullet: :dont_raise do
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
@@ -627,7 +627,7 @@ RSpec.describe "Evaluations" do
         expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
       end
 
-      it "does not allow me to mark my existing evaluation as complete if it fails validations", bullet: :skip do
+      it "does not allow me to mark my existing evaluation as complete if it fails validations", bullet: :dont_raise do
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
@@ -657,7 +657,7 @@ RSpec.describe "Evaluations" do
         expect(assigns(:evaluation).errors).not_to be_empty
       end
 
-      it "does not allow me to mark an evaluation I did not create as complete", bullet: :skip do
+      it "does not allow me to mark an evaluation I did not create as complete", bullet: :dont_raise do
         user = create(:user, :evaluator)
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
         evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
