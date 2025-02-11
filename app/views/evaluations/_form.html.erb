@@ -65,7 +65,7 @@
             <div class="usa-form-group">
               <%= evaluation_score_input(score_fields, criterion, rand, disabled) %>
 
-              <%= inline_error(score_fields, :score) %>
+              <%= inline_error(score_fields, :score, rand) %>
             </div>
 
             <div class="usa-form-group">
@@ -86,7 +86,7 @@
                 <span class="usa-character-count__message"></span>
               </div>
 
-              <%= inline_error(score_fields, :comment) %>
+              <%= inline_error(score_fields, :comment, rand) %>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
             data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
             disabled: %>
 
-          <%= inline_error(form, :additional_comments) %>
+          <%= inline_error(form, :additional_comments, rand) %>
         </div>
       </div>
     </div>

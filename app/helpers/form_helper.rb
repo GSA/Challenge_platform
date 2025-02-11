@@ -12,10 +12,25 @@ module FormHelper
     Array(fields).any? { |field| object.errors[field].present? } ? "border-secondary" : ""
   end
 
-  def inline_error(form, field)
+  def inline_error(form, field, identifier = nil)
     object = form.object
-    field_id = (form.object_name + "_#{field}_error").gsub(/[\[\]]/, "_").squeeze('_')
-    error = object.errors[field].present? ? object.errors[field].join(", ") : ""
+    object_name = form.object_name
+
+    # Required for hotdog layout. Append or replace part of field name with random identifier
+    if identifier.present?
+      if form.options[:child_index].present?
+        object_name = object_name.sub(/\[\d+\]$/, "[#{identifier}]")
+      else
+        object_name += "[#{identifier}]"
+      end
+    end
+
+    Rails.logger.debug(object_name)
+
+    object_name += "_#{field}"
+
+    field_id = "#{object_name.gsub(/[\[\]]/, '_').squeeze('_')}_error"
+    error = object.errors[field].presence&.join(", ") || ""
 
     tag.span(error, class: "text-secondary font-body-2xs", id: field_id)
   end
