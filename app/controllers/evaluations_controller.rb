@@ -172,11 +172,7 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
   end
 
   def evaluation_params
-    # Normalize random hex keys to integer indexes rails understands for nested_attributes
-    if params.dig(:evaluation, :evaluation_scores_attributes).present?
-      params[:evaluation][:evaluation_scores_attributes] = params[:evaluation][:evaluation_scores_attributes].
-        transform_keys.with_index { |_key, index| index.to_s }
-    end
+    normalize_evaluation_scores_keys!
 
     permitted_attributes = if @evaluation&.completed_at.present?
                              %i[revision_comments] + [{ evaluation_scores_attributes: %i[id score_override
@@ -189,6 +185,14 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
                            end
 
     params.require(:evaluation).permit(*permitted_attributes)
+  end
+
+  # Normalize random hex keys to integer indexes rails understands for nested_attributes
+  def normalize_evaluation_scores_keys!
+    return if params.dig(:evaluation, :evaluation_scores_attributes).blank?
+
+    params[:evaluation][:evaluation_scores_attributes] =
+      params[:evaluation][:evaluation_scores_attributes].transform_keys.with_index { |_key, index| index.to_s }
   end
 
   def process_recusal
