@@ -13,25 +13,27 @@ module FormHelper
   end
 
   def inline_error(form, field, identifier = nil)
-    object = form.object
-    object_name = form.object_name
-
-    # Required for hotdog layout. Append or replace part of field name with random identifier
-    if identifier.present?
-      if form.options[:child_index].present?
-        object_name = object_name.sub(/\[\d+\]$/, "[#{identifier}]")
-      else
-        object_name += "[#{identifier}]"
-      end
-    end
-
-    Rails.logger.debug(object_name)
-
-    object_name += "_#{field}"
-
-    field_id = "#{object_name.gsub(/[\[\]]/, '_').squeeze('_')}_error"
-    error = object.errors[field].presence&.join(", ") || ""
+    object_name = formatted_object_name(form, identifier)
+    field_id = "#{normalize_field_name(object_name, field)}_error"
+    error = form.object.errors[field].presence&.join(", ") || ""
 
     tag.span(error, class: "text-secondary font-body-2xs", id: field_id)
+  end
+
+  private
+
+  def formatted_object_name(form, identifier)
+    object_name = form.object_name
+    return object_name if identifier.blank?
+
+    if form.options[:child_index].present?
+      object_name.sub(/\[\d+\]$/, "[#{identifier}]")
+    else
+      "#{object_name}[#{identifier}]"
+    end
+  end
+
+  def normalize_field_name(object_name, field)
+    "#{object_name}_#{field}".gsub(/[\[\]]/, "_").squeeze("_")
   end
 end
