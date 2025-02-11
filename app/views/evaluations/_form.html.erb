@@ -120,7 +120,7 @@
     <% if !disabled %>
       <div class="display-flex flex-justify-center">
         <%= form.button "Save Draft", class: "usa-button usa-button--outline", name: "subaction", value: "save_draft", type: "submit" %>
-        <%= form.button "Mark Complete", class: "usa-button", name: "subaction", value: "mark_complete", type: "submit", data: {"action": "modal#open", "modal-target-id": "complete"} %>
+        <%= form.button "Mark Complete", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "complete"} %>
       </div>
 
       <%= render "modals/confirmation", 

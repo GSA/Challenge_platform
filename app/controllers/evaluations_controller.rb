@@ -39,8 +39,6 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
       return redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.evaluator_submission_assignment_not_found")
     end
 
-    @submission = @evaluator_submission_assignment.submission
-
     @evaluation_form = EvaluationForm.find_by(phase: @evaluator_submission_assignment.phase)
 
     if @evaluation_form.nil?
@@ -121,8 +119,6 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
     @evaluation.assign_attributes(evaluation_params)
     fetch_evaluator_submission_assignment
 
-    @submission = @evaluation.submission
-
     unauthorized_redirect unless can_access_evaluation?
   end
 
@@ -176,33 +172,23 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
   end
 
   def evaluation_params
-    evaluation_scores = params[:evaluation][:evaluation_scores_attributes]
-
     # Normalize random hex keys to integer indexes rails understands for nested_attributes
-    if evaluation_scores.present?
-      params[:evaluation][:evaluation_scores_attributes] = evaluation_scores.transform_keys.with_index do |_key, index|
-        index.to_s
-      end
+    if params.dig(:evaluation, :evaluation_scores_attributes).present?
+      params[:evaluation][:evaluation_scores_attributes] = params[:evaluation][:evaluation_scores_attributes].
+        transform_keys.with_index { |_key, index| index.to_s }
     end
 
-    if @evaluation&.completed_at.present?
-      params.require(:evaluation).permit(
-        :revision_comments,
-        evaluation_scores_attributes: %i[id score_override comment_override]
-      )
-    else
-      params.require(:evaluation).permit(:user_id,
-                                         :evaluator_submission_assignment_id,
-                                         :submission_id,
-                                         :evaluation_form_id,
-                                         :additional_comments,
-                                         :revision_comments,
-                                         evaluation_scores_attributes: %i[
-                                           id evaluation_criterion_id
-                                           score score_override
-                                           comment comment_override
-                                         ])
-    end
+    permitted_attributes = if @evaluation&.completed_at.present?
+                             %i[revision_comments] + [{ evaluation_scores_attributes: %i[id score_override
+                                                                                         comment_override] }]
+                           else
+                             %i[user_id evaluator_submission_assignment_id submission_id evaluation_form_id
+                                additional_comments revision_comments] +
+                               [{ evaluation_scores_attributes: %i[id evaluation_criterion_id score score_override
+                                                                   comment comment_override] }]
+                           end
+
+    params.require(:evaluation).permit(*permitted_attributes)
   end
 
   def process_recusal

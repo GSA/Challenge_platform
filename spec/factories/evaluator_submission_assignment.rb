@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :evaluator_submission_assignment do
     # Associations
-    association :evaluator, factory: :user
+    association :evaluator, factory: [:user, :evaluator]
     association :submission
 
     status { %w[assigned unassigned recused].sample }

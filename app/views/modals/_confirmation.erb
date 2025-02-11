@@ -11,7 +11,7 @@
 >
   <% if defined?(confirm_data) && confirm_data.present? %>
     <% confirm_data.each do |data| %>
-      <input type="hidden" name="<%= data[:name] %>" value="<%= data[:value] %>">
+      <input type="hidden" name="<%= data[:name] %>" value="<%= data[:value] %>" data-modal-target="confirmDataInput" disabled>
     <% end %>
   <% end %>
 

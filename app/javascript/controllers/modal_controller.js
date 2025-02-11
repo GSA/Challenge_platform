@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["modal"];
+  static targets = ["modal", "confirmDataInput"];
   static values = {
     modalId: String,
   };
@@ -43,6 +43,9 @@ export default class extends Controller {
 
   _handleAction(action, modal) {
     if (action === "submit") {
+      this.confirmDataInputTargets.forEach((input) => {
+        input.removeAttribute("disabled");
+      });
       modal.closest("form")?.submit();
     } else {
       this.invokeAction(action);
