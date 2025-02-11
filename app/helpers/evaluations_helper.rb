@@ -56,6 +56,7 @@ module EvaluationsHelper
     evaluator.evaluator_submission_assignments.
       joins(:submission).
       where(submissions: { challenge:, phase: }).
+      where("submissions.deleted_at" => nil).
       where(status: [:assigned, :recused]).
       count
   end
@@ -66,6 +67,7 @@ module EvaluationsHelper
     evaluator.evaluator_submission_assignments.
       joins(:submission).
       where(submissions: { challenge:, phase: }).
+      where("submissions.deleted_at" => nil).
       where(status: [:assigned, :recused]).
       left_joins(:evaluation).
       where('evaluations.completed_at IS NULL OR evaluations.id IS NULL').
