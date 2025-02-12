@@ -30,13 +30,101 @@ RSpec.describe 'Evaluation', :js, type: :system do
   it 'saves the form as a draft' do
     visit new_submission_evaluation_path(submission)
 
-    click_button 'Save Draft'
+    save_evaluation_draft
+
     expect(page).to have_content('Evaluation saved as draft')
   end
 
   it 'validates presence of required fields' do
     visit new_submission_evaluation_path(submission)
 
+    complete_evaluation
+
+    expect(page).to have_content("prohibited this evaluation from being saved")
+  end
+
+  it 'allows entering scores for evaluation criteria' do
+    skip "Add calculated and total score display tests"
+    visit new_submission_evaluation_path(submission)
+
+    fill_in_all_scores
+
+    # TODO: Fix this when updating test
+    total_score = 0
+    expect(page).to have_content(total_score)
+  end
+
+  it 'submits the form and marks the evaluation as complete' do
+    visit new_submission_evaluation_path(submission)
+
+    fill_in_all_scores
+    complete_evaluation
+
+    expect(page).to have_content('Evaluation Complete')
+  end
+
+  def fill_in_all_scores
+    all('[data-controller="evaluation-score"]').each do |evaluation_score|
+      select_score(evaluation_score)
+      comment = Faker::Lorem.sentence(word_count: 3)
+      fill_in_comment(evaluation_score, comment)
+    end
+  end
+
+  def select_score(evaluation_score)
+    scoring_type = evaluation_score[:'data-scoring-type']
+    max_points = evaluation_score[:'data-points'].to_i
+    option_range_start = evaluation_score[:'data-option-range-start']
+    option_range_end = evaluation_score[:'data-option-range-end']
+
+    case scoring_type
+    when "numeric"
+      value = rand(0..max_points)
+      fill_in_numeric_input(evaluation_score, value)
+    when "binary"
+      options = [0, 1]
+      value = options.sample
+      select_binary_option(evaluation_score, value)
+    when "rating"
+      options = (option_range_start.to_i..option_range_end.to_i).to_a
+      value = options.sample
+      select_rating_option(evaluation_score, value)
+    end
+  end
+
+  def fill_in_numeric_input(evaluation_score, value)
+    input = evaluation_score.find('input[type="number"]', visible: :all)
+
+    input.fill_in with: value
+  end
+
+  def select_binary_option(evaluation_score, value)
+    inputs = evaluation_score.all('input[type="radio"]', visible: :all)
+    selected_input = inputs.find { |input| input[:value] == value.to_s }
+    label = evaluation_score.find("label[for='#{selected_input[:id]}']", visible: :all)
+
+    label.click
+  end
+
+  def select_rating_option(evaluation_score, value)
+    inputs = evaluation_score.all('input[type="radio"]', visible: :all)
+    selected_input = inputs.find { |input| input[:value] == value.to_s }
+    label = evaluation_score.find("label[for='#{selected_input[:id]}']", visible: :all)
+
+    label.click
+  end
+
+  def fill_in_comment(evaluation_score, value)
+    textarea = evaluation_score.find('textarea', visible: :all)
+
+    textarea.fill_in with: value
+  end
+
+  def save_evaluation_draft
+    click_button 'Save Draft'
+  end
+
+  def complete_evaluation
     click_button 'Mark Complete'
 
     assert_selector 'dialog#complete', visible: true
@@ -44,37 +132,5 @@ RSpec.describe 'Evaluation', :js, type: :system do
     within 'dialog#complete' do
       click_link_or_button 'Yes'
     end
-
-    expect(page).to have_content("prohibited this evaluation from being saved")
-  end
-
-  it 'allows entering scores for evaluation criteria' do
-    pending "Fix filling in other criteria types and helper function. Check calced scores"
-
-    # evaluation_form.evaluation_criteria.each do |criterion|
-    #   within("[data-criterion][data-scoring-type='#{criterion.scoring_type}']") do
-    #     if criterion.scoring_type == 'numeric'
-    #       fill_in 'evaluation_score[score]', with: criterion.points_or_weight
-    #     end
-    #   end
-    # end
-    # TODO: Fix this when updating test
-    total_score = 0
-    expect(page).to have_content(total_score)
-  end
-
-  it 'submits the form and marks the evaluation as complete' do
-    pending "Use criteria filling function to fill all criteria"
-    # evaluation_form.evaluation_criteria.each do |criterion|
-    #   within("[data-criterion][data-scoring-type='#{criterion.scoring_type}']") do
-    #     if criterion.scoring_type == 'numeric'
-    #       fill_in 'evaluation_score[score]', with: criterion.points_or_weight
-    #     end
-    #   end
-    # end
-
-    # click_button 'Mark Complete'
-    # click_button 'Yes'
-    expect(page).to have_content('Evaluation completed successfully')
   end
 end

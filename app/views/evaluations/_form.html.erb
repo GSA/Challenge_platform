@@ -40,6 +40,7 @@
            data-criterion
            data-points="<%= criterion.points_or_weight %>"
            data-scoring-type="<%= criterion.scoring_type %>"
+           data-option-range-start="<%= criterion.option_range_start %>"
            data-option-range-end="<%= criterion.option_range_end %>">
 
         <div class="usa-accordion usa-accordion__multiselectable margin-bottom-4" data-allow-multiple>
@@ -109,7 +110,6 @@
             maxlength: 3000,
             rows: "7",
             class: "usa-textarea #{input_error_class(form, :additional_comments)}",
-            data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
             disabled: %>
 
           <%= inline_error(form, :additional_comments, rand) %>
