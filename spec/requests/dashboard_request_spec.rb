@@ -54,6 +54,7 @@ RSpec.describe "DashboardController" do
       end
 
       it_behaves_like "a page with utility menu links for all users"
+      it_behaves_like "a page with utility menu links for an evaluator"
       it_behaves_like "a page with dashboard content for an evaluator"
     end
   end
