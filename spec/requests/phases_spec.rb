@@ -30,18 +30,20 @@ RSpec.describe "Phases" do
       let(:challenge_user) { create_user(role: "challenge_manager") }
 
       before { log_in_user(challenge_user) }
+      before { get "/phases" }
+
+      it_behaves_like "a page with footer content"
+      it_behaves_like "a page with header content"
+      it_behaves_like "a page with utility menu links for all users"
+      it_behaves_like "a page with utility menu links for a challenge manager"
 
       it "renders the index view with the correct header" do
-        get phases_path
-
         expect(response).to have_http_status(:success)
         expect(response.body).to include("Submissions & Evaluations")
         expect(response.body).to include("View challenge submissions")
       end
 
       it "renders an empty list" do
-        get phases_path
-
         expect(response.body).to include("You currently do not have any challenges.")
       end
 

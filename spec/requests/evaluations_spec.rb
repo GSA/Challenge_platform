@@ -41,7 +41,13 @@ RSpec.describe "Evaluations" do
     context "when logged in as an evaluator" do
       before do
         create_and_log_in_user(role: "evaluator")
+        get "/evaluations"
       end
+
+      it_behaves_like "a page with footer content"
+      it_behaves_like "a page with header content"
+      it_behaves_like "a page with utility menu links for all users"
+      it_behaves_like "a page with utility menu links for an evaluator"
 
       it "renders the index view with the correct header" do
         get evaluations_path
