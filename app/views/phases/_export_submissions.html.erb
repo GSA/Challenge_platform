@@ -1,33 +1,27 @@
-<div data-controller="export-submissions">
-  <div class="grid-container padding-x-0">
-    <div class="grid-row flex-justify-end">
-      <div class="grid-col-6 display-flex flex-justify-end padding-top-105">
-        <nav aria-label="export submissions" class="tablet:usa-nav display-flex">
-          <ul class="usa-nav__primary usa-accordion">
-            <li class="radius-md">
-              <button
-                type="button"
-                class="usa-accordion__button display-flex"
-                aria-expanded="false"
-                style="background-color: white; border: none; padding: 0;"
-                data-action="click->export-submissions#open"
-                data-phase-id="<%= @phase.id %>"
-                data-challenge-title="<%= @challenge.title %>"
-                data-phase-number="<%= phase_number(@challenge, @phase) %>"
-              >
-                <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Export</span>
-                <%= image_tag "images/usa-icons/file_download.svg", 
-                    class: "usa-icon icon-down",
-                    style: "width: 18px; height: 18px; margin-top: 4px;",
-                    alt: "", 
-                    aria: { hidden: true } %>
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </div>
-  </div>
+<div data-controller="export-submissions" class="padding-top-105">
+  <nav aria-label="export submissions">
+    <ul class="usa-nav__primary usa-accordion">
+      <li class="radius-md">
+        <button
+          type="button"
+          class="usa-accordion__button display-flex"
+          aria-expanded="false"
+          style="background-color: white; border: none; padding: 0;"
+          data-action="click->export-submissions#open"
+          data-phase-id="<%= @phase.id %>"
+          data-challenge-title="<%= @challenge.title %>"
+          data-phase-number="<%= phase_number(@challenge, @phase) %>"
+        >
+          <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Export</span>
+          <%= image_tag "images/usa-icons/file_download.svg",
+              class: "usa-icon icon-down icon-primary-blue",
+              style: "width: 18px; height: 18px; margin-top: 4px;",
+              alt: "",
+              aria: { hidden: true } %>
+        </button>
+      </li>
+    </ul>
+  </nav>
 
   <dialog
     id="export-submissions-modal"

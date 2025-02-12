@@ -1,7 +1,3 @@
-<div data-controller="export-submissions-modal"
-     data-export-submissions-modal-challenge-id-value="<%= @challenge.id %>"
-     data-export-submissions-modal-phase-id-value="<%= @phase.id %>">
-
 <% if @phase.evaluation_form.nil? %>
   <%= render 'shared/alert_error', alert_heading: t('alerts.no_evaluation_form.heading'), alert_text: t('alerts.no_evaluation_form.text') %>
 <% end %>
@@ -11,12 +7,8 @@
 <% end %>
 
 <div class="display-flex flex-justify padding-right-2 tablet:padding-x-0 width-full">
-  <div>
-    <%= render partial: "phases/sort_and_filter" %>
-  </div>
-  <div>
-    <%= render partial: "phases/export_submissions" %>
-  </div>
+  <%= render partial: "phases/sort_and_filter" %>
+  <%= render partial: "phases/export_submissions" %>
 </div>
 
 <div data-controller="load-more"
