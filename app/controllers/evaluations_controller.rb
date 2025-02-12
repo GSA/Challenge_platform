@@ -5,7 +5,6 @@
 class EvaluationsController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[create update]
-  before_action :set_phase, only: [:submissions]
 
   def index
     @phases = Phase.joins(:evaluator_submission_assignments).
@@ -18,6 +17,12 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
   end
 
   def submissions
+    @phase = Phase.joins(:challenge_phases_evaluators).
+      where(challenge_phases_evaluators: { user_id: current_user.id }).
+      find(params[:id])
+
+    @challenge = @phase.challenge
+
     @assigned_submissions = @phase.evaluator_submission_assignments.
       where(evaluator: current_user).
       where(status: %i[assigned recused]).
@@ -89,11 +94,15 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
   end
 
   def recuse
-    @evaluation = Evaluation.find_by(id: params[:id], user_id: current_user.id)
-    fetch_evaluator_submission_assignment
-    return unauthorized_redirect unless can_access_evaluation?
+    @evaluator_submission_assignment =
+      current_user.evaluator_submission_assignments.where(submission_id: params[:submission_id]).first
 
-    process_recusal
+    if EvaluatorRecusalService.new(@evaluator_submission_assignment).call
+      flash[:notice] = I18n.t("evaluations.recusal.success")
+      redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
+    else
+      unauthorized_redirect
+    end
   end
 
   private
@@ -120,13 +129,6 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
     fetch_evaluator_submission_assignment
 
     unauthorized_redirect unless can_access_evaluation?
-  end
-
-  def set_phase
-    @phase = Phase.joins(:challenge_phases_evaluators).
-      where(challenge_phases_evaluators: { user_id: current_user.id }).
-      find(params[:id])
-    @challenge = @phase.challenge
   end
 
   def find_or_initialize_evaluation
@@ -162,10 +164,6 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
     end
   end
 
-  def recuse_evaluator
-    @evaluator_submission_assignment&.update(status: :recused)
-  end
-
   # Redirect Helpers
   def unauthorized_redirect
     redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.unauthorized")
@@ -193,22 +191,5 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
 
     params[:evaluation][:evaluation_scores_attributes] =
       params[:evaluation][:evaluation_scores_attributes].transform_keys.with_index { |_key, index| index.to_s }
-  end
-
-  def process_recusal
-    if recuse_evaluator
-      @evaluator_submission_assignment.evaluation&.destroy!
-      flash[:notice] = I18n.t("evaluations.recusal.success")
-      redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
-    else
-      handle_recusal_failure
-    end
-  rescue ActiveRecord::RecordInvalid
-    handle_recusal_failure
-  end
-
-  def handle_recusal_failure
-    flash[:alert] = I18n.t("evaluations.recusal.failure")
-    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
   end
 end
