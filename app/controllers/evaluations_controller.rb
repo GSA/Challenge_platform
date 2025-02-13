@@ -143,8 +143,7 @@ class EvaluationsController < ApplicationController
   end
 
   def can_access_evaluation?
-    evaluator_access = @evaluator_submission_assignment && @evaluator_submission_assignment.user_id == current_user.id
-    evaluator_access || challenge_manager_access
+    @evaluator_submission_assignment && @evaluator_submission_assignment.user_id == current_user.id
   end
 
   def build_evaluation
