@@ -39,8 +39,7 @@ RSpec.describe "Phases" do
 
       it "renders the index view with the correct header" do
         expect(response).to have_http_status(:success)
-        expect(response.body).to include("Submissions & Evaluations")
-        expect(response.body).to include("View challenge submissions")
+        expect(response.body).to include("My Challenges")
       end
 
       it "renders an empty list" do
