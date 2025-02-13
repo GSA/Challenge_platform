@@ -27,6 +27,22 @@ class PhasesController < ApplicationController
     render_response
   end
 
+  def export_submissions
+    service = ExportSubmissionsService.new(@phase, params[:options])
+    export_response = service.export
+
+    respond_to do |format|
+      format.json do
+        if export_response.is_a?(Hash) && export_response[:redirect_url]
+          render json: export_response, status: :see_other
+        end
+      end
+      format.csv do
+        send_data(export_response, type: 'text/csv')
+      end
+    end
+  end
+
   private
 
   def set_phase
