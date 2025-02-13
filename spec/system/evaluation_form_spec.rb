@@ -127,6 +127,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_criterion_points_weight(1, 10)
 
       save_form
+      expect_form_scale_type_to_equal("weight")
       expect(page).to have_content(I18n.t("evaluation_form.errors.criteria_weight_total"))
 
       # Fix weights to add up to 100 and form should submit
@@ -263,15 +264,35 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       updated_comments_required = !evaluation_form.comments_required
       # TODO: Enable this when criteria updating and weight fixing is implemented
       # updated_scale_type = !evaluation_form.weighted_scoring
-      updated_end_date = evaluation_form.closing_date + 1.day
-
-      # Update form field values
+      updated_end_date = evaluation_form.phase.end_date + 10.days
       fill_in_instructions(updated_instructions)
       check_comments_required
       # TODO: When switching to weighted it needs to make sure criteria values sum to 100
       # select_scale_type(updated_scale_type ? "point" : "weighted")
       fill_in_end_date(updated_end_date)
+      Rails.logger.info(
+        <<-UPDATES
+          Evaluation Form updates #{evaluation_form.inspect}
+          updated_instructions=#{updated_instructions}
+          updated_comments_required=#{updated_comments_required}
+          updated_end_date=#{updated_end_date}
+        UPDATES
+      )
+      evaluation_form.assign_attributes({
+        instructions: updated_instructions,
+        comments_required: updated_comments_required,
+        closing_date: updated_end_date
+      })
+      if evaluation_form.valid?
+        Rails.logger.info("Evaluation form is valid with changes: #{evaluation_form.changes}")
+      else
+        Rails.logger.error("Evaluation Form erorrs:\n#{evaluation_form.errors.full_messages.to_sentence}")
+      end
 
+      page.execute_script("window.scrollTo(0, 0)")
+      page.save_screenshot()
+      page.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+      page.save_screenshot()
       save_form
       expect(page).to have_current_path(phases_path)
       expect(page).to have_content("Evaluation form is saved")
@@ -280,8 +301,8 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(evaluation_form.instructions).to eq(updated_instructions)
       expect(evaluation_form.comments_required).to eq(updated_comments_required)
       # TODO: Enable this when weighted scoring issue above is solved
-      # expect(evaluation_form.weighted_scoring).to eq(updated_scale_type)
-      expect(evaluation_form.closing_date).to eq(updated_end_date)
+      # expect(form.weighted_scoring).to eq(updated_scale_type)
+      expect(form.closing_date).to eq(updated_end_date)
     end
 
     it 'allows adding new criteria' do
