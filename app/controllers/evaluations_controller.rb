@@ -5,7 +5,7 @@
 
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
-  before_action -> { authorize_user('evaluator', 'challenge_manager') }
+  before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[create update]
   before_action :set_phase, only: [:submissions]
 
