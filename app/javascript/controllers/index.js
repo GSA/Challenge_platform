@@ -25,6 +25,9 @@ application.register(
 import EvaluationScoreController from "./evaluation_score_controller";
 application.register("evaluation-score", EvaluationScoreController);
 
+import ExportSubmissionsController from "./export_submissions_controller";
+application.register("export-submissions", ExportSubmissionsController);
+
 import FormValidationController from "./form_validation_controller";
 application.register("form-validation", FormValidationController);
 

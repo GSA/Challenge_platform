@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   resources :phases, only: [:index] do
     member do
       get 'submissions'
+      get 'export_submissions'
     end
     resources :evaluators, only: [:index, :create, :destroy] do
       member do
