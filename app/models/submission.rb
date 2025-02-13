@@ -54,7 +54,6 @@ class Submission < ApplicationRecord
   validate :can_be_ineligible_for_evaluation,
            if: -> { judging_status_change == %w[selected not_selected] }
 
-
   after_save :update_submission_evaluation_status
 
   scope :by_user, lambda { |user|
@@ -121,8 +120,21 @@ class Submission < ApplicationRecord
   end
 
   def update_submission_evaluation_status
-    new_status = calculate_evaluation_status
-    update_column(:evaluation_status, new_status)
+    calculate_and_save_evaluation_status
+  end
+
+  def calculate_and_save_evaluation_status
+    return if @updating_evaluation_status
+
+    @updating_evaluation_status = true
+    begin
+      new_status = calculate_evaluation_status
+      if evaluation_status != new_status.to_s
+        update_columns(evaluation_status: new_status)
+      end
+    ensure
+      @updating_evaluation_status = false
+    end
   end
 
   private
@@ -149,10 +161,7 @@ class Submission < ApplicationRecord
 
     submission_evaluations = evaluations.
       joins(:evaluator_submission_assignment).
-      where(evaluator_submission_assignments: {
-        submission_id: id,
-        status: :assigned
-      })
+      where(evaluator_submission_assignments: { submission_id: id, status: :assigned })
 
     completed_count = submission_evaluations.where.not(completed_at: nil).count
     in_progress_count = submission_evaluations.where(completed_at: nil).count
@@ -162,7 +171,7 @@ class Submission < ApplicationRecord
 
     if completed_count == assigned_count
       :completed
-    elsif completed_count > 0 || in_progress_count > 0
+    elsif completed_count.positive? || in_progress_count.positive?
       :in_progress
     else
       :not_started
