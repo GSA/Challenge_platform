@@ -18,11 +18,7 @@ class PhasesController < ApplicationController
     @submissions = SubmissionsSortAndFilterService.new(
       @submissions,
       params,
-      {
-        not_started: @not_started,
-        in_progress: @in_progress,
-        completed: @completed
-      }
+      @submission_statuses
     ).sort_and_filter
 
     @filtered_count = @submissions.unscope(:group).distinct.count(:id)
@@ -49,13 +45,18 @@ class PhasesController < ApplicationController
   end
 
   def set_submission_statuses
-    @not_started = @submissions.left_joins(evaluator_submission_assignments: :evaluation).
-      where(evaluations: { id: nil }).distinct
-    @in_progress = @submissions.joins(evaluator_submission_assignments: :evaluation).
-      where(evaluations: { completed_at: nil }).distinct
-    @completed = @submissions.joins(evaluator_submission_assignments: :evaluation).
-      where.not(evaluations: { completed_at: nil }).
-      where.not(id: @in_progress.select(:id)).distinct
+    eligible_submissions = @submissions.eligible_for_evaluation
+
+    @not_started = eligible_submissions.where(evaluation_status: :not_started)
+    @in_progress = eligible_submissions.where(evaluation_status: :in_progress)
+    @completed = eligible_submissions.where(evaluation_status: :completed)
+
+    @submission_statuses = {
+      not_started: @not_started,
+      in_progress: @in_progress,
+      completed: @completed
+    }
+
     @submissions_by_status = {
       not_started: @not_started.count,
       in_progress: @in_progress.count,

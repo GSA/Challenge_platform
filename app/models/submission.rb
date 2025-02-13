@@ -28,6 +28,7 @@
 class Submission < ApplicationRecord
   enum :status, { draft: "draft", submitted: "submitted" }
   enum :judging_status, { not_selected: "not_selected", selected: "selected", qualified: "qualified", winner: "winner" }
+  enum :evaluation_status, { not_started: "not_started", in_progress: "in_progress", completed: "completed" }
 
   # Associations
   belongs_to :challenge
@@ -52,6 +53,9 @@ class Submission < ApplicationRecord
            if: -> { judging_status_change == %w[selected winner] }
   validate :can_be_ineligible_for_evaluation,
            if: -> { judging_status_change == %w[selected not_selected] }
+
+
+  after_save :update_submission_evaluation_status
 
   scope :by_user, lambda { |user|
     by_user_role =
@@ -116,6 +120,11 @@ class Submission < ApplicationRecord
     !eligible_for_evaluation? || !all_evaluations_completed? || evaluator_submission_assignments.empty?
   end
 
+  def update_submission_evaluation_status
+    new_status = calculate_evaluation_status
+    update_column(:evaluation_status, new_status)
+  end
+
   private
 
   def all_evaluations_completed?
@@ -133,5 +142,30 @@ class Submission < ApplicationRecord
     return unless evaluators_assigned?
 
     errors.add(:judging_status, "must remain eligible for evaluation when evaluators are assigned")
+  end
+
+  def calculate_evaluation_status
+    assigned_evaluators = evaluator_submission_assignments.where(status: :assigned)
+
+    submission_evaluations = evaluations.
+      joins(:evaluator_submission_assignment).
+      where(evaluator_submission_assignments: {
+        submission_id: id,
+        status: :assigned
+      })
+
+    completed_count = submission_evaluations.where.not(completed_at: nil).count
+    in_progress_count = submission_evaluations.where(completed_at: nil).count
+    assigned_count = assigned_evaluators.count
+
+    return :not_started if assigned_count.zero?
+
+    if completed_count == assigned_count
+      :completed
+    elsif completed_count > 0 || in_progress_count > 0
+      :in_progress
+    else
+      :not_started
+    end
   end
 end

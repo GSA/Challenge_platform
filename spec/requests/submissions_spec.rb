@@ -200,26 +200,34 @@ RSpec.describe "Submissions" do
 
       context 'when viewing submissions' do
         let!(:draft_submission) { create(:submission, challenge: challenge, phase: phase, status: "draft") }
-        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase) }
+        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase, judging_status: 'selected') }
         let!(:in_progress_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
           assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: nil)
+          submission.update_submission_evaluation_status
           submission
         end
+
         let!(:completed_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
+          submission.update_submission_evaluation_status
           submission
+        end
+
+        let!(:ineligible_submission) do
+          create(:submission, challenge: challenge, phase: phase)
         end
         let!(:eligible_submission) do
           create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
         end
         let!(:selected_submission) do
           submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'winner')
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
+          submission.update_submission_evaluation_status
           submission
         end
 
@@ -239,7 +247,7 @@ RSpec.describe "Submissions" do
         end
 
         context 'when filtering submissions' do
-          it 'shows only submissions matching the selected status' do
+          it 'shows only submissions matching the selected status', bullet: :dont_raise do
             get submissions_phase_path(phase), params: { status: 'not_started' }
 
             expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
@@ -266,9 +274,10 @@ RSpec.describe "Submissions" do
 
             expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
             expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{not_started_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{in_progress_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_no_css("[data-submission-id='#{ineligible_submission.id}']")
           end
 
           it 'displays only selected to advance submissions', bullet: :dont_raise do
@@ -374,6 +383,152 @@ RSpec.describe "Submissions" do
             get submissions_phase_path(phase, page: 2, partial: true, eligible_for_evaluation: 'true')
             expect(response).to have_http_status(:success)
             expect(response.body.scan(/data-submission-id="(\d+)"/).flatten.count).to eq(3)
+          end
+        end
+      end
+
+      context 'evaluation status transitions' do
+        let(:challenge) { create(:challenge) }
+        let(:phase) { create(:phase, challenge: challenge) }
+        let(:evaluator) { create(:user, role: :evaluator) }
+        let(:second_evaluator) { create(:user, role: :evaluator) }
+        let(:submission) { create(:submission, challenge: challenge, phase: phase, judging_status: 'selected') }
+
+        before do
+          ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+          ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: second_evaluator)
+        end
+
+        context 'when submission has no evaluators' do
+          it 'is not_started' do
+            expect(submission.evaluation_status).to eq('not_started')
+          end
+        end
+
+        context 'when submission has only recused evaluators' do
+          before do
+            create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: evaluator,
+              status: :recused)
+          end
+
+          it 'is not_started' do
+            expect(submission.evaluation_status).to eq('not_started')
+          end
+        end
+
+        context 'when submission has assigned evaluator but no evaluation' do
+          before do
+            create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: evaluator,
+              status: :assigned)
+          end
+
+          it 'is not_started' do
+            expect(submission.evaluation_status).to eq('not_started')
+          end
+        end
+
+        context 'when evaluation is started but not completed' do
+          let!(:assignment) do
+            create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: evaluator,
+              status: :assigned)
+          end
+
+          before do
+            create(:evaluation,
+              evaluator_submission_assignment: assignment,
+              submission: submission,
+              completed_at: nil)
+          end
+
+          it 'is in_progress' do
+            expect(submission.evaluation_status).to eq('in_progress')
+          end
+
+          context 'when evaluator recuses' do
+            it 'becomes not_started' do
+              assignment.update!(status: :recused)
+              expect(submission.evaluation_status).to eq('not_started')
+            end
+          end
+        end
+
+        context 'when all evaluations are completed' do
+          let!(:assignment) do
+            create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: evaluator,
+              status: :assigned)
+          end
+
+          before do
+            create(:evaluation,
+              evaluator_submission_assignment: assignment,
+              submission: submission,
+              completed_at: Time.current)
+          end
+
+          it 'is completed' do
+            expect(submission.evaluation_status).to eq('completed')
+          end
+
+          context 'when new evaluator is assigned' do
+            it 'becomes in_progress' do
+              create(:evaluator_submission_assignment,
+                submission: submission,
+                evaluator: second_evaluator,
+                status: :assigned)
+              expect(submission.evaluation_status).to eq('in_progress')
+            end
+          end
+
+          context 'when only evaluator completes evaluation and then recuses' do
+            it 'transitions from completed to not_started' do
+              expect(submission.evaluation_status).to eq('completed')
+              assignment.update!(status: :recused)
+              expect(submission.evaluation_status).to eq('not_started')
+            end
+          end
+        end
+
+        context 'when multiple evaluators are assigned' do
+          let!(:first_assignment) do
+            create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: evaluator,
+              status: :assigned)
+          end
+
+          let!(:second_assignment) do
+            create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: second_evaluator,
+              status: :assigned)
+          end
+
+          it 'is in_progress when one evaluation is completed' do
+            create(:evaluation,
+              evaluator_submission_assignment: first_assignment,
+              submission: submission,
+              completed_at: Time.current)
+            expect(submission.evaluation_status).to eq('in_progress')
+          end
+
+          it 'is completed when all evaluations are completed' do
+            create(:evaluation,
+              evaluator_submission_assignment: first_assignment,
+              submission: submission,
+              completed_at: Time.current)
+            create(:evaluation,
+              evaluator_submission_assignment: second_assignment,
+              submission: submission,
+              completed_at: Time.current)
+            expect(submission.evaluation_status).to eq('completed')
           end
         end
       end

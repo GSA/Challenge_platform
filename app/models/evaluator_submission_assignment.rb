@@ -40,6 +40,9 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
     recused_unassigned: 3
   }
 
+  after_save :update_submission_evaluation_status, if: :saved_change_to_status?
+  after_destroy :update_submission_evaluation_status
+
   def self.ordered_by_status
     includes(:evaluation).
       select('evaluator_submission_assignments.*, evaluations.id AS evaluation_id, evaluations.completed_at').
@@ -67,5 +70,9 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
     else
       :not_started
     end
+  end
+
+  def update_submission_evaluation_status
+    submission.update_submission_evaluation_status
   end
 end
