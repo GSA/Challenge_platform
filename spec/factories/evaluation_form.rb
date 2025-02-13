@@ -10,6 +10,11 @@ FactoryBot.define do
     comments_required { Faker::Boolean.boolean }
     scale_type { [:point, :weight].sample }
 
+    # Optional Attrs
+    transient do
+      evaluation_criteria_attrs { [] } # Allow passing in an array of criteria attributes
+    end
+
     # Factory options
     trait :with_comments do
       comments_required { true }
@@ -44,21 +49,27 @@ FactoryBot.define do
       end
     end
 
-    after(:create) do |evaluation_form|
-      num_criteria = rand(1..10)
-
-      if evaluation_form.weighted_scoring?
-        weights = Array.new(num_criteria) { rand(1..100) }
-        total_weight = weights.sum.to_f
-        normalized_weights = weights.map { |w| (w / total_weight * 100).round }
-
-        normalized_weights[-1] += 100 - normalized_weights.sum
-
-        normalized_weights.each do |weight|
-          create(:evaluation_criterion, evaluation_form:, points_or_weight: weight)
+    after(:create) do |evaluation_form, evaluator|
+      if evaluator.evaluation_criteria_attrs.any?
+        evaluator.evaluation_criteria_attrs.each do |criterion_attrs|
+          create(:evaluation_criterion, evaluation_form: evaluation_form, **criterion_attrs)
         end
       else
-        create_list(:evaluation_criterion, num_criteria, evaluation_form:)
+        num_criteria = rand(1..10)
+
+        if evaluation_form.weighted_scoring?
+          weights = Array.new(num_criteria) { rand(1..100) }
+          total_weight = weights.sum.to_f
+          normalized_weights = weights.map { |w| (w / total_weight * 100).round }
+
+          normalized_weights[-1] += 100 - normalized_weights.sum
+
+          normalized_weights.each do |weight|
+            create(:evaluation_criterion, evaluation_form:, points_or_weight: weight)
+          end
+        else
+          create_list(:evaluation_criterion, num_criteria, evaluation_form:)
+        end
       end
 
       evaluation_form.reload
