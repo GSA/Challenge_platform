@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: Reenable rubocop after refactor/shortening controller code or moving some functionality into service
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController # rubocop:disable Metrics/ClassLength
   before_action -> { authorize_user('evaluator') }
@@ -192,4 +191,4 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
     params[:evaluation][:evaluation_scores_attributes] =
       params[:evaluation][:evaluation_scores_attributes].transform_keys.with_index { |_key, index| index.to_s }
   end
-end
+end # rubocop:enable Metrics/ClassLength
