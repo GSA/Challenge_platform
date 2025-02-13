@@ -191,4 +191,5 @@ class EvaluationsController < ApplicationController # rubocop:disable Metrics/Cl
     params[:evaluation][:evaluation_scores_attributes] =
       params[:evaluation][:evaluation_scores_attributes].transform_keys.with_index { |_key, index| index.to_s }
   end
-end # rubocop:enable Metrics/ClassLength
+end
+# rubocop:enable Metrics/ClassLength
