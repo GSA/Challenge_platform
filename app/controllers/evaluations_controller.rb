@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for evaluations CRUD actions.
-class EvaluationsController < ApplicationController # rubocop:disable Metrics/ClassLength
+# rubocop:disable Metrics/ClassLength
+class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
   before_action :set_evaluation_and_submission_assignment, only: %i[create update]
 
