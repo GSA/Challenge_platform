@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["modal"];
+  static targets = ["modal", "confirmDataInput"];
   static values = {
     modalId: String,
   };
@@ -23,20 +23,32 @@ export default class extends Controller {
 
   confirm(event) {
     const modal = this._getModal(event);
+    if (!modal) return;
 
-    if (modal) {
-      const confirmRedirect = modal.dataset.modalConfirmRedirect;
-      const confirmAction = modal.dataset.modalConfirmAction;
+    const { modalConfirmRedirect: redirect, modalConfirmAction: action } =
+      modal.dataset;
 
-      if (confirmRedirect) {
-        window.location.href = confirmRedirect;
-      } else if (confirmAction) {
-        this.invokeAction(confirmAction);
-        modal.close();
-      } else {
-        modal.close();
-        return true;
-      }
+    if (redirect) {
+      this._redirect(redirect);
+    } else if (action) {
+      this._handleAction(action, modal);
+    }
+
+    modal.close();
+  }
+
+  _redirect(url) {
+    window.location.href = url;
+  }
+
+  _handleAction(action, modal) {
+    if (action === "submit") {
+      this.confirmDataInputTargets.forEach((input) => {
+        input.removeAttribute("disabled");
+      });
+      modal.closest("form")?.submit();
+    } else {
+      this.invokeAction(action);
     }
   }
 
