@@ -50,7 +50,7 @@
                   <td data-label="">
                     <div class="display-flex flex-wrap">
                       <% if assignment&.evaluation&.completed_at %>
-                        <%= link_to(edit_evaluation_path(assignment.evaluation)) do %>
+                        <%= link_to(evaluation_path(assignment.evaluation)) do %>
                           <button class="usa-button font-body-3xs text-no-wrap padding-x-1 margin-bottom-1">
                             View Evaluation
                           </button>
