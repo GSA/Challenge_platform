@@ -122,7 +122,7 @@ class Submission < ApplicationRecord
   private
 
   def set_evaluation_status
-    self.evaluation_status = calculate_evaluation_status
+    self.evaluation_status = EvaluationStatusService.calculate_evaluation_status(self)
   end
 
   def all_evaluations_completed?
@@ -140,28 +140,5 @@ class Submission < ApplicationRecord
     return unless evaluators_assigned?
 
     errors.add(:judging_status, "must remain eligible for evaluation when evaluators are assigned")
-  end
-
-  def calculate_evaluation_status
-    assigned_evaluators = evaluator_submission_assignments.assigned
-
-    submission_evaluations = evaluations.
-      joins(:evaluator_submission_assignment).
-      where(evaluator_submission_assignments: { submission_id: id, status: :assigned })
-
-    completed_count = submission_evaluations.where.not(completed_at: nil).count
-    in_progress_count = submission_evaluations.where(completed_at: nil).count
-    assigned_count = assigned_evaluators.count
-
-    return :not_started if assigned_count.zero?
-
-    if assigned_count.zero? || (completed_count.zero? && in_progress_count.zero?)
-      # nobody is assigned or no assignees have started or completed any evaluations
-      :not_started
-    elsif completed_count == assigned_count
-      :completed
-    else
-      :in_progress
-    end
   end
 end
