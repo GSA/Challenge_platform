@@ -3,8 +3,7 @@
 # Controller for challenge submissions CRUD actions.
 class SubmissionsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
-  before_action :set_submission, only: [:show, :update]
-  before_action :set_phase, only: [:show]
+  before_action :set_submission
 
   def show; end
 
@@ -29,10 +28,6 @@ class SubmissionsController < ApplicationController
     @submission = Submission.by_user(current_user).find(params[:id])
   end
 
-  def set_phase
-    @phase = @submission.phase
-  end
-
   def handle_successful_update(format)
     format.html do
       flash[:success] = I18n.t("submission_updated")
@@ -42,6 +37,7 @@ class SubmissionsController < ApplicationController
   end
 
   def handle_failed_update(format)
+    flash.now[:error] = @submission.errors.full_messages.to_sentence
     format.html { render :show }
     format.json { render json: { errors: @submission.errors }, status: :unprocessable_entity }
   end

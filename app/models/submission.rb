@@ -116,7 +116,7 @@ class Submission < ApplicationRecord
   end
 
   def evaluations_missing_or_incomplete?
-    !eligible_for_evaluation? || !all_evaluations_completed? || evaluator_submission_assignments.empty?
+    !eligible_for_evaluation? || evaluator_submission_assignments.assigned.empty? || !all_evaluations_completed?
   end
 
   private
@@ -126,7 +126,7 @@ class Submission < ApplicationRecord
   end
 
   def all_evaluations_completed?
-    evaluator_submission_assignments.
+    evaluator_submission_assignments.assigned.
       all? { |assignment| assignment.evaluation_status == :completed }
   end
 
