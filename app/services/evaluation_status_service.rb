@@ -15,7 +15,7 @@ class EvaluationStatusService
     return :not_started if assigned_evaluators.empty?
 
     submission_evaluations = fetch_submission_evaluations
-    evaluation_status_counts = count_evaluation_statuses(submission_evaluations, assigned_evaluators)
+    evaluation_status_counts = count_evaluation_statuses(submission_evaluations)
     determine_status(assigned_evaluators.count, evaluation_status_counts)
   end
 
@@ -26,7 +26,7 @@ class EvaluationStatusService
       where(evaluator_submission_assignments: { submission_id: @submission.id, status: :assigned })
   end
 
-  def count_evaluation_statuses(submission_evaluations, assigned_evaluators)
+  def count_evaluation_statuses(submission_evaluations)
     {
       completed: submission_evaluations.where.not(completed_at: nil).count,
       in_progress: submission_evaluations.where(completed_at: nil).count
