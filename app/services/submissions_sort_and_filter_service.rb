@@ -67,6 +67,10 @@ class SubmissionsSortAndFilterService
       @submissions = @submissions.order_by_average_score(:desc)
     when 'average_score_low_to_high'
       @submissions = @submissions.order_by_average_score(:asc)
+    when 'assignees_high_to_low'
+      @submissions = @submissions.order_by_assignee_count(:desc)
+    when 'assignees_low_to_high'
+      @submissions = @submissions.order_by_assignee_count(:asc)
     when 'submission_id_high_to_low'
       @submissions = @submissions.order(id: :desc)
     when 'submission_id_low_to_high'

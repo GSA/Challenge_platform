@@ -70,6 +70,19 @@ class Submission < ApplicationRecord
   }
   scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
 
+  scope :order_by_assignee_count, lambda { |direction|
+    direction_sql = direction == :desc ? 'DESC' : 'ASC'
+    join_sql = <<-JOIN_SQL
+      LEFT OUTER JOIN evaluator_submission_assignments
+      ON submissions.id = evaluator_submission_assignments.submission_id
+      AND evaluator_submission_assignments.status in (0, 2)
+    JOIN_SQL
+    joins(join_sql).
+      group("submissions.id").
+      select("submissions.*, count(evaluator_submission_assignments.id) as assignee_count").
+      order("assignee_count #{direction_sql}")
+  }
+
   scope :order_by_average_score, lambda { |direction|
     direction_sql = direction == :desc ? 'DESC' : 'ASC'
 

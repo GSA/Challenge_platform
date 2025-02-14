@@ -10,7 +10,9 @@ class PhasesController < ApplicationController
   end
 
   def submissions
-    @submissions = @phase.submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
+    # This causes a SQL error when sorting by assignee_count -- refactor into the service??
+    # @submissions = @phase.submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
+    @submissions = @phase.submissions
 
     set_submission_counts
     set_submission_statuses
@@ -22,6 +24,7 @@ class PhasesController < ApplicationController
     ).sort_and_filter
 
     @filtered_count = @submissions.unscope(:group).distinct.count(:id)
+    # puts "FILTERED_COUNT=#{@filtered_count}"
     @submissions = paginate_submissions(@submissions)
 
     render_response

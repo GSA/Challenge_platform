@@ -318,6 +318,9 @@ RSpec.describe "Submissions" do
               "~ tr[data-submission-id='#{completed_submission.id}']"
             )
           end
+
+          xit 'orders submissions by assigned evaluators high to low'
+          xit 'orders submissions by assigned evaluators low to high'
         end
       end
 
