@@ -205,7 +205,6 @@ RSpec.describe "Submissions" do
           submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
           assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
           create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: nil)
-          submission.update_submission_evaluation_status
           submission
         end
 
@@ -213,7 +212,6 @@ RSpec.describe "Submissions" do
           submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
           assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
           create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
-          submission.update_submission_evaluation_status
           submission
         end
 
@@ -227,7 +225,6 @@ RSpec.describe "Submissions" do
           submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'winner')
           assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
           create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
-          submission.update_submission_evaluation_status
           submission
         end
 

@@ -45,7 +45,8 @@ class Evaluation < ApplicationRecord
   before_save :ensure_all_scores_exist
   before_save :calculate_total_score
   after_destroy :update_submission_evaluation_status
-  after_save :update_submission_evaluation_status, if: -> { saved_change_to_completed_at? || saved_change_to_id? }
+  after_create :update_submission_evaluation_status
+  after_update :update_submission_evaluation_status, if: -> { saved_change_to_completed_at? }
 
   private
 
@@ -75,6 +76,6 @@ class Evaluation < ApplicationRecord
   end
 
   def update_submission_evaluation_status
-    submission.update_submission_evaluation_status
+    submission.save
   end
 end

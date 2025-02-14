@@ -54,7 +54,7 @@ class Submission < ApplicationRecord
   validate :can_be_ineligible_for_evaluation,
            if: -> { judging_status_change == %w[selected not_selected] }
 
-  after_save :update_submission_evaluation_status
+  before_save :set_evaluation_status
 
   scope :by_user, lambda { |user|
     by_user_role =
@@ -119,25 +119,11 @@ class Submission < ApplicationRecord
     !eligible_for_evaluation? || !all_evaluations_completed? || evaluator_submission_assignments.empty?
   end
 
-  def update_submission_evaluation_status
-    calculate_and_save_evaluation_status
-  end
-
-  def calculate_and_save_evaluation_status
-    return if @updating_evaluation_status
-
-    @updating_evaluation_status = true
-    begin
-      new_status = calculate_evaluation_status
-      if evaluation_status != new_status.to_s
-        update_columns(evaluation_status: new_status)
-      end
-    ensure
-      @updating_evaluation_status = false
-    end
-  end
-
   private
+
+  def set_evaluation_status
+    self.evaluation_status = calculate_evaluation_status
+  end
 
   def all_evaluations_completed?
     evaluator_submission_assignments.
@@ -157,7 +143,7 @@ class Submission < ApplicationRecord
   end
 
   def calculate_evaluation_status
-    assigned_evaluators = evaluator_submission_assignments.where(status: :assigned)
+    assigned_evaluators = evaluator_submission_assignments.assigned
 
     submission_evaluations = evaluations.
       joins(:evaluator_submission_assignment).
@@ -169,12 +155,13 @@ class Submission < ApplicationRecord
 
     return :not_started if assigned_count.zero?
 
-    if completed_count == assigned_count
-      :completed
-    elsif completed_count.positive? || in_progress_count.positive?
-      :in_progress
-    else
+    if assigned_count.zero? || (completed_count.zero? && in_progress_count.zero?)
+      # nobody is assigned or no assignees have started or completed any evaluations
       :not_started
+    elsif completed_count == assigned_count
+      :completed
+    else
+      :in_progress
     end
   end
 end

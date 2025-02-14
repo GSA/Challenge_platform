@@ -63,9 +63,9 @@ class PhasesController < ApplicationController
   def set_submission_statuses
     eligible_submissions = @submissions.eligible_for_evaluation
 
-    @not_started = eligible_submissions.where(evaluation_status: :not_started)
-    @in_progress = eligible_submissions.where(evaluation_status: :in_progress)
-    @completed = eligible_submissions.where(evaluation_status: :completed)
+    @not_started = eligible_submissions.not_started
+    @in_progress = eligible_submissions.in_progress
+    @completed = eligible_submissions.completed
 
     @submission_statuses = {
       not_started: @not_started,
