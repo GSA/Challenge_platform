@@ -54,8 +54,6 @@ class Submission < ApplicationRecord
   validate :can_be_ineligible_for_evaluation,
            if: -> { judging_status_change == %w[selected not_selected] }
 
-  before_save :set_evaluation_status
-
   scope :by_user, lambda { |user|
     by_user_role =
       case user.role
@@ -120,10 +118,6 @@ class Submission < ApplicationRecord
   end
 
   private
-
-  def set_evaluation_status
-    self.evaluation_status = EvaluationStatusService.calculate_evaluation_status(self)
-  end
 
   def all_evaluations_completed?
     evaluator_submission_assignments.assigned.

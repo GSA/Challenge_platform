@@ -2,8 +2,9 @@
 
 # This service handles calculating the overall evaluation status of a submission
 class EvaluationStatusService
-  def self.calculate_evaluation_status(submission)
-    new(submission).calculate_evaluation_status
+  def self.update_evaluation_status(submission)
+    evaluation_status = new(submission).calculate_evaluation_status
+    submission.update(evaluation_status:)
   end
 
   def initialize(submission)

@@ -76,6 +76,6 @@ class Evaluation < ApplicationRecord
   end
 
   def update_submission_evaluation_status
-    submission.save
+    EvaluationStatusService.update_evaluation_status(submission)
   end
 end
