@@ -5,6 +5,7 @@ class EvaluationFormsController < ApplicationController
   helper FormHelper
 
   before_action -> { authorize_user('challenge_manager') }
+  before_action :set_phase, only: %i[show edit update destroy index new create]
   before_action :set_evaluation_form, only: %i[show edit update destroy]
   before_action :set_evaluation_forms, only: %i[index]
   before_action :set_available_phases, only: %i[new create edit update]
@@ -30,11 +31,11 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.save
         format.html do
-          redirect_to confirmation_evaluation_form_path(@evaluation_form), notice: I18n.t("evaluation_form_saved")
+          redirect_to confirmation_phase_evaluation_form_path(@evaluation_form.phase, @evaluation_form), notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :created, location: @evaluation_form }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_entity, phase: @evaluation_form.phase }
         format.json { render json: @evaluation_form.errors, status: :unprocessable_entity }
       end
     end
@@ -45,7 +46,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
         format.html do
-          redirect_to confirmation_evaluation_form_path(@evaluation_form), notice: I18n.t("evaluation_form_saved")
+          redirect_to confirmation_phase_evaluation_form_path(@evaluation_form.phase, @evaluation_form), notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -96,6 +97,10 @@ class EvaluationFormsController < ApplicationController
         }
       end
   end
+
+  def set_phase
+    @phase = Phase.find(params[:phase_id])
+  end  
 
   # Only allow a list of trusted parameters through.
   def evaluation_form_params

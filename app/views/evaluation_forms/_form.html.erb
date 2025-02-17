@@ -1,4 +1,4 @@
-<%= form_with(model: evaluation_form, data: { controller: "evaluation-form modal form-validation" }) do |form| %>
+<%= form_with(url: url, model: evaluation_form, data: { controller: "evaluation-form modal form-validation" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: darkred">
       <div class="usa-alert usa-alert--error" role="alert">
@@ -237,7 +237,7 @@
     description: "Your evaluation form will not be saved and any entered information will be lost.",
     confirm_text: "Yes",
     cancel_text: "Close",
-    confirm_redirect: evaluation_forms_path
+    confirm_redirect: phases_path
   %>
 
   <%= render "modals/confirmation", 

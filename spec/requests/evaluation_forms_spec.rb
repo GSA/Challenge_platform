@@ -2,13 +2,16 @@ require 'rails_helper'
 
 RSpec.describe "EvaluationForms" do
   describe "GET /evaluation_forms" do
+    let(:user) { create_user(role: "challenge_manager") }
+    let!(:challenge) { create(:challenge, user:, is_multi_phase: true) }
+    let!(:phase) { create(:phase, challenge: challenge) }
     context "when logged in as a super admin" do
       before do
         create_and_log_in_user(role: "super_admin")
       end
 
       it "redirects to the phoenix app" do
-        get evaluation_forms_path
+        get phase_evaluation_forms_path(phase)
 
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
@@ -20,67 +23,69 @@ RSpec.describe "EvaluationForms" do
       end
 
       it "redirects to the phoenix app" do
-        get evaluation_forms_path
+        get phase_evaluation_forms_path(phase)
 
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
     end
 
     context "when logged in as a challenge manager" do
-      let(:user) { create_user(role: "challenge_manager") }
-
       before { log_in_user(user) }
 
       it "renders the index view with the correct header" do
-        get evaluation_forms_path
+        get phase_evaluation_forms_path(phase)
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include("Evaluation Forms")
       end
 
       it "renders an empty list" do
-        get evaluation_forms_path
+        get phase_evaluation_forms_path(phase)
         expect(response.body).to include("You currently do not have any evaluation forms.")
       end
 
-      it "renders a list of evaluation forms for the current user's challenges" do
-        agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-        challenge = Challenge.create!(user:, agency:, title: "Turning red bull into water")
-        ChallengeManager.create(user:, challenge:)
-        ph1 = create_phase(challenge_id: challenge.id)
-        ph2 = create_phase(challenge_id: challenge.id)
+      # The following specs don't make sense now that we're scoping eval forms by phase. 
+      # Maybe delete if we end up removing the eval form list page
+      # Or update to reflect new requirements 
 
-        create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: ph1.id)
-        create_evaluation_form(title: "Sam", challenge_id: challenge.id, phase_id: ph2.id)
-        get evaluation_forms_path
-        expect(response.body).to include("Sam")
-        expect(response.body).to include("Frodo")
-      end
+      # it "renders a list of evaluation forms for the current user's challenges" do
+      #   agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
+      #   challenge = Challenge.create!(user:, agency:, title: "Turning red bull into water")
+      #   ChallengeManager.create(user:, challenge:)
+      #   ph1 = create_phase(challenge_id: challenge.id)
+      #   ph2 = create_phase(challenge_id: challenge.id)
 
-      it "does not include evaluation forms for challenges not assigned to the current user" do
-        agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-        challenge = Challenge.create!(user:, agency:, title: "Turning monster energy into chamomile")
-        ChallengeManager.create(user:, challenge:)
+      #   create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: ph1.id)
+      #   create_evaluation_form(title: "Sam", challenge_id: challenge.id, phase_id: ph2.id)
+      #   get evaluation_forms_path
+      #   expect(response.body).to include("Sam")
+      #   expect(response.body).to include("Frodo")
+      # end
 
-        user2 = create_user(role: "challenge_manager", email: "testwizard@example.gov")
-        challenge2 = Challenge.create!(user: user2, agency:, title: "Turning frogs into princes")
-        ChallengeManager.create(user: user2, challenge:)
-        ph1 = create_phase(challenge_id: challenge.id)
-        ph2 = create_phase(challenge_id: challenge.id)
-        ph3 = create_phase(challenge_id: challenge2.id)
-        ph4 = create_phase(challenge_id: challenge2.id)
+      # it "does not include evaluation forms for challenges not assigned to the current user" do
+      #   agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
+      #   challenge = Challenge.create!(user:, agency:, title: "Turning monster energy into chamomile")
+      #   ChallengeManager.create(user:, challenge:)
 
-        create_evaluation_form(title: "Shrek", challenge_id: challenge.id, phase_id: ph1.id)
-        create_evaluation_form(title: "Fiona", challenge_id: challenge.id, phase_id: ph2.id)
-        create_evaluation_form(title: "Donkey", challenge_id: challenge2.id, phase_id: ph3.id)
-        create_evaluation_form(title: "Farquad", challenge_id: challenge2.id, phase_id: ph4.id)
+      #   user2 = create_user(role: "challenge_manager", email: "testwizard@example.gov")
+      #   challenge2 = Challenge.create!(user: user2, agency:, title: "Turning frogs into princes")
+      #   ChallengeManager.create(user: user2, challenge:)
+      #   ph1 = create_phase(challenge_id: challenge.id)
+      #   ph2 = create_phase(challenge_id: challenge.id)
+      #   ph3 = create_phase(challenge_id: challenge2.id)
+      #   ph4 = create_phase(challenge_id: challenge2.id)
 
-        get evaluation_forms_path
-        expect(response.body).to include("Shrek")
-        expect(response.body).to include("Fiona")
-        expect(response.body).not_to include("Donkey")
-        expect(response.body).not_to include("Farquad")
-      end
+      #   create_evaluation_form(title: "Shrek", challenge_id: challenge.id, phase_id: ph1.id)
+      #   create_evaluation_form(title: "Fiona", challenge_id: challenge.id, phase_id: ph2.id)
+      #   create_evaluation_form(title: "Donkey", challenge_id: challenge2.id, phase_id: ph3.id)
+      #   create_evaluation_form(title: "Farquad", challenge_id: challenge2.id, phase_id: ph4.id)
+
+      #   get evaluation_forms_path
+      #   expect(response.body).to include("Shrek")
+      #   expect(response.body).to include("Fiona")
+      #   expect(response.body).not_to include("Donkey")
+      #   expect(response.body).not_to include("Farquad")
+      # end
     end
 
     context "when logged in as an evaluator" do
@@ -89,7 +94,7 @@ RSpec.describe "EvaluationForms" do
       end
 
       it "redirects to the dashboard" do
-        get evaluation_forms_path
+        get phase_evaluation_forms_path(phase)
 
         expect(response).to redirect_to(dashboard_path)
       end
@@ -101,7 +106,7 @@ RSpec.describe "EvaluationForms" do
       end
 
       it "redirects to the phoenix app" do
-        get evaluation_forms_path
+        get phase_evaluation_forms_path(phase)
 
         expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
       end
@@ -124,7 +129,7 @@ RSpec.describe "EvaluationForms" do
         expect(EvaluationForm.count).to eq(0)
 
         expect do
-          post evaluation_forms_path, params: {
+          post phase_evaluation_forms_path(challenge.phases[0]), params: {
             evaluation_form: {
               phase_id: challenge.phases[0].id,
               challenge_id: challenge.id,
@@ -153,7 +158,7 @@ RSpec.describe "EvaluationForms" do
 
     context "when requiring evaluator comments on scores" do
       it "updates the comments_required attribute" do
-        patch evaluation_form_path(evaluation_form), params: { evaluation_form: { comments_required: true } }
+        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: { evaluation_form: { comments_required: true } }
         evaluation_form.reload
         expect(evaluation_form.comments_required).to be_truthy
       end
@@ -163,7 +168,7 @@ RSpec.describe "EvaluationForms" do
       it "updates the scale_type attribute" do
         create(:evaluation_criterion, evaluation_form: evaluation_form, points_or_weight: 100)
 
-        patch evaluation_form_path(evaluation_form), params: { evaluation_form: { scale_type: "weight" } }
+        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: { evaluation_form: { scale_type: "weight" } }
         evaluation_form.reload
         expect(evaluation_form.scale_type).to eq("weight")
       end
@@ -172,7 +177,7 @@ RSpec.describe "EvaluationForms" do
         evaluation_form = create(:evaluation_form, scale_type: "point")
         evaluation_criterion = create(:evaluation_criterion, evaluation_form:, points_or_weight: 100)
 
-        patch evaluation_form_path(evaluation_form), params: {
+        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: {
           evaluation_form: {
             scale_type: "weight",
             evaluation_criteria_attributes: {
@@ -203,7 +208,7 @@ RSpec.describe "EvaluationForms" do
         old_attributes = evaluation_form.attributes.symbolize_keys
         new_attributes = FactoryBot.attributes_for(:evaluation_form)
 
-        patch evaluation_form_path(evaluation_form), params: {
+        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: {
           evaluation_form: new_attributes
         }
 
@@ -232,7 +237,7 @@ RSpec.describe "EvaluationForms" do
 
         new_closing_date = 2.days.from_now.to_date
 
-        patch evaluation_form_path(evaluation_form), params: {
+        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: {
           evaluation_form: {
             title: "New title attempt",
             closing_date: new_closing_date

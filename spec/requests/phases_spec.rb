@@ -50,11 +50,11 @@ RSpec.describe "Phases" do
         challenge = create(:challenge, user: challenge_user, title: "Turning monster energy into pepto bismol")
         phase = create_phase(challenge_id: challenge.id)
         ChallengeManager.create(user: challenge_user, challenge:)
-        create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: phase.id)
+        frodo = create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: phase.id)
 
         get phases_path
         expect(response.body).to include("Turning monster energy into pepto bismol")
-        expect(response.body).to include("Frodo")
+        expect(response.body).to have_link("Edit form", href: edit_phase_evaluation_form_path(phase, frodo))
       end
     end
 

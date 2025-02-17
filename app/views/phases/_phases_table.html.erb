@@ -37,11 +37,9 @@
             </td>
             <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
-                <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
-                  <%= phase.evaluation_form.title %>
-                <% end %>    
+                <%= link_to "Edit form", edit_phase_evaluation_form_path(phase, phase.evaluation_form) %>  
               <% else %>
-                N/A  
+                <%= link_to "Create form", new_phase_evaluation_form_path(phase) %>
               <% end %>  
             </td>
             <td data-label="Evaluations are due by" class="text-top">
@@ -52,13 +50,7 @@
               <% end %>
             </td>
             <td data-label="Evaluation Form" class="text-top">
-              <% if phase.evaluation_form %>
-                <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
-                  <%= phase.evaluation_form.title %>
-                <% end %>    
-              <% else %>
-                N/A  
-              <% end %>  
+
             </td>
             <td>
               <div class="display-flex flex-column grid-row grid-gap-1">
