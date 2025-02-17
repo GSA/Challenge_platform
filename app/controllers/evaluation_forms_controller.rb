@@ -28,20 +28,14 @@ class EvaluationFormsController < ApplicationController
   def create
     @evaluation_form = EvaluationForm.new(evaluation_form_params)
 
-    respond_to do |format|
-      if @evaluation_form.save
-        format.html do
-          redirect_to confirmation_phase_evaluation_form_path(
-            @evaluation_form.phase,
-            @evaluation_form
-          ),
-                      notice: I18n.t("evaluation_form_saved")
-        end
-        format.json { render :show, status: :created, location: @evaluation_form }
-      else
-        format.html { render :new, status: :unprocessable_entity, phase: @evaluation_form.phase }
-        format.json { render json: @evaluation_form.errors, status: :unprocessable_entity }
-      end
+    if @evaluation_form.save
+      redirect_to confirmation_phase_evaluation_form_path(
+        @evaluation_form.phase,
+        @evaluation_form
+      ),
+                  notice: I18n.t("evaluation_form_saved")
+    else
+      render :new, status: :unprocessable_entity, phase: @evaluation_form.phase
     end
   end
 
