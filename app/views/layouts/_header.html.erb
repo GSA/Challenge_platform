@@ -135,7 +135,7 @@ aria-label="Official website of the United States government"
       <!-- Desktop search and login area --> 
       <section class="display-none desktop:display-flex">
         <section aria-label="Search component">
-          <form class="usa-search usa-search--small" role="search">
+          <form class="usa-search usa-search--small margin-top-2px" role="search">
             <label class="usa-sr-only" for="search-field-desktop">Search</label>
             <input
               class="usa-input"
@@ -154,11 +154,9 @@ aria-label="Official website of the United States government"
           </form>
         </section>
         <% if logged_in? %>
-          <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1", type: "button") %>
-          <button class="usa-button font-body-2xs text-no-wrap">Switch Task</button> 
+          <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1 desktop:margin-right-3", type: "button") %>
         <% else %>
-          <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1", type: "button") %>
-          <button class="usa-button font-body-2xs text-no-wrap">Create Account</button> 
+          <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline text-no-wrap desktop:margin-left-1 desktop:margin-right-3", type: "button") %>
         <% end %>
       </section>
       <!-- mobile search and login area --> 
@@ -187,10 +185,8 @@ aria-label="Official website of the United States government"
             <%= current_user.email %>
           </div>  
           <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
-          <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Switch Task</button> 
         <% else %>
           <%= button_to("Login", new_session_path, method: :get, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>
-          <button class="usa-button font-body-2xs text-no-wrap width-full margin-y-1">Create Account</button> 
         <% end %>
       </section>
     </nav>
