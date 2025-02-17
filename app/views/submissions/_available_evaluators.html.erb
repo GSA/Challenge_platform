@@ -21,18 +21,20 @@
               </div> 
               <div class="margin-left-05">
                   <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
-                  <% if assignment %>
-                    <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
-                      <%= f.hidden_field :phase_id, value: @submission.phase.id %>
-                      <%= f.hidden_field :status, value: "assigned" %>
-                      <%= f.submit "Reassign", class: "usa-button font-body-2xs margin-top-1" %>
-                    <% end %>
-                  <% else %>
-                    <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
-                      <%= f.hidden_field :evaluator_id, value: evaluator.id %>
-                      <%= f.hidden_field :submission_id, value: @submission.id %>
-                      <%= f.submit "Assign", class: "usa-button font-body-2xs margin-top-1" %>
-                    <% end %>
+                  <% unless @submission.winner? %>
+                    <% if assignment %>
+                      <%= form_with url: phase_evaluator_submission_assignment_path(@submission.phase, assignment.id), method: "PATCH" do |f| %>
+                        <%= f.hidden_field :phase_id, value: @submission.phase.id %>
+                        <%= f.hidden_field :status, value: "assigned" %>
+                        <%= f.submit "Reassign", class: "usa-button font-body-2xs margin-top-1" %>
+                      <% end %>
+                    <% else %>
+                      <%= form_with url: phase_evaluator_submission_assignments_path(@submission.phase) do |f| %>
+                        <%= f.hidden_field :evaluator_id, value: evaluator.id %>
+                        <%= f.hidden_field :submission_id, value: @submission.id %>
+                        <%= f.submit "Assign", class: "usa-button font-body-2xs margin-top-1" %>
+                      <% end %>
+                    <% end %>  
                   <% end %>  
               </div>
           </div>
