@@ -15,11 +15,13 @@
       <% @challenges.each do |challenge| %>
         <% challenge.phases.each do |phase| %>
           <tr>
-            <th data-label="Form Title" scope="row" class="text-top">
-              <strong><%= challenge_phase_title(challenge, phase) %></strong>
-              <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
+            <th data-label="Challenge" scope="row" class="text-top">
+              <%= link_to "#{Rails.configuration.phx_interop[:phx_uri]}/challenges/#{challenge.id}" do %>
+                <strong><%= challenge_phase_title(challenge, phase) %></strong>
+              <% end %>  
             </th>
-            <td data-label="Number of Submissions" class="text-top">
+            <td data-label="Challenge Status" class="text-top">
+              <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
               <%= phase.submissions_count %>
             </td>
             <td data-label="Evaluation Form" class="text-top">
@@ -37,6 +39,15 @@
               <% else %>
                 N/A  
               <% end %>
+            </td>
+            <td data-label="Evaluation Form" class="text-top">
+              <% if phase.evaluation_form %>
+                <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
+                  <%= phase.evaluation_form.title %>
+                <% end %>    
+              <% else %>
+                N/A  
+              <% end %>  
             </td>
             <td>
               <div class="display-flex flex-column grid-row grid-gap-1">
