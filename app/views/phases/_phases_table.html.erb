@@ -24,8 +24,8 @@
               <%= statuses[challenge.status.to_sym] %>
             </td>
             <td data-label="Challenge Start and End Dates" class="text-top">
-              <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
-              <%= phase.submissions_count %>
+              <%= phase.start_date.strftime("%m/%d/%Y") %> <br/>
+              <%= phase.end_date.strftime("%m/%d/%Y") %>
             </td>
             <td data-label="# of Submissions" class="text-top">
               <%= phase.submissions_count %>
