@@ -14,7 +14,7 @@ module Dev
       @current_user = User.find_by(email:)
       renew_session
       session[:userinfo] = [{ "email" => email, "sub" => @current_user.token }]
-      case @current_user.role 
+      case @current_user.role
       when "evaluator"
         redirect_to evaluations_path
       else
