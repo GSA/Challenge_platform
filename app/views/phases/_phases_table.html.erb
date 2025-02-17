@@ -52,27 +52,11 @@
                 <% end %>    
               <% end %>
             </td>
-            <td data-label="Evaluations are due by" class="text-top">
-              <% if phase.evaluation_form %>
-                <%= phase.evaluation_form.closing_date %>
-              <% else %>
-                N/A  
-              <% end %>
+            <td data-label="Evaluation Due Date" class="text-top">
+              <%= phase.evaluation_form&.closing_date %>
             </td>
-            <td>
-              <div class="display-flex flex-column grid-row grid-gap-1">
-                <%= link_to phase_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
-                  Manage Evaluators
-                <% end %>
-                <% if phase.submissions_count > 0 %>
-                  <%= link_to(submissions_phase_path(phase)) do %>
-                    <button class="usa-button font-body-2xs text-no-wrap width-full">
-                      View Submissions
-                    </button>
-                  <% end %>
-                <% end %>
-              </div>
-              </div>  
+            <td data-label="Evaluation Status" class="text-top">
+              
             </td>
             </td>  
           </tr>
