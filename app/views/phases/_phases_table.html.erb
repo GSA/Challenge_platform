@@ -42,15 +42,22 @@
                 <%= link_to "Create form", new_phase_evaluation_form_path(phase) %>
               <% end %>  
             </td>
+       
+            <td data-label="# of Evaluators" class="text-top">
+              <%= link_to phase_evaluators_path(phase) do %>
+                <% if phase.evaluators.present? %>
+                  <%= phase.evaluators.count %> Evaluators
+                <% else %>
+                  Invite Evaluators
+                <% end %>    
+              <% end %>
+            </td>
             <td data-label="Evaluations are due by" class="text-top">
               <% if phase.evaluation_form %>
                 <%= phase.evaluation_form.closing_date %>
               <% else %>
                 N/A  
               <% end %>
-            </td>
-            <td data-label="Evaluation Form" class="text-top">
-
             </td>
             <td>
               <div class="display-flex flex-column grid-row grid-gap-1">
