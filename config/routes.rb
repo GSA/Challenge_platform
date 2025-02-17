@@ -12,14 +12,15 @@ Rails.application.routes.draw do
 
   resources :evaluations, only: %i[index edit create update] do
     member do
-      get :submissions
-      patch 'recuse'
+      get 'confirmation'
+      get 'submissions'
     end
   end
 
   resources :phases, only: [:index] do
     member do
-      get :submissions
+      get 'submissions'
+      get 'export_submissions'
     end
     resources :evaluators, only: [:index, :create, :destroy] do
       member do
@@ -39,7 +40,7 @@ Rails.application.routes.draw do
     resources :evaluations, only: [:new] do
       patch 'recuse', on: :collection
     end
-    get :materials, on: :member, to: "submission_materials#show"
+    get 'materials', on: :member, to: "submission_materials#show"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

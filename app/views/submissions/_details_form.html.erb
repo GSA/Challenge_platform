@@ -41,6 +41,7 @@
         type="hidden"
         name="submission[judging_status]"
         data-submission-details-target="judgingStatusHidden"
+        value=<%= @submission.judging_status %>
         />
         <div class="usa-form-group">
             <%= form.label :comments, "Comments and notes:", class: "usa-label", for: "#{rand}-comments" %>

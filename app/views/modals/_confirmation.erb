@@ -9,14 +9,20 @@
   data-modal-confirm-action="<%= defined?(confirm_action) ? confirm_action : '' %>"
   data-modal-cancel-action="<%= defined?(cancel_action) ? cancel_action : '' %>"
 >
+  <% if defined?(confirm_data) && confirm_data.present? %>
+    <% confirm_data.each do |data| %>
+      <input type="hidden" name="<%= data[:name] %>" value="<%= data[:value] %>" data-modal-target="confirmDataInput" disabled>
+    <% end %>
+  <% end %>
+
   <div class="usa-modal__content">
     <div class="usa-modal__main">
       <h2 class="usa-modal__heading" id=<%= "#{id}-heading" %>>
-        <%= heading %>
+        <%= sanitize(heading) %>
       </h2>
       <div class="usa-prose">
         <p id=<%= "#{id}-description" %>>
-          <%= description %>
+          <%= sanitize(description) %>
         </p>
       </div>
       <div class="usa-modal__footer">
