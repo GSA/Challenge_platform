@@ -15,11 +15,11 @@ module Dev
       renew_session
       session[:userinfo] = [{ "email" => email, "sub" => @current_user.token }]
       case @current_user.role 
-      when "evaluator"  
+      when "evaluator"
         redirect_to evaluations_path
       else
         redirect_to phases_path
-      end    
+      end
     end
   end
 end

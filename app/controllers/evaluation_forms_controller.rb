@@ -31,7 +31,11 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.save
         format.html do
-          redirect_to confirmation_phase_evaluation_form_path(@evaluation_form.phase, @evaluation_form), notice: I18n.t("evaluation_form_saved")
+          redirect_to confirmation_phase_evaluation_form_path(
+            @evaluation_form.phase, 
+            @evaluation_form
+            ), 
+            notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :created, location: @evaluation_form }
       else
