@@ -200,26 +200,31 @@ RSpec.describe "Submissions" do
 
       context 'when viewing submissions' do
         let!(:draft_submission) { create(:submission, challenge: challenge, phase: phase, status: "draft") }
-        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase) }
+        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase, judging_status: 'selected') }
         let!(:in_progress_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
           assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: nil)
           submission
         end
+
         let!(:completed_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
           submission
+        end
+
+        let!(:ineligible_submission) do
+          create(:submission, challenge: challenge, phase: phase)
         end
         let!(:eligible_submission) do
           create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
         end
         let!(:selected_submission) do
           submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'winner')
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
           submission
         end
 
@@ -239,7 +244,7 @@ RSpec.describe "Submissions" do
         end
 
         context 'when filtering submissions' do
-          it 'shows only submissions matching the selected status' do
+          it 'shows only submissions matching the selected status', bullet: :dont_raise do
             get submissions_phase_path(phase), params: { status: 'not_started' }
 
             expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
@@ -266,9 +271,10 @@ RSpec.describe "Submissions" do
 
             expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
             expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{not_started_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{in_progress_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_no_css("[data-submission-id='#{ineligible_submission.id}']")
           end
 
           it 'displays only selected to advance submissions', bullet: :dont_raise do

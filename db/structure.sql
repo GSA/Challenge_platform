@@ -1109,7 +1109,8 @@ CREATE TABLE public.submissions (
     description_delta text,
     brief_description_delta text,
     pdf_reference character varying(255),
-    comments text
+    comments text,
+    evaluation_status character varying DEFAULT 'not_started'::character varying NOT NULL
 );
 
 
@@ -1978,6 +1979,13 @@ CREATE INDEX index_evaluator_submission_assignments_on_user_id ON public.evaluat
 
 
 --
+-- Name: index_submissions_on_evaluation_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_submissions_on_evaluation_status ON public.submissions USING btree (evaluation_status);
+
+
+--
 -- Name: message_contexts_context_context_id_audience_parent_id_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2472,6 +2480,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250210211648),
 (20250204131151),
 (20250202220815),
 (20250120045732),
