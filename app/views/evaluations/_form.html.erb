@@ -64,7 +64,7 @@
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
 
             <div class="usa-form-group">
-              <%= evaluation_score_input(score_fields, criterion, rand, disabled) %>
+              <%= evaluation_score_input(score_fields, :score, criterion, rand, disabled) %>
 
               <%= inline_error(score_fields, :score, rand) %>
             </div>

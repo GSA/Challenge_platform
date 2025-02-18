@@ -42,20 +42,22 @@ class EvaluationScore < ApplicationRecord
     comment_override || comment
   end
 
-  def calculated_score
-    return if effective_score.blank?
+  def calculated_score(score = nil)
+    score ||= effective_score
+
+    return if score.blank?
 
     points = evaluation_criterion.points_or_weight
 
     case evaluation_criterion.scoring_type
     when "binary"
-      effective_score == 1 ? points : 0
+      score == 1 ? points : 0
     when "numeric"
       # Another way to ensure the calculated score is at most the max points for the criterion
-      [effective_score, points].min
+      [score, points].min
     when "rating"
       best_option = evaluation_criterion.option_range_end
-      (points / best_option) * effective_score
+      (points / best_option) * score
     else
       0
     end.round(2)

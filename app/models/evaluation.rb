@@ -45,6 +45,16 @@ class Evaluation < ApplicationRecord
   before_save :ensure_all_scores_exist
   before_save :calculate_total_score
 
+  def calculated_total_score(use_evaluator_scores: false)
+    total = if use_evaluator_scores
+              evaluation_scores.sum { |score| score.calculated_score(score.score) }
+            else
+              self[:total_score]
+            end
+
+    total.to_f.round(2).to_s.sub(/\.0+$/, '')
+  end
+
   private
 
   def user_has_valid_role

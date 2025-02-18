@@ -1,0 +1,8 @@
+<%= render 'shared/back_link', path: "#" %>
+
+<h1>Submission ID <%= @submission.id %></h1>
+<p class="font-body-sm text-normal margin-bottom-4">Review evaluator's scores and provide your revisions</p>
+
+<%= link_to "Evaluator: #{@evaluator.full_name}", "#", class: "text-no-underline text-bold font-sans-lg" %>
+
+<%= render partial: "evaluation_overrides/form" %>

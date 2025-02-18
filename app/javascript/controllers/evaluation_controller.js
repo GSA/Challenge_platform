@@ -14,8 +14,10 @@ export default class extends Controller {
       totalScore += parseFloat(span.textContent) || 0;
     });
 
+    totalScore = parseFloat((Math.round(totalScore * 100) / 100).toFixed(2));
+
     if (this.hasTotalScoreTarget) {
-      this.totalScoreTarget.textContent = totalScore.toFixed(2);
+      this.totalScoreTarget.textContent = totalScore;
     }
   }
 }
