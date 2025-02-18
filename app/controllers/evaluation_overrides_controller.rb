@@ -4,15 +4,13 @@
 class EvaluationOverridesController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_instance_variables
+  before_action :ensure_evaluation_completed_and_authorized
 
-  # TODO: Redirect if not completed evaluation or not correct challenge manager
-  # TODO: Fix back button and evaluator name links
   def show; end
 
-  # TODO: Fix redirect
   def update
     if @evaluation.update(evaluation_params)
-      render :show, notice: "Revision submitted"
+      redirect_to @return_path, notice: I18n.t("evaluation_overrides.notices.submitted")
     else
       render :show, status: :unprocessable_entity
     end
@@ -24,6 +22,14 @@ class EvaluationOverridesController < ApplicationController
     @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
     @submission = @evaluation.submission
     @evaluator = @evaluation.user
+    @return_path = submission_path(@submission)
+  end
+
+  def ensure_evaluation_completed_and_authorized
+    return if @evaluation.completed_at.present? &&
+              current_user.challenge_manager_challenges.exists?(id: @evaluation.submission.challenge_id)
+
+    redirect_to @return_path, alert: I18n.t("evaluation_overrides.alerts.unauthorized")
   end
 
   def evaluation_params

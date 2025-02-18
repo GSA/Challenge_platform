@@ -104,6 +104,11 @@ en:
   evaluation_scores:
     instruction_text_numeric: "Enter a number between %{min} and %{max} with %{min} being the lowest and %{max} being the highest"
     unique_evaluation_for_evaluation_criterion_error: "already has a score for this evaluation criterion"
+  evaluation_overrides:
+    alerts:
+      unuathorized: "You are not authorized to access this evaluation."
+    notices:
+      submitted: "Revision submitted"
   alerts:
     recused_evaluator:
       heading: "Recused Evaluator"
