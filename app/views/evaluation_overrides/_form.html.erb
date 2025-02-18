@@ -143,14 +143,23 @@
     </div>
 
     <div class="display-flex flex-justify-center">
-      <%= form.button "Cancel", class: "usa-button usa-button--outline", name: "subaction", value: "save_draft", type: "submit" %>
-      <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "complete"} %>
+      <%= link_to "Cancel", "#", class: "usa-button usa-button--outline", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
+      <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} %>
     </div>
 
     <%= render "modals/confirmation", 
-      id: "complete",
-      heading: "Are you sure you want to complete your evaluation?",
-      description: "Completing evaluation for this submission will make your scores final and available for challenge managers. <b>Once the evaluation is completed it no longer can be edited.</b>",
+      id: "cancel",
+      heading: "Are you sure you want to cancel?",
+      description: "Your evaluation revisions will not be saved and any entered information will be lost.",
+      confirm_text: "Yes",
+      cancel_text: "Close",
+      confirm_redirect: "#"
+    %>
+
+    <%= render "modals/confirmation", 
+      id: "revise",
+      heading: "Are you sure you want to save evaluation revisions?",
+      description: "By saving these evaluation revisions, the submission evaluation score and the average submission evaluation score will be updated.",
       confirm_text: "Yes",
       cancel_text: "Back",
       confirm_action: "submit"
