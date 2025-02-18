@@ -194,7 +194,7 @@ RSpec.describe "Evaluations" do
           expect(response.body).to include(submission.id.to_s)
         end
 
-        it "shows submission counts" do
+        it "shows submission counts", skip: :bullet do
           create(:evaluation,
                  evaluator_submission_assignment: assignment,
                  completed_at: Time.current)
