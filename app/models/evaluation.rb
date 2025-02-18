@@ -58,6 +58,10 @@ class Evaluation < ApplicationRecord
     total.to_f.round(2).to_s.sub(/\.0+$/, '')
   end
 
+  def revised?
+    evaluation_scores.any? { |score| score.score_override.present? }
+  end
+
   private
 
   def user_has_valid_role
