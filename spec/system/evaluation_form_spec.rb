@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe 'Evaluation Form', :js, type: :system do
   let(:user) { create_user(role: "challenge_manager", status: "active") }
+  let!(:challenge) { create(:challenge, user:, is_multi_phase: true) }
+  let!(:phase) { create(:phase, challenge: challenge) }
 
   describe "new evaluation form page" do
-    let!(:challenge) { create(:challenge, user:, is_multi_phase: true) }
-    let!(:phase) { create(:phase, challenge: challenge) }
 
     before do
       system_login_user(user)
@@ -85,37 +85,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Check accessibility
       expect(page).to(be_axe_clean)
-    end
-
-    it "only shows phases without existing evaluation forms as options for phase select" do
-      create(:evaluation_form, phase: challenge.phases[0])
-      new_challenge = create(:challenge, user:)
-
-      # Generate taken and non taken challenge_phase_title values
-      invalid_phase = challenge.phases[0]
-      invalid_challenge_phase_title = challenge_phase_title(challenge, invalid_phase)
-      valid_phase = challenge.phases[1]
-      valid_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
-      new_challenge.phases[0]
-      new_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
-
-      visit new_phase_evaluation_form_path(phase)
-
-      expect_form_phase_select_to_not_contain(invalid_challenge_phase_title)
-      expect_form_phase_select_to_contain(valid_challenge_phase_title)
-      expect_form_phase_select_to_contain(new_challenge_phase_title)
-    end
-
-    it "shows no results found if all phases are taken" do
-      # Make an evaluation form for all 3 initial factory challenge phases
-      create(:evaluation_form, phase: challenge.phases[0])
-      create(:evaluation_form, phase: challenge.phases[1])
-      create(:evaluation_form, phase: challenge.phases[2])
-      create(:evaluation_form, phase: challenge.phases[3])
-
-      visit new_phase_evaluation_form_path(phase)
-
-      expect_form_phase_select_to_be_empty
     end
 
     it "contains the evaluation form data when editing after creation" do
@@ -235,11 +204,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   end
 
   describe "update evaluation form page" do
-    let(:challenge) do
-      create(:challenge, user:, is_multi_phase: true)
-    end
+    # let(:challenge) do
+    #   create(:challenge, user:, is_multi_phase: true)
+    # end
     let(:evaluation_form) do
-      create(:evaluation_form, challenge:, phase: challenge.phases.first, scale_type: "weight")
+      create(:evaluation_form, challenge:, phase: phase, scale_type: "weight")
     end
 
     before do
@@ -296,16 +265,14 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # Prep updated form field values for comparison
       updated_title = "Updated #{evaluation_form.title}"
       # TODO: Might affect disabled state, start_date, etc.
-      updated_phase = challenge.phases[1]
       updated_instructions = "Updated #{evaluation_form.instructions}"
       updated_comments_required = !evaluation_form.comments_required
       # TODO: Enable this when criteria updating and weight fixing is implemented
       # updated_scale_type = !evaluation_form.weighted_scoring
-      updated_end_date = updated_phase.end_date + 1.day
+      updated_end_date = evaluation_form.closing_date + 1.day
 
       # Update form field values
       fill_in_title(updated_title)
-      select_phase(updated_phase)
       fill_in_instructions(updated_instructions)
       check_comments_required
       # TODO: When switching to weighted it needs to make sure criteria values sum to 100
@@ -313,12 +280,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(updated_end_date)
 
       save_form
-      expect(page).to have_current_path(confirmation_phase_evaluation_form_path(updated_phase, evaluation_form))
+      expect(page).to have_current_path(confirmation_phase_evaluation_form_path(phase, evaluation_form))
       expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
       expect(evaluation_form.title).to eq(updated_title)
-      expect(evaluation_form.phase_id).to eq(updated_phase.id)
       expect(evaluation_form.instructions).to eq(updated_instructions)
       expect(evaluation_form.comments_required).to eq(updated_comments_required)
       # TODO: Enable this when weighted scoring issue above is solved
@@ -347,7 +313,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it 'allows removing existing criteria' do
-      visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
+      visit edit_phase_evaluation_form_path(phase, evaluation_form)
 
       num_criteria = evaluation_form.evaluation_criteria.length
 
@@ -412,11 +378,10 @@ end
 def fill_in_base_form_info(title: "New Evaluation Form")
   # Fill in main form fields
   fill_in_title(title)
-  select_phase(challenge.phases.first)
   fill_in_instructions("Example instructions")
   check_comments_required
   select_scale_type("point")
-  fill_in_end_date(challenge.phases.first.end_date + 1)
+  fill_in_end_date(phase.end_date + 1)
 end
 
 def fill_in_all_eval_criteria_types
@@ -463,12 +428,6 @@ end
 
 def fill_in_title(value)
   fill_in 'evaluation_form[title]', with: value
-end
-
-def select_phase(phase)
-  challenge_phase_title = challenge_phase_title(phase.challenge, phase)
-  find_by_id('challenge-combo').click
-  find('#challenge-combo--list li', text: challenge_phase_title).click
 end
 
 def fill_in_instructions(value)
@@ -662,8 +621,6 @@ end
 
 def expect_base_form_field_to_match(evaluation_form)
   expect_form_title_to_equal(evaluation_form.title)
-  phase = evaluation_form.phase
-  expect_form_phase_to_equal(challenge_phase_title(phase.challenge, phase))
   expect_form_instructions_to_equal(evaluation_form.instructions)
   expect_form_comments_required_to_equal(evaluation_form.comments_required)
   expect_form_scale_type_to_equal(evaluation_form.scale_type)
@@ -700,10 +657,6 @@ end
 # Base form value checkers
 def expect_form_title_to_equal(value)
   expect(find_by_id('evaluation_form_title').value).to eq(value)
-end
-
-def expect_form_phase_to_equal(value)
-  expect(find_by_id('challenge-combo').value).to eq(value)
 end
 
 def expect_form_phase_select_to_not_contain(value)

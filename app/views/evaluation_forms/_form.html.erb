@@ -43,32 +43,8 @@
         <%= inline_error(form, :title) %>
       </div>
 
-      <div class="usa-form-group">
-        <div class="display-flex flex-align-center text-bold">
-          <%= form.label :phase, "Select a Challenge", class: "margin-right-05 #{label_error_class(form, :phase)}", for: "challenge-combo" %>
-          <span class="margin-right-05" style="color: darkred;">*</span>
-        </div>
-        <div class="usa-hint">Choose the challenge this form will evaluate.</div>
-
-        <div class="usa-combo-box" data-default-value="<%= combo_box_default_value %>">
-          <%= select_tag(
-            'challenge-combo',
-            options_for_select(options_for_available_phases(@available_phases)),
-            class: "usa-select #{input_error_class(form, :phase)}",
-            title: 'challenge-combo',
-            data: {
-              action: "evaluation-form#handleChallengeSelect form-validation#validatePresence focusout->form-validation#validatePresence",
-              field_name: "evaluation_form_phase"
-            },
-            disabled: disabled
-          ) %>
-        </div>
-
-        <%= inline_error(form, :phase) %>
-
-        <%= form.hidden_field :phase_id, {data: { "evaluation-form-target": 'phaseID'}} %>
-        <%= form.hidden_field :challenge_id, {data: { "evaluation-form-target": 'challengeID'}} %>
-      </div>
+      <%= form.hidden_field :phase_id, value: @phase.id %>
+      <%= form.hidden_field :challenge_id, value: @phase.challenge.id %>
 
       <div class="usa-form-group">
         <div class="usa-character-count">
@@ -192,7 +168,7 @@
       </p>
 
       <div class="usa-label text-bold font-sans-sm">Evaluation Start Date:</div>
-      <div class="usa-hint" data-evaluation-form-target="startDate">mm/dd/yyyy</div>
+      <div class="usa-hint"><%= @phase.challenge.end_date.strftime('%m/%d/%Y') %></div>
 
       <div class="usa-form-group">
         <div class="display-flex flex-align-center text-bold">
@@ -201,7 +177,7 @@
         </div>
         <div class="usa-hint" id="evaluation_form_closing_date_hint">mm/dd/yyyy</div>
 
-        <div data-evaluation-form-target="datePicker" class="usa-date-picker" data-default-value="<%= evaluation_form.closing_date %>" data-min-date="<%= if evaluation_form.challenge then evaluation_form.challenge.end_date end %>">
+        <div data-evaluation-form-target="datePicker" class="usa-date-picker" data-default-value="<%= evaluation_form.closing_date %>" data-min-date="<%= @phase.challenge.end_date %>">
           <input
             class="usa-input <%= input_error_class(form, :closing_date) %>"
             id="evaluation_form_closing_date"
