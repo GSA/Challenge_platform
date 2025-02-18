@@ -28,6 +28,7 @@
 class Submission < ApplicationRecord
   enum :status, { draft: "draft", submitted: "submitted" }
   enum :judging_status, { not_selected: "not_selected", selected: "selected", qualified: "qualified", winner: "winner" }
+  enum :evaluation_status, { not_started: "not_started", in_progress: "in_progress", completed: "completed" }
 
   # Associations
   belongs_to :challenge

@@ -44,6 +44,9 @@ class Evaluation < ApplicationRecord
 
   before_save :ensure_all_scores_exist
   before_save :calculate_total_score
+  after_create :update_submission_evaluation_status
+  after_update :update_submission_evaluation_status, if: -> { saved_change_to_completed_at? }
+  after_destroy :update_submission_evaluation_status
 
   def calculated_total_score(use_evaluator_scores: false)
     total = if use_evaluator_scores
@@ -80,5 +83,9 @@ class Evaluation < ApplicationRecord
                        else
                          evaluation_scores.sum(&:calculated_score).round(2)
                        end
+  end
+
+  def update_submission_evaluation_status
+    EvaluationStatusService.update_evaluation_status(submission)
   end
 end
