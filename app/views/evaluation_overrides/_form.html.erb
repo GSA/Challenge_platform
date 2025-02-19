@@ -48,15 +48,15 @@
             </button>
           </h2>
 
-          <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible">
+          <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible" data-evaluation-target="score">
             <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Evaluator Score:</span>
-              <span class="font-sans-xl text-bold"><%= score_fields.object.calculated_score(score_fields.object.score) %></span>
+              <span class="font-sans-xl text-bold" data-evaluation-target="evaluatorScore"><%= score_fields.object.calculated_score(score_fields.object.score) %></span>
             </div>
 
             <div class="display-flex flex-align-center bg-primary-light padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Revised Score:</span>
-              <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= score_fields.object.calculated_score(score_fields.object.score_override) %></span>
+              <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= display_revised_score(score_fields.object) %></span>
             </div>
 
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>

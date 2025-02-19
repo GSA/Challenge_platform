@@ -15,10 +15,17 @@ export default class extends Controller {
     const input = this.getInputValue(event);
     const criterionElement = this.getCriterionElement();
 
+    var scoreValue;
+
     if (!criterionElement) return;
 
-    const points = this.getPoints(criterionElement);
-    const scoreValue = this.getScoreValue(input, criterionElement, points);
+    if (input === null) {
+      scoreValue = "__";
+    } else {
+      const points = this.getPoints(criterionElement);
+      scoreValue = this.getScoreValue(input, criterionElement, points);
+    }
+
     this.updateCalculatedScore(criterionElement, scoreValue);
 
     this.dispatch("scoreUpdated");
@@ -29,14 +36,14 @@ export default class extends Controller {
     if (input.type === "radio") {
       return this.getCheckedRadioValue();
     }
-    return parseFloat(input.value) || 0;
+    return input.value.trim() === "" ? null : parseFloat(input.value);
   }
 
   getCheckedRadioValue() {
     const checkedRadio = this.element.querySelector(
       'input[type="radio"]:checked'
     );
-    return checkedRadio ? parseFloat(checkedRadio.value) : 0;
+    return checkedRadio ? parseFloat(checkedRadio.value) : null;
   }
 
   getCriterionElement() {

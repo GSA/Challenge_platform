@@ -50,12 +50,17 @@ class Evaluation < ApplicationRecord
 
   def calculated_total_score(use_evaluator_scores: false)
     total = if use_evaluator_scores
-              evaluation_scores.sum { |score| score.calculated_score(score.score) }
+              evaluation_scores.sum do |score|
+                calculated_score = score.calculated_score(score.score)
+                return nil if calculated_score.nil?
+
+                calculated_score
+              end
             else
               total_score
             end
 
-    total.to_f.round(2).to_s.sub(/\.0+$/, '')
+    total.to_f.round(2).to_s.sub(/\.0+$/, '') unless total.nil?
   end
 
   def revised?
