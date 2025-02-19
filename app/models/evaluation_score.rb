@@ -72,7 +72,7 @@ class EvaluationScore < ApplicationRecord
 
   def rating_score(score, points)
     best_option = evaluation_criterion.option_range_end
-    (points / best_option) * score
+    (points.to_f / best_option) * score
   end
 
   # TODO: Should these error messages be more generic instead of specific values
