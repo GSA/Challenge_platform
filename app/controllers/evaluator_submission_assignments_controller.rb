@@ -27,6 +27,8 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       status: :assigned
     )
     if @evaluator_submission_assignment.save
+      NotificationMailer.evaluation_assignment(@evaluator_submission_assignment).deliver_now
+
       redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignments.assigned.success")
     else
       redirect_to submission_path(@submission), notice: I18n.t("evaluator_submission_assignments.assigned.failure")
@@ -85,6 +87,10 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
   end
 
   def handle_successful_update(new_status)
+    if new_status == :assigned
+      NotificationMailer.evaluation_assignment(@assignment).deliver_now
+    end
+
     flash[:success] = t("evaluator_submission_assignments.#{new_status}.success")
     if request&.referer&.include?("submissions")
       redirect_to request.referer
