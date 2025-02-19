@@ -56,7 +56,9 @@
               <%= phase.evaluation_form&.closing_date %>
             </td>
             <td data-label="Evaluation Status" class="text-top">
-              <%= evaluation_status(phase) %>
+              <span class="text-top text-no-wrap usa-tag <%= evaluation_submission_assignment_status_color(phase) %>">
+                <%= phase.evaluation_status.to_s.titleize %>
+              </span>
             </td>
             </td>  
           </tr>
