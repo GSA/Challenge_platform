@@ -107,6 +107,7 @@ en:
   evaluation_overrides:
     alerts:
       unuathorized: "You are not authorized to access this evaluation."
+      not_found: "Evaluation not found"
     notices:
       submitted: "Revision submitted"
   alerts:

@@ -20,6 +20,9 @@ class EvaluationOverridesController < ApplicationController
 
   def set_instance_variables
     @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
+
+    return redirect_to dashboard_path, alert: I18n.t("evaluation_overrides.alerts.not_found") unless @evaluation
+
     @submission = @evaluation.submission
     @evaluator = @evaluation.user
     @return_path = submission_path(@submission)

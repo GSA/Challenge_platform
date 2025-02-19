@@ -29,13 +29,12 @@ class EvaluationInitService
     normalize_evaluation_scores_keys!
 
     permitted_attributes = if @evaluation&.completed_at.present?
-                             %i[revision_comments] + [{ evaluation_scores_attributes: %i[id score_override
-                                                                                         comment_override] }]
+                             []
                            else
                              %i[user_id evaluator_submission_assignment_id submission_id evaluation_form_id
-                                additional_comments revision_comments] +
-                               [{ evaluation_scores_attributes: %i[id evaluation_criterion_id score score_override
-                                                                   comment comment_override] }]
+                                additional_comments] +
+                               [{ evaluation_scores_attributes: %i[id evaluation_criterion_id score
+                                                                   comment] }]
                            end
 
     @params.require(:evaluation).permit(*permitted_attributes)

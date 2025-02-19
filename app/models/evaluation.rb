@@ -52,7 +52,7 @@ class Evaluation < ApplicationRecord
     total = if use_evaluator_scores
               evaluation_scores.sum { |score| score.calculated_score(score.score) }
             else
-              self[:total_score]
+              total_score
             end
 
     total.to_f.round(2).to_s.sub(/\.0+$/, '')
