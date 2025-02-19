@@ -37,13 +37,24 @@ export default class extends Controller {
         evaluator_submission_assignment: { status: newStatus }
       })
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response.redirected) {
+        window.location.assign(response.url);
+        return null;
+      }
+      return response.json();
+    })
     .then(data => {
+      if (!data) return;
       if (!data.success) {
         throw new Error(data.message || 'Failed to unassign evaluator from submission');
       }
-      const evaluatorId = new URLSearchParams(window.location.search).get('evaluator_id');
-      window.location.href = `/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${evaluatorId}`;
+      if (data.redirect_url) {
+        window.location.assign(data.redirect_url);
+      } else {
+        const evaluatorId = new URLSearchParams(window.location.search).get('evaluator_id');
+        window.location.assign(`/phases/${this.phaseIdValue}/evaluator_submission_assignments?evaluator_id=${evaluatorId}`);
+      }
     })
     .catch(error => {
       console.error('Error:', error);
