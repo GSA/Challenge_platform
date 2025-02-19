@@ -77,6 +77,8 @@ class EvaluatorManagementService
   end
 
   def handle_evaluator_role_requested(user)
+    NotificationMailer.role_request(user, @challenge, @phase).deliver_now
+
     user.update!(status: 'evaluator_role_requested')
     ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
     {
