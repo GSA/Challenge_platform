@@ -1,66 +1,48 @@
 <div
-    class="usa-summary-box bg-base-lightest border-1px border-base-dark radius-0"
+    class="usa-summary-box bg-base-lightest border-1px border-base-lightest radius-0"
     role="region"
     aria-labelledby="summary-box-key-information"
 >
-    <div class="usa-summary-box__body">
-        <div class="display-flex flex-column tablet:flex-row tablet:flex-align-center">
-        <div class="tablet:flex-fill">
-            <div class="display-flex flex-align-center margin-bottom-2 tablet:margin-bottom-0">
-            <div class="margin-right-2">
-                <span class="font-sans-3xl text-primary text-bold"><%= @submissions_count %></span>
-            </div>
-            <div>
-                <h2 class="usa-summary-box__heading text-primary margin-bottom-05" id="summary-box-key-information">
-                Total Submissions
-                </h2>
-                <p class="usa-summary-box__text text-primary-darker text-bold">
-                Evaluations due by <%= @phase.evaluation_form&.closing_date&.strftime('%m/%d/%Y') || "N/A" %>
-                </p>
-            </div>
-            </div>
-        </div>
+  <div class="usa-summary-box__body margin-top-neg-2">
+    <h1 class="font-sans-lg text-bold text-black margin-bottom-2">At a glance</h1>
+    <div class="border-top border-1px border-base-light margin-y-2"></div>
 
-        <div class="border-top border-base-dark margin-y-2 tablet:display-none"></div>
+    <div class="display-flex flex-column tablet:flex-row tablet:flex-align-center">
+      <div class="tablet:flex-fill">
+        <ul class="add-list-reset">
+          <li class="margin-bottom-0.5 display-flex">
+              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @submissions_count %></span>
+              <span class="margin-left-2">Submissions</span>
+          </li>
+          <li class="margin-bottom-0.5 display-flex">
+              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @eligible_count %></span>
+              <span class="margin-left-2">Eligible for evaluation</span>
+          </li>
+          <li class="margin-bottom-0.5 display-flex">
+              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @selected_count %></span>
+              <span class="margin-left-2">Selected to advance</span>
+          </li>
+          <li class="display-flex">
+              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @phase.evaluation_form&.closing_date&.strftime('%m/%d/%Y') || "N/A" %></span>
+              <span class="margin-left-2">Evaluation due date</span>
+          </li>
+        </ul>
+      </div>
 
-        <div class="display-flex flex-row tablet:margin-left-auto">
-            <div class="text-center margin-right-5">
-            <span class="font-sans-xl text-green text-bold display-block"><%= @submissions_by_status[:completed] || 0 %></span>
-            <span class="font-sans-lg text-green text-bold">Completed</span>
-            </div>
-            <div class="text-center margin-right-5">
-            <span class="font-sans-xl text-accent-warm-dark text-bold display-block"><%= @submissions_by_status[:in_progress] || 0 %></span>
-            <span class="font-sans-lg text-accent-warm-dark text-bold">In Progress</span>
-            </div>
-            <div class="text-center margin-right-2">
-            <span class="font-sans-xl text-secondary-dark text-bold display-block"><%= @submissions_by_status[:not_started] || 0 %></span>
-            <span class="font-sans-lg text-secondary-dark text-bold">Not Started</span>
-            </div>
+      <div class="display-flex flex-row tablet:margin-left-auto tablet:margin-top-0 margin-top-3">
+        <div class="text-center bg-green-cool-vivid-60v padding-1 margin-right-1" style="width: 32%">
+          <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_by_status[:completed] || 0 %></span>
+          <span class="font-sans-3xs tablet:font-sans-sm text-white">COMPLETED<br>EVALUATIONS</span>
         </div>
+        <div class="text-center bg-orange-warm-vivid-50v padding-1 margin-right-1" style="width: 32%">
+          <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_by_status[:in_progress] || 0 %></span>
+          <span class="font-sans-3xs tablet:font-sans-sm text-white">IN PROGRESS<br>EVALUATIONS</span>
         </div>
+        <div class="text-center bg-red-vivid-60v padding-1" style="width: 32%">
+          <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_by_status[:not_started] || 0 %></span>
+          <span class="font-sans-3xs tablet:font-sans-sm text-white">NOT&nbsp;STARTED<br>EVALUATIONS</span>
+        </div>
+      </div>
     </div>
-    <div class="display-flex flex-wrap tablet:flex-justify margin-top-2">
-        <div class="font-body-xs">
-            <%= image_tag(
-                "images/usa-icons/verified.svg",
-                class: "usa-icon--size-3 margin-right-1",
-                alt: ""
-            )%>
-            <span class="text-top">
-                <span class="text-primary"><%= @eligible_count %> of <%= @submissions_count %></span>
-                submissions selected for evaluation
-            </span>
-        </div>
-        <div class="font-body-xs">
-            <%= image_tag(
-                "images/usa-icons/star_outline.svg",
-                class: "usa-icon--size-3 margin-right-1",
-                alt: ""
-            )%>
-            <span class="text-top">
-                <span class="text-primary"><%= @selected_count %> of <%= @eligible_count %></span>
-                submissions selected to advance
-            </span>
-        </div>
-    </div>
+  </div>
 </div>

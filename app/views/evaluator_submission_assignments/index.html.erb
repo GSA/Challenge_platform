@@ -12,7 +12,7 @@
   <h3 class="font-body-lg">Assigned Submissions</h3>
   <p><%= t('evaluator_submission_assignments.assigned_submissions') %></p>
 
-  <%= render 'shared/assignment_stats', heading: 'Assigned Submissions' %>
+  <%= render 'shared/assignment_stats', heading: 'Assigned Submissions', show_all_stats: true %>
 
   <% if @assigned_submissions.any? { |assignment| assignment.status == "recused" } %>
     <%= render 'shared/alert_error', alert_heading: t('alerts.recused_submission.heading'), alert_text: t('alerts.recused_submission.text') %>
