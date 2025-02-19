@@ -63,10 +63,10 @@ RSpec.describe "Phases" do
         create_and_log_in_user(role: "evaluator")
       end
 
-      it "redirects to the dashboard" do
+      it "redirects to the evaluator landing page" do
         get phases_path
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(evaluations_path)
       end
     end
 

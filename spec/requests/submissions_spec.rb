@@ -140,10 +140,10 @@ RSpec.describe "Submissions" do
     context "when logged in as an evaluator" do
       let(:user) { create_user(role: "evaluator") }
 
-      it "redirects to the dashboard" do
+      it "redirects to the landing page" do
         get submissions_phase_path(phase)
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(evaluations_path)
       end
     end
 

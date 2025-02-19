@@ -8,8 +8,6 @@ Rails.application.routes.draw do
     delete 'timeout'
   end
 
-  get '/dashboard', to: "dashboard#index"
-
   resources :evaluations, only: %i[index edit create update] do
     member do
       get 'confirmation'

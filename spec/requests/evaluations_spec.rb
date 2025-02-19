@@ -31,10 +31,10 @@ RSpec.describe "Evaluations" do
         create_and_log_in_user(role: "challenge_manager")
       end
 
-      it "redirects to the dashboard" do
+      it "redirects to the challenge manager landing page" do
         get evaluations_path
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(phases_path)
       end
     end
 
