@@ -22,10 +22,8 @@ export default class extends Controller {
     this.phaseIdValue = dataset.phaseId;
   }
 
-  unassignEvaluatorSubmission() {
-    const newStatus = this.determineNewStatus();
-  
-    fetch(`/phases/${this.phaseIdValue}/evaluator_submission_assignments/${this.assignmentIdValue}`, {
+  getFetchConfig(newStatus) {
+    return {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -35,22 +33,29 @@ export default class extends Controller {
       body: JSON.stringify({
         evaluator_submission_assignment: { status: newStatus }
       })
-    })
-    .then(response => {
-      if (response.redirected) {
-        window.location.assign(response.url);
-        return null;
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (!data) return;
-      if (!data.success) {
-        throw new Error(data.message || 'Failed to unassign evaluator from submission');
-      }
-      this.handleRedirect(data);
-    })
-    .catch(this.handleError);
+    };
+  }
+
+  unassignEvaluatorSubmission() {
+    const newStatus = this.determineNewStatus();
+    const url = `/phases/${this.phaseIdValue}/evaluator_submission_assignments/${this.assignmentIdValue}`;
+    
+    fetch(url, this.getFetchConfig(newStatus))
+      .then(response => {
+        if (response.redirected) {
+          window.location.assign(response.url);
+          return null;
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (!data) return;
+        if (!data.success) {
+          throw new Error(data.message || 'Failed to unassign evaluator from submission');
+        }
+        this.handleRedirect(data);
+      })
+      .catch(this.handleError);
   }
 
   determineNewStatus() {

@@ -79,6 +79,7 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   def destroy_evaluation_if_unassigned
     return unless (unassigned? || recused_unassigned?) && evaluation.present?
+
     evaluation.destroy
   end
 end
