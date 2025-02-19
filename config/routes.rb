@@ -28,7 +28,7 @@ Rails.application.routes.draw do
       end
     end
     resources :evaluator_submission_assignments, only: [:index, :update, :create]
-    resources :evaluation_forms do
+    resources :evaluation_forms, except: [:index] do
       member do
         get 'confirmation'
         post 'clone'
