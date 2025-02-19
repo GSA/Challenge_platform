@@ -98,7 +98,7 @@ class EvaluationsController < ApplicationController
       current_user.evaluator_submission_assignments.where(submission_id: params[:submission_id]).first
 
     if EvaluatorRecusalService.new(@evaluator_submission_assignment).call
-      NotificationMailer.recusal(@evaluator_submission_assignment).deliver_now
+      send_recusal_notification
 
       flash[:notice] = I18n.t("evaluations.recusal.success")
       redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
@@ -164,6 +164,10 @@ class EvaluationsController < ApplicationController
     @evaluation_form.evaluation_criteria.each do |criterion|
       @evaluation.evaluation_scores.build(evaluation_criterion: criterion)
     end
+  end
+
+  def send_recusal_notification
+    NotificationMailer.recusal(@evaluator_submission_assignment).deliver_now
   end
 
   # Redirect Helpers

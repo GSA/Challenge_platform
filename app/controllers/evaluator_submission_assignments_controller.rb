@@ -86,10 +86,12 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     @assignment.update(status: new_status)
   end
 
+  def send_evaluation_assignment_notification(new_status)
+    NotificationMailer.evaluation_assignment(@assignment).deliver_now if new_status == :assigned
+  end
+
   def handle_successful_update(new_status)
-    if new_status == :assigned
-      NotificationMailer.evaluation_assignment(@assignment).deliver_now
-    end
+    send_evaluation_assignment_notification(new_status)
 
     flash[:success] = t("evaluator_submission_assignments.#{new_status}.success")
     if request&.referer&.include?("submissions")

@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# Mailer class for sending notification emails related to evaluation invitations,
+# evaluation assignments, evaluator role change requests, and recusals
 class NotificationMailer < ApplicationMailer
   include PhasesHelper
   include EvaluationFormsHelper
@@ -57,6 +61,7 @@ class NotificationMailer < ApplicationMailer
   end
 
   def attach_logo
-    attachments.inline['challenge_gov_logo.png'] = File.read(Rails.root.join('public/platform-assets/images/challenge_gov_logo.png'))
+    logo_path = Rails.public_path.join('platform-assets/images/challenge_gov_logo.png')
+    attachments.inline['challenge_gov_logo.png'] = File.read(logo_path)
   end
 end
