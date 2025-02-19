@@ -75,6 +75,21 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+
+  config.action_mailer.smtp_settings = {
+    user_name: ENV.fetch('SMTP_USERNAME'),
+    password: ENV.fetch('SMTP_PASSWORD'),
+    domain: ENV.fetch('HOST'),
+    address: ENV.fetch('SMTP_SERVER'),
+    port: ENV.fetch('SMTP_PORT', 587).to_i,
+    authentication: :login,
+    enable_starttls_auto: true
+  }
+
+  config.action_mailer.default_url_options = { host: ENV.fetch('HOST', 'challenge.gov') }
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
