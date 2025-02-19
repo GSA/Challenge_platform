@@ -20,7 +20,10 @@ module EvaluationsHelper
   def display_score(assignment)
     return 'N/A' unless assignment.evaluation_status == :completed
 
-    assignment.evaluation&.total_score || 'N/A'
+    score = assignment.evaluation&.total_score
+    return 'N/A' if score.nil?
+
+    assignment.evaluation.revised? ? "#{score} (Revised)" : score
   end
 
   # individual evaluator score

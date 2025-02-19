@@ -42,26 +42,38 @@ class EvaluationScore < ApplicationRecord
     comment_override || comment
   end
 
-  def calculated_score
-    return if effective_score.blank?
+  def calculated_score(score = nil)
+    score ||= effective_score
+    return if score.blank?
 
     points = evaluation_criterion.points_or_weight
 
-    case evaluation_criterion.scoring_type
-    when "binary"
-      effective_score == 1 ? points : 0
-    when "numeric"
-      # Another way to ensure the calculated score is at most the max points for the criterion
-      [effective_score, points].min
-    when "rating"
-      best_option = evaluation_criterion.option_range_end
-      (points / best_option) * effective_score
-    else
-      0
-    end.round(2)
+    compute_score(score, points).round(2)
   end
 
   private
+
+  def compute_score(score, points)
+    case evaluation_criterion.scoring_type
+    when "binary" then binary_score(score, points)
+    when "numeric" then numeric_score(score, points)
+    when "rating" then rating_score(score, points)
+    else 0
+    end
+  end
+
+  def binary_score(score, points)
+    score == 1 ? points : 0
+  end
+
+  def numeric_score(score, points)
+    [score, points].min
+  end
+
+  def rating_score(score, points)
+    best_option = evaluation_criterion.option_range_end
+    (points / best_option) * score
+  end
 
   # TODO: Should these error messages be more generic instead of specific values
   # Ex. less than or equal to criterion points or weight
