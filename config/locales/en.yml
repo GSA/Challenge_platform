@@ -115,4 +115,12 @@ en:
       text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."
     recused_evaluator_submission:
       heading: "Recused Evaluator"
-      text: "This submission has a recused evaluator. Please unassign a recused evaluator."       
+      text: "This submission has a recused evaluator. Please unassign a recused evaluator."
+  mailers:
+    evaluation_invitation:
+      subject: "You have been invited to %{challenge_title} Evaluation Panel"
+    evaluation_assignment:
+      subject: "You have been assigned to evaluate submission %{submission_id}"
+    recusal:
+      subject: "An evaluator has recused from evaluating submission %{submission_id}"
+
