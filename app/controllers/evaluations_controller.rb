@@ -98,6 +98,8 @@ class EvaluationsController < ApplicationController
       current_user.evaluator_submission_assignments.where(submission_id: params[:submission_id]).first
 
     if EvaluatorRecusalService.new(@evaluator_submission_assignment).call
+      NotificationMailer.recusal(@evaluator_submission_assignment).deliver_now
+
       flash[:notice] = I18n.t("evaluations.recusal.success")
       redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
     else
