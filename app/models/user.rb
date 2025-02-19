@@ -151,7 +151,7 @@ class User < ApplicationRecord
   end
 
   def full_name(format: :default)
-    return "Unknown User" if first_name.blank? && last_name.blank?
+    return email if first_name.blank? && last_name.blank?
 
     case format
     when :default
