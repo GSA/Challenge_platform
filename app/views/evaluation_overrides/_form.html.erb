@@ -18,7 +18,7 @@
       </div>
     <% end %>
 
-    <% disabled = form_disabled?(@evaluation) %>
+    <% disabled = !@evaluation.revisable? %>
 
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
@@ -62,7 +62,7 @@
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
 
             <div class="usa-form-group">
-              <%= evaluation_score_input(score_fields, :score_override, criterion, rand, false) %>
+              <%= evaluation_score_input(score_fields, :score_override, criterion, rand, disabled) %>
 
               <%= inline_error(score_fields, :score_override, rand) %>
             </div>
@@ -85,7 +85,8 @@
                   maxlength: 3000,
                   rows: 7,
                   class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment_override)}",
-                  data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"}
+                  data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
+                  disabled:
                   %>
 
                 <span class="usa-character-count__message"></span>
@@ -114,7 +115,7 @@
             maxlength: 3000,
             rows: "7",
             class: "usa-textarea #{input_error_class(form, :additional_comments)}",
-            disabled: %>
+            disabled: true %>
         </div>
       </div>
     </div>
@@ -134,7 +135,8 @@
           <%= form.text_area :revision_comments,
             maxlength: 3000,
             rows: "7",
-            class: "usa-textarea #{input_error_class(form, :revision_comments)}"
+            class: "usa-textarea #{input_error_class(form, :revision_comments)}",
+            disabled:
             %>
 
           <%= inline_error(form, :revision_comments, rand) %>
@@ -142,10 +144,12 @@
       </div>
     </div>
 
-    <div class="display-flex flex-justify-center">
-      <%= link_to "Cancel", "#", class: "usa-button usa-button--outline", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
-      <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} %>
-    </div>
+    <% if !disabled %>
+      <div class="display-flex flex-justify-center">
+        <%= link_to "Cancel", "#", class: "usa-button usa-button--outline", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
+        <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} %>
+      </div>
+    <% end %>
 
     <%= render "modals/confirmation", 
       id: "cancel",

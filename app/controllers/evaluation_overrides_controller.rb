@@ -9,7 +9,7 @@ class EvaluationOverridesController < ApplicationController
   def show; end
 
   def update
-    if @evaluation.update(evaluation_params)
+    if @evaluation.revisable? && @evaluation.update(evaluation_params)
       redirect_to @return_path, notice: I18n.t("evaluation_overrides.notices.submitted")
     else
       render :show, status: :unprocessable_entity
