@@ -23,7 +23,7 @@ module EvaluationsHelper
     score = assignment.evaluation&.total_score
     return 'N/A' if score.nil?
 
-    maybe_percent = (@phase || assignment.phase).evaluation_form&.weighted_scoring? ? "%" : ""
+    maybe_percent = weighted_scoring?(@phase || assignment.phase) ? "%" : ""
 
     assignment.evaluation.revised? ? "#{score}#{maybe_percent} (Revised)" : "#{score}#{maybe_percent}"
   end
@@ -129,5 +129,9 @@ module EvaluationsHelper
 
   def form_disabled?(evaluation)
     evaluation.completed_at
+  end
+
+  def weighted_scoring?(phase)
+    phase.evaluation_form&.weighted_scoring?
   end
 end

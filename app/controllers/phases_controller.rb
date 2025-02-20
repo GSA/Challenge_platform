@@ -11,7 +11,6 @@ class PhasesController < ApplicationController
 
   def submissions
     @submissions = @phase.submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
-    @weighted_scoring = @phase.evaluation_form&.weighted_scoring?
 
     set_submission_counts
     set_submission_statuses

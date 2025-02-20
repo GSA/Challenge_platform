@@ -21,7 +21,7 @@
     <% end %>
 
     <% disabled = form_disabled?(@evaluation) %>
-    <% maybe_percent = @evaluator_submission_assignment.phase.evaluation_form.weighted_scoring? ? "%" : "" %>
+    <% maybe_percent = weighted_scoring?(@evaluator_submission_assignment.phase) ? "%" : "" %>
 
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 

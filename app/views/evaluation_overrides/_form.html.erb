@@ -19,7 +19,7 @@
     <% end %>
 
     <% disabled = !@evaluation.revisable? %>
-    <% maybe_percent = @phase.evaluation_form.weighted_scoring? ? "%" : "" %>
+    <% maybe_percent = weighted_scoring?(@phase) ? "%" : "" %>
 
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 

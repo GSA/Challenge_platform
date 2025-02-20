@@ -29,7 +29,7 @@
           </div>  
         </td>
         <td data-label="Average Score">
-          <%= average_score(assignment.submission).display_score %><%= "%" if @weighted_scoring && average_score(assignment.submission).display_score != "N/A" %>
+          <%= average_score(assignment.submission).display_score %><%= "%" if weighted_scoring?(@phase) && average_score(assignment.submission).display_score != "N/A" %>
         </td>
         <td>
           <div class="display-flex flex-no-wrap grid-row grid-gap-1">
