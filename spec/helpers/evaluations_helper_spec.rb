@@ -169,8 +169,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
         completed_at: Time.current
       )
 
-      average_score = (evaluation1.total_score + evaluation2.total_score) / 2
-      average_score = average_score ? average_score.round : 0
+      average_score = (evaluation1.total_score.to_f + evaluation2.total_score) / 2
+      average_score = average_score ? average_score.round(2) : 0
 
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(average_score)

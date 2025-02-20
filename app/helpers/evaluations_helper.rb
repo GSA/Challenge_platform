@@ -48,8 +48,7 @@ module EvaluationsHelper
     end
 
     avg = completed_evaluations.average(:total_score)
-    score = avg ? avg.round : 0
-    puts("score avg=#{avg}, avg.round=#{avg.round}")
+    score = avg ? avg.round(2) : 0
     Score.new(score, score.to_s, score.to_s)
   end
 
