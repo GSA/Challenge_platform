@@ -21,7 +21,6 @@
     <div class="display-flex flex-align-center text-bold">
       <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template), class: "margin-right-05 #{label_error_class(f, :title)}" %>
       <span class="margin-right-05" style="color: darkred;">*</span>
-      <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
     </div>
 
     <%= f.text_field :title, 
@@ -44,7 +43,6 @@
       <div class="display-flex flex-align-center text-bold">
         <%= f.label :description, "Criteria description", for: criteria_field_id(f, "description", is_template), class: "margin-right-05 #{label_error_class(f, :description)}" %>
         <span class="margin-right-05" style="color: darkred;">*</span>
-        <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
       </div>
 
       <%= f.text_area :description, 
@@ -68,7 +66,6 @@
     <div class="display-flex flex-align-center text-bold">
       <%= f.label :points_or_weight, "Criteria Points/Weight", for: criteria_field_id(f, "points_or_weight", is_template), class: "margin-right-05 #{label_error_class(f, :points_or_weight)}" %>
       <span class="margin-right-05" style="color: darkred;">*</span>
-      <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
     </div>
 
     <%= f.number_field :points_or_weight, 
@@ -96,7 +93,6 @@
       <legend class="usa-legend display-flex flex-align-center text-bold <%= label_error_class(f, :scoring_type) %>">
         <span class="margin-right-05">Scoring type</span>
         <span class="margin-right-05" style="color: darkred;">*</span>
-        <%= image_tag "images/usa-icons/help_outline.svg", width: 16, height: 16, alt: "Help for criteria title" %>
       </legend>
 
       <% scoring_types = { "numeric" => "Numeric score / points", "rating" => "Rating scale", "binary" => "Binary scale" } %>

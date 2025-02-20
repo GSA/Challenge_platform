@@ -49,7 +49,6 @@
           <legend class="usa-legend usa-process-list__heading display-flex flex-align-center font-sans-md text-bold <%= label_error_class(form, :scale_type) %>">
             <span class="margin-right-05">Scoring Type</span>
             <span class="margin-right-05" style="color: darkred;">*</span>
-            <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for scale type' %>
           </legend>
 
           <div class="display-flex flex-row">
@@ -92,8 +91,6 @@
               <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
               <%= form.label :comments_required, "Require score comments (optional) ", class: "usa-checkbox__label text-bold" %>
             </div>
-
-            <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for comments required', style: "margin-top: .75rem" %>
           </div>
           <p class="margin-left-4 margin-top-05 font-body-2xs width-mobile">Check the box if the evaluators are required to provide comments on their scores.</p>
         </fieldset>
