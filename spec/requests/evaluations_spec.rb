@@ -266,6 +266,81 @@ RSpec.describe "Evaluations" do
     end
   end
 
+  describe "GET /evaluations/:id/revision" do
+    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:challenge_manager) { create(:user, role: 'challenge_manager') }
+    let(:challenge) { create(:challenge) }
+    let(:phase) { create(:phase, challenge: challenge) }
+    let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+    let(:submission) { create(:submission, challenge:, phase: phase) }
+    let!(:assignment) do
+      create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: evaluator,
+              status: :assigned)
+    end
+
+    context "when logged in as an evaluator" do
+      before do
+        log_in_user(evaluator)
+        ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+      end
+
+      context "with assigned submissions" do
+        it "does not allow viewing the revision for my own evaluation" do
+          evaluation = create(:evaluation,
+                              evaluation_form:,
+                              submission:,
+                              user: evaluator,
+                              evaluator_submission_assignment: assignment)
+
+          # redirected to landing page
+          get revision_evaluation_path(evaluation)
+          expect(response).to redirect_to(dashboard_path)
+          follow_redirect!
+          expect(response.body).to have_css('p.usa-alert__text', text: I18n.t("access_denied"))
+        end
+      end
+    end
+
+    context "when logged in as a challenge manager" do
+      before do
+        log_in_user(challenge_manager)
+        ChallengeManager.create(challenge:, user: challenge_manager)
+        ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+      end
+
+      it "does not allow viewing revision for a draft evaluation", bullet: :dont_raise do
+          evaluation = create(:evaluation,
+                              evaluation_form:,
+                              submission:,
+                              user: evaluator,
+                              evaluator_submission_assignment: assignment)
+
+          # redirected to landing page
+          get revision_evaluation_path(evaluation)
+          expect(response).to redirect_to(submission_path(submission))
+          follow_redirect!
+          expect(response.body).to have_css('div.usa-alert__body', text: I18n.t("evaluation_overrides.alerts.not_found"))
+      end
+
+      it "does allow viewing revision for a completed evaluation", bullet: :dont_raise do
+        evaluation = create(:evaluation,
+                            evaluation_form:,
+                            submission:,
+                            user: evaluator,
+                            evaluator_submission_assignment: assignment,
+                            completed_at: Time.current)
+
+        # redirected to landing page
+        get revision_evaluation_path(evaluation)
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_css('h1', text: "Submission ID #{submission.id}")
+        expect(response.body).to have_css('p.text-normal', text: "Review evaluator's scores and provide your revisions")
+      end
+    end
+  end
+
   # new_submission_evaluation_path
   describe "GET /evaluator_submission_assignments/:evaluator_submission_assignment_id/evaluations/new" do
     context "when logged in as an evaluator" do
