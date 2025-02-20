@@ -5,7 +5,6 @@ FactoryBot.define do
     phase { association(:phase, challenge: challenge) }
 
     # Fields
-    title { "#{Faker::Lorem.word.humanize} Evaluation Form" }
     instructions { Faker::Lorem.sentence(word_count: 10) }
     comments_required { Faker::Boolean.boolean }
     scale_type { [:point, :weight].sample }

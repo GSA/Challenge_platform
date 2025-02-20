@@ -1,3 +1,5 @@
+<h2 class="text-primary">Evaluation Form</h2>
+
 <%= form_with(url: url, model: evaluation_form, data: { controller: "evaluation-form modal form-validation" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: darkred">
@@ -23,25 +25,7 @@
   %>
   <ol class="usa-process-list">
     <li class="usa-process-list__item">
-      <h2 class="usa-process-list__heading">Evaluation Information</h2>
-      <p class="margin-top-05">
-        Create an evaluation form title, assign it to your challenge and
-        provide instructions that will be shared with your evaluators. 
-      </p>
-      <div class="usa-form-group">
-        <div class="display-flex flex-align-center text-bold">
-          <%= form.label :title, "Title", class: "margin-right-05 #{label_error_class(form, :title)}" %>
-          <span class="margin-right-05" style="color: darkred;">*</span>
-        </div>
-
-        <%= form.text_field :title,
-          maxlength: 150,
-          class: "usa-input #{input_error_class(form, :title)}",
-          data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
-          disabled: disabled %>
-
-        <%= inline_error(form, :title) %>
-      </div>
+      <h3 class="usa-process-list__heading">Evaluation Information</h3>
 
       <%= form.hidden_field :phase_id, value: @phase.id %>
       <%= form.hidden_field :challenge_id, value: @phase.challenge.id %>
@@ -49,7 +33,7 @@
       <div class="usa-form-group">
         <div class="usa-character-count">
           <div class="display-flex flex-align-center text-bold">
-            <%= form.label :instructions, "Instructions", class: "margin-right-05 #{label_error_class(form, :instructions)}" %>
+            <%= form.label :instructions, "Evaluation Instructions", class: "margin-right-05 #{label_error_class(form, :instructions)}" %>
             <span class="margin-right-05" style="color: darkred;">*</span>
           </div>
 
