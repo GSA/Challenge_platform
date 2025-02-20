@@ -48,6 +48,18 @@ class Evaluation < ApplicationRecord
   after_update :update_submission_evaluation_status, if: -> { saved_change_to_completed_at? }
   after_destroy :update_submission_evaluation_status
 
+  def calculated_total_score(use_evaluator_scores: false)
+    total = use_evaluator_scores ? calculate_score_with_evaluator_scores : total_score
+
+    return nil if total.nil?
+
+    format_total(total)
+  end
+
+  def revised?
+    evaluation_scores.any? { |score| score.score_override.present? }
+  end
+
   private
 
   def user_has_valid_role
@@ -77,5 +89,18 @@ class Evaluation < ApplicationRecord
 
   def update_submission_evaluation_status
     EvaluationStatusService.update_evaluation_status(submission)
+  end
+
+  def calculate_score_with_evaluator_scores
+    evaluation_scores.each do |score|
+      calculated_score = score.calculated_score(score.score)
+      return nil if calculated_score.nil?
+    end
+
+    evaluation_scores.sum { |score| score.calculated_score(score.score) }
+  end
+
+  def format_total(total)
+    total.to_f.round(2).to_s.sub(/\.0+$/, '') unless total.nil?
   end
 end
