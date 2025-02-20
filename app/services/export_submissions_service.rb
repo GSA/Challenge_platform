@@ -41,7 +41,7 @@ class ExportSubmissionsService
   # submission csv
   def submissions_headers
     [
-      'Submission ID', 'Title', 'Brief Description', 'Description',
+      'Submission ID', 'Submitter Email', 'Title', 'Brief Description', 'Description',
       'External URL', 'Status', 'Created At', 'Updated At',
       'Eligible for Evaluation', 'Selected to Advance'
     ]
@@ -50,6 +50,7 @@ class ExportSubmissionsService
   def submission_data(submission)
     [
       submission.id,
+      submission.submitter.email,
       submission.title || '',
       sanitize_text(submission.brief_description) || '',
       sanitize_text(submission.description) || '',
