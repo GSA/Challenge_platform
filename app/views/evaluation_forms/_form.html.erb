@@ -103,12 +103,6 @@
     <li class="usa-process-list__item">
       <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
 
-      <p>
-        Build your evaluation criteria and scoring options.
-      </p>
-
-      
-
       <div data-controller="evaluation-criteria">
         <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
           <% if evaluation_form.evaluation_criteria.empty? %>
@@ -149,11 +143,6 @@
 
     <li class="usa-process-list__item">
       <h3 class="usa-process-list__heading">Evaluation Period</h3>
-      <p>
-        Set the end date of your evaluation period.
-        Your evaluation start date is the end date of your challenge.
-      </p>
-
       <div class="usa-label text-bold font-sans-sm">Evaluation Start Date:</div>
       <div class="usa-hint"><%= @phase.end_date.strftime('%m/%d/%Y') %></div>
 
