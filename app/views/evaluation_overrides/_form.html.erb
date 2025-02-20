@@ -19,6 +19,7 @@
     <% end %>
 
     <% disabled = !@evaluation.revisable? %>
+    <% maybe_percent = weighted_scoring?(@phase) ? "%" : "" %>
 
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
@@ -52,11 +53,13 @@
             <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Evaluator Score:</span>
               <span class="font-sans-xl text-bold" data-evaluation-target="evaluatorScore"><%= score_fields.object.calculated_score(score_fields.object.score) %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
             </div>
 
             <div class="display-flex flex-align-center bg-primary-light padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Revised Score:</span>
               <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= display_revised_score(score_fields.object) %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
             </div>
 
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
@@ -102,6 +105,7 @@
       <div class="display-flex flex-align-center flex-justify-center">
         <span class="text-bold margin-right-1">Evaluator Score:</span>
         <span class="font-sans-2xl text-bold total-score"><%= @evaluation.calculated_total_score(use_evaluator_scores: true) %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
       </div>
 
       <hr/>
@@ -123,6 +127,7 @@
       <div class="display-flex flex-align-center flex-justify-center">
         <span class="text-bold margin-right-1">Revised Score:</span>
         <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
       </div>
 
       <hr/>

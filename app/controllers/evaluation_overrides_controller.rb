@@ -24,6 +24,7 @@ class EvaluationOverridesController < ApplicationController
     return redirect_to dashboard_path, alert: I18n.t("evaluation_overrides.alerts.not_found") unless @evaluation
 
     @submission = @evaluation.submission
+    @phase = @submission.phase
     @evaluator = @evaluation.user
     @return_path = submission_path(@submission)
   end
