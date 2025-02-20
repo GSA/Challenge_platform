@@ -70,7 +70,7 @@
             <div>
               <p>Evaluator Feedback:</p>
 
-              <%= score_fields.object.comment || "N/A" %>
+              <%= score_fields.object.comment.presence || "N/A" %>
             </div>
 
             <div class="usa-form-group">
@@ -85,7 +85,6 @@
                   maxlength: 3000,
                   rows: 7,
                   class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment_override)}",
-                  data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
                   disabled:
                   %>
 
