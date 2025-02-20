@@ -43,12 +43,13 @@ module EvaluationsHelper
       where(evaluator_submission_assignment: assigned_evaluations).
       where.not(completed_at: nil)
 
-    unless completed_evaluations.count == assigned_evaluations.count
+    if completed_evaluations.count != assigned_evaluations.count
       return Score.new(0, "0", "N/A")
     end
 
     avg = completed_evaluations.average(:total_score)
     score = avg ? avg.round : 0
+    puts("score avg=#{avg}, avg.round=#{avg.round}")
     Score.new(score, score.to_s, score.to_s)
   end
 
