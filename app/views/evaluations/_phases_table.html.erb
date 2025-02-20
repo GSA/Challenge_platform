@@ -2,10 +2,9 @@
   <thead>
     <tr>
       <th scope="col">Challenge</th>
-      <th scope="col">Assigned to me</th>
-      <th scope="col">Remaining to evaluate</th>
-      <th scope="col">Due by</th>
-      <th scope="col"><span class="usa-sr-only">Evaluate</span></th>
+      <th scope="col"># of Submissions to Evaluate</th>
+      <th scope="col">Evaluation Due Date</th>
+      <th scope="col">Evaluation Status</th>
     </tr>
   </thead>
   <tbody>
@@ -14,26 +13,24 @@
         <th data-label="Challenge Title" scope="row" class="text-top">
           <%= challenge_phase_title(phase.challenge, phase) %>
         </th>
-        <td data-label="Assigned to me" class="text-top">
-          <%= assigned_submissions_count(current_user, phase.challenge, phase) %>
+        <td data-label="# of Submissions to Evaluate" class="text-top">
+          <%= link_to submissions_evaluation_path(phase) do %>
+            <%= assigned_submissions_count(current_user, phase.challenge, phase) %> of 
+            <%= remaining_evaluations_count(current_user, phase.challenge, phase) %>
+          <% end %>
         </td>
-        <td data-label="Remaining to evaluate" class="text-top">
-          <%= remaining_evaluations_count(current_user, phase.challenge, phase) %>
-        </td>
-        <td data-label="Due by" class="text-top">
+        <td data-label="Evaluation Due Date" class="text-top">
           <% if phase.evaluation_form %>
-            <%= phase.evaluation_form.closing_date %>
+            <%= phase.evaluation_form.closing_date.strftime('%m/%d/%Y') %>
           <% else %>
             N/A
           <% end %>
         </td>
-        <td>
-          <div class="display-flex flex-column grid-row grid-gap-1 padding-bottom-2">
-            <%= link_to submissions_evaluation_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full" do %>
-              View Submissions
-            <% end %>
-          </div>
-        </td>  
+        <td data-label="Evaluation Status" class="text-top">
+          <span class="text-top text-no-wrap usa-tag <%= evaluation_submission_assignment_status_color(phase) %>">
+            <%= phase.evaluation_status.to_s.titleize %>
+          </span>
+        </td> 
       </tr>
     <% end %>
   </tbody>
