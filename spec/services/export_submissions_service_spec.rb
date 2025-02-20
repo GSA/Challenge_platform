@@ -16,7 +16,7 @@ RSpec.describe ExportSubmissionsService do
 
       it 'includes the correct headers' do
         expected_headers = [
-          'Submission ID', 'Title', 'Brief Description', 'Description',
+          'Submission ID', 'Submitter Email', 'Title', 'Brief Description', 'Description',
           'External URL', 'Status', 'Created At', 'Updated At',
           'Eligible for Evaluation', 'Selected to Advance'
         ]
@@ -26,6 +26,7 @@ RSpec.describe ExportSubmissionsService do
       it 'includes the submission data' do
         row = parsed_csv.first
         expect(row['Submission ID']).to eq(submission.id.to_s)
+        expect(row['Submitter Email']).to eq(submission.submitter.email)
         expect(row['Title']).to eq(submission.title)
         expect(row['Brief Description']).to eq(submission.brief_description || '')
         expect(row['Status']).to eq(submission.status)

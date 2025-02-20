@@ -40,7 +40,6 @@ export default class extends Controller {
   }
 
   updateErrorMessage(field, message) {
-    console.log(field);
     const errorElement = document.getElementById(field + "_error");
     if (errorElement) {
       errorElement.innerHTML = message;

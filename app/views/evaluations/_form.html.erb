@@ -55,7 +55,7 @@
             </button>
           </h2>
 
-          <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible">
+          <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible" data-evaluation-target="score">
             <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">My Score:</span>
               <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= score_fields.object.calculated_score %></span>
@@ -64,7 +64,7 @@
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
 
             <div class="usa-form-group">
-              <%= evaluation_score_input(score_fields, criterion, rand, disabled) %>
+              <%= evaluation_score_input(score_fields, :score, criterion, rand, disabled) %>
 
               <%= inline_error(score_fields, :score, rand) %>
             </div>
@@ -81,7 +81,7 @@
                   maxlength: 3000,
                   rows: 7,
                   class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment)}",
-                  data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
+                  data: @evaluation.evaluation_form.comments_required? ? {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"} : nil,
                   disabled: %>
 
                 <span class="usa-character-count__message"></span>
@@ -97,7 +97,7 @@
     <div class="bg-base margin-bottom-4 padding-2 text-base-lightest">
       <div class="display-flex flex-align-center flex-justify-center">
         <span class="text-bold margin-right-1">Total Score:</span>
-        <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.total_score %></span>
+        <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score || "__" %></span>
       </div>
 
       <hr/>

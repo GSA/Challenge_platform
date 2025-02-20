@@ -20,7 +20,10 @@ module EvaluationsHelper
   def display_score(assignment)
     return 'N/A' unless assignment.evaluation_status == :completed
 
-    assignment.evaluation&.total_score || 'N/A'
+    score = assignment.evaluation&.total_score
+    return 'N/A' if score.nil?
+
+    assignment.evaluation.revised? ? "#{score} (Revised)" : score
   end
 
   # individual evaluator score
@@ -40,12 +43,12 @@ module EvaluationsHelper
       where(evaluator_submission_assignment: assigned_evaluations).
       where.not(completed_at: nil)
 
-    unless completed_evaluations.count == assigned_evaluations.count
+    if completed_evaluations.count != assigned_evaluations.count
       return Score.new(0, "0", "N/A")
     end
 
     avg = completed_evaluations.average(:total_score)
-    score = avg ? avg.round : 0
+    score = avg ? avg.round(2) : 0
     Score.new(score, score.to_s, score.to_s)
   end
 

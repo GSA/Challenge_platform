@@ -14,36 +14,35 @@ module EvaluationScoresHelper
     "#{prefix}[#{identifier}][#{attribute}]"
   end
 
-  def evaluation_score_input(score_fields, criterion, identifier, disabled)
-    field_id = evaluation_score_id(score_fields, :score, identifier)
-    field_name = evaluation_score_name(score_fields, :score, identifier)
+  def evaluation_score_input(score_fields, field, criterion, identifier, disabled)
+    field_id = evaluation_score_id(score_fields, field, identifier)
+    field_name = evaluation_score_name(score_fields, field, identifier)
 
     case criterion.scoring_type
     when 'numeric'
-      score_numeric_input(score_fields, field_id, field_name, disabled)
+      score_numeric_input(score_fields, field, field_id, field_name, disabled)
     else # rating or binary
       content_tag(:div, class: "usa-fieldset") do
         score_options(criterion).each do |value, label|
-          concat(score_radio_input(score_fields, value, label, id: field_id, name: field_name, disabled:))
+          concat(score_radio_input(score_fields, value, label, field:, id: field_id, name: field_name, disabled:))
         end
       end
     end
   end
 
-  def score_numeric_input(score_fields, id, name, disabled)
+  def score_numeric_input(score_fields, field, id, name, disabled)
     criterion = score_fields.object.evaluation_criterion
     min = 0
     max = criterion.points_or_weight
 
     content_tag(:div, class: "display-flex flex-column") do
-      # TODO: Should the lowest be 1?
-      concat(score_fields.label(:score, "Enter a number between #{min} and #{max}", for: id))
+      concat(score_fields.label(field, I18n.t("evaluation_scores.instruction_text_numeric", min:, max:), for: id))
       concat(score_fields.number_field(
-               :score, id:, name:, min:, max:, class: "usa-input width-10",
-                       data: {
-                         'evaluation-score-target': "scoreInput",
-                         action: "input->evaluation-score#calculateScore"
-                       }, disabled:
+               field, id:, name:, min:, max:, class: "usa-input width-10",
+                      data: {
+                        'evaluation-score-target': "scoreInput",
+                        action: "input->evaluation-score#calculateScore"
+                      }, disabled:
              ))
     end
   end
@@ -55,18 +54,19 @@ module EvaluationScoresHelper
   end
 
   def score_radio_input(score_fields, value, label, opts = {})
+    field = opts[:field]
     id = opts[:id]
     name = opts[:name]
     disabled = opts[:disabled]
 
     content_tag(:div, class: "usa-radio") do
       concat(score_fields.radio_button(
-               :score, value, id: "#{id}_#{value}", name:, class: "usa-radio__input usa-radio__input--tile",
-                              data: {
-                                'evaluation-score-target': "scoreInput",
-                                action: "change->evaluation-score#calculateScore"
-                              },
-                              disabled:
+               field, value, id: "#{id}_#{value}", name:, class: "usa-radio__input usa-radio__input--tile",
+                             data: {
+                               'evaluation-score-target': "scoreInput",
+                               action: "change->evaluation-score#calculateScore"
+                             },
+                             disabled:
              ))
       concat(score_fields.label("score_#{value}", label, for: "#{id}_#{value}", class: "usa-radio__label"))
     end
