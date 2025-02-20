@@ -94,14 +94,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     send_evaluation_assignment_notification(new_status)
 
     flash[:success] = t("evaluator_submission_assignments.#{new_status}.success")
-    if request&.referer&.include?("submissions")
-      redirect_to request.referer
-    else
-      respond_to do |format|
-        format.html { redirect_to_assignment_path }
-        format.json { render json: { success: true, message: flash[:success] } }
-      end
-    end
+    handle_update_response
   end
 
   def handle_failed_update(new_status)
@@ -117,5 +110,14 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       @phase,
       evaluator_id: params[:evaluator_id]
     )
+  end
+
+  def handle_update_response
+    return redirect_to request.referer if request&.referer&.include?("submissions")
+
+    respond_to do |format|
+      format.html { redirect_to_assignment_path }
+      format.json { render json: { success: true, message: flash[:success] } }
+    end
   end
 end

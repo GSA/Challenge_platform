@@ -10,22 +10,17 @@ class EvaluationsController < ApplicationController
       where(evaluator_submission_assignments: {
               user_id: current_user.id,
               status: [:assigned, :recused]
-            }).
-      includes(:challenge, :evaluation_form).
-      distinct
+            }).includes(:challenge, :evaluation_form).distinct
   end
 
   def submissions
     @phase = Phase.joins(:challenge_phases_evaluators).
-      where(challenge_phases_evaluators: { user_id: current_user.id }).
-      find(params[:id])
+      where(challenge_phases_evaluators: { user_id: current_user.id }).find(params[:id])
 
     @challenge = @phase.challenge
 
     @assigned_submissions = @phase.evaluator_submission_assignments.
-      where(evaluator: current_user).
-      where(status: %i[assigned recused]).
-      includes(:submission, :evaluation).
+      where(evaluator: current_user).where(status: %i[assigned recused]).includes(:submission, :evaluation).
       ordered_by_status
 
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
