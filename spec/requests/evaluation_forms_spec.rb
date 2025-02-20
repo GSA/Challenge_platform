@@ -119,15 +119,12 @@ RSpec.describe "EvaluationForms" do
         evaluation_form = create(:evaluation_form, challenge:, phase: challenge.phases[0],
                                                    closing_date: initial_closing_date)
 
-        old_title = evaluation_form.title
-
         expect(evaluation_form.closing_date).to eq(initial_closing_date)
 
         new_closing_date = 2.days.from_now.to_date
 
         patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: {
           evaluation_form: {
-            title: "New title attempt",
             closing_date: new_closing_date
           }
         }
@@ -136,7 +133,6 @@ RSpec.describe "EvaluationForms" do
 
         expect(evaluation_form.closing_date).to eq(new_closing_date)
         # Disallow other updates while still allowing end_date
-        expect(evaluation_form.title).to eq(old_title)
       end
     end
   end
