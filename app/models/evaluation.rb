@@ -56,6 +56,10 @@ class Evaluation < ApplicationRecord
     format_total(total)
   end
 
+  def revisable?
+    submission.selected?
+  end
+
   def revised?
     evaluation_scores.any? { |score| score.score_override.present? }
   end

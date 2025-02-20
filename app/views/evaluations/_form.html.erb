@@ -81,7 +81,7 @@
                   maxlength: 3000,
                   rows: 7,
                   class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment)}",
-                  data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
+                  data: @evaluation.evaluation_form.comments_required? ? {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"} : nil,
                   disabled: %>
 
                 <span class="usa-character-count__message"></span>
