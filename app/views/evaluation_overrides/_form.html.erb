@@ -18,7 +18,8 @@
       </div>
     <% end %>
 
-    <% disabled = form_disabled?(@evaluation) %>
+    <% disabled = !@evaluation.revisable? %>
+    <% maybe_percent = weighted_scoring?(@phase) ? "%" : "" %>
 
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
@@ -52,17 +53,19 @@
             <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Evaluator Score:</span>
               <span class="font-sans-xl text-bold" data-evaluation-target="evaluatorScore"><%= score_fields.object.calculated_score(score_fields.object.score) %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
             </div>
 
             <div class="display-flex flex-align-center bg-primary-light padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Revised Score:</span>
               <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= display_revised_score(score_fields.object) %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
             </div>
 
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
 
             <div class="usa-form-group">
-              <%= evaluation_score_input(score_fields, :score_override, criterion, rand, false) %>
+              <%= evaluation_score_input(score_fields, :score_override, criterion, rand, disabled) %>
 
               <%= inline_error(score_fields, :score_override, rand) %>
             </div>
@@ -70,7 +73,7 @@
             <div>
               <p>Evaluator Feedback:</p>
 
-              <%= score_fields.object.comment || "N/A" %>
+              <%= score_fields.object.comment.presence || "N/A" %>
             </div>
 
             <div class="usa-form-group">
@@ -85,7 +88,7 @@
                   maxlength: 3000,
                   rows: 7,
                   class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment_override)}",
-                  data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"}
+                  disabled:
                   %>
 
                 <span class="usa-character-count__message"></span>
@@ -102,6 +105,7 @@
       <div class="display-flex flex-align-center flex-justify-center">
         <span class="text-bold margin-right-1">Evaluator Score:</span>
         <span class="font-sans-2xl text-bold total-score"><%= @evaluation.calculated_total_score(use_evaluator_scores: true) %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
       </div>
 
       <hr/>
@@ -114,7 +118,7 @@
             maxlength: 3000,
             rows: "7",
             class: "usa-textarea #{input_error_class(form, :additional_comments)}",
-            disabled: %>
+            disabled: true %>
         </div>
       </div>
     </div>
@@ -123,6 +127,7 @@
       <div class="display-flex flex-align-center flex-justify-center">
         <span class="text-bold margin-right-1">Revised Score:</span>
         <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
       </div>
 
       <hr/>
@@ -134,7 +139,8 @@
           <%= form.text_area :revision_comments,
             maxlength: 3000,
             rows: "7",
-            class: "usa-textarea #{input_error_class(form, :revision_comments)}"
+            class: "usa-textarea #{input_error_class(form, :revision_comments)}",
+            disabled:
             %>
 
           <%= inline_error(form, :revision_comments, rand) %>
@@ -142,10 +148,12 @@
       </div>
     </div>
 
-    <div class="display-flex flex-justify-center">
-      <%= link_to "Cancel", "#", class: "usa-button usa-button--outline", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
-      <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} %>
-    </div>
+    <% if !disabled %>
+      <div class="display-flex flex-justify-center">
+        <%= link_to "Cancel", "#", class: "usa-button usa-button--outline", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
+        <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} %>
+      </div>
+    <% end %>
 
     <%= render "modals/confirmation", 
       id: "cancel",
