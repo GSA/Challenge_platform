@@ -53,8 +53,9 @@ class Phase < ApplicationRecord
 
   def evaluation_status
     eligible_for_evaluation_exists = submissions.eligible_for_evaluation.exists?
-    in_progress_or_completed_exists = submissions.eligible_for_evaluation.where(evaluation_status: [:in_progress, :completed]).exists?
-    in_progress_exists = submissions.eligible_for_evaluation.where(evaluation_status: :in_progress).exists?
+    in_progress_or_completed_exists = submissions.eligible_for_evaluation.exists?(evaluation_status: [:in_progress,
+                                                                                                      :completed])
+    in_progress_exists = submissions.eligible_for_evaluation.exists?(evaluation_status: :in_progress)
     if !eligible_for_evaluation_exists || !in_progress_or_completed_exists
       # no submissions are eligible for evaluation, or if they do they are all currently not_started
       :not_started
