@@ -23,7 +23,9 @@ module EvaluationsHelper
     score = assignment.evaluation&.total_score
     return 'N/A' if score.nil?
 
-    assignment.evaluation.revised? ? "#{score} (Revised)" : score
+    maybe_percent = (@phase || assignment.phase).evaluation_form&.weighted_scoring? ? "%" : ""
+
+    assignment.evaluation.revised? ? "#{score}#{maybe_percent} (Revised)" : "#{score}#{maybe_percent}"
   end
 
   # individual evaluator score

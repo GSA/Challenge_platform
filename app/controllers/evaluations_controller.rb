@@ -21,6 +21,7 @@ class EvaluationsController < ApplicationController
       find(params[:id])
 
     @challenge = @phase.challenge
+    @weighted_scoring = @phase.evaluation_form&.weighted_scoring?
 
     @assigned_submissions = @phase.evaluator_submission_assignments.
       where(evaluator: current_user).
