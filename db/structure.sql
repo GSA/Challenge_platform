@@ -399,7 +399,6 @@ ALTER SEQUENCE public.evaluation_criteria_id_seq OWNED BY public.evaluation_crit
 
 CREATE TABLE public.evaluation_forms (
     id bigint NOT NULL,
-    title character varying NOT NULL,
     instructions character varying NOT NULL,
     comments_required boolean DEFAULT false,
     closing_date date NOT NULL,
@@ -1109,7 +1108,7 @@ CREATE TABLE public.submissions (
     description_delta text,
     brief_description_delta text,
     pdf_reference character varying(255),
-    comments text,
+    comments character varying,
     evaluation_status character varying DEFAULT 'not_started'::character varying NOT NULL
 );
 
@@ -2480,9 +2479,12 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250220185334),
 (20250210211648),
+(20250205135218),
 (20250204131151),
 (20250202220815),
+(20250130144731),
 (20250120045732),
 (20250120043934),
 (20241223190634),
