@@ -88,7 +88,8 @@ class Submission < ApplicationRecord
 
     joins(
       "LEFT JOIN evaluations ON evaluations.submission_id = submissions.id " \
-      "AND evaluations.completed_at IS NOT NULL"
+      "AND evaluations.completed_at IS NOT NULL " \
+      "AND submissions.evaluation_status = 'completed'"
     ).
       group('submissions.id').
       order(
