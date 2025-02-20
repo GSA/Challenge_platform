@@ -13,6 +13,7 @@ class SubmissionsSortAndFilterService
   def sort_and_filter
     apply_filters
     apply_sorting
+    apply_includes
     @submissions
   end
 
@@ -75,6 +76,14 @@ class SubmissionsSortAndFilterService
       @submissions = @submissions.order(id: :desc)
     when 'submission_id_low_to_high'
       @submissions = @submissions.order(id: :asc)
+    end
+  end
+
+  def apply_includes
+    if @params[:sort]&.include?('assignees')
+      @submissions = @submissions.preload(evaluator_submission_assignments: [:evaluator, :evaluation])
+    else
+      @submissions = @submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
     end
   end
 end

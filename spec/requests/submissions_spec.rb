@@ -299,6 +299,23 @@ RSpec.describe "Submissions" do
                    evaluator_submission_assignment: create(:evaluator_submission_assignment,
                                                            submission: completed_submission),
                    total_score: 90)
+
+            create_list(:evaluator_submission_assignment, 3,
+              submission: completed_submission,
+              status: :assigned
+            )
+            create(:evaluator_submission_assignment,
+              submission: completed_submission,
+              status: :recused
+            )
+            create_list(:evaluator_submission_assignment, 2,
+              submission: not_started_submission,
+              status: :assigned
+            )
+            create(:evaluator_submission_assignment,
+              submission: not_started_submission,
+              status: :recused
+            )
           end
 
           it 'orders submissions by score high to low' do
@@ -319,8 +336,41 @@ RSpec.describe "Submissions" do
             )
           end
 
-          xit 'orders submissions by assigned evaluators high to low'
-          xit 'orders submissions by assigned evaluators low to high'
+          it 'orders submissions by assigned evaluators high to low' do
+            get submissions_phase_path(phase), params: { sort: 'assignees_high_to_low' }
+
+            # completed_submission: 6 evaluators (4 assigned + 2 recused)
+            # not_started_submission: 3 evaluators (2 assigned + 1 recused)
+            # in_progress_submission: 2 evaluator (2 assigned)
+            # eligible_submission: 0 evaluators
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{completed_submission.id}'] ~ tr[data-submission-id='#{not_started_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{not_started_submission.id}'] ~ tr[data-submission-id='#{in_progress_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{in_progress_submission.id}'] ~ tr[data-submission-id='#{eligible_submission.id}']"
+            )
+          end
+
+          it 'orders submissions by assigned evaluators low to high' do
+            get submissions_phase_path(phase), params: { sort: 'assignees_low_to_high' }
+
+            # eligible_submission: 0 evaluators
+            # in_progress_submission: 2 evaluator (2 assigned)
+            # not_started_submission: 3 evaluators (2 assigned + 1 recused)
+            # completed_submission: 6 evaluators (4 assigned + 2 recused)
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{eligible_submission.id}'] ~ tr[data-submission-id='#{in_progress_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{in_progress_submission.id}'] ~ tr[data-submission-id='#{not_started_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{not_started_submission.id}'] ~ tr[data-submission-id='#{completed_submission.id}']"
+            )
+          end
         end
       end
 
