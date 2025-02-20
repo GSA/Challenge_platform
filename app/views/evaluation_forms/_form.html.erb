@@ -43,28 +43,11 @@
 
         <%= inline_error(form, :instructions) %>
       </div>
-    </li>
-
-    <li class="usa-process-list__item">
-      <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
-
-      <p>
-        Build your evaluation criteria and scoring options.
-      </p>
-
-      <div class="display-flex flex-align-center text-bold">
-        <div class="usa-checkbox">
-          <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
-          <%= form.label :comments_required, "Require evaluators to provide comments on their scores. (optional)", class: "usa-checkbox__label" %>
-        </div>
-
-        <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for comments required', style: "margin-top: .75rem" %>
-      </div>
 
       <div class="usa-form-group">
         <fieldset class="usa-fieldset margin-top-205">
           <legend class="usa-legend usa-process-list__heading display-flex flex-align-center font-sans-md text-bold <%= label_error_class(form, :scale_type) %>">
-            <span class="margin-right-05">Scale Type</span>
+            <span class="margin-right-05">Scoring Type</span>
             <span class="margin-right-05" style="color: darkred;">*</span>
             <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for scale type' %>
           </legend>
@@ -103,8 +86,28 @@
           <div class="margin-top-1">
             <%= inline_error(form, :scale_type) %>
           </div>
+
+          <div class="display-flex flex-align-center text-bold margin-top-3">
+            <div class="usa-checkbox">
+              <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
+              <%= form.label :comments_required, "Require score comments (optional) ", class: "usa-checkbox__label text-bold" %>
+            </div>
+
+            <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for comments required', style: "margin-top: .75rem" %>
+          </div>
+          <p class="margin-left-4 margin-top-05 font-body-2xs width-mobile">Check the box if the evaluators are required to provide comments on their scores.</p>
         </fieldset>
       </div>
+    </li>
+
+    <li class="usa-process-list__item">
+      <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
+
+      <p>
+        Build your evaluation criteria and scoring options.
+      </p>
+
+      
 
       <div data-controller="evaluation-criteria">
         <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
