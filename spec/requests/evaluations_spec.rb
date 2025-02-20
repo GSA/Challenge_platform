@@ -302,7 +302,7 @@ RSpec.describe "Evaluations" do
 
           # redirected to landing page
           get revision_evaluation_path(evaluation)
-          expect(response).to redirect_to(dashboard_path)
+          expect(response).to redirect_to(evaluations_path)
           follow_redirect!
           expect(response.body).to have_css('p.usa-alert__text', text: I18n.t("access_denied"))
         end
