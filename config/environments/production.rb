@@ -82,7 +82,9 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     domain: ENV.fetch('HOST'),
     address: ENV.fetch('SMTP_SERVER'),
-    port: ENV.fetch('SMTP_PORT', 587).to_i
+    port: ENV.fetch('SMTP_PORT', 587).to_i,
+    openssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
+    authentication: nil
   }
 
   config.action_mailer.default_url_options = { host: ENV.fetch('HOST', 'challenge.gov') }
