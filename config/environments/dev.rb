@@ -85,7 +85,7 @@ Rails.application.configure do
     port: ENV.fetch('SMTP_PORT', 587).to_i
   }
 
-  config.action_mailer.default_url_options = { host: ENV.fetch('HOST', 'challenge.gov') }
+  config.action_mailer.default_url_options = { host: ENV.fetch('HOST', 'challenge-dev.app.cloud.gov') }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
