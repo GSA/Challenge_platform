@@ -1,9 +1,9 @@
 <% if @challenge_managers.length > 1 %>
-If you have any questions you may reach out to any of the challenge managers:
-<% @challenge_managers.each do |cm| %>
-  <%= "#{cm.first_name} #{cm.last_name}" %> at <%= "#{cm.email}" %>,
-<% end %>
+  If you have any questions you may reach out to any of the challenge managers:
+  <% @challenge_managers.each do |cm| %>
+    <%= "#{cm.first_name} #{cm.last_name}" %> at <%= "#{cm.email}" %>,
+  <% end %>
 <% else %>
-If you have any questions you may reach out to the challenge manager <%= "#{@challenge_managers.first.first_name} #{@challenge_managers.first.last_name}" %> at <%= "#{@challenge_managers.first.email}" %>
+  If you have any questions you may reach out to the challenge manager <%= "#{@challenge_managers.first.first_name} #{@challenge_managers.first.last_name}" %> at <%= "#{@challenge_managers.first.email}" %>
 <% end %>
 or to team@challenge.gov.
