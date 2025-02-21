@@ -170,7 +170,7 @@ RSpec.describe "Evaluations" do
     let(:evaluator) { create(:user, role: 'evaluator') }
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge: challenge) }
-    let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+    let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
 
     context "when logged in as an evaluator" do
       before do

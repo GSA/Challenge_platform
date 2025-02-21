@@ -66,8 +66,9 @@ RSpec.describe EvaluatorsHelper, type: :helper do
 
     context 'when assignment is completed and has an evaluation with a total score' do
       it 'returns the total score' do
+        create(:evaluation_form, :pointed, phase: submission.phase)
         evaluation = create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
-        expect(helper.display_score(assignment)).to eq(evaluation.total_score)
+        expect(helper.display_score(assignment)).to eq(evaluation.total_score.to_s)
       end
     end
 
