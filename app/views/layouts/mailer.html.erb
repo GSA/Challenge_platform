@@ -51,9 +51,11 @@
     <div class="button-container">
       <% unless action_name == 'role_request' %>
         <div class="button-container">
-          <a href="https://www.challenge.gov" class="mailer-button" target="_blank" rel="noopener noreferrer">
-            Login to Challenge.gov
-          </a>
+          <%= link_to "Login to Challenge.gov", 
+              "#{Rails.env.development? ? 'http' : 'https'}://#{Rails.configuration.action_mailer.default_url_options[:host]}", 
+              class: "mailer-button", 
+              target: "_blank", 
+              rel: "noopener noreferrer" %>
         </div>
       <% end %>
     </div>
