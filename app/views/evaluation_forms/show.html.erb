@@ -3,8 +3,8 @@
 <%= render @evaluation_form %>
 
 <div>
-  <%= link_to "Edit this evaluation form", edit_evaluation_form_path(@evaluation_form) %> |
-  <%= link_to "Back to evaluation forms", evaluation_forms_path %>
+  <%= link_to "Edit this evaluation form", edit_phase_evaluation_form_path(@evaluation_form.phase, @evaluation_form) %> |
+  <%= link_to "Back to evaluation forms", phase_evaluation_forms_path(@evaluation_form.phase) %>
 
   <%= button_to "Destroy this evaluation form", @evaluation_form, method: :delete %>
 </div>

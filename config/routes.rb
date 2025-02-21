@@ -8,8 +8,6 @@ Rails.application.routes.draw do
     delete 'timeout'
   end
 
-  get '/dashboard', to: "dashboard#index"
-
   resources :evaluations, only: %i[index edit create update] do
     member do
       get 'confirmation'
@@ -19,12 +17,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :evaluation_forms do
-    member do
-      get 'confirmation'
-      post 'clone'
-    end
-  end
   resources :phases, only: [:index] do
     member do
       get 'submissions'
@@ -36,6 +28,12 @@ Rails.application.routes.draw do
       end
     end
     resources :evaluator_submission_assignments, only: [:index, :update, :create]
+    resources :evaluation_forms, except: [:index] do
+      member do
+        get 'confirmation'
+        post 'clone'
+      end
+    end
   end
 
   resources :submissions, only: [:show, :update] do

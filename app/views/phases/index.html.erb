@@ -1,6 +1,7 @@
-<h1>Submissions & Evaluations</h1>
-<p class="text-normal">View challenge submissions and manage your list of evaluators for each challenge.</p>
-
+<h1>My Challenges</h1>
+<%= link_to "#{Rails.configuration.phx_interop[:phx_uri]}/challenges/new" do %>
+  <button class="usa-button padding-2">Create New Challenge</button>
+<% end %>
 <% if @challenges.empty? %>
   <div class="text-normal">
     <p>You currently do not have any challenges.</p>

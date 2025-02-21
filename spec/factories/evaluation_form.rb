@@ -45,7 +45,7 @@ FactoryBot.define do
         evaluation_form.closing_date = phase_end_date + 1.day
       else
         # Fallback in case of no phase end_date
-        closing_date { Faker::Date.forward(days: 30) }
+        closing_date { 4.months.from_now }
       end
     end
 
