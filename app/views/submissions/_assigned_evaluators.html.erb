@@ -1,7 +1,9 @@
 <div data-controller="unassign-evaluator-submission-modal">
   <% if @submission.evaluator_submission_assignments.recused.exists? %>
     <div class="margin-bottom-2">
-      <%= render 'shared/alert_error', alert_heading: t('alerts.recused_evaluator.heading'), alert_text: t('alerts.recused_evaluator_submission.text') %>
+      <%= render 'shared/alert_error', 
+          alert_heading: t('alerts.recused_evaluator.heading'), 
+          alert_text: t('alerts.recused_evaluator_submission.text') %>
     </div>
   <% end %>
 
@@ -20,68 +22,78 @@
 
     <div class="usa-accordion__content overflow-hidden" id="<%= rand %>">
       <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
-        <% if assigned_evaluators.any? %>
-          <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
-              <thead>
-                <tr>
-                  <th scope="col">Evaluator name</th>
-                  <th scope="col">Evaluation Status</th>
-                  <th scope="col">Score</th>
-                  <th scope="col"><span class="usa-sr-only">Actions</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% assigned_evaluators.each do |evaluator| %>
-                  <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
-                  <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
-                    <th scope="row" data-label="Evaluator name" class="text-top">
-                      <% if assignment.status == "recused" %>
-                        <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
-                      <% end %>
-                      <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span>
-                    </th>
-                    <td data-label="Evaluation Status" class="text-top">
-                      <span class="usa-tag padding-x-1 display-inline-block <%= evaluation_submission_assignment_status_color(assignment) %>">
-                      <%= assignment.evaluation_status.to_s.titleize %>
+      <% if assigned_evaluators.any? %>
+        <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
+          <thead>
+            <tr>
+              <th scope="col">Evaluator name</th>
+              <th scope="col">Evaluation Status</th>
+              <th scope="col">Score</th>
+              <th scope="col"><span class="usa-sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% assigned_evaluators.each do |evaluator| %>
+              <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
+              <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
+                <th scope="row" data-label="Evaluator name" class="text-top">
+                  <% if assignment.status == "recused" %>
+                    <%= image_tag('images/usa-icons/error.svg', 
+                        class: "usa-icon--size-3", 
+                        alt: "Recused", 
+                        style: "vertical-align: middle; margin-right: 5px;") %>
+                  <% end %>
+                  <span class="text-bold text-ls-1 line-height-sans-4">
+                    <%= "#{evaluator.first_name} #{evaluator.last_name}" %>
                   </span>
-                    </td>
-                    <td data-label="Score" class="text-top">
-                      <span class="margin-x-1"><%= evaluator_score(assignment).formatted_score %></span>
-                    </td>
-                    <td data-label="">
-                      <div class="display-flex flex-wrap">
-                        <% if assignment&.evaluation&.completed_at %>
-                          <%= link_to(evaluation_path(assignment.evaluation)) do %>
-                            <button class="usa-button font-body-3xs text-no-wrap padding-x-1 margin-bottom-1">
-                              View Evaluation
-                            </button>
-                          <% end %>
-                        <% end %>
-                        <% unless @submission.winner? %>
-                          <%= button_tag "Unassign", type: 'button', class: 'usa-button usa-button--outline font-body-2xs', data: { 
+                </th>
+                <td data-label="Evaluation Status" class="text-top">
+                  <span class="usa-tag padding-x-1 display-inline-block <%= evaluation_submission_assignment_status_color(assignment) %>">
+                    <%= assignment.evaluation_status.to_s.titleize %>
+                  </span>
+                </td>
+                <td data-label="Score" class="text-top">
+                  <span class="margin-x-1">
+                    <%= evaluator_score(assignment).formatted_score %>
+                  </span>
+                </td>
+                <td data-label="">
+                  <div class="display-flex flex-wrap">
+                    <% if assignment&.evaluation&.completed_at %>
+                      <%= link_to(evaluation_path(assignment.evaluation)) do %>
+                        <button class="usa-button font-body-3xs text-no-wrap padding-x-1 margin-bottom-1">
+                          View Evaluation
+                        </button>
+                      <% end %>
+                    <% end %>
+                    <% unless @submission.winner? %>
+                      <%= button_tag "Unassign", 
+                          type: 'button', 
+                          class: 'usa-button usa-button--outline font-body-2xs', 
+                          data: { 
                             action: "click->unassign-evaluator-submission-modal#open",
                             assignment_id: assignment.id,
                             phase_id: @submission.phase.id,
                             current_status: assignment.status
                           } %>
-                        <% end %>
-                      </div>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          <% else %>
-            <div class="usa-alert usa-alert--warning">
-              <div class="usa-alert__body">
-                <p class="usa-alert__text font-body-2xs">
-                  You currently do not have any evaluators assigned to this submission. Please use the section below to review and assign available evaluators.
-                </p>
-              </div>
-            </div>
-          <% end %>  
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="usa-alert usa-alert--warning">
+          <div class="usa-alert__body">
+            <p class="usa-alert__text font-body-2xs">
+              You currently do not have any evaluators assigned to this submission. Please use the section below to review and assign available evaluators.
+            </p>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 
-  <%= render 'evaluator_submission_assignments/unassign_evaluator_submission_modal' %>  
+  <%= render 'evaluator_submission_assignments/unassign_evaluator_submission_modal' %>
 </div>
