@@ -31,17 +31,23 @@ RSpec.describe "Evaluations" do
         create_and_log_in_user(role: "challenge_manager")
       end
 
-      it "redirects to the dashboard" do
+      it "redirects to the challenge manager landing page" do
         get evaluations_path
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(phases_path)
       end
     end
 
     context "when logged in as an evaluator" do
       before do
         create_and_log_in_user(role: "evaluator")
+        get "/evaluations"
       end
+
+      it_behaves_like "a page with footer content"
+      it_behaves_like "a page with header content"
+      it_behaves_like "a page with utility menu links for all users"
+      it_behaves_like "a page with utility menu links for an evaluator"
 
       it "renders the index view with the correct header" do
         get evaluations_path
@@ -296,7 +302,7 @@ RSpec.describe "Evaluations" do
 
           # redirected to landing page
           get revision_evaluation_path(evaluation)
-          expect(response).to redirect_to(dashboard_path)
+          expect(response).to redirect_to(evaluations_path)
           follow_redirect!
           expect(response.body).to have_css('p.usa-alert__text', text: I18n.t("access_denied"))
         end

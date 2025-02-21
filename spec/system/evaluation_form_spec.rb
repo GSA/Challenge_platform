@@ -2,22 +2,23 @@ require 'rails_helper'
 
 RSpec.describe 'Evaluation Form', :js, type: :system do
   let(:user) { create_user(role: "challenge_manager", status: "active") }
+  let!(:challenge) { create(:challenge, user:, is_multi_phase: true) }
+  let!(:phase) { create(:phase, challenge: challenge) }
 
   describe "new evaluation form page" do
-    let!(:challenge) { create(:challenge, user:, is_multi_phase: true) }
 
     before do
       system_login_user(user)
     end
 
     it "is accessible" do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
       # Accessibility check on empty form
       expect(page).to(be_axe_clean)
     end
 
     it "shows a confirmation modal when clicking the cancel button" do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
 
       click_link_or_button "Cancel"
 
@@ -26,8 +27,8 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to(be_axe_clean)
     end
 
-    it "redirects to evaluation form path when clicking yes in cancel modal" do
-      visit new_evaluation_form_path
+    it "redirects to phases path when clicking yes in cancel modal" do
+      visit new_phase_evaluation_form_path(phase)
 
       click_link_or_button "Cancel"
 
@@ -37,11 +38,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
         click_link_or_button 'Yes'
       end
 
-      assert_current_path evaluation_forms_path
+      assert_current_path phases_path
     end
 
     it "closes the cancel modal and does nothing if you click close" do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
 
       click_link_or_button "Cancel"
 
@@ -52,11 +53,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       end
 
       assert_no_selector 'dialog#cancel', visible: true
-      assert_current_path new_evaluation_form_path
+      assert_current_path new_phase_evaluation_form_path(phase)
     end
 
     it 'allows creation of a valid form with all 3 criteria scoring types' do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
 
       fill_in_full_form
 
@@ -72,65 +73,34 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Click through confirmation page
       expect(page).to have_content("Evaluation Form Saved")
-      click_link_or_button "Manage Evaluation Forms"
+      click_link_or_button "Back to Challenge Phases"
 
-      # Should be on evaluation index view
+      # Should be on phases index view
       evaluation_form = EvaluationForm.first
-      expect(page).to have_content("Evaluation Forms")
-      expect(page).to have_content(evaluation_form.title)
       phase = evaluation_form.phase
       challenge_phase_title = challenge_phase_title(phase.challenge, phase)
       expect(page).to have_content(challenge_phase_title)
-      expect(page).to have_content(evaluation_period(evaluation_form))
+      expect(page).to have_content("Edit form")
+      expect(page).to have_link("Edit form", href: edit_phase_evaluation_form_path(phase, evaluation_form))
 
       # Check accessibility
       expect(page).to(be_axe_clean)
     end
 
-    it "only shows phases without existing evaluation forms as options for phase select" do
-      create(:evaluation_form, phase: challenge.phases[0])
-      new_challenge = create(:challenge, user:)
-
-      # Generate taken and non taken challenge_phase_title values
-      invalid_phase = challenge.phases[0]
-      invalid_challenge_phase_title = challenge_phase_title(challenge, invalid_phase)
-      valid_phase = challenge.phases[1]
-      valid_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
-      new_challenge.phases[0]
-      new_challenge_phase_title = challenge_phase_title(challenge, valid_phase)
-
-      visit new_evaluation_form_path
-
-      expect_form_phase_select_to_not_contain(invalid_challenge_phase_title)
-      expect_form_phase_select_to_contain(valid_challenge_phase_title)
-      expect_form_phase_select_to_contain(new_challenge_phase_title)
-    end
-
-    it "shows no results found if all phases are taken" do
-      # Make an evaluation form for all 3 initial factory challenge phases
-      create(:evaluation_form, phase: challenge.phases[0])
-      create(:evaluation_form, phase: challenge.phases[1])
-      create(:evaluation_form, phase: challenge.phases[2])
-
-      visit new_evaluation_form_path
-
-      expect_form_phase_select_to_be_empty
-    end
-
     it "contains the evaluation form data when editing after creation" do
       title = "Editing after creation"
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
       fill_in_full_form(title:)
       save_form
-      click_link_or_button "Manage Evaluation Forms"
-      expect(page).to have_link(title)
+      click_link_or_button "Back to Challenge Phases"
+      expect(page).to have_link("Edit form")
       evaluation_form = EvaluationForm.find_by(title:)
-      click_edit_button_for_evaluation_form(evaluation_form.id)
+      click_link("Edit form", href: edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form))
       expect_form_to_match_all_evaluation_form_values(evaluation_form)
     end
 
     it 'allows removing evaluation criteria' do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
 
       fill_in_full_form
 
@@ -150,7 +120,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "shows an error if criteria points don't add up to 100 for weighted form" do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
 
       fill_in_base_form_info
       select_scale_type("weighted")
@@ -173,7 +143,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "expands all criteria if switching to weighted scale with value over 100" do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
 
       fill_in_base_form_info
       select_scale_type("point")
@@ -205,7 +175,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "does nothing if switching to weighted scale with no value over 100" do
-      visit new_evaluation_form_path
+      visit new_phase_evaluation_form_path(phase)
 
       fill_in_base_form_info
       select_scale_type("point")
@@ -234,11 +204,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   end
 
   describe "update evaluation form page" do
-    let(:challenge) do
-      create(:challenge, user:, is_multi_phase: true)
-    end
+    # let(:challenge) do
+    #   create(:challenge, user:, is_multi_phase: true)
+    # end
     let(:evaluation_form) do
-      create(:evaluation_form, challenge:, phase: challenge.phases.first, scale_type: "weight")
+      create(:evaluation_form, challenge:, phase: phase, scale_type: "weight")
     end
 
     before do
@@ -246,12 +216,12 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "is accessible" do
-      visit edit_evaluation_form_path(evaluation_form)
+      visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
       expect(page).to(be_axe_clean)
     end
 
     it "shows a confirmation modal when clicking the cancel button" do
-      visit edit_evaluation_form_path(evaluation_form)
+      visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
 
       click_link_or_button "Cancel"
 
@@ -261,7 +231,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "redirects to evaluation form path when clicking yes in cancel modal" do
-      visit edit_evaluation_form_path(evaluation_form)
+      visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
 
       click_link_or_button "Cancel"
 
@@ -271,11 +241,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
         click_link_or_button 'Yes'
       end
 
-      assert_current_path evaluation_forms_path
+      assert_current_path phases_path
     end
 
     it "closes the cancel modal and does nothing if you click close" do
-      visit edit_evaluation_form_path(evaluation_form)
+      visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
 
       click_link_or_button "Cancel"
 
@@ -286,25 +256,23 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       end
 
       assert_no_selector 'dialog#cancel', visible: true
-      assert_current_path edit_evaluation_form_path(evaluation_form)
+      assert_current_path edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
     end
 
     it 'allows editing of an existing form values' do
-      visit edit_evaluation_form_path(evaluation_form)
+      visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
 
       # Prep updated form field values for comparison
       updated_title = "Updated #{evaluation_form.title}"
       # TODO: Might affect disabled state, start_date, etc.
-      updated_phase = challenge.phases[1]
       updated_instructions = "Updated #{evaluation_form.instructions}"
       updated_comments_required = !evaluation_form.comments_required
       # TODO: Enable this when criteria updating and weight fixing is implemented
       # updated_scale_type = !evaluation_form.weighted_scoring
-      updated_end_date = updated_phase.end_date + 1.day
+      updated_end_date = evaluation_form.closing_date + 1.day
 
       # Update form field values
       fill_in_title(updated_title)
-      select_phase(updated_phase)
       fill_in_instructions(updated_instructions)
       check_comments_required
       # TODO: When switching to weighted it needs to make sure criteria values sum to 100
@@ -312,12 +280,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(updated_end_date)
 
       save_form
-      expect(page).to have_current_path(confirmation_evaluation_form_path(evaluation_form))
+      expect(page).to have_current_path(confirmation_phase_evaluation_form_path(phase, evaluation_form))
       expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
       expect(evaluation_form.title).to eq(updated_title)
-      expect(evaluation_form.phase_id).to eq(updated_phase.id)
       expect(evaluation_form.instructions).to eq(updated_instructions)
       expect(evaluation_form.comments_required).to eq(updated_comments_required)
       # TODO: Enable this when weighted scoring issue above is solved
@@ -326,7 +293,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it 'allows adding new criteria' do
-      visit edit_evaluation_form_path(evaluation_form)
+      visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
 
       num_criteria = evaluation_form.evaluation_criteria.length
 
@@ -346,7 +313,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it 'allows removing existing criteria' do
-      visit edit_evaluation_form_path(evaluation_form)
+      visit edit_phase_evaluation_form_path(phase, evaluation_form)
 
       num_criteria = evaluation_form.evaluation_criteria.length
 
@@ -372,7 +339,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       closed_challenge = create(:challenge, user:, phases: [create(:phase, end_date: 1.week.ago)])
       closed_evaluation_form = create(:evaluation_form, challenge:, phase: closed_challenge.phases.first)
 
-      visit edit_evaluation_form_path(closed_evaluation_form)
+      visit edit_phase_evaluation_form_path(closed_evaluation_form.phase, closed_evaluation_form)
 
       # Add expectation in spec to satisfy rubocop
       expect(page).to have_css("form[data-controller='evaluation-form modal form-validation']")
@@ -391,7 +358,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "is accessible" do
-      visit confirmation_evaluation_form_path(evaluation_form)
+      visit confirmation_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
       expect(page).to have_content("Evaluation Form Saved")
       expect(page).to(be_axe_clean)
     end
@@ -411,11 +378,10 @@ end
 def fill_in_base_form_info(title: "New Evaluation Form")
   # Fill in main form fields
   fill_in_title(title)
-  select_phase(challenge.phases.first)
   fill_in_instructions("Example instructions")
   check_comments_required
   select_scale_type("point")
-  fill_in_end_date(challenge.phases.first.end_date + 1)
+  fill_in_end_date(phase.end_date + 1)
 end
 
 def fill_in_all_eval_criteria_types
@@ -462,12 +428,6 @@ end
 
 def fill_in_title(value)
   fill_in 'evaluation_form[title]', with: value
-end
-
-def select_phase(phase)
-  challenge_phase_title = challenge_phase_title(phase.challenge, phase)
-  find_by_id('challenge-combo').click
-  find('#challenge-combo--list li', text: challenge_phase_title).click
 end
 
 def fill_in_instructions(value)
@@ -595,10 +555,6 @@ def save_form
   click_on 'Save'
 end
 
-def click_edit_button_for_evaluation_form(id)
-  find("form[action='/evaluation_forms/#{id}/edit'] button[type='submit']").click
-end
-
 ##### Form Focus Helpers #####
 # Checks for form fields being focused. Usually in the case of a required field not filled out
 # Includes non visible fields because of custom checkbox and radio button styling
@@ -665,8 +621,6 @@ end
 
 def expect_base_form_field_to_match(evaluation_form)
   expect_form_title_to_equal(evaluation_form.title)
-  phase = evaluation_form.phase
-  expect_form_phase_to_equal(challenge_phase_title(phase.challenge, phase))
   expect_form_instructions_to_equal(evaluation_form.instructions)
   expect_form_comments_required_to_equal(evaluation_form.comments_required)
   expect_form_scale_type_to_equal(evaluation_form.scale_type)
@@ -703,10 +657,6 @@ end
 # Base form value checkers
 def expect_form_title_to_equal(value)
   expect(find_by_id('evaluation_form_title').value).to eq(value)
-end
-
-def expect_form_phase_to_equal(value)
-  expect(find_by_id('challenge-combo').value).to eq(value)
 end
 
 def expect_form_phase_select_to_not_contain(value)
