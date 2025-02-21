@@ -116,6 +116,7 @@ RSpec.describe EvaluationsHelper, type: :helper do
 
     context 'when assignment is completed and has an evaluation with a total score' do
       it 'returns the correct score formats' do
+        create(:evaluation_form, :pointed, phase: submission.phase)
         evaluation = create(:evaluation,
           evaluator_submission_assignment: assignment,
           completed_at: Time.current
@@ -123,9 +124,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
         allow(assignment).to receive(:evaluation_status).and_return(:completed)
 
         result = helper.evaluator_score(assignment)
-        expect(result.raw_score).to eq(evaluation.total_score)
-        expect(result.formatted_score).to eq(evaluation.total_score.to_s)
-        expect(result.display_score).to eq(evaluation.total_score)
+        expect(result.formatted_score.to_s).to eq(evaluation.total_score.to_s)
+        expect(result.display_score.to_s).to eq(evaluation.total_score.to_s)
       end
     end
 
@@ -169,8 +169,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
         completed_at: Time.current
       )
 
-      average_score = (evaluation1.total_score + evaluation2.total_score) / 2
-      average_score = average_score ? average_score.round : 0
+      average_score = (evaluation1.total_score.to_f + evaluation2.total_score) / 2
+      average_score = average_score ? average_score.round(2) : 0
 
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(average_score)
@@ -226,10 +226,11 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
 
     it 'returns score for completed evaluations' do
+      create(:evaluation_form, :pointed, phase: submission.phase)
       evaluation = create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator)
       allow(assignment).to receive(:evaluation_status).and_return(:completed)
       allow(assignment).to receive(:evaluation).and_return(evaluation)
-      expect(helper.display_score(assignment)).to eq(evaluation.total_score)
+      expect(helper.display_score(assignment)).to eq(evaluation.total_score.to_s)
     end
   end
 

@@ -136,8 +136,9 @@
       <% end %>
     </td>
 
-    <td data-label="Average Score" data-score="<%= average_score(submission).formatted_score %>">
-      <%= average_score(submission).formatted_score %>
+    <% average_score = average_score(submission).formatted_score %>
+    <td data-label="Average Score" data-score="<%= average_score %>">
+      <%= average_score %><%= "%" if weighted_scoring?(@phase) && average_score.presence != "0" %>
     </td>
 
     <td>

@@ -21,6 +21,7 @@
     <% end %>
 
     <% disabled = form_disabled?(@evaluation) %>
+    <% maybe_percent = weighted_scoring?(@evaluator_submission_assignment.phase) ? "%" : "" %>
 
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
@@ -59,6 +60,7 @@
             <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">My Score:</span>
               <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= score_fields.object.calculated_score %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
             </div>
 
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
@@ -81,7 +83,7 @@
                   maxlength: 3000,
                   rows: 7,
                   class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment)}",
-                  data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
+                  data: @evaluation.evaluation_form.comments_required? ? {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"} : nil,
                   disabled: %>
 
                 <span class="usa-character-count__message"></span>
@@ -98,6 +100,7 @@
       <div class="display-flex flex-align-center flex-justify-center">
         <span class="text-bold margin-right-1">Total Score:</span>
         <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score || "__" %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
       </div>
 
       <hr/>

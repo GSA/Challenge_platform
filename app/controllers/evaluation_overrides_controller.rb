@@ -9,7 +9,7 @@ class EvaluationOverridesController < ApplicationController
   def show; end
 
   def update
-    if @evaluation.update(evaluation_params)
+    if @evaluation.revisable? && @evaluation.update(evaluation_params)
       redirect_to @return_path, notice: I18n.t("evaluation_overrides.notices.submitted")
     else
       render :show, status: :unprocessable_entity
@@ -24,6 +24,7 @@ class EvaluationOverridesController < ApplicationController
     return redirect_to dashboard_path, alert: I18n.t("evaluation_overrides.alerts.not_found") unless @evaluation
 
     @submission = @evaluation.submission
+    @phase = @submission.phase
     @evaluator = @evaluation.user
     @return_path = submission_path(@submission)
   end
@@ -32,7 +33,7 @@ class EvaluationOverridesController < ApplicationController
     return if @evaluation.completed_at.present? &&
               current_user.challenge_manager_challenges.exists?(id: @evaluation.submission.challenge_id)
 
-    redirect_to @return_path, alert: I18n.t("evaluation_overrides.alerts.unauthorized")
+    redirect_to @return_path, alert: I18n.t("evaluation_overrides.alerts.not_found")
   end
 
   def evaluation_params

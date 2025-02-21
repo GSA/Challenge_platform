@@ -164,7 +164,7 @@ RSpec.describe "Evaluations" do
     let(:evaluator) { create(:user, role: 'evaluator') }
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge: challenge) }
-    let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+    let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
 
     context "when logged in as an evaluator" do
       before do
@@ -194,7 +194,7 @@ RSpec.describe "Evaluations" do
           expect(response.body).to include(submission.id.to_s)
         end
 
-        it "shows submission counts", skip: :bullet do
+        it "shows submission counts", bullet: :dont_raise do
           create(:evaluation,
                  evaluator_submission_assignment: assignment,
                  completed_at: Time.current)
@@ -263,6 +263,81 @@ RSpec.describe "Evaluations" do
       it "can access their associated phase" do
         get submissions_evaluation_path(other_phase)
         expect(response).to have_http_status(:success)
+      end
+    end
+  end
+
+  describe "GET /evaluations/:id/revision" do
+    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:challenge_manager) { create(:user, role: 'challenge_manager') }
+    let(:challenge) { create(:challenge) }
+    let(:phase) { create(:phase, challenge: challenge) }
+    let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+    let(:submission) { create(:submission, challenge:, phase: phase) }
+    let!(:assignment) do
+      create(:evaluator_submission_assignment,
+              submission: submission,
+              evaluator: evaluator,
+              status: :assigned)
+    end
+
+    context "when logged in as an evaluator" do
+      before do
+        log_in_user(evaluator)
+        ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+      end
+
+      context "with assigned submissions" do
+        it "does not allow viewing the revision for my own evaluation" do
+          evaluation = create(:evaluation,
+                              evaluation_form:,
+                              submission:,
+                              user: evaluator,
+                              evaluator_submission_assignment: assignment)
+
+          # redirected to landing page
+          get revision_evaluation_path(evaluation)
+          expect(response).to redirect_to(dashboard_path)
+          follow_redirect!
+          expect(response.body).to have_css('p.usa-alert__text', text: I18n.t("access_denied"))
+        end
+      end
+    end
+
+    context "when logged in as a challenge manager" do
+      before do
+        log_in_user(challenge_manager)
+        ChallengeManager.create(challenge:, user: challenge_manager)
+        ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: evaluator)
+      end
+
+      it "does not allow viewing revision for a draft evaluation", bullet: :dont_raise do
+          evaluation = create(:evaluation,
+                              evaluation_form:,
+                              submission:,
+                              user: evaluator,
+                              evaluator_submission_assignment: assignment)
+
+          # redirected to landing page
+          get revision_evaluation_path(evaluation)
+          expect(response).to redirect_to(submission_path(submission))
+          follow_redirect!
+          expect(response.body).to have_css('div.usa-alert__body', text: I18n.t("evaluation_overrides.alerts.not_found"))
+      end
+
+      it "does allow viewing revision for a completed evaluation", bullet: :dont_raise do
+        evaluation = create(:evaluation,
+                            evaluation_form:,
+                            submission:,
+                            user: evaluator,
+                            evaluator_submission_assignment: assignment,
+                            completed_at: Time.current)
+
+        # redirected to landing page
+        get revision_evaluation_path(evaluation)
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_css('h1', text: "Submission ID #{submission.id}")
+        expect(response.body).to have_css('p.text-normal', text: "Review evaluator's scores and provide your revisions")
       end
     end
   end
@@ -539,160 +614,156 @@ RSpec.describe "Evaluations" do
 
       before { log_in_user(current_user) }
 
-      it "allows me to save a draft of my existing evaluation to skip validations and not set completed_at",
-         bullet: :dont_raise do
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
+      describe "draft evaluations" do
+        it "allows me to save a draft of my existing evaluation to skip validations and not set completed_at",
+          bullet: :dont_raise do
+          evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
+          evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
-        evaluation = create(:evaluation,
-                            user: current_user,
-                            evaluation_form: evaluation_form,
-                            submission: evaluator_submission_assignment.submission,
-                            evaluator_submission_assignment: evaluator_submission_assignment)
+          evaluation = create(:evaluation,
+                              user: current_user,
+                              evaluation_form: evaluation_form,
+                              submission: evaluator_submission_assignment.submission,
+                              evaluator_submission_assignment: evaluator_submission_assignment)
 
-        evaluation_params = build_patch_evaluation_params(evaluation)
+          evaluation_params = build_patch_evaluation_params(evaluation)
 
-        evaluation_params = evaluation_params.merge(additional_comments: "Test")
+          evaluation_params = evaluation_params.merge(additional_comments: "Test")
 
-        # Nullify scores to test draft saving skipping validations
-        evaluation_params[:evaluation_scores_attributes].each_value do |value|
-          value[:score] = nil
-          value[:comment] = nil
+          # Nullify scores to test draft saving skipping validations
+          evaluation_params[:evaluation_scores_attributes].each_value do |value|
+            value[:score] = nil
+            value[:comment] = nil
+          end
+
+          patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "save_draft" })
+
+          updated_evaluation = assigns(:evaluation)
+
+          expect(updated_evaluation).to be_persisted
+          expect(updated_evaluation.additional_comments).to eq("Test")
+
+          expect(updated_evaluation.errors).to be_empty
+          expect(updated_evaluation.completed_at).to be_nil
+
+          expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "save_draft"))
+          expect(flash[:notice]).to include(I18n.t("evaluations.notices.saved_draft"))
         end
 
-        patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "save_draft" })
+        it "does not allow me to save a draft of an evaluation I did not create", bullet: :dont_raise do
+          user = create(:user, :evaluator)
+          evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
+          evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
-        updated_evaluation = assigns(:evaluation)
+          evaluation = create(:evaluation,
+                              user: user,
+                              evaluation_form: evaluation_form,
+                              submission: evaluator_submission_assignment.submission,
+                              evaluator_submission_assignment: evaluator_submission_assignment)
 
-        expect(updated_evaluation).to be_persisted
-        expect(updated_evaluation.additional_comments).to eq("Test")
+          evaluation_params = { additional_comments: "Test" }
 
-        expect(updated_evaluation.errors).to be_empty
-        expect(updated_evaluation.completed_at).to be_nil
+          patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "save_draft" })
 
-        expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "save_draft"))
-        expect(flash[:notice]).to include(I18n.t("evaluations.notices.saved_draft"))
+          expect(response).to redirect_to(evaluations_path)
+          expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
+        end
       end
+      describe "complete evaluations" do
+        it "allows me to mark my existing evaluation as complete", bullet: :dont_raise do
+          evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
+          evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
-      it "does not allow me to save a draft of an evaluation I did not create", bullet: :dont_raise do
-        user = create(:user, :evaluator)
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
+          evaluation = create(:evaluation,
+                              user: current_user,
+                              evaluation_form: evaluation_form,
+                              submission: evaluator_submission_assignment.submission,
+                              evaluator_submission_assignment: evaluator_submission_assignment)
 
-        evaluation = create(:evaluation,
-                            user: user,
-                            evaluation_form: evaluation_form,
-                            submission: evaluator_submission_assignment.submission,
-                            evaluator_submission_assignment: evaluator_submission_assignment)
+          evaluation_params = { additional_comments: "Test" }
 
-        evaluation_params = { additional_comments: "Test" }
+          patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "mark_complete" })
 
-        patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "save_draft" })
+          updated_evaluation = assigns(:evaluation)
 
-        expect(response).to redirect_to(evaluations_path)
-        expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
+          expect(updated_evaluation).to be_persisted
+          expect(updated_evaluation.additional_comments).to eq("Test")
+
+          expect(updated_evaluation.errors).to be_empty
+          expect(updated_evaluation.completed_at).not_to be_nil
+
+          expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "mark_complete"))
+          expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
+        end
+
+        it "does not allow me to mark my existing evaluation as complete if it fails validations", bullet: :dont_raise do
+          evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
+          evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
+
+          evaluation = create(:evaluation,
+                              user: current_user,
+                              evaluation_form: evaluation_form,
+                              submission: evaluator_submission_assignment.submission,
+                              evaluator_submission_assignment: evaluator_submission_assignment)
+
+          evaluation_params = build_patch_evaluation_params(evaluation)
+
+          # Nullify scores to test draft saving skipping validations
+          evaluation_params[:evaluation_scores_attributes].each_value do |value|
+            value[:score] = nil
+            value[:comment] = nil
+          end
+
+          patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "mark_complete" })
+
+          failed_evaluation = assigns(:evaluation)
+          evaluation_record = Evaluation.find_by(id: failed_evaluation.id)
+
+          expect(failed_evaluation.completed_at).to be_nil
+          expect(evaluation_record.completed_at).to be_nil
+
+          expect(response).to render_template(:show)
+          expect(assigns(:evaluation).errors).not_to be_empty
+        end
+
+        it "does not allow me to mark an evaluation I did not create as complete", bullet: :dont_raise do
+          user = create(:user, :evaluator)
+          evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
+          evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
+
+          evaluation = create(:evaluation,
+                              user: user,
+                              evaluation_form: evaluation_form,
+                              submission: evaluator_submission_assignment.submission,
+                              evaluator_submission_assignment: evaluator_submission_assignment)
+
+          evaluation_params = { additional_comments: "Test" }
+
+          patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "mark_complete" })
+
+          expect(response).to redirect_to(evaluations_path)
+          expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
+        end
       end
     end
   end
 
-  # evaluation_path
-  describe "PATCH /evaluations/:id" do
+  # recuse on a new evaluation that has not been started
+  describe "PATCH /submissions/:submission_id/evaluations/recuse" do
     context "when logged in as an evaluator" do
       let(:current_user) { create_user(role: "evaluator") }
-
       before { log_in_user(current_user) }
 
-      it "allows me to mark my existing evaluation as complete", bullet: :dont_raise do
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
-
-        evaluation = create(:evaluation,
-                            user: current_user,
-                            evaluation_form: evaluation_form,
-                            submission: evaluator_submission_assignment.submission,
-                            evaluator_submission_assignment: evaluator_submission_assignment)
-
-        evaluation_params = { additional_comments: "Test" }
-
-        patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "mark_complete" })
-
-        updated_evaluation = assigns(:evaluation)
-
-        expect(updated_evaluation).to be_persisted
-        expect(updated_evaluation.additional_comments).to eq("Test")
-
-        expect(updated_evaluation.errors).to be_empty
-        expect(updated_evaluation.completed_at).not_to be_nil
-
-        expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "mark_complete"))
-        expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
-      end
-
-      it "does not allow me to mark my existing evaluation as complete if it fails validations", bullet: :dont_raise do
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
-
-        evaluation = create(:evaluation,
-                            user: current_user,
-                            evaluation_form: evaluation_form,
-                            submission: evaluator_submission_assignment.submission,
-                            evaluator_submission_assignment: evaluator_submission_assignment)
-
-        evaluation_params = build_patch_evaluation_params(evaluation)
-
-        # Nullify scores to test draft saving skipping validations
-        evaluation_params[:evaluation_scores_attributes].each_value do |value|
-          value[:score] = nil
-          value[:comment] = nil
-        end
-
-        patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "mark_complete" })
-
-        failed_evaluation = assigns(:evaluation)
-        evaluation_record = Evaluation.find_by(id: failed_evaluation.id)
-
-        expect(failed_evaluation.completed_at).to be_nil
-        expect(evaluation_record.completed_at).to be_nil
-
-        expect(response).to render_template(:show)
-        expect(assigns(:evaluation).errors).not_to be_empty
-      end
-
-      it "does not allow me to mark an evaluation I did not create as complete", bullet: :dont_raise do
-        user = create(:user, :evaluator)
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: user.id)
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
-
-        evaluation = create(:evaluation,
-                            user: user,
-                            evaluation_form: evaluation_form,
-                            submission: evaluator_submission_assignment.submission,
-                            evaluator_submission_assignment: evaluator_submission_assignment)
-
-        evaluation_params = { additional_comments: "Test" }
-
-        patch evaluation_path(evaluation, params: { evaluation: evaluation_params, subaction: "mark_complete" })
-
-        expect(response).to redirect_to(evaluations_path)
-        expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
-      end
-    end
-
-    # recuse on a new evaluation that has not been started
-    describe "PATCH /submissions/:submission_id/evaluations/recuse" do
-      context "when logged in as an evaluator" do
-        let(:current_user) { create_user(role: "evaluator") }
+      context "when the evaluation does not exist" do
         let(:challenge) { create(:challenge) }
         let(:phase) { create(:phase, challenge: challenge) }
         let(:submission) { create(:submission, phase: phase) }
         let!(:evaluator_submission_assignment) do
           create(:evaluator_submission_assignment,
-                 submission: submission,
-                 evaluator: current_user,
-                 status: :assigned)
+                  submission: submission,
+                  evaluator: current_user,
+                  status: :assigned)
         end
-
-        before { log_in_user(current_user) }
 
         it "successfully recuses without an evaluation" do
           expect do
@@ -716,32 +787,27 @@ RSpec.describe "Evaluations" do
           end
         end
       end
-    end
 
-    # recuse on an existing evaluation that is in progress or completed
-    describe "PATCH /evaluations/:id/recuse" do
+      # recuse on an existing evaluation that is in progress or completed
       context "when logged in as an evaluator" do
-        let(:current_user) { create_user(role: "evaluator") }
         let(:challenge) { create(:challenge) }
         let(:phase) { create(:phase, challenge: challenge) }
         let(:submission) { create(:submission, phase: phase) }
         let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
         let(:evaluator_submission_assignment) do
           create(:evaluator_submission_assignment,
-                 submission: submission,
-                 evaluator: current_user,
-                 status: :assigned)
+                  submission: submission,
+                  evaluator: current_user,
+                  status: :assigned)
         end
         let!(:evaluation) do
           create(:evaluation,
-                 user: current_user,
-                 evaluation_form: evaluation_form,
-                 submission: submission,
-                 evaluator_submission_assignment: evaluator_submission_assignment,
-                 completed_at: Time.current)
+                  user: current_user,
+                  evaluation_form: evaluation_form,
+                  submission: submission,
+                  evaluator_submission_assignment: evaluator_submission_assignment,
+                  completed_at: Time.current)
         end
-
-        before { log_in_user(current_user) }
 
         it "destroys evaluation when recusing" do
           expect do
@@ -761,10 +827,10 @@ RSpec.describe "Evaluations" do
                                     evaluator: other_evaluator,
                                     status: :assigned)
           create(:evaluation,
-                 user: other_evaluator,
-                 evaluation_form: evaluation_form,
-                 submission: submission,
-                 evaluator_submission_assignment: other_assignment)
+                  user: other_evaluator,
+                  evaluation_form: evaluation_form,
+                  submission: submission,
+                  evaluator_submission_assignment: other_assignment)
 
           # patch recuse_evaluation_path(other_evaluation)
           patch recuse_submission_evaluations_path(submission)
