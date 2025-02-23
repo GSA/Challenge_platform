@@ -22,6 +22,7 @@ class EvaluatorManagementService
   def self.accept_evaluator_invitation(user)
     invitations = EvaluatorInvitation.where(email: user.email)
     invitations.each do |invite|
+      user.update(first_name: invite.first_name, last_name: invite.last_name)
       ChallengePhasesEvaluator.create(challenge: invite.challenge, phase: invite.phase, user:)
       invite.destroy
     end
@@ -77,6 +78,8 @@ class EvaluatorManagementService
   end
 
   def handle_evaluator_role_requested(user)
+    NotificationMailer.role_request(user, @challenge, @phase).deliver_now
+
     user.update!(status: 'evaluator_role_requested')
     ChallengePhasesEvaluator.find_or_create_by(challenge: @challenge, phase: @phase, user:)
     {
