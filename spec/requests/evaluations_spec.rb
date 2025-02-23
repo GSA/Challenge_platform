@@ -31,17 +31,23 @@ RSpec.describe "Evaluations" do
         create_and_log_in_user(role: "challenge_manager")
       end
 
-      it "redirects to the dashboard" do
+      it "redirects to the challenge manager landing page" do
         get evaluations_path
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(phases_path)
       end
     end
 
     context "when logged in as an evaluator" do
       before do
         create_and_log_in_user(role: "evaluator")
+        get "/evaluations"
       end
+
+      it_behaves_like "a page with footer content"
+      it_behaves_like "a page with header content"
+      it_behaves_like "a page with utility menu links for all users"
+      it_behaves_like "a page with utility menu links for an evaluator"
 
       it "renders the index view with the correct header" do
         get evaluations_path
@@ -173,7 +179,7 @@ RSpec.describe "Evaluations" do
       end
 
       context "with assigned submissions" do
-        let(:submission) { create(:submission, phase: phase) }
+        let(:submission) { create(:submission, phase: phase, challenge: challenge) }
         let!(:assignment) do
           create(:evaluator_submission_assignment,
                  submission: submission,
@@ -296,7 +302,7 @@ RSpec.describe "Evaluations" do
 
           # redirected to landing page
           get revision_evaluation_path(evaluation)
-          expect(response).to redirect_to(dashboard_path)
+          expect(response).to redirect_to(evaluations_path)
           follow_redirect!
           expect(response.body).to have_css('p.usa-alert__text', text: I18n.t("access_denied"))
         end
@@ -756,7 +762,7 @@ RSpec.describe "Evaluations" do
       context "when the evaluation does not exist" do
         let(:challenge) { create(:challenge) }
         let(:phase) { create(:phase, challenge: challenge) }
-        let(:submission) { create(:submission, phase: phase) }
+        let(:submission) { create(:submission, phase: phase, challenge: challenge) }
         let!(:evaluator_submission_assignment) do
           create(:evaluator_submission_assignment,
                   submission: submission,
@@ -768,6 +774,10 @@ RSpec.describe "Evaluations" do
           expect do
             patch recuse_submission_evaluations_path(submission)
           end.to change { evaluator_submission_assignment.reload.status }.from("assigned").to("recused")
+            .and change { ActionMailer::Base.deliveries.count }.by(1)
+
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.subject).to eq(I18n.t("mailers.recusal.subject", submission_id: submission.id))
 
           expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))
           expect(response).to redirect_to(submissions_evaluation_path(phase))
@@ -791,7 +801,8 @@ RSpec.describe "Evaluations" do
       context "when logged in as an evaluator" do
         let(:challenge) { create(:challenge) }
         let(:phase) { create(:phase, challenge: challenge) }
-        let(:submission) { create(:submission, phase: phase) }
+        let(:submission) { create(:submission, phase: phase, challenge: challenge) }
+        let(:challenge_manager) { create(:user, role: "challenge_manager") }
         let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
         let(:evaluator_submission_assignment) do
           create(:evaluator_submission_assignment,
@@ -808,11 +819,21 @@ RSpec.describe "Evaluations" do
                   completed_at: Time.current)
         end
 
-        it "destroys evaluation when recusing" do
+        before do
+          log_in_user(current_user)
+          create(:challenge_manager, user: challenge_manager, challenge: challenge)
+        end
+
+        it "destroys evaluation and sends recusal notification email when recusing" do
           expect do
             patch recuse_submission_evaluations_path(submission)
           end.to change { Evaluation.count }.by(-1).
-            and change { evaluator_submission_assignment.reload.status }.to("recused")
+            and change { evaluator_submission_assignment.reload.status }.to("recused").
+            and change { ActionMailer::Base.deliveries.count }.by(1)
+
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.subject).to eq(I18n.t("mailers.recusal.subject", submission_id: submission.id))
+          expect(mail.to).to match_array(challenge.challenge_managers.map(&:user).map(&:email))
 
           expect(response).to redirect_to(submissions_evaluation_path(phase))
           expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))

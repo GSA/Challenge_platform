@@ -1,0 +1,11 @@
+<h2><strong>An evaluator recused from evaluating a submission you assigned them to.</strong></h2>
+
+An evaluator <%= "#{@evaluator.email}" %> recused themselves from evaluating <%= link_to "submission #{@submission.id}", submission_url(@submission), target: "_blank" %> for <%= @challenge_phase_title %>.
+
+<br/><br/>
+
+<strong>Please login to Challenge.gov via Login.gov to unassign the recused evaluator and assign another evaluator.</strong>
+
+<br/><br/>
+
+<%= render 'challenge_managers_contact' %>

@@ -5,12 +5,8 @@ class EvaluationFormsController < ApplicationController
   helper FormHelper
 
   before_action -> { authorize_user('challenge_manager') }
+  before_action :set_phase
   before_action :set_evaluation_form, only: %i[show edit update destroy]
-  before_action :set_evaluation_forms, only: %i[index]
-  before_action :set_available_phases, only: %i[new create edit update]
-
-  # GET /evaluation_forms or /evaluation_forms.json
-  def index; end
 
   # GET /evaluation_forms/1 or /evaluation_forms/1.json
   def show; end
@@ -27,16 +23,14 @@ class EvaluationFormsController < ApplicationController
   def create
     @evaluation_form = EvaluationForm.new(evaluation_form_params)
 
-    respond_to do |format|
-      if @evaluation_form.save
-        format.html do
-          redirect_to confirmation_evaluation_form_path(@evaluation_form), notice: I18n.t("evaluation_form_saved")
-        end
-        format.json { render :show, status: :created, location: @evaluation_form }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @evaluation_form.errors, status: :unprocessable_entity }
-      end
+    if @evaluation_form.save
+      redirect_to confirmation_phase_evaluation_form_path(
+        @evaluation_form.phase,
+        @evaluation_form
+      ),
+                  notice: I18n.t("evaluation_form_saved")
+    else
+      render :new, status: :unprocessable_entity, phase: @evaluation_form.phase
     end
   end
 
@@ -45,7 +39,8 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
         format.html do
-          redirect_to confirmation_evaluation_form_path(@evaluation_form), notice: I18n.t("evaluation_form_saved")
+          redirect_to confirmation_phase_evaluation_form_path(@evaluation_form.phase, @evaluation_form),
+                      notice: I18n.t("evaluation_form_saved")
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -77,24 +72,8 @@ class EvaluationFormsController < ApplicationController
       find(params[:id])
   end
 
-  def set_evaluation_forms
-    @evaluation_forms = EvaluationForm.
-      by_user(current_user).
-      includes([:challenge, :phase])
-  end
-
-  def set_available_phases
-    current_phase_id = @evaluation_form&.phase_id
-
-    @available_phases =
-      current_user.challenge_manager_challenges.includes(:phases).map do |challenge|
-        {
-          challenge:,
-          phases: challenge.phases.reject do |phase|
-            current_phase_id != phase.id && EvaluationForm.exists?(phase_id: phase.id)
-          end
-        }
-      end
+  def set_phase
+    @phase = Phase.find(params[:phase_id])
   end
 
   # Only allow a list of trusted parameters through.

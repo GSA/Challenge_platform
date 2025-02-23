@@ -12,8 +12,9 @@ class EvaluatorInvitationService
     existing_invitation ? resend_invitation(existing_invitation) : create_new_invitation(invitation_params)
   end
 
-  # TODO: Implement sending the invitation email here
   def resend_invitation(invitation)
+    NotificationMailer.evaluation_invitation(invitation).deliver_now
+
     if invitation.update(last_invite_sent: Time.current)
       {
         success: true,
@@ -39,6 +40,7 @@ class EvaluatorInvitationService
       )
     )
     if invitation.save
+      NotificationMailer.evaluation_invitation(invitation).deliver_now
       {
         success: true,
         message: I18n.t(
