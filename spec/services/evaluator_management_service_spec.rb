@@ -70,18 +70,33 @@ RSpec.describe EvaluatorManagementService do
         }
       end
 
-      it 'creates a new invitation' do
-        result = service.process_evaluator_invitation(email, invitation_params)
-        expect(result[:success]).to be true
-        expect(result[:message]).to include('Invitation sent')
-        expect(EvaluatorInvitation.find_by(email: email)).to be_present
+      it 'creates a new invitation and sends notification email' do
+        expect do
+          result = service.process_evaluator_invitation(email, invitation_params)
+          expect(result[:success]).to be true
+          expect(result[:message]).to include('Invitation sent')
+          expect(EvaluatorInvitation.find_by(email: email)).to be_present
+        end.to change { EvaluatorInvitation.count }.by(1)
+           .and change { ActionMailer::Base.deliveries.count }.by(1)
+
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.subject).to eq(I18n.t("mailers.evaluation_invitation.subject",
+                                         challenge_title: challenge.title))
+        expect(mail.to).to eq([email])
       end
 
-      it 'resends an existing invitation' do
+      it 'resends an existing invitation with notification email' do
         create(:evaluator_invitation, challenge: challenge, phase: phase, email: email)
         result = service.process_evaluator_invitation(email, { email: email })
         expect(result[:success]).to be true
         expect(result[:message]).to include('Invitation has been resent')
+        expect(EvaluatorInvitation.count).to eq(1)
+
+        expect(ActionMailer::Base.deliveries.count).to eq(1)
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.subject).to eq(I18n.t("mailers.evaluation_invitation.subject",
+                                         challenge_title: challenge.title))
+        expect(mail.to).to eq([email])
       end
     end
 
@@ -97,6 +112,11 @@ RSpec.describe EvaluatorManagementService do
         expect(result[:success]).to be true
         expect(result[:message]).to include('requires a role change to evaluator')
         expect(solver.reload.status).to eq('evaluator_role_requested')
+
+        expect(ActionMailer::Base.deliveries.count).to eq(1)
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.subject).to eq(I18n.t("mailers.evaluation_invitation.subject",
+                                         challenge_title: challenge.title))
       end
 
       it 'does not set evaluator_role_requested for users with evaluator role' do
