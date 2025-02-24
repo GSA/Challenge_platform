@@ -222,10 +222,10 @@ RSpec.describe "Evaluations" do
 
           get submissions_evaluation_path(phase)
 
-          expect(response.body).to include("COMPLETED")
-          expect(response.body).to include("IN PROGRESS")
-          expect(response.body).to include("NOT")
-          expect(response.body).to include("STARTED")
+          expect(response.body).to include("Completed")
+          expect(response.body).to include("In Progress")
+          expect(response.body).to include("Not")
+          expect(response.body).to include("Started")
 
           expect(response.body).to have_css(".bg-green-cool-vivid-60v .font-sans-xl.text-white.text-bold", text: "1")
           expect(response.body).to have_css(".bg-orange-warm-vivid-50v .font-sans-xl.text-white.text-bold", text: "1")
