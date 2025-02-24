@@ -18,8 +18,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
       where(status: %i[unassigned recused_unassigned]).
       ordered_by_status
     @recused_submissions = @evaluator_assignments.
-      where(status: %i[recused]).
-      ordered_by_status
+      where(status: %i[recused])
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
   end
 
