@@ -88,9 +88,6 @@ RSpec.describe Phase, type: :model do
           evaluator_submission_assignment: assignment,
           submission: submission,
           completed_at: nil)
-      end
-
-      before do
         create(:evaluation,
           evaluator_submission_assignment: assignment2,
           submission: submission,
@@ -124,9 +121,6 @@ RSpec.describe Phase, type: :model do
           evaluator_submission_assignment: assignment,
           submission: submission,
           completed_at: Time.current)
-      end
-
-      before do
         create(:evaluation,
           evaluator_submission_assignment: assignment2,
           submission: submission,

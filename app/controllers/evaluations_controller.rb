@@ -10,22 +10,17 @@ class EvaluationsController < ApplicationController
       where(evaluator_submission_assignments: {
               user_id: current_user.id,
               status: [:assigned, :recused]
-            }).
-      includes(:challenge, :evaluation_form).
-      distinct
+            }).includes(:challenge, :evaluation_form).distinct
   end
 
   def submissions
     @phase = Phase.joins(:challenge_phases_evaluators).
-      where(challenge_phases_evaluators: { user_id: current_user.id }).
-      find(params[:id])
+      where(challenge_phases_evaluators: { user_id: current_user.id }).find(params[:id])
 
     @challenge = @phase.challenge
 
     @assigned_submissions = @phase.evaluator_submission_assignments.
-      where(evaluator: current_user).
-      where(status: %i[assigned recused]).
-      includes(:submission, :evaluation).
+      where(evaluator: current_user).where(status: %i[assigned recused]).includes(:submission, :evaluation).
       ordered_by_status
 
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
@@ -84,6 +79,8 @@ class EvaluationsController < ApplicationController
       current_user.evaluator_submission_assignments.where(submission_id: params[:submission_id]).first
 
     if EvaluatorRecusalService.new(@evaluator_submission_assignment).call
+      send_recusal_notification
+
       flash[:notice] = I18n.t("evaluations.recusal.success")
       redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
     else
@@ -119,6 +116,10 @@ class EvaluationsController < ApplicationController
     @evaluation_form.evaluation_criteria.each do |criterion|
       @evaluation.evaluation_scores.build(evaluation_criterion: criterion)
     end
+  end
+
+  def send_recusal_notification
+    NotificationMailer.recusal(@evaluator_submission_assignment).deliver_now
   end
 
   # Auth Helpers
