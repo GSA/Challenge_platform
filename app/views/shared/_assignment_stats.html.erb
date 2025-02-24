@@ -34,15 +34,15 @@
       <div class="display-flex flex-row tablet:margin-left-auto tablet:margin-top-0 margin-top-3">
         <div class="text-center bg-green-cool-vivid-60v padding-1 margin-right-1" style="width: 32%">
           <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["completed"] || 0 %></span>
-          <span class="font-sans-3xs tablet:font-sans-sm text-white">COMPLETED<br>EVALUATIONS</span>
+          <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">Completed<br>Evaluations</span>
         </div>
         <div class="text-center bg-orange-warm-vivid-50v padding-1 margin-right-1" style="width: 32%">
           <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["in_progress"] || 0 %></span>
-          <span class="font-sans-3xs tablet:font-sans-sm text-white">IN PROGRESS<br>EVALUATIONS</span>
+          <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">In Progress<br>Evaluations</span>
         </div>
         <div class="text-center bg-red-vivid-60v padding-1" style="width: 32%">
           <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["not_started"] || 0 %></span>
-          <span class="font-sans-3xs tablet:font-sans-sm text-white">NOT&nbsp;STARTED<br>EVALUATIONS</span>
+          <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">Not&nbsp;Started<br>Evaluations</span>
         </div>
       </div>
     </div>
