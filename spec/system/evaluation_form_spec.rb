@@ -88,13 +88,12 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "contains the evaluation form data when editing after creation" do
-      title = "Editing after creation"
       visit new_phase_evaluation_form_path(phase)
-      fill_in_full_form(title:)
+      fill_in_full_form
       save_form
       click_link_or_button "Back to Challenge Phases"
       expect(page).to have_link("Edit form")
-      evaluation_form = EvaluationForm.find_by(title:)
+      evaluation_form = phase.evaluation_form
       click_link("Edit form", href: edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form))
       expect_form_to_match_all_evaluation_form_values(evaluation_form)
     end
@@ -263,7 +262,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
 
       # Prep updated form field values for comparison
-      updated_title = "Updated #{evaluation_form.title}"
       # TODO: Might affect disabled state, start_date, etc.
       updated_instructions = "Updated #{evaluation_form.instructions}"
       updated_comments_required = !evaluation_form.comments_required
@@ -272,7 +270,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       updated_end_date = evaluation_form.closing_date + 1.day
 
       # Update form field values
-      fill_in_title(updated_title)
       fill_in_instructions(updated_instructions)
       check_comments_required
       # TODO: When switching to weighted it needs to make sure criteria values sum to 100
@@ -284,7 +281,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       expect(page).to have_content("Evaluation Form Saved")
 
       evaluation_form.reload
-      expect(evaluation_form.title).to eq(updated_title)
       expect(evaluation_form.instructions).to eq(updated_instructions)
       expect(evaluation_form.comments_required).to eq(updated_comments_required)
       # TODO: Enable this when weighted scoring issue above is solved
@@ -370,14 +366,13 @@ end
 #######################################
 
 ##### Form Fill Helpers #####
-def fill_in_full_form(title: "New Evaluation Form")
-  fill_in_base_form_info(title:)
+def fill_in_full_form
+  fill_in_base_form_info
   fill_in_all_eval_criteria_types
 end
 
-def fill_in_base_form_info(title: "New Evaluation Form")
+def fill_in_base_form_info
   # Fill in main form fields
-  fill_in_title(title)
   fill_in_instructions("Example instructions")
   check_comments_required
   select_scale_type("point")
@@ -424,10 +419,6 @@ def fill_in_rating_criteria_type(initial: false)
   fill_in_criterion_option_label(index, 3, "Neutral")
   fill_in_criterion_option_label(index, 4, "Slightly Agree")
   fill_in_criterion_option_label(index, 5, "Agree")
-end
-
-def fill_in_title(value)
-  fill_in 'evaluation_form[title]', with: value
 end
 
 def fill_in_instructions(value)
@@ -562,16 +553,6 @@ def expect_field_to_be_focused(selector)
   expect(page).to have_css("#{selector}:focus", visible: :all)
 end
 
-def expect_form_title_to_be_focused
-  selector = "input[name='evaluation_form[title]']"
-  expect_field_to_be_focused(selector)
-end
-
-def expect_form_phase_to_be_focused
-  selector = "#challenge-combo"
-  expect_field_to_be_focused(selector)
-end
-
 def expect_form_instructions_to_be_focused
   selector = "textarea[name='evaluation_form[instructions]']"
   expect_field_to_be_focused(selector)
@@ -620,7 +601,6 @@ def expect_form_to_match_all_evaluation_form_values(evaluation_form)
 end
 
 def expect_base_form_field_to_match(evaluation_form)
-  expect_form_title_to_equal(evaluation_form.title)
   expect_form_instructions_to_equal(evaluation_form.instructions)
   expect_form_comments_required_to_equal(evaluation_form.comments_required)
   expect_form_scale_type_to_equal(evaluation_form.scale_type)
@@ -655,10 +635,6 @@ def expect_criterion_scoring_type_specific_fields_to_match(index, criterion)
 end
 
 # Base form value checkers
-def expect_form_title_to_equal(value)
-  expect(find_by_id('evaluation_form_title').value).to eq(value)
-end
-
 def expect_form_phase_select_to_not_contain(value)
   expect(page).to have_no_select(
     class: "usa-combo-box__select",

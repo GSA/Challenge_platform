@@ -20,10 +20,9 @@ RSpec.describe 'Evaluation', :js, type: :system do
     system_login_user(evaluator)
   end
 
-  it 'displays the evaluation form title and instructions' do
+  it 'displays the evaluation form instructions' do
     visit new_submission_evaluation_path(submission)
 
-    expect(page).to have_content(evaluation_form.title)
     expect(page).to have_content(evaluation_form.instructions)
   end
 
