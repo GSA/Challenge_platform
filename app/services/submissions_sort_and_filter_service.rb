@@ -81,10 +81,10 @@ class SubmissionsSortAndFilterService
 
   def apply_includes
     association_preloads = if @params[:sort]&.include?('assignees')
-                            { evaluator_submission_assignments: [:evaluator, { evaluation: :evaluation_scores }] }
-                          else
-                            { evaluator_submission_assignments: [:evaluator, :evaluation] }
-                          end
+                             { evaluator_submission_assignments: [:evaluator, { evaluation: :evaluation_scores }] }
+                           else
+                             { evaluator_submission_assignments: [:evaluator, :evaluation] }
+                           end
 
     @submissions = @submissions.includes(association_preloads)
   end
