@@ -78,7 +78,7 @@ class Submission < ApplicationRecord
       AND evaluator_submission_assignments.status in (0, 2)
     JOIN_SQL
     eligible_for_evaluation.
-    joins(join_sql).
+      joins(join_sql).
       group("submissions.id").
       select("submissions.*, count(evaluator_submission_assignments.id) as assignee_count").
       order("assignee_count #{direction_sql}")
