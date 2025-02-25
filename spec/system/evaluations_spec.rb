@@ -26,10 +26,9 @@ RSpec.describe 'Evaluation', :js, type: :system do
         evaluator.update(email: generate_user_email(type: :gov))
       end
 
-      it 'displays the evaluation form title and instructions' do
+      it 'displays the evaluation form instructions' do
         visit new_submission_evaluation_path(submission)
 
-        expect(page).to have_content(evaluation_form.title)
         expect(page).to have_content(evaluation_form.instructions)
       end
 

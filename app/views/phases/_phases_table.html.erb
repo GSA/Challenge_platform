@@ -28,9 +28,8 @@
               <%= phase.end_date.strftime("%m/%d/%Y") %>
             </td>
             <td data-label="# of Submissions" class="text-top">
-              <% count = phase.submissions_count %>
-              <% if count > 0 %>
-                <%= link_to count, submissions_phase_path(phase) %>
+              <% if phase.submissions_count > 0 %>
+                <%= link_to "#{phase.submissions_count} Submissions", submissions_phase_path(phase) %>
               <% else %>
                 None Yet
               <% end %>    

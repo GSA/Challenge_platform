@@ -224,11 +224,12 @@ RSpec.describe "Evaluations" do
 
           expect(response.body).to include("Completed")
           expect(response.body).to include("In Progress")
-          expect(response.body).to include("Not Started")
+          expect(response.body).to include("Not")
+          expect(response.body).to include("Started")
 
-          expect(response.body).to include('<span class="font-sans-xl text-success-dark text-bold display-block">1</span>')
-          expect(response.body).to include('<span class="font-sans-xl text-accent-warm-dark text-bold display-block">1</span>')
-          expect(response.body).to include('<span class="font-sans-xl text-error-dark text-bold display-block">1</span>')
+          expect(response.body).to have_css(".bg-green-cool-vivid-60v .font-sans-xl.text-white.text-bold", text: "1")
+          expect(response.body).to have_css(".bg-orange-warm-vivid-50v .font-sans-xl.text-white.text-bold", text: "1")
+          expect(response.body).to have_css(".bg-red-vivid-60v .font-sans-xl.text-white.text-bold", text: "1")
         end
       end
 

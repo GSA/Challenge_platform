@@ -1,3 +1,10 @@
+<h2 class="text-primary">Evaluation Form</h2>
+
+<div class="margin-top-4">
+  Required fields are marked with an asterisk 
+  (<span style="color: darkred;">*</span>).
+</div>
+
 <%= form_with(url: url, model: evaluation_form, data: { controller: "evaluation-form modal form-validation" }) do |form| %>
   <% if evaluation_form.errors.any? %>
     <div style="color: darkred">
@@ -23,25 +30,7 @@
   %>
   <ol class="usa-process-list">
     <li class="usa-process-list__item">
-      <h2 class="usa-process-list__heading">Evaluation Information</h2>
-      <p class="margin-top-05">
-        Create an evaluation form title, assign it to your challenge and
-        provide instructions that will be shared with your evaluators. 
-      </p>
-      <div class="usa-form-group">
-        <div class="display-flex flex-align-center text-bold">
-          <%= form.label :title, "Title", class: "margin-right-05 #{label_error_class(form, :title)}" %>
-          <span class="margin-right-05" style="color: darkred;">*</span>
-        </div>
-
-        <%= form.text_field :title,
-          maxlength: 150,
-          class: "usa-input #{input_error_class(form, :title)}",
-          data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"},
-          disabled: disabled %>
-
-        <%= inline_error(form, :title) %>
-      </div>
+      <h3 class="usa-process-list__heading">Evaluation Information</h3>
 
       <%= form.hidden_field :phase_id, value: @phase.id %>
       <%= form.hidden_field :challenge_id, value: @phase.challenge.id %>
@@ -49,7 +38,7 @@
       <div class="usa-form-group">
         <div class="usa-character-count">
           <div class="display-flex flex-align-center text-bold">
-            <%= form.label :instructions, "Instructions", class: "margin-right-05 #{label_error_class(form, :instructions)}" %>
+            <%= form.label :instructions, "Evaluation Instructions", class: "margin-right-05 #{label_error_class(form, :instructions)}" %>
             <span class="margin-right-05" style="color: darkred;">*</span>
           </div>
 
@@ -59,30 +48,12 @@
 
         <%= inline_error(form, :instructions) %>
       </div>
-    </li>
-
-    <li class="usa-process-list__item">
-      <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
-
-      <p>
-        Build your evaluation criteria and scoring options.
-      </p>
-
-      <div class="display-flex flex-align-center text-bold">
-        <div class="usa-checkbox">
-          <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
-          <%= form.label :comments_required, "Require evaluators to provide comments on their scores. (optional)", class: "usa-checkbox__label" %>
-        </div>
-
-        <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for comments required', style: "margin-top: .75rem" %>
-      </div>
 
       <div class="usa-form-group">
         <fieldset class="usa-fieldset margin-top-205">
           <legend class="usa-legend usa-process-list__heading display-flex flex-align-center font-sans-md text-bold <%= label_error_class(form, :scale_type) %>">
             <span class="margin-right-05">Scale Type</span>
             <span class="margin-right-05" style="color: darkred;">*</span>
-            <%= image_tag 'images/usa-icons/help_outline.svg', width: 16, height: 16, alt: 'Help for scale type' %>
           </legend>
 
           <div class="display-flex flex-row">
@@ -119,8 +90,20 @@
           <div class="margin-top-1">
             <%= inline_error(form, :scale_type) %>
           </div>
+
+          <div class="display-flex flex-align-center text-bold margin-top-3">
+            <div class="usa-checkbox">
+              <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
+              <%= form.label :comments_required, "Require score comments (optional) ", class: "usa-checkbox__label text-bold" %>
+            </div>
+          </div>
+          <p class="margin-left-4 margin-top-05 font-body-2xs width-mobile">Check the box if the evaluators are required to provide comments on their scores.</p>
         </fieldset>
       </div>
+    </li>
+
+    <li class="usa-process-list__item">
+      <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
 
       <div data-controller="evaluation-criteria">
         <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
@@ -162,11 +145,6 @@
 
     <li class="usa-process-list__item">
       <h3 class="usa-process-list__heading">Evaluation Period</h3>
-      <p>
-        Set the end date of your evaluation period.
-        Your evaluation start date is the end date of your challenge.
-      </p>
-
       <div class="usa-label text-bold font-sans-sm">Evaluation Start Date:</div>
       <div class="usa-hint"><%= @phase.end_date.strftime('%m/%d/%Y') %></div>
 

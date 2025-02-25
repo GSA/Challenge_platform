@@ -42,6 +42,7 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   after_destroy :update_submission_evaluation_status
   after_save :update_submission_evaluation_status, if: :saved_change_to_status?
+  after_save :destroy_evaluation_if_unassigned, if: :saved_change_to_status?
 
   def self.ordered_by_status
     includes(:evaluation).
@@ -74,5 +75,11 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
 
   def update_submission_evaluation_status
     EvaluationStatusService.update_evaluation_status(submission)
+  end
+
+  def destroy_evaluation_if_unassigned
+    return unless (unassigned? || recused_unassigned?) && evaluation.present?
+
+    evaluation.destroy
   end
 end

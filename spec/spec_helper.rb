@@ -74,11 +74,10 @@ def create_phase(attrs = {})
 end
 
 def create_evaluation_form(attrs = {})
-  title = attrs[:title] || "test challenge"
   challenge_id = attrs[:challenge_id] || create_challenge.id
   phase_id = attrs[:phase_id] || create_phase.id
   scale_type = attrs[:scale_type] || "point"
-  EvaluationForm.create!(title:, challenge_id:, phase_id:, instructions: "test instructions",
+  EvaluationForm.create!(challenge_id:, phase_id:, instructions: "test instructions",
                          closing_date: Date.tomorrow, scale_type: scale_type)
 end
 
