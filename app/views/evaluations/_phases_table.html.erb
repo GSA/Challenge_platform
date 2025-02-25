@@ -28,7 +28,7 @@
         </td>
         <td data-label="Evaluation Status" class="text-top">
           <span class="text-top text-no-wrap usa-tag <%= evaluation_submission_assignment_status_color(phase) %>">
-            <%= phase.evaluation_status.to_s.titleize %>
+            <%= phase.evaluator_submission_assignments.where(user_id: current_user.id).first.status.to_s.titleize %>
           </span>
         </td> 
       </tr>
