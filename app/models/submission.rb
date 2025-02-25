@@ -28,6 +28,7 @@
 class Submission < ApplicationRecord
   enum :status, { draft: "draft", submitted: "submitted" }
   enum :judging_status, { not_selected: "not_selected", selected: "selected", qualified: "qualified", winner: "winner" }
+  enum :evaluation_status, { not_started: "not_started", in_progress: "in_progress", completed: "completed" }
 
   # Associations
   belongs_to :challenge
@@ -113,13 +114,13 @@ class Submission < ApplicationRecord
   end
 
   def evaluations_missing_or_incomplete?
-    !eligible_for_evaluation? || !all_evaluations_completed? || evaluator_submission_assignments.empty?
+    !eligible_for_evaluation? || evaluator_submission_assignments.assigned.empty? || !all_evaluations_completed?
   end
 
   private
 
   def all_evaluations_completed?
-    evaluator_submission_assignments.
+    evaluator_submission_assignments.assigned.
       all? { |assignment| assignment.evaluation_status == :completed }
   end
 

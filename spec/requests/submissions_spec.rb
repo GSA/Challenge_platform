@@ -140,10 +140,10 @@ RSpec.describe "Submissions" do
     context "when logged in as an evaluator" do
       let(:user) { create_user(role: "evaluator") }
 
-      it "redirects to the dashboard" do
+      it "redirects to the landing page" do
         get submissions_phase_path(phase)
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(evaluations_path)
       end
     end
 
@@ -190,36 +190,47 @@ RSpec.describe "Submissions" do
 
           get submissions_phase_path(phase)
           expect(response.body).to include("Boston Tea Party Cleanup")
-          # total submission count
-          expect(response.body).to have_css("h2.text-primary", text: "Total Submissions")
-          expect(response.body).to have_css("span.font-sans-3xl.text-primary.text-bold", text: "2")
-          # selected to advance
-          expect(response.body).to have_css("span.text-primary", text: "1 of 2")
+
+          # total submission counts
+          expect(response.body).to include("At a glance")
+          expect(response.body).to have_css("span.text-bold", text: "2")    # Total Submissions (excluding draft)
+          expect(response.body).to have_css("span.text-bold", text: "1")    # Eligible for evaluation (selected)
+          expect(response.body).to have_css("span.text-bold", text: "0")    # Selected to advance (winner)
+
+          # Evaluation progress stats
+          expect(response.body).to have_css(".bg-green-cool-vivid-60v .font-sans-xl.text-white.text-bold", text: "0")    # Completed
+          expect(response.body).to have_css(".bg-orange-warm-vivid-50v .font-sans-xl.text-white.text-bold", text: "0")    # In Progress
+          expect(response.body).to have_css(".bg-red-vivid-60v .font-sans-xl.text-white.text-bold", text: "1")           # Not Started
         end
       end
 
       context 'when viewing submissions' do
         let!(:draft_submission) { create(:submission, challenge: challenge, phase: phase, status: "draft") }
-        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase) }
+        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase, judging_status: 'selected') }
         let!(:in_progress_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
           assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: nil)
           submission
         end
+
         let!(:completed_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
           submission
+        end
+
+        let!(:ineligible_submission) do
+          create(:submission, challenge: challenge, phase: phase)
         end
         let!(:eligible_submission) do
           create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
         end
         let!(:selected_submission) do
           submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'winner')
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
           submission
         end
 
@@ -233,13 +244,13 @@ RSpec.describe "Submissions" do
           # except the drafts
           expect(response.body).not_to have_css("[data-submission-id='#{draft_submission.id}']")
 
-          expect(response.body).to have_css('.text-secondary-dark.text-bold', text: '2')   # not_started, eligible
-          expect(response.body).to have_css('.text-accent-warm-dark.text-bold', text: '1') # in_progress
-          expect(response.body).to have_css('.text-green.text-bold', text: '2')            # completed, selected
+          expect(response.body).to have_css('.bg-red-vivid-60v .font-sans-xl.text-white', text: '2')      # not_started
+          expect(response.body).to have_css('.bg-orange-warm-vivid-50v .font-sans-xl.text-white', text: '1') # in_progress
+          expect(response.body).to have_css('.bg-green-cool-vivid-60v .font-sans-xl.text-white', text: '2')  # completed
         end
 
         context 'when filtering submissions' do
-          it 'shows only submissions matching the selected status' do
+          it 'shows only submissions matching the selected status', bullet: :dont_raise do
             get submissions_phase_path(phase), params: { status: 'not_started' }
 
             expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
@@ -266,9 +277,10 @@ RSpec.describe "Submissions" do
 
             expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
             expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{not_started_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{in_progress_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_no_css("[data-submission-id='#{ineligible_submission.id}']")
           end
 
           it 'displays only selected to advance submissions', bullet: :dont_raise do

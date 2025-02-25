@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 // Connects to data-controller="form-validation"
 export default class extends Controller {
@@ -18,7 +18,9 @@ export default class extends Controller {
   }
 
   findLabel(target, formGroup) {
-    const isSelect = target.tagName === "SELECT" || target.classList.contains("usa-combo-box__input");
+    const isSelect =
+      target.tagName === "SELECT" ||
+      target.classList.contains("usa-combo-box__input");
     const isRadio = target.type === "radio";
 
     const labelId = isSelect ? target.name : target.id;

@@ -1,9 +1,12 @@
-<div data-controller="evaluator-recusal-modal">
+<div class="padding-bottom-4" data-controller="evaluator-recusal-modal">
   <%= render 'evaluator_recusal_button' %>
 
-  <%= form_with(model: @evaluation, data: { controller: "evaluation modal" }) do |form| %>
+  <h2><%= @evaluation.evaluation_form.title %></h2>
+  <p><%= @evaluation.evaluation_form.instructions %></p>
+
+  <%= form_with(model: @evaluation, data: { controller: "evaluation modal form-validation" }) do |form| %>
     <% if @evaluation.errors.any? %>
-      <div style="color: darkred">
+      <div style="color: darkred" class="margin-bottom-4">
         <div class="usa-alert usa-alert--error" role="alert">
           <div class="usa-alert__body">
             <h2 class="usa-alert__heading"><%= pluralize(@evaluation.errors.count, "error") %> prohibited this evaluation from being saved:</h2>
@@ -17,66 +20,124 @@
       </div>
     <% end %>
 
+    <% disabled = form_disabled?(@evaluation) %>
+    <% maybe_percent = weighted_scoring?(@evaluator_submission_assignment.phase) ? "%" : "" %>
+
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
     <%= form.hidden_field :submission_id %>
     <%= form.hidden_field :evaluator_submission_assignment_id %>
     <%= form.hidden_field :evaluation_form_id %>
 
-    <%= form.fields_for :evaluation_scores do |score_fields, index| %>
+    <%= form.fields_for :evaluation_scores do |score_fields| %>
       <% criterion = score_fields.object.evaluation_criterion %>
+      <% rand = SecureRandom.hex(8) %>
 
-      <h2><%= "Criterion: #{criterion.title} (#{criterion.points_or_weight} points)" %></h2>
-      <h3><%= criterion.description %></h3>
-  
-      <h3><%= "Your Score: #{score_fields.object.calculated_score}" %></h3>
+      <%= score_fields.hidden_field :id, name: evaluation_score_name(score_fields, :id, rand) %>
+      <%= score_fields.hidden_field :evaluation_criterion_id, name: evaluation_score_name(score_fields, :evaluation_criterion_id, rand) %>
 
-      <%= score_fields.hidden_field :evaluation_criterion_id %>
+      <div data-controller="evaluation-score"
+           data-action="evaluation-score:scoreUpdated->evaluation#updateTotalScore"
+           data-criterion
+           data-points="<%= criterion.points_or_weight %>"
+           data-scoring-type="<%= criterion.scoring_type %>"
+           data-option-range-start="<%= criterion.option_range_start %>"
+           data-option-range-end="<%= criterion.option_range_end %>">
 
-      <div class="usa-form-group">
-        <div class="display-flex flex-align-center text-bold">
-          <%= score_fields.label :score, "Score", class: "margin-right-05 #{label_error_class(score_fields, :score)}" %>
-          <span class="margin-right-05" style="color: darkred;">*</span>
+        <div class="usa-accordion usa-accordion__multiselectable margin-bottom-4" data-allow-multiple>
+          <h2 class="usa-accordion__heading">
+            <button
+              type="button"
+              class="usa-accordion__button display-flex flex-justify icon-white"
+              aria-expanded="true"
+              aria-controls="<%= evaluation_score_id(score_fields, "accordion", rand) %>"
+            >
+              <div><%= "#{criterion.title} " %></div>
+            </button>
+          </h2>
+
+          <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible" data-evaluation-target="score">
+            <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
+              <span class="font-sans-sm margin-right-1 text-normal">My Score:</span>
+              <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= score_fields.object.calculated_score %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
+            </div>
+
+            <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
+
+            <div class="usa-form-group">
+              <%= evaluation_score_input(score_fields, :score, criterion, rand, disabled) %>
+
+              <%= inline_error(score_fields, :score, rand) %>
+            </div>
+
+            <div class="usa-form-group">
+              <div class="display-flex flex-align-center">
+                <%= score_fields.label :comment, "Add your feedback to support your choice:", for: evaluation_score_id(score_fields, :comment, rand), class: "margin-right-05 #{label_error_class(score_fields, :comments)}" %>
+              </div>
+
+              <div class="usa-character-count">
+                <%= score_fields.text_area :comment,
+                  id: evaluation_score_id(score_fields, :comment, rand),
+                  name: evaluation_score_name(score_fields, :comment, rand),
+                  maxlength: 3000,
+                  rows: 7,
+                  class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment)}",
+                  data: @evaluation.evaluation_form.comments_required? ? {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"} : nil,
+                  disabled: %>
+
+                <span class="usa-character-count__message"></span>
+              </div>
+
+              <%= inline_error(score_fields, :comment, rand) %>
+            </div>
+          </div>
         </div>
-
-        <%= evaluation_score_input(score_fields, criterion) %>
-
-        <%= inline_error(score_fields, :score) %>
-      </div>
-
-      <div class="usa-form-group">
-        <div class="display-flex flex-align-center text-bold">
-          <%= score_fields.label :comment, "Comment", class: "margin-right-05 #{label_error_class(score_fields, :comments)}" %>
-          <span class="margin-right-05" style="color: darkred;">*</span>
-        </div>
-
-        <%= score_fields.text_field :comment,
-          maxlength: 150,
-          class: "usa-input #{input_error_class(score_fields, :comment)}",
-          data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
-
-        <%= inline_error(score_fields, :comment) %>
       </div>
     <% end %>
 
-    <div class="usa-form-group">
-      <div class="display-flex flex-align-center text-bold">
-        <%= form.label :additional_comments, "Additional Comments", class: "margin-right-05 #{label_error_class(form, :additional_comments)}" %>
-        <span class="margin-right-05" style="color: darkred;">*</span>
+    <div class="bg-base margin-bottom-4 padding-2 text-base-lightest">
+      <div class="display-flex flex-align-center flex-justify-center">
+        <span class="text-bold margin-right-1">Total Score:</span>
+        <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score || "__" %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
       </div>
 
-      <%= form.text_field :additional_comments,
-        maxlength: 150,
-        class: "usa-input #{input_error_class(form, :additional_comments)}",
-        data: {"action": "evaluation-form#validatePresence focusout->evaluation-form#validatePresence"} %>
+      <hr/>
 
-      <%= inline_error(form, :additional_comments) %>
+      <div class="display-flex flex-align-center flex-justify-center">
+        <div class="usa-form-group width-full margin-auto margin-top-0">
+          <%= form.label :additional_comments, "Additional Comments", class: "#{label_error_class(form, :additional_comments)}" %>
+
+          <%= form.text_area :additional_comments,
+            maxlength: 3000,
+            rows: "7",
+            class: "usa-textarea #{input_error_class(form, :additional_comments)}",
+            disabled: %>
+
+          <%= inline_error(form, :additional_comments, rand) %>
+        </div>
+      </div>
     </div>
 
-    <br/>
+    <% if !disabled %>
+      <div class="display-flex flex-justify-center">
+        <%= form.button "Save Draft", class: "usa-button usa-button--outline", name: "subaction", value: "save_draft", type: "submit" %>
+        <%= form.button "Mark Complete", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "complete"} %>
+      </div>
 
-    <%= form.button "Save Draft", name: "subaction", value: "save_draft", type: "submit" %>
-    <%= form.button "Mark Complete", name: "subaction", value: "mark_complete", type: "submit" %>
+      <%= render "modals/confirmation", 
+        id: "complete",
+        heading: "Are you sure you want to complete your evaluation?",
+        description: "Completing evaluation for this submission will make your scores final and available for challenge managers. <b>Once the evaluation is completed it no longer can be edited.</b>",
+        confirm_text: "Yes",
+        cancel_text: "Back",
+        confirm_action: "submit",
+        confirm_data: [
+          {name: "subaction", value: "mark_complete"}
+        ]
+      %>
+    <% end %>
   <% end %>
 
   <%= render 'evaluator_recusal_modal' %>
