@@ -15,8 +15,8 @@
         </th>
         <td data-label="# of Submissions to Evaluate" class="text-top">
           <%= link_to submissions_evaluation_path(phase) do %>
-            <%= assigned_submissions_count(current_user, phase.challenge, phase) %> of 
-            <%= remaining_evaluations_count(current_user, phase.challenge, phase) %>
+            <%= remaining_evaluations_count(current_user, phase.challenge, phase) %> of 
+            <%= assigned_submissions_count(current_user, phase.challenge, phase) %> Submissions
           <% end %>
         </td>
         <td data-label="Evaluation Due Date" class="text-top">
