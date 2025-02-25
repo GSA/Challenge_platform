@@ -190,11 +190,17 @@ RSpec.describe "Submissions" do
 
           get submissions_phase_path(phase)
           expect(response.body).to include("Boston Tea Party Cleanup")
-          # total submission count
-          expect(response.body).to have_css("h2.text-primary", text: "Total Submissions")
-          expect(response.body).to have_css("span.font-sans-3xl.text-primary.text-bold", text: "2")
-          # selected to advance
-          expect(response.body).to have_css("span.text-primary", text: "1 of 2")
+
+          # total submission counts
+          expect(response.body).to include("At a glance")
+          expect(response.body).to have_css("span.text-bold", text: "2")    # Total Submissions (excluding draft)
+          expect(response.body).to have_css("span.text-bold", text: "1")    # Eligible for evaluation (selected)
+          expect(response.body).to have_css("span.text-bold", text: "0")    # Selected to advance (winner)
+
+          # Evaluation progress stats
+          expect(response.body).to have_css(".bg-green-cool-vivid-60v .font-sans-xl.text-white.text-bold", text: "0")    # Completed
+          expect(response.body).to have_css(".bg-orange-warm-vivid-50v .font-sans-xl.text-white.text-bold", text: "0")    # In Progress
+          expect(response.body).to have_css(".bg-red-vivid-60v .font-sans-xl.text-white.text-bold", text: "1")           # Not Started
         end
       end
 
@@ -238,9 +244,9 @@ RSpec.describe "Submissions" do
           # except the drafts
           expect(response.body).not_to have_css("[data-submission-id='#{draft_submission.id}']")
 
-          expect(response.body).to have_css('.text-secondary-dark.text-bold', text: '2')   # not_started, eligible
-          expect(response.body).to have_css('.text-accent-warm-dark.text-bold', text: '1') # in_progress
-          expect(response.body).to have_css('.text-green.text-bold', text: '2')            # completed, selected
+          expect(response.body).to have_css('.bg-red-vivid-60v .font-sans-xl.text-white', text: '2')      # not_started
+          expect(response.body).to have_css('.bg-orange-warm-vivid-50v .font-sans-xl.text-white', text: '1') # in_progress
+          expect(response.body).to have_css('.bg-green-cool-vivid-60v .font-sans-xl.text-white', text: '2')  # completed
         end
 
         context 'when filtering submissions' do
