@@ -72,6 +72,20 @@ dialog::backdrop {
   border: 1px solid red;
 }
 
+.export-checkboxes {
+  .usa-checkbox {
+    .usa-checkbox__label::before {
+      border-radius: 0;
+      left: 1rem;
+    }
+
+    .usa-checkbox__label {
+      padding-left: 3rem;
+      text-align: left;
+    }
+  }
+}
+
 .icon-primary-blue {
   filter: brightness(0) saturate(100%) invert(19%) sepia(28%) saturate(2849%) hue-rotate(197deg) brightness(94%) contrast(87%);
 }

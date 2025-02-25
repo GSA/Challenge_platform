@@ -30,18 +30,19 @@ RSpec.describe "Phases" do
       let(:challenge_user) { create_user(role: "challenge_manager") }
 
       before { log_in_user(challenge_user) }
+      before { get "/phases" }
+
+      it_behaves_like "a page with footer content"
+      it_behaves_like "a page with header content"
+      it_behaves_like "a page with utility menu links for all users"
+      it_behaves_like "a page with utility menu links for a challenge manager"
 
       it "renders the index view with the correct header" do
-        get phases_path
-
         expect(response).to have_http_status(:success)
-        expect(response.body).to include("Submissions & Evaluations")
-        expect(response.body).to include("View challenge submissions")
+        expect(response.body).to include("My Challenges")
       end
 
       it "renders an empty list" do
-        get phases_path
-
         expect(response.body).to include("You currently do not have any challenges.")
       end
 
@@ -49,11 +50,11 @@ RSpec.describe "Phases" do
         challenge = create(:challenge, user: challenge_user, title: "Turning monster energy into pepto bismol")
         phase = create_phase(challenge_id: challenge.id)
         ChallengeManager.create(user: challenge_user, challenge:)
-        create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: phase.id)
+        frodo = create_evaluation_form(title: "Frodo", challenge_id: challenge.id, phase_id: phase.id)
 
         get phases_path
         expect(response.body).to include("Turning monster energy into pepto bismol")
-        expect(response.body).to include("Frodo")
+        expect(response.body).to have_link("Edit form", href: edit_phase_evaluation_form_path(phase, frodo))
       end
     end
 
@@ -62,10 +63,10 @@ RSpec.describe "Phases" do
         create_and_log_in_user(role: "evaluator")
       end
 
-      it "redirects to the dashboard" do
+      it "redirects to the evaluator landing page" do
         get phases_path
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(evaluations_path)
       end
     end
 

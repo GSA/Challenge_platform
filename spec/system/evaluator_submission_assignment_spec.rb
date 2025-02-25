@@ -5,7 +5,7 @@ RSpec.describe 'Evaluator Submission Assignments', :js, type: :system do
   let(:challenge) { create(:challenge) }
   let(:phase) { create(:phase, challenge: challenge) }
   let(:evaluator) { create(:user, role: 'evaluator') }
-  let(:submission) { create(:submission, phase: phase) }
+  let(:submission) { create(:submission, phase: phase, challenge: challenge) }
   let!(:evaluation_form) do
     create(:evaluation_form, phase: phase, challenge: challenge, closing_date: 1.month.from_now)
   end

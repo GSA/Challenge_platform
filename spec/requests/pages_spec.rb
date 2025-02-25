@@ -33,11 +33,11 @@ RSpec.describe "PagesController" do
     expect(response).to be_ok
   end
 
-  it "404s to the dashboard" do
+  it "404s to the root path" do
     stub_request(:get, "#{PagesController::HOST}#{PagesController::BASE_URL}/not_found/").
       to_return(status: 404, body: "", headers: {})
 
     get "/not_found"
-    expect(response).to redirect_to("/dashboard")
+    expect(response).to redirect_to("/")
   end
 end

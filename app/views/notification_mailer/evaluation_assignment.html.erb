@@ -1,0 +1,11 @@
+<h2><strong>You have been assigned to evaluate a submission.</strong></h2>
+
+A challenge manager assigned you to evaluate <%= link_to "submission #{@submission.id}", new_submission_evaluation_url(@submission), target: "_blank" %> for <%= @challenge_phase_title %>. Evaluations are due by <%= @due_date %>.
+
+<br/><br/>
+
+<strong>Please login to Challenge.gov via Login.gov to review and evaluate submissions assigned to you.</strong>
+
+<br/><br/>
+
+<%= render 'challenge_managers_contact' %>

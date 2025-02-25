@@ -36,6 +36,15 @@ RSpec.describe EvaluationsHelper, type: :helper do
       expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(1)
     end
 
+    it 'does not count deleted submissions' do
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      assignment = create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      assignment.submission.update(deleted_at: Time.now)
+
+      expect(helper.assigned_submissions_count(evaluator, challenge, phase)).to eq(2)
+    end
+
     it 'does not count unassigned or recused_unassigned submissions' do
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
       create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :recused)
@@ -46,11 +55,68 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
   end
 
+  describe '#remaining_evaluations_count' do
+    it 'returns the correct count of assigned submissions' do
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+
+      expect(helper.remaining_evaluations_count(evaluator, challenge, phase)).to eq(3)
+    end
+
+    it 'returns 0 for non-User evaluators' do
+      expect(helper.remaining_evaluations_count(nil, challenge, phase)).to eq(0)
+    end
+
+    it 'returns 0 when there are no assigned submissions' do
+      expect(helper.remaining_evaluations_count(evaluator, challenge, phase)).to eq(0)
+    end
+
+    it 'only counts submissions for the specified challenge and phase' do
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator,
+                                               submission: create(:submission, challenge: create(:challenge), phase: create(:phase)),
+                                               status: :assigned)
+
+      expect(helper.remaining_evaluations_count(evaluator, challenge, phase)).to eq(1)
+    end
+
+    it 'does not count completed submissions' do
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
+      assignment = create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      evaluation = create(:evaluation,
+        evaluator_submission_assignment: assignment,
+        completed_at: Time.current
+      )
+
+      expect(helper.remaining_evaluations_count(evaluator, challenge, phase)).to eq(1)
+    end
+
+    it 'does not count deleted submissions' do
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      assignment = create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :assigned)
+      assignment.submission.update(deleted_at: Time.current)
+
+      expect(helper.remaining_evaluations_count(evaluator, challenge, phase)).to eq(2)
+    end
+
+    it 'does not count unassigned or recused_unassigned submissions' do
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :recused)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :unassigned)
+      create(:evaluator_submission_assignment, evaluator: evaluator, submission: create(:submission, challenge: challenge, phase: phase), status: :recused_unassigned)
+
+      expect(helper.remaining_evaluations_count(evaluator, challenge, phase)).to eq(2)
+    end
+  end
+
   describe '#evaluator_score' do
     let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned) }
 
     context 'when assignment is completed and has an evaluation with a total score' do
       it 'returns the correct score formats' do
+        create(:evaluation_form, :pointed, phase: submission.phase)
         evaluation = create(:evaluation,
           evaluator_submission_assignment: assignment,
           completed_at: Time.current
@@ -58,9 +124,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
         allow(assignment).to receive(:evaluation_status).and_return(:completed)
 
         result = helper.evaluator_score(assignment)
-        expect(result.raw_score).to eq(evaluation.total_score)
-        expect(result.formatted_score).to eq(evaluation.total_score.to_s)
-        expect(result.display_score).to eq(evaluation.total_score)
+        expect(result.formatted_score.to_s).to eq(evaluation.total_score.to_s)
+        expect(result.display_score.to_s).to eq(evaluation.total_score.to_s)
       end
     end
 
@@ -72,18 +137,6 @@ RSpec.describe EvaluationsHelper, type: :helper do
         expect(result.formatted_score).to eq("0")
         expect(result.display_score).to eq("N/A")
       end
-    end
-  end
-
-  describe '#evaluation_submission_assignment_status_color' do
-    it 'returns correct color for not started status' do
-      allow(assignment).to receive(:evaluation_status).and_return(:not_started)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-error-dark')
-    end
-
-    it 'returns correct color for completed status' do
-      allow(assignment).to receive(:evaluation_status).and_return(:completed)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-success-dark')
     end
   end
 
@@ -116,8 +169,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
         completed_at: Time.current
       )
 
-      average_score = (evaluation1.total_score + evaluation2.total_score) / 2
-      average_score = average_score ? average_score.round : 0
+      average_score = (evaluation1.total_score.to_f + evaluation2.total_score) / 2
+      average_score = average_score ? average_score.round(2) : 0
 
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(average_score)
@@ -149,22 +202,15 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
   end
 
-  describe '#assigned_submissions_count' do
-    it 'returns correct count of assigned submissions' do
-      assignment.update!(status: :assigned)
-      count = helper.assigned_submissions_count(evaluator, submission.challenge, submission.phase)
-      expect(count).to eq(1)
-    end
-
-    it 'returns zero for non-user objects' do
-      expect(helper.assigned_submissions_count(nil, submission.challenge, submission.phase)).to eq(0)
-    end
-  end
-
   describe '#evaluation_submission_assignment_status_color' do
     it 'returns correct color for not started status' do
       allow(assignment).to receive(:evaluation_status).and_return(:not_started)
       expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-error-dark')
+    end
+
+    it 'returns correct color for in_progress status' do
+      allow(assignment).to receive(:evaluation_status).and_return(:in_progress)
+      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-accent-warm-dark')
     end
 
     it 'returns correct color for completed status' do
@@ -180,10 +226,11 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
 
     it 'returns score for completed evaluations' do
+      create(:evaluation_form, :pointed, phase: submission.phase)
       evaluation = create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator)
       allow(assignment).to receive(:evaluation_status).and_return(:completed)
       allow(assignment).to receive(:evaluation).and_return(evaluation)
-      expect(helper.display_score(assignment)).to eq(evaluation.total_score)
+      expect(helper.display_score(assignment)).to eq(evaluation.total_score.to_s)
     end
   end
 

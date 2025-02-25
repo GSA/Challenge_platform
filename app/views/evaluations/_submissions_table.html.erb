@@ -1,4 +1,4 @@
-<%= render 'shared/assignment_stats', heading: 'Total Submissions' %>
+<%= render 'shared/assignment_stats', heading: 'Total Submissions', show_all_stats: false %>
 
 <table aria-label="List of Submissions to Evaluate" class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header margin-bottom-10">
   <thead>
@@ -29,7 +29,7 @@
           </div>  
         </td>
         <td data-label="Average Score">
-          <%= average_score(assignment.submission).display_score %>
+          <%= average_score(assignment.submission).display_score %><%= "%" if weighted_scoring?(@phase) && average_score(assignment.submission).display_score != "N/A" %>
         </td>
         <td>
           <div class="display-flex flex-no-wrap grid-row grid-gap-1">
