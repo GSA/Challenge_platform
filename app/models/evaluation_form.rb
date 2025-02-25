@@ -5,7 +5,6 @@
 # Table name: evaluation_forms
 #
 #  id                :bigint           not null, primary key
-#  title             :string           not null
 #  instructions      :string           not null
 #  comments_required :boolean          default(FALSE)
 #  scale_type        :string           not null
