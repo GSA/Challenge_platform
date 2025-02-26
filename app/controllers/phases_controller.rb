@@ -6,11 +6,11 @@ class PhasesController < ApplicationController
   before_action :set_phase, except: [:index]
 
   def index
-    @challenges = current_user.challenge_manager_challenges.includes([phases: [:evaluation_form]])
+    @challenges = current_user.challenge_manager_challenges.includes([phases: [:evaluation_form, :evaluators]])
   end
 
   def submissions
-    @submissions = @phase.submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
+    @submissions = @phase.submissions
 
     set_submission_counts
     set_submission_statuses
@@ -18,17 +18,29 @@ class PhasesController < ApplicationController
     @submissions = SubmissionsSortAndFilterService.new(
       @submissions,
       params,
-      {
-        not_started: @not_started,
-        in_progress: @in_progress,
-        completed: @completed
-      }
+      @submission_statuses
     ).sort_and_filter
 
     @filtered_count = @submissions.unscope(:group).distinct.count(:id)
     @submissions = paginate_submissions(@submissions)
 
     render_response
+  end
+
+  def export_submissions
+    service = ExportSubmissionsService.new(@phase, params[:options])
+    export_response = service.export
+
+    respond_to do |format|
+      format.json do
+        if export_response.is_a?(Hash) && export_response[:redirect_url]
+          render json: export_response, status: :see_other
+        end
+      end
+      format.csv do
+        send_data(export_response, type: 'text/csv')
+      end
+    end
   end
 
   private
@@ -49,13 +61,18 @@ class PhasesController < ApplicationController
   end
 
   def set_submission_statuses
-    @not_started = @submissions.left_joins(evaluator_submission_assignments: :evaluation).
-      where(evaluations: { id: nil }).distinct
-    @in_progress = @submissions.joins(evaluator_submission_assignments: :evaluation).
-      where(evaluations: { completed_at: nil }).distinct
-    @completed = @submissions.joins(evaluator_submission_assignments: :evaluation).
-      where.not(evaluations: { completed_at: nil }).
-      where.not(id: @in_progress.select(:id)).distinct
+    eligible_submissions = @submissions.eligible_for_evaluation
+
+    @not_started = eligible_submissions.not_started
+    @in_progress = eligible_submissions.in_progress
+    @completed = eligible_submissions.completed
+
+    @submission_statuses = {
+      not_started: @not_started,
+      in_progress: @in_progress,
+      completed: @completed
+    }
+
     @submissions_by_status = {
       not_started: @not_started.count,
       in_progress: @in_progress.count,

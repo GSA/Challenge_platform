@@ -21,3 +21,15 @@ i.e.
 */
 
 @use "uswds-core" as *;
+
+$theme-colors: (
+  'green-cool-vivid-60v': #216E1F,
+  'orange-warm-vivid-50v': #CF4900,
+  'red-vivid-60v': #B50909
+);
+
+@each $name, $color in $theme-colors {
+   .bg-#{$name} {
+     background-color: $color;
+   }
+ }

@@ -140,10 +140,10 @@ RSpec.describe "Submissions" do
     context "when logged in as an evaluator" do
       let(:user) { create_user(role: "evaluator") }
 
-      it "redirects to the dashboard" do
+      it "redirects to the landing page" do
         get submissions_phase_path(phase)
 
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(evaluations_path)
       end
     end
 
@@ -190,36 +190,47 @@ RSpec.describe "Submissions" do
 
           get submissions_phase_path(phase)
           expect(response.body).to include("Boston Tea Party Cleanup")
-          # total submission count
-          expect(response.body).to have_css("h2.text-primary", text: "Total Submissions")
-          expect(response.body).to have_css("span.font-sans-3xl.text-primary.text-bold", text: "2")
-          # selected to advance
-          expect(response.body).to have_css("span.text-primary", text: "1 of 2")
+
+          # total submission counts
+          expect(response.body).to include("At a glance")
+          expect(response.body).to have_css("span.text-bold", text: "2")    # Total Submissions (excluding draft)
+          expect(response.body).to have_css("span.text-bold", text: "1")    # Eligible for evaluation (selected)
+          expect(response.body).to have_css("span.text-bold", text: "0")    # Selected to advance (winner)
+
+          # Evaluation progress stats
+          expect(response.body).to have_css(".bg-green-cool-vivid-60v .font-sans-xl.text-white.text-bold", text: "0")    # Completed
+          expect(response.body).to have_css(".bg-orange-warm-vivid-50v .font-sans-xl.text-white.text-bold", text: "0")    # In Progress
+          expect(response.body).to have_css(".bg-red-vivid-60v .font-sans-xl.text-white.text-bold", text: "1")           # Not Started
         end
       end
 
       context 'when viewing submissions' do
         let!(:draft_submission) { create(:submission, challenge: challenge, phase: phase, status: "draft") }
-        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase) }
+        let!(:not_started_submission) { create(:submission, challenge: challenge, phase: phase, judging_status: 'selected') }
         let!(:in_progress_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
           assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: nil)
           submission
         end
+
         let!(:completed_submission) do
-          submission = create(:submission, challenge: challenge, phase: phase)
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
           submission
+        end
+
+        let!(:ineligible_submission) do
+          create(:submission, challenge: challenge, phase: phase)
         end
         let!(:eligible_submission) do
           create(:submission, challenge: challenge, phase: phase, judging_status: 'selected')
         end
         let!(:selected_submission) do
           submission = create(:submission, challenge: challenge, phase: phase, judging_status: 'winner')
-          assignment = create(:evaluator_submission_assignment, submission: submission)
-          create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
+          assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+          create(:evaluation, evaluator_submission_assignment: assignment, submission: submission, completed_at: Time.current)
           submission
         end
 
@@ -233,13 +244,13 @@ RSpec.describe "Submissions" do
           # except the drafts
           expect(response.body).not_to have_css("[data-submission-id='#{draft_submission.id}']")
 
-          expect(response.body).to have_css('.text-secondary-dark.text-bold', text: '2')   # not_started, eligible
-          expect(response.body).to have_css('.text-accent-warm-dark.text-bold', text: '1') # in_progress
-          expect(response.body).to have_css('.text-green.text-bold', text: '2')            # completed, selected
+          expect(response.body).to have_css('.bg-red-vivid-60v .font-sans-xl.text-white', text: '2')      # not_started
+          expect(response.body).to have_css('.bg-orange-warm-vivid-50v .font-sans-xl.text-white', text: '1') # in_progress
+          expect(response.body).to have_css('.bg-green-cool-vivid-60v .font-sans-xl.text-white', text: '2')  # completed
         end
 
         context 'when filtering submissions' do
-          it 'shows only submissions matching the selected status' do
+          it 'shows only submissions matching the selected status', bullet: :dont_raise do
             get submissions_phase_path(phase), params: { status: 'not_started' }
 
             expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
@@ -266,9 +277,10 @@ RSpec.describe "Submissions" do
 
             expect(response.body).to have_css("[data-submission-id='#{eligible_submission.id}']")
             expect(response.body).to have_css("[data-submission-id='#{selected_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{not_started_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{in_progress_submission.id}']")
-            expect(response.body).to have_no_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{not_started_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{in_progress_submission.id}']")
+            expect(response.body).to have_css("[data-submission-id='#{completed_submission.id}']")
+            expect(response.body).to have_no_css("[data-submission-id='#{ineligible_submission.id}']")
           end
 
           it 'displays only selected to advance submissions', bullet: :dont_raise do
@@ -284,32 +296,74 @@ RSpec.describe "Submissions" do
 
         context 'when sorting submissions' do
           before do
+            assignments = create_list(:evaluator_submission_assignment, 3,
+              submission: completed_submission,
+              status: :assigned
+            )
+
+            assignments.each do |assignment|
+              create(:evaluation,
+                     evaluator_submission_assignment: assignment,
+                     submission: completed_submission,
+                     completed_at: Time.current,
+                     total_score: 90)
+            end
+
+            create(:evaluator_submission_assignment,
+              submission: completed_submission,
+              status: :recused
+            )
+
+            EvaluationStatusService.update_evaluation_status(completed_submission)
+
             create(:evaluation,
                    evaluator_submission_assignment: create(:evaluator_submission_assignment,
                                                            submission: in_progress_submission),
                    total_score: 80)
 
-            create(:evaluation,
-                   evaluator_submission_assignment: create(:evaluator_submission_assignment,
-                                                           submission: completed_submission),
-                   total_score: 90)
-          end
-
-          it 'orders submissions by score high to low' do
-            get submissions_phase_path(phase), params: { sort: 'average_score_high_to_low' }
-
-            expect(response.body).to have_css(
-              "tr[data-submission-id='#{completed_submission.id}'] " \
-              "~ tr[data-submission-id='#{in_progress_submission.id}']"
+            create_list(:evaluator_submission_assignment, 2,
+              submission: not_started_submission,
+              status: :assigned
+            )
+            create(:evaluator_submission_assignment,
+              submission: not_started_submission,
+              status: :recused
             )
           end
 
-          it 'orders submissions by score low to high' do
-            get submissions_phase_path(phase), params: { sort: 'average_score_low_to_high' }
+          it 'orders submissions by assigned evaluators high to low' do
+            get submissions_phase_path(phase), params: { sort: 'assignees_high_to_low' }
 
+            # completed_submission: 6 evaluators (4 assigned + 2 recused)
+            # not_started_submission: 3 evaluators (2 assigned + 1 recused)
+            # in_progress_submission: 2 evaluator (2 assigned)
+            # eligible_submission: 0 evaluators
             expect(response.body).to have_css(
-              "tr[data-submission-id='#{in_progress_submission.id}'] " \
-              "~ tr[data-submission-id='#{completed_submission.id}']"
+              "tr[data-submission-id='#{completed_submission.id}'] ~ tr[data-submission-id='#{not_started_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{not_started_submission.id}'] ~ tr[data-submission-id='#{in_progress_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{in_progress_submission.id}'] ~ tr[data-submission-id='#{eligible_submission.id}']"
+            )
+          end
+
+          it 'orders submissions by assigned evaluators low to high' do
+            get submissions_phase_path(phase), params: { sort: 'assignees_low_to_high' }
+
+            # eligible_submission: 0 evaluators
+            # in_progress_submission: 2 evaluator (2 assigned)
+            # not_started_submission: 3 evaluators (2 assigned + 1 recused)
+            # completed_submission: 6 evaluators (4 assigned + 2 recused)
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{eligible_submission.id}'] ~ tr[data-submission-id='#{in_progress_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{in_progress_submission.id}'] ~ tr[data-submission-id='#{not_started_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{not_started_submission.id}'] ~ tr[data-submission-id='#{completed_submission.id}']"
             )
           end
         end
@@ -338,25 +392,65 @@ RSpec.describe "Submissions" do
         context 'when sorting by average score' do
           before do
             submissions[0..24].each_with_index do |submission, index|
-              create(:evaluation,
-                     evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: submission),
-                     total_score: (index + 1) * 20)
+              submission.update!(judging_status: 'selected')
+              assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+
+              evaluation = create(:evaluation,
+                               evaluator_submission_assignment: assignment,
+                               submission: submission,
+                               completed_at: Time.current)
+
+              evaluation.update_column(:total_score, (25 - index) * 20)
+              submission.reload
             end
           end
 
-          it 'paginates correctly when sorted by score', bullet: :dont_raise do
+          it 'paginates and orders submissions by score high to low across pages', bullet: :dont_raise do
             get submissions_phase_path(phase, page: 1, sort: 'average_score_high_to_low')
             expect(response).to have_http_status(:success)
-            first_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
-            expect(first_page_scores.count).to eq(20)
-            expect(first_page_scores.map(&:to_i)).to eq(first_page_scores.map(&:to_i).sort.reverse)
+
+            first_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            first_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(first_page_submissions.count).to eq(20)
+            expect(first_page_scores).to eq(first_page_scores.sort.reverse)
             expect(response.body).to have_button('Load more')
 
             get submissions_phase_path(phase, page: 2, partial: true, sort: 'average_score_high_to_low')
+            second_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            second_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(second_page_submissions.count).to eq(5)
+            expect(second_page_scores).to eq(second_page_scores.sort.reverse)
+
+            all_submissions = first_page_submissions + second_page_submissions
+            all_scores = first_page_scores + second_page_scores
+            expect(all_scores).to eq(all_scores.sort.reverse)
+
+            expected_order = submissions[0..24].sort_by { |s| [-s.average_score, s.id] }.map(&:id)
+            expect(all_submissions).to eq(expected_order)
+          end
+
+          it 'paginates and orders submissions by score low to high across pages', bullet: :dont_raise do
+            get submissions_phase_path(phase, page: 1, sort: 'average_score_low_to_high')
             expect(response).to have_http_status(:success)
-            second_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
-            expect(second_page_scores.count).to eq(5)
-            expect(second_page_scores.map(&:to_i)).to eq(second_page_scores.map(&:to_i).sort.reverse)
+
+            first_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            first_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(first_page_submissions.count).to eq(20)
+            expect(first_page_scores).to eq(first_page_scores.sort)
+            expect(response.body).to have_button('Load more')
+
+            get submissions_phase_path(phase, page: 2, partial: true, sort: 'average_score_low_to_high')
+            second_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            second_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(second_page_submissions.count).to eq(5)
+            expect(second_page_scores).to eq(second_page_scores.sort)
+
+            all_submissions = first_page_submissions + second_page_submissions
+            all_scores = first_page_scores + second_page_scores
+            expect(all_scores).to eq(all_scores.sort)
+
+            expected_order = submissions[0..24].sort_by { |s| [s.average_score, s.id] }.map(&:id)
+            expect(all_submissions).to eq(expected_order)
           end
         end
 

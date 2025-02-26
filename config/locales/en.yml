@@ -102,7 +102,14 @@ en:
       success: "Recused successfully"
       failure: "Failed to recuse from submission"
   evaluation_scores:
+    instruction_text_numeric: "Enter a number between %{min} and %{max} with %{min} being the lowest and %{max} being the highest"
     unique_evaluation_for_evaluation_criterion_error: "already has a score for this evaluation criterion"
+  evaluation_overrides:
+    alerts:
+      unuathorized: "You are not authorized to access this evaluation."
+      not_found: "Evaluation not found"
+    notices:
+      submitted: "Revision submitted"
   alerts:
     recused_evaluator:
       heading: "Recused Evaluator"
@@ -115,4 +122,12 @@ en:
       text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."
     recused_evaluator_submission:
       heading: "Recused Evaluator"
-      text: "This submission has a recused evaluator. Please unassign a recused evaluator."       
+      text: "This submission has a recused evaluator. Please unassign a recused evaluator."
+  mailers:
+    evaluation_invitation:
+      subject: "You have been invited to %{challenge_title} Evaluation Panel"
+    evaluation_assignment:
+      subject: "You have been assigned to evaluate submission %{submission_id}"
+    recusal:
+      subject: "An evaluator has recused from evaluating submission %{submission_id}"
+

@@ -2,53 +2,62 @@
     <thead>
       <tr>
         <th scope="col">Challenge</th>
-        <th scope="col">Number of Submissions</th>
+        <th scope="col">Challenge Status</th>
+        <th scope="col">Challenge Start and End Dates</th>
+        <th scope="col"># of Submissions</th>
         <th scope="col">Evaluation Form</th>
-        <th scope="col">Evaluations are due by</th>
-        <th scope="col"><span class="usa-sr-only">Actions</span></th>
+        <th scope="col"># of Evaluators</th>
+        <th scope="col">Evaluation Due Date</th>
+        <th scope="col">Evaluation Status</th>
       </tr>
     </thead>
     <tbody>
       <% @challenges.each do |challenge| %>
         <% challenge.phases.each do |phase| %>
           <tr>
-            <th data-label="Form Title" scope="row" class="text-top">
-              <strong><%= challenge_phase_title(challenge, phase) %></strong>
-              <span class="<%= challenge.status == 'published' ? 'text-green' : 'text-accent-warm-dark' %> padding-top-05 display-block text-bold padding-bottom-2"><%= challenge.status.capitalize %></span>
+            <th data-label="Challenge" scope="row" class="text-top">
+              <%= link_to "#{Rails.configuration.phx_interop[:phx_uri]}/challenges/#{challenge.id}" do %>
+                <strong><%= challenge_phase_title(challenge, phase) %></strong>
+              <% end %>  
             </th>
-            <td data-label="Number of Submissions" class="text-top">
-              <%= phase.submissions_count %>
+            <td data-label="Challenge Status" class="text-top">
+              <%= statuses[challenge.status.to_sym] %>
+            </td>
+            <td data-label="Challenge Start and End Dates" class="text-top">
+              <%= phase.start_date.strftime("%m/%d/%Y") %> <br/>
+              <%= phase.end_date.strftime("%m/%d/%Y") %>
+            </td>
+            <td data-label="# of Submissions" class="text-top">
+              <% if phase.submissions_count > 0 %>
+                <%= link_to "#{phase.submissions_count} Submissions", submissions_phase_path(phase) %>
+              <% else %>
+                None Yet
+              <% end %>    
             </td>
             <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
-                <%= link_to edit_evaluation_form_path(phase.evaluation_form) do %>
-                  <%= phase.evaluation_form.title %>
-                <% end %>    
+                <%= link_to "Edit form", edit_phase_evaluation_form_path(phase, phase.evaluation_form) %>  
               <% else %>
-                N/A  
+                <%= link_to "Create form", new_phase_evaluation_form_path(phase) %>
               <% end %>  
             </td>
-            <td data-label="Evaluations are due by" class="text-top">
-              <% if phase.evaluation_form %>
-                <%= phase.evaluation_form.closing_date %>
-              <% else %>
-                N/A  
+       
+            <td data-label="# of Evaluators" class="text-top">
+              <%= link_to phase_evaluators_path(phase) do %>
+                <% if phase.evaluators.present? %>
+                  <%= phase.evaluators.count %> Evaluators
+                <% else %>
+                  Invite Evaluators
+                <% end %>    
               <% end %>
             </td>
-            <td>
-              <div class="display-flex flex-column grid-row grid-gap-1">
-                <%= link_to phase_evaluators_path(phase), class: "usa-button font-body-2xs text-no-wrap width-full margin-bottom-105" do %>
-                  Manage Evaluators
-                <% end %>
-                <% if phase.submissions_count > 0 %>
-                  <%= link_to(submissions_phase_path(phase)) do %>
-                    <button class="usa-button font-body-2xs text-no-wrap width-full">
-                      View Submissions
-                    </button>
-                  <% end %>
-                <% end %>
-              </div>
-              </div>  
+            <td data-label="Evaluation Due Date" class="text-top">
+              <%= phase.evaluation_form&.closing_date %>
+            </td>
+            <td data-label="Evaluation Status" class="text-top">
+              <span class="text-top text-no-wrap usa-tag <%= evaluation_submission_assignment_status_color(phase) %>">
+                <%= phase.evaluation_status.to_s.titleize %>
+              </span>
             </td>
             </td>  
           </tr>

@@ -28,6 +28,7 @@
 class Submission < ApplicationRecord
   enum :status, { draft: "draft", submitted: "submitted" }
   enum :judging_status, { not_selected: "not_selected", selected: "selected", qualified: "qualified", winner: "winner" }
+  enum :evaluation_status, { not_started: "not_started", in_progress: "in_progress", completed: "completed" }
 
   # Associations
   belongs_to :challenge
@@ -69,17 +70,31 @@ class Submission < ApplicationRecord
   }
   scope :eligible_for_evaluation, -> { where(judging_status: [:selected, :winner]) }
 
+  scope :order_by_assignee_count, lambda { |direction|
+    direction_sql = direction == :desc ? 'DESC' : 'ASC'
+    join_sql = <<-JOIN_SQL
+      LEFT OUTER JOIN evaluator_submission_assignments
+      ON submissions.id = evaluator_submission_assignments.submission_id
+      AND evaluator_submission_assignments.status in (0, 2)
+    JOIN_SQL
+    eligible_for_evaluation.
+      joins(join_sql).
+      group("submissions.id").
+      select("submissions.*, count(evaluator_submission_assignments.id) as assignee_count").
+      order("assignee_count #{direction_sql}")
+  }
+
   scope :order_by_average_score, lambda { |direction|
     direction_sql = direction == :desc ? 'DESC' : 'ASC'
 
-    joins(
-      "LEFT JOIN evaluations ON evaluations.submission_id = submissions.id " \
-      "AND evaluations.completed_at IS NOT NULL"
-    ).
+    where(evaluation_status: :completed).
+      joins(
+        "LEFT JOIN evaluations ON evaluations.submission_id = submissions.id"
+      ).
       group('submissions.id').
       order(
         Arel.sql(
-          "COALESCE(ROUND(AVG(evaluations.total_score)), 0) #{direction_sql}, " \
+          "COALESCE(AVG(evaluations.total_score), 0) #{direction_sql}, " \
           "submissions.id #{direction_sql}"
         )
       )
@@ -113,15 +128,15 @@ class Submission < ApplicationRecord
   end
 
   def evaluations_missing_or_incomplete?
-    !eligible_for_evaluation? || !all_evaluations_completed? || evaluator_submission_assignments.empty?
+    !eligible_for_evaluation? || evaluator_submission_assignments.assigned.empty? || !all_evaluations_completed?
+  end
+
+  def all_evaluations_completed?
+    evaluator_submission_assignments.assigned.
+      all? { |assignment| assignment.evaluation_status == :completed }
   end
 
   private
-
-  def all_evaluations_completed?
-    evaluator_submission_assignments.
-      all? { |assignment| assignment.evaluation_status == :completed }
-  end
 
   def can_be_selected_to_advance
     return unless evaluations_missing_or_incomplete?

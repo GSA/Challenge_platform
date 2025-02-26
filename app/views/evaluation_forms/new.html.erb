@@ -1,5 +1,5 @@
-<% content_for :title, "Create Evaluation Form" %>
+<% content_for :title, challenge_phase_title(@phase.challenge, @phase) %>
 
-<h1>Create Evaluation Form</h1>
+<h1><%= challenge_phase_title(@phase.challenge, @phase) %></h1>
 
-<%= render "form", evaluation_form: @evaluation_form %>
+<%= render "form", evaluation_form: @evaluation_form, url: phase_evaluation_forms_path(phase_id: @phase.id), phase: @phase %>

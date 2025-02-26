@@ -44,6 +44,25 @@ class Evaluation < ApplicationRecord
 
   before_save :ensure_all_scores_exist
   before_save :calculate_total_score
+  after_create :update_submission_evaluation_status
+  after_update :update_submission_evaluation_status, if: -> { saved_change_to_completed_at? }
+  after_destroy :update_submission_evaluation_status
+
+  def calculated_total_score(use_evaluator_scores: false)
+    total = use_evaluator_scores ? calculate_score_with_evaluator_scores : total_score
+
+    return nil if total.nil?
+
+    format_total(total)
+  end
+
+  def revisable?
+    submission.selected?
+  end
+
+  def revised?
+    evaluation_scores.any? { |score| score.score_override.present? }
+  end
 
   private
 
@@ -70,5 +89,22 @@ class Evaluation < ApplicationRecord
                        else
                          evaluation_scores.sum(&:calculated_score).round(2)
                        end
+  end
+
+  def update_submission_evaluation_status
+    EvaluationStatusService.update_evaluation_status(submission)
+  end
+
+  def calculate_score_with_evaluator_scores
+    evaluation_scores.each do |score|
+      calculated_score = score.calculated_score(score.score)
+      return nil if calculated_score.nil?
+    end
+
+    evaluation_scores.sum { |score| score.calculated_score(score.score) }
+  end
+
+  def format_total(total)
+    total.to_f.round(2).to_s.sub(/\.0+$/, '') unless total.nil?
   end
 end

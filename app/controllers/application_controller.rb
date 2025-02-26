@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
   def authorize_user(*roles)
     return if roles.include?(current_user&.role) || %w[super_admin admin].include?(current_user&.role)
 
-    redirect_to dashboard_path, alert: I18n.t("access_denied")
+    redirect_to_landing_page(alert: I18n.t("access_denied"))
   end
 
   def redirect_admins_to_phoenix
@@ -42,6 +42,17 @@ class ApplicationController < ActionController::Base
     return unless current_user&.role == 'solver'
 
     redirect_to Rails.configuration.phx_interop[:phx_uri], allow_other_host: true
+  end
+
+  def redirect_to_landing_page(options = {})
+    case @current_user&.role
+    when "evaluator"
+      redirect_to evaluations_path, options
+    when "challenge_manager"
+      redirect_to phases_path, options
+    else
+      redirect_to "/", options
+    end
   end
 
   def sign_in(login_userinfo)
@@ -73,16 +84,10 @@ class ApplicationController < ActionController::Base
 
     if session[:session_timeout_at].blank? || session[:session_timeout_at] < Time.current
       sign_out
-      redirect_to dashboard_path, alert: I18n.t("session_expired_alert")
+      redirect_to "/", alert: I18n.t("session_expired_alert")
     else
       renew_session
     end
-  end
-
-  def redirect_if_logged_in(path = "/dashboard")
-    return unless logged_in?
-
-    redirect_to path, notice: I18n.t("already_logged_in_notice")
   end
 
   def generate_user_jwt(user)

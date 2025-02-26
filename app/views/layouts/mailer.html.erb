@@ -1,13 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style>
-      /* Email styles need to be inline */
+      .mailer-button {
+        background-color: #1A4480;
+        border: 0;
+        border-radius: 0.25rem;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-block;
+        font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;
+        font-size: 1.06rem;
+        font-weight: 600;
+        line-height: 1;
+        padding: 0.75rem 2.5rem;
+        text-align: center;
+        text-decoration: none;
+        margin-top: 3rem;
+      }
+
+      .mailer-header-logo {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0;
+        padding: 0;
+      }
+
+      .mailer-content {
+        padding-left: 40px;
+        padding-right: 40px;
+        font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;
+      }
+
+      .button-container {
+        text-align: center;
+        width: 100%;
+      }
     </style>
   </head>
-
   <body>
-    <%= yield %>
+    <div class="mailer-header-logo" role="banner">
+      <%= image_tag attachments['challenge_gov_logo.png'].url, 
+          alt: "Challenge.gov",
+          style: 'width: 100%; max-width: 100%; height: auto;' if attachments['challenge_gov_logo.png'] %>
+    </div>
+    <div class="mailer-content">
+      <%= yield %>
+    </div>
+    <div class="button-container">
+      <% unless action_name == 'role_request' %>
+        <div class="button-container">
+          <%= link_to "Login to Challenge.gov", 
+              "#{Rails.env.development? ? 'http' : 'https'}://#{Rails.configuration.action_mailer.default_url_options[:host]}", 
+              class: "mailer-button",
+              style: "color: #ffffff !important; text-decoration: none;",
+              target: "_blank", 
+              rel: "noopener noreferrer" %>
+        </div>
+      <% end %>
+    </div>
   </body>
 </html>

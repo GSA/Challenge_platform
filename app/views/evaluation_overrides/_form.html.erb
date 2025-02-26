@@ -1,0 +1,175 @@
+<div class="padding-bottom-4" data-controller="evaluator-recusal-modal">
+  <p><%= @evaluation.evaluation_form.instructions %></p>
+
+  <%= form_with(model: @evaluation, url: revise_evaluation_path, data: { controller: "evaluation modal form-validation" }) do |form| %>
+    <% if @evaluation.errors.any? %>
+      <div style="color: darkred" class="margin-bottom-4">
+        <div class="usa-alert usa-alert--error" role="alert">
+          <div class="usa-alert__body">
+            <h2 class="usa-alert__heading"><%= pluralize(@evaluation.errors.count, "error") %> prohibited this evaluation from being saved:</h2>
+            <ul>
+              <% @evaluation.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% disabled = !@evaluation.revisable? %>
+    <% maybe_percent = weighted_scoring?(@phase) ? "%" : "" %>
+
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+    <%= form.fields_for :evaluation_scores do |score_fields| %>
+      <% criterion = score_fields.object.evaluation_criterion %>
+      <% rand = SecureRandom.hex(8) %>
+
+      <%= score_fields.hidden_field :id, name: evaluation_score_name(score_fields, :id, rand) %>
+
+      <div data-controller="evaluation-score"
+           data-action="evaluation-score:scoreUpdated->evaluation#updateTotalScore"
+           data-criterion
+           data-points="<%= criterion.points_or_weight %>"
+           data-scoring-type="<%= criterion.scoring_type %>"
+           data-option-range-start="<%= criterion.option_range_start %>"
+           data-option-range-end="<%= criterion.option_range_end %>">
+
+        <div class="usa-accordion usa-accordion__multiselectable margin-bottom-4" data-allow-multiple>
+          <h2 class="usa-accordion__heading">
+            <button
+              type="button"
+              class="usa-accordion__button display-flex flex-justify icon-white"
+              aria-expanded="true"
+              aria-controls="<%= evaluation_score_id(score_fields, "accordion", rand) %>"
+            >
+              <div><%= "#{criterion.title} " %></div>
+            </button>
+          </h2>
+
+          <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible" data-evaluation-target="score">
+            <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
+              <span class="font-sans-sm margin-right-1 text-normal">Evaluator Score:</span>
+              <span class="font-sans-xl text-bold" data-evaluation-target="evaluatorScore"><%= score_fields.object.calculated_score(score_fields.object.score) %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
+            </div>
+
+            <div class="display-flex flex-align-center bg-primary-light padding-x-205 padding-y-1 text-base-lightest">
+              <span class="font-sans-sm margin-right-1 text-normal">Revised Score:</span>
+              <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= display_revised_score(score_fields.object) %></span>
+              <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
+            </div>
+
+            <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
+
+            <div class="usa-form-group">
+              <%= evaluation_score_input(score_fields, :score_override, criterion, rand, disabled) %>
+
+              <%= inline_error(score_fields, :score_override, rand) %>
+            </div>
+
+            <div>
+              <p>Evaluator Feedback:</p>
+
+              <%= score_fields.object.comment.presence || "N/A" %>
+            </div>
+
+            <div class="usa-form-group">
+              <div class="display-flex flex-align-center">
+                <%= score_fields.label :comment_override, "Add your feedback to support your choice:", for: evaluation_score_id(score_fields, :comment_override, rand), class: "margin-right-05 #{label_error_class(score_fields, :comment_overrides)}" %>
+              </div>
+
+              <div class="usa-character-count">
+                <%= score_fields.text_area :comment_override,
+                  id: evaluation_score_id(score_fields, :comment_override, rand),
+                  name: evaluation_score_name(score_fields, :comment_override, rand),
+                  maxlength: 3000,
+                  rows: 7,
+                  class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment_override)}",
+                  disabled:
+                  %>
+
+                <span class="usa-character-count__message"></span>
+              </div>
+
+              <%= inline_error(score_fields, :comment_override, rand) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bg-base padding-2 text-base-lightest">
+      <div class="display-flex flex-align-center flex-justify-center">
+        <span class="text-bold margin-right-1">Evaluator Score:</span>
+        <span class="font-sans-2xl text-bold total-score"><%= @evaluation.calculated_total_score(use_evaluator_scores: true) %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
+      </div>
+
+      <hr/>
+
+      <div class="display-flex flex-align-center flex-justify-center">
+        <div class="usa-form-group width-full margin-auto margin-top-0">
+          <%= form.label :additional_comments, "Evaluator Comments", class: "#{label_error_class(form, :additional_comments)}" %>
+
+          <%= form.text_area :additional_comments,
+            maxlength: 3000,
+            rows: "7",
+            class: "usa-textarea #{input_error_class(form, :additional_comments)}",
+            disabled: true %>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-base-light margin-bottom-4 padding-2 text-base-lightest">
+      <div class="display-flex flex-align-center flex-justify-center">
+        <span class="text-bold margin-right-1">Revised Score:</span>
+        <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score %></span>
+        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
+      </div>
+
+      <hr/>
+
+      <div class="display-flex flex-align-center flex-justify-center">
+        <div class="usa-form-group width-full margin-auto margin-top-0">
+          <%= form.label :revision_comments, "Revision Supporting Comments", class: "#{label_error_class(form, :revision_comments)}" %>
+
+          <%= form.text_area :revision_comments,
+            maxlength: 3000,
+            rows: "7",
+            class: "usa-textarea #{input_error_class(form, :revision_comments)}",
+            disabled:
+            %>
+
+          <%= inline_error(form, :revision_comments, rand) %>
+        </div>
+      </div>
+    </div>
+
+    <% if !disabled %>
+      <div class="display-flex flex-justify-center">
+        <%= link_to "Cancel", "#", class: "usa-button usa-button--outline", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
+        <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} %>
+      </div>
+    <% end %>
+
+    <%= render "modals/confirmation", 
+      id: "cancel",
+      heading: "Are you sure you want to cancel?",
+      description: "Your evaluation revisions will not be saved and any entered information will be lost.",
+      confirm_text: "Yes",
+      cancel_text: "Close",
+      confirm_redirect: @return_path
+    %>
+
+    <%= render "modals/confirmation", 
+      id: "revise",
+      heading: "Are you sure you want to save evaluation revisions?",
+      description: "By saving these evaluation revisions, the submission evaluation score and the average submission evaluation score will be updated.",
+      confirm_text: "Yes",
+      cancel_text: "Back",
+      confirm_action: "submit"
+    %>
+  <% end %>
+</div>

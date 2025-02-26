@@ -1,60 +1,58 @@
-<div class="grid-container padding-x-0">
-  <div class="grid-row">
-    <div class="grid-col-12 display-flex flex-column flex-align-start padding-top-105">
-      <nav aria-label="Sort and filter options" class="tablet:usa-nav display-flex" data-controller="sort-filter-menu">
-        <ul class="usa-nav__primary usa-accordion" style="position: relative;">
-          <li class="radius-md">
-            <button
-              type="button"
-              class="usa-accordion__button"
-              aria-expanded="false"
-              aria-controls="sort-and-filter"
-              style="background-color: white; border: none; padding: 0;"
-            >
-              <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Sort & Filter</span>
-              <%= image_tag "images/usa-icons/arrow_drop_down.svg", 
-                  class: "usa-icon icon-down", 
-                  alt: "", 
-                  aria: { hidden: true } %>
-              <%= image_tag "images/usa-icons/arrow_drop_up.svg", 
-                  class: "usa-icon icon-up", 
-                  alt: "", 
-                  aria: { hidden: true } %>
-            </button>
-            <ul id="sort-and-filter" class="usa-nav__submenu text-no-wrap bg-white font-sans-xs width-auto" 
-                style="position: absolute; top: 100%; left: 0; z-index: 1000; max-height: 80vh; overflow-y: auto;">
-              <% menu_items = [
-                { label: "Evaluation progress: Completed", value: "status=completed" },
-                { label: "Evaluation progress: In progress", value: "status=in_progress" },
-                { label: "Evaluation progress: Not started", value: "status=not_started" },
-                { label: "Evaluation progress: Recused", value: "status=recused" },
-                { label: "Eligible for Evaluation", value: "eligible_for_evaluation=true" },
-                { label: "Selected to Advance", value: "selected_to_advance=true" },
-                { label: "Average score: high to low", value: "sort=average_score_high_to_low" },
-                { label: "Average score: low to high", value: "sort=average_score_low_to_high" },
-                { label: "Submission ID: high to low", value: "sort=submission_id_high_to_low" },
-                { label: "Submission ID: low to high", value: "sort=submission_id_low_to_high" }
-              ] %>
-              <% menu_items.each do |item| %>
-                <li class="usa-nav__submenu-item bg-primary-darker margin-y-2px">
-                  <a href="#" class="text-white text-no-underline menu-item display-flex flex-align-center padding-y-05 padding-x-105 width-full" 
-                    data-action="click->sort-filter-menu#toggle" 
-                    data-sort-filter-menu-target="menuItem" 
-                    data-filter-value="<%= item[:value] %>">
-                    <%= image_tag "images/usa-icons/check.svg", 
-                        width: 18, 
-                        height: 18, 
-                        alt: "Selected", 
-                        class: "icon-white checkmark margin-left-neg-3 padding-top-2px tablet:padding-top-05 tablet:margin-left-neg-1", 
-                        style: "display: none;" %>
-                    <span class="text-white"><%= item[:label] %></span>
-                  </a>
-                </li>
-              <% end %>
-            </ul>
-          </li>
+<div data-controller="sort-filter-menu" class="padding-top-105">
+  <nav aria-label="Sort and filter options">
+    <ul class="usa-nav__primary usa-accordion" style="position: relative;">
+      <li class="radius-md text-no-wrap">
+        <button
+          type="button"
+          class="usa-accordion__button"
+          aria-expanded="false"
+          aria-controls="sort-and-filter"
+          style="background-color: white; border: none; padding: 0;"
+        >
+          <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Sort & Filter</span>
+          <%= image_tag "images/usa-icons/arrow_drop_down.svg",
+              class: "usa-icon icon-down icon-primary-blue",
+              alt: "",
+              aria: { hidden: true } %>
+          <%= image_tag "images/usa-icons/arrow_drop_up.svg",
+              class: "usa-icon icon-up icon-primary-blue",
+              alt: "",
+              aria: { hidden: true } %>
+        </button>
+        <ul id="sort-and-filter" class="usa-nav__submenu text-no-wrap bg-white font-sans-xs width-auto"
+            style="position: absolute; top: 100%; left: 0; z-index: 1000; max-height: 80vh; overflow-y: auto;">
+          <% menu_items = [
+            { label: "Evaluation progress: Completed", value: "status=completed" },
+            { label: "Evaluation progress: In progress", value: "status=in_progress" },
+            { label: "Evaluation progress: Not started", value: "status=not_started" },
+            { label: "Evaluation progress: Recused", value: "status=recused" },
+            { label: "Eligible for Evaluation", value: "eligible_for_evaluation=true" },
+            { label: "Selected to Advance", value: "selected_to_advance=true" },
+            { label: "Average score: high to low", value: "sort=average_score_high_to_low" },
+            { label: "Average score: low to high", value: "sort=average_score_low_to_high" },
+            { label: "Assigned evaluators: high to low", value: "sort=assignees_high_to_low" },
+            { label: "Assigned evaluators: low to high", value: "sort=assignees_low_to_high" },
+            { label: "Submission ID: high to low", value: "sort=submission_id_high_to_low" },
+            { label: "Submission ID: low to high", value: "sort=submission_id_low_to_high" }
+          ] %>
+          <% menu_items.each do |item| %>
+            <li class="usa-nav__submenu-item bg-primary-darker margin-y-2px">
+              <a href="#" class="text-white text-no-underline menu-item display-flex flex-align-center padding-y-05 padding-x-105 width-full"
+                data-action="click->sort-filter-menu#toggle"
+                data-sort-filter-menu-target="menuItem"
+                data-filter-value="<%= item[:value] %>">
+                <%= image_tag "images/usa-icons/check.svg",
+                    width: 18,
+                    height: 18,
+                    alt: "Selected",
+                    class: "icon-white checkmark margin-left-neg-3 padding-top-2px tablet:padding-top-05 tablet:margin-left-neg-1",
+                    style: "display: none;" %>
+                <span class="text-white"><%= item[:label] %></span>
+              </a>
+            </li>
+          <% end %>
         </ul>
-      </nav>
-    </div>
-  </div>
+      </li>
+    </ul>
+  </nav>
 </div>

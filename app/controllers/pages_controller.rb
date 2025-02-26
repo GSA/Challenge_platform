@@ -15,7 +15,7 @@ class PagesController < ApplicationController
     path = "#{BASE_URL}/#{params[:path]}/"
     reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
       config.on_missing do |_code, _response|
-        redirect_to "/dashboard"
+        redirect_to "/"
         return true
       end
 

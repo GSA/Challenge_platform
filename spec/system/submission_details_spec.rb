@@ -105,7 +105,13 @@ describe "A11y", :js do
       expect(page).to have_css("p.usa-alert__text", text: "Evaluator assigned successfully")
 
       click_on('Unassign')
-      expect(page).to have_css("p.usa-alert__text", text: "Evaluator unassigned successfully")
+      expect(page).to have_css('#unassign-evaluator-submission-modal', visible: true)
+      expect(page).to have_content('Are you sure you want to unassign an evaluator from this submission?')
+
+      within('#unassign-evaluator-submission-modal') do
+        click_button 'Yes'
+        expect(page).to have_current_path(submission_path(submission))
+      end
     end
 
     it "unassigns a recused evaluator from the submission" do
@@ -123,7 +129,13 @@ describe "A11y", :js do
 
       visit submission_path(submission)
       click_on('Unassign')
-      expect(page).to have_css("p.usa-alert__text", text: "Recused evaluator unassigned successfully")
+      expect(page).to have_css('#unassign-evaluator-submission-modal', visible: true)
+      expect(page).to have_content('Are you sure you want to unassign an evaluator from this submission?')
+
+      within('#unassign-evaluator-submission-modal') do
+        click_button 'Yes'
+        expect(page).to have_current_path(submission_path(submission))
+      end
     end
   end
 end

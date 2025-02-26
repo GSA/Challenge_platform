@@ -14,7 +14,8 @@ module Dev
       @current_user = User.find_by(email:)
       renew_session
       session[:userinfo] = [{ "email" => email, "sub" => @current_user.token }]
-      redirect_to dashboard_path
+
+      redirect_to_landing_page
     end
   end
 end

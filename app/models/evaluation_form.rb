@@ -5,7 +5,6 @@
 # Table name: evaluation_forms
 #
 #  id                :bigint           not null, primary key
-#  title             :string           not null
 #  instructions      :string           not null
 #  comments_required :boolean          default(FALSE)
 #  scale_type        :string           not null
@@ -30,7 +29,6 @@ class EvaluationForm < ApplicationRecord
       where(challenge_manager_users: { id: user.id })
   }
 
-  validates :title, presence: true, length: { maximum: 150 }
   validates :instructions, presence: true
   validates :scale_type, presence: true
   validates :closing_date, presence: true

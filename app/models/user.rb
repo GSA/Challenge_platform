@@ -150,6 +150,19 @@ class User < ApplicationRecord
     /\.(gov|mil)$/.match?(email)
   end
 
+  def full_name(format: :default)
+    return email if first_name.blank? && last_name.blank?
+
+    case format
+    when :default
+      [first_name, last_name].compact.join(" ")
+    when :last_first
+      [last_name, first_name].compact.join(", ")
+    else
+      raise ArgumentError, "Invalid format"
+    end
+  end
+
   private
 
   def process_evaluator_invitations
