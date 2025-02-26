@@ -80,9 +80,8 @@ class SubmissionsSortAndFilterService
   end
 
   def apply_includes
-    @submissions = @submissions.public_send(
-      @params[:sort]&.include?('assignees') ? :preload : :includes,
-      evaluator_submission_assignments: [:evaluator, :evaluation]
-    )
+    association_preloads = { evaluator_submission_assignments: [:evaluator, { evaluation: :evaluation_scores }] }
+
+    @submissions = @submissions.preload(association_preloads)
   end
 end

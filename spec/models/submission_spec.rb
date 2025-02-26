@@ -83,10 +83,10 @@ RSpec.describe Submission, type: :model do
   describe "Scope .order_by_assignee_count" do
     let(:phase) { create(:phase) }
     let(:evaluators) { create_list(:user, 3, role: :evaluator) }
-    let(:submission_0_assigned) { create(:submission, phase:) }
-    let(:submission_1_assigned) { create(:submission, phase:) }
-    let(:submission_1_assigned_1_recused) { create(:submission, phase:) }
-    let(:submission_3_assigned) { create(:submission, phase:) }
+    let(:submission_0_assigned) { create(:submission, phase:, judging_status: 'selected') }
+    let(:submission_1_assigned) { create(:submission, phase:, judging_status: 'selected') }
+    let(:submission_1_assigned_1_recused) { create(:submission, phase:, judging_status: 'selected') }
+    let(:submission_3_assigned) { create(:submission, phase:, judging_status: 'selected') }
 
     before do
       evaluator1, evaluator2, evaluator3 = evaluators

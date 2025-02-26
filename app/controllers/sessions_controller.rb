@@ -26,7 +26,7 @@ class SessionsController < ApplicationController
 
   def result
     sign_in(@login_userinfo)
-    redirect_to dashboard_path
+    redirect_to_landing_page
   end
 
   def renew

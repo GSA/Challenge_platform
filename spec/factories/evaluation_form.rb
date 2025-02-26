@@ -5,7 +5,6 @@ FactoryBot.define do
     phase { association(:phase, challenge: challenge) }
 
     # Fields
-    title { "#{Faker::Lorem.word.humanize} Evaluation Form" }
     instructions { Faker::Lorem.sentence(word_count: 10) }
     comments_required { Faker::Boolean.boolean }
     scale_type { [:point, :weight].sample }
@@ -45,7 +44,7 @@ FactoryBot.define do
         evaluation_form.closing_date = phase_end_date + 1.day
       else
         # Fallback in case of no phase end_date
-        closing_date { Faker::Date.forward(days: 30) }
+        closing_date { 4.months.from_now }
       end
     end
 

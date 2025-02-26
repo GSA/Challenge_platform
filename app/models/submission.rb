@@ -77,7 +77,8 @@ class Submission < ApplicationRecord
       ON submissions.id = evaluator_submission_assignments.submission_id
       AND evaluator_submission_assignments.status in (0, 2)
     JOIN_SQL
-    joins(join_sql).
+    eligible_for_evaluation.
+      joins(join_sql).
       group("submissions.id").
       select("submissions.*, count(evaluator_submission_assignments.id) as assignee_count").
       order("assignee_count #{direction_sql}")
@@ -86,15 +87,14 @@ class Submission < ApplicationRecord
   scope :order_by_average_score, lambda { |direction|
     direction_sql = direction == :desc ? 'DESC' : 'ASC'
 
-    joins(
-      "LEFT JOIN evaluations ON evaluations.submission_id = submissions.id " \
-      "AND evaluations.completed_at IS NOT NULL " \
-      "AND submissions.evaluation_status = 'completed'"
-    ).
+    where(evaluation_status: :completed).
+      joins(
+        "LEFT JOIN evaluations ON evaluations.submission_id = submissions.id"
+      ).
       group('submissions.id').
       order(
         Arel.sql(
-          "COALESCE(ROUND(AVG(evaluations.total_score)), 0) #{direction_sql}, " \
+          "COALESCE(AVG(evaluations.total_score), 0) #{direction_sql}, " \
           "submissions.id #{direction_sql}"
         )
       )
@@ -131,12 +131,12 @@ class Submission < ApplicationRecord
     !eligible_for_evaluation? || evaluator_submission_assignments.assigned.empty? || !all_evaluations_completed?
   end
 
-  private
-
   def all_evaluations_completed?
     evaluator_submission_assignments.assigned.
       all? { |assignment| assignment.evaluation_status == :completed }
   end
+
+  private
 
   def can_be_selected_to_advance
     return unless evaluations_missing_or_incomplete?

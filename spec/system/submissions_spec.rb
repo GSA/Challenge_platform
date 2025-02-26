@@ -16,8 +16,13 @@ describe "A11y", :js do
       visit submissions_phase_path(phase)
       expect(user.role).to eq("challenge_manager")
       expect(page).to have_content("Boston Tea Party Cleanup")
-      expect(page).to have_content("Total Submissions")
-      # commenting out for now, switch this back on soon
+
+      expect(page).to have_content("At a glance")
+      expect(page).to have_content("Submissions")
+      expect(page).to have_content("Eligible for evaluation")
+      expect(page).to have_content("Selected to advance")
+      expect(page).to have_content("Evaluation due date")
+
       expect(page).to(be_axe_clean)
     end
   end
