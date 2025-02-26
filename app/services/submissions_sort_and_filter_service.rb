@@ -22,6 +22,7 @@ class SubmissionsSortAndFilterService
   def apply_filters
     filter_by_eligibility
     filter_by_status
+    filter_by_submission_id
   end
 
   def filter_by_eligibility
@@ -35,6 +36,12 @@ class SubmissionsSortAndFilterService
     return unless @params[:status]
 
     @submissions = apply_status_filter(@submissions)
+  end
+
+  def filter_by_submission_id
+    return unless @params[:submission_id].present?
+
+    @submissions = @submissions.where("submissions.id::text LIKE ?", "%#{@params[:submission_id]}%")
   end
 
   def apply_status_filter(submissions)
