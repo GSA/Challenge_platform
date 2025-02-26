@@ -1,7 +1,7 @@
 <div data-controller="sort-filter-menu" class="padding-top-105">
   <nav aria-label="Sort and filter options">
     <ul class="usa-nav__primary usa-accordion" style="position: relative;">
-      <li class="radius-md text-no-wrap margin-left-2">
+      <li class="radius-md text-no-wrap margin-left-0 margin-bottom-1 tablet:margin-left-2">
         <button
           type="button"
           class="usa-accordion__button"
@@ -23,77 +23,110 @@
         <div id="sort-and-filter" class="usa-nav__submenu bg-white width-auto" 
              style="position: absolute; top: 100%; left: 0; z-index: 1000; max-height: 80vh; overflow-y: auto;">
 
-          <div class="display-flex flex-justify bg-base-lightest padding-2">
+          <div class="display-flex flex-justify bg-base-lightest padding-x-2 padding-y-1">
             <h2 class="margin-0 font-sans-md">Sort & Filter</h2>
-            <%= image_tag "images/usa-icons/close.svg",
-                class: "usa-icon icon-up icon-primary-blue",
-                alt: "",
-                aria: { hidden: true } %>
+            <button type="button" 
+                    class="cursor-pointer"
+                    style="background: none; border: none; padding: 0;"
+                    data-action="click->sort-filter-menu#close">
+              <%= image_tag "images/usa-icons/close.svg",
+                  class: "usa-icon usa-icon--size-3 margin-top-2px margin-right-neg-05",
+                  alt: "",
+                  aria: { hidden: true } %>
+            </button>
           </div>
 
           <div class="border-1px border-base-lighter">
-            <h4 class="margin-top-0 margin-bottom-1 font-weight-normal padding-3">Filter by submission ID</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-4">
+            <h4 class="margin-top-0 margin-bottom-1 font-weight-normal padding-top-3 padding-x-3">Filter by submission ID</h4>
+            <div class="margin-bottom-2 padding-x-3">
+              <input 
+                class="usa-input width-full" 
+                id="submission-id-search"
+                type="search" 
+                name="search" 
+                placeholder="Enter submission ID"
+                data-sort-filter-menu-target="submissionIdSearch"
+                data-action="input->sort-filter-menu#handleSearchInput"
+                style="height: 2.5rem; border: 1px solid #1b1b1b;"
+              >
             </div>
 
-            <h4 class="margin-top-0 margin-bottom-1 font-weight-normal padding-x-3">Filter by</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-6">
+            <h4 class="margin-top-8 margin-bottom-1 font-weight-normal padding-x-3">Filter by</h4>
+            <div class="usa-radio margin-bottom-2 margin-left-8">
               <input class="usa-radio__input" id="eligible" type="radio" name="filter-type" 
-                    data-sort-filter-menu-target="filterOption" value="eligible_for_evaluation=true"
-                    style="transform: scale(0.7);">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="eligible_for_evaluation=true">
               <label class="usa-radio__label" for="eligible">Eligible for evaluations</label>
               
               <input class="usa-radio__input" id="selected" type="radio" name="filter-type" 
-                    data-sort-filter-menu-target="filterOption" value="selected_to_advance=true">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="selected_to_advance=true">
               <label class="usa-radio__label" for="selected">Selected to advance</label>
             </div>
 
             <h4 class="margin-bottom-1 padding-x-3">Filter by evaluation status</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-6">
+            <div class="usa-radio margin-bottom-2 margin-left-8">
               <input class="usa-radio__input" id="completed" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption" value="status=completed">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="status=completed">
               <label class="usa-radio__label" for="completed">Completed</label>
               
               <input class="usa-radio__input" id="in_progress" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption" value="status=in_progress">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="status=in_progress">
               <label class="usa-radio__label" for="in_progress">In progress</label>
               
               <input class="usa-radio__input" id="not_started" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption" value="status=not_started">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="status=not_started">
               <label class="usa-radio__label" for="not_started">Not started</label>
               
               <input class="usa-radio__input" id="recused" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption" value="status=recused">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="status=recused">
               <label class="usa-radio__label" for="recused">Recused</label>
             </div>
             
             <h4 class="margin-bottom-1 padding-x-3">Sort by average score</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-6">
+            <div class="usa-radio margin-bottom-2 margin-left-8">
               <input class="usa-radio__input" id="score_high" type="radio" name="score_sort" 
-                    data-sort-filter-menu-target="filterOption" value="sort=average_score_high_to_low">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="sort=average_score_high_to_low">
               <label class="usa-radio__label" for="score_high">High to low</label>
               
               <input class="usa-radio__input" id="score_low" type="radio" name="score_sort" 
-                    data-sort-filter-menu-target="filterOption" value="sort=average_score_low_to_high">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="sort=average_score_low_to_high">
               <label class="usa-radio__label" for="score_low">Low to high</label>
             </div>
 
             <h4 class="margin-bottom-1 padding-x-3">Sort by # of assigned evaluators</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-6">
+            <div class="usa-radio margin-bottom-2 margin-left-8">
               <input class="usa-radio__input" id="eval_high" type="radio" name="evaluator_sort" 
-                    data-sort-filter-menu-target="filterOption" value="sort=assignees_high_to_low">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="sort=assignees_high_to_low">
               <label class="usa-radio__label" for="eval_high">High to low</label>
               
               <input class="usa-radio__input" id="eval_low" type="radio" name="evaluator_sort" 
-                    data-sort-filter-menu-target="filterOption" value="sort=assignees_low_to_high">
+                    data-sort-filter-menu-target="filterOption"
+                    data-action="change->sort-filter-menu#handleRadioChange"
+                    value="sort=assignees_low_to_high">
               <label class="usa-radio__label" for="eval_low">Low to high</label>
             </div>
 
             <div class="display-flex flex-justify padding-2">
-              <button class="usa-button usa-button--primary" 
-                      data-action="sort-filter-menu#applyFilters"
-                      style="background-color: #0076d6 !important; color: white; border-radius: 4px; font-size: 1.1rem; letter-spacing: 0.05em; padding: 0.25rem 1rem !important;">Show results</button>
-              <a href="#" class="font-weight-normal text-primary margin-top-1 margin-right-4 margin-bottom-1" 
+              <button class="usa-button usa-button--primary-dark"
+                      data-action="sort-filter-menu#applyFilters">Show results</button>
+              <a href="#" class="font-weight-normal text-primary margin-top-1 margin-right-2 margin-bottom-1" 
                       data-action="sort-filter-menu#clearAllFilters">Reset</a>
             </div>
           </div>
