@@ -11,7 +11,8 @@ Add a list of changed settings in the form $setting: value.
   $flex-direction-settings: (
     responsive: true
   ),
-  $theme-accordion-button-background-color: 'blue-70v'
+  $theme-accordion-button-background-color: 'blue-70v',
+  $theme-color-primary-darker: 'blue-80v'
 );
 
 @use "uswds" as *;
