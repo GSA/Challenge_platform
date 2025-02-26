@@ -80,6 +80,36 @@ RSpec.describe Submission, type: :model do
     end
   end
 
+  describe "Scope .order_by_assignee_count" do
+    let(:phase) { create(:phase) }
+    let(:evaluators) { create_list(:user, 3, role: :evaluator) }
+    let(:submission_0_assigned) { create(:submission, phase:, judging_status: 'selected') }
+    let(:submission_1_assigned) { create(:submission, phase:, judging_status: 'selected') }
+    let(:submission_1_assigned_1_recused) { create(:submission, phase:, judging_status: 'selected') }
+    let(:submission_3_assigned) { create(:submission, phase:, judging_status: 'selected') }
+
+    before do
+      evaluator1, evaluator2, evaluator3 = evaluators
+      submission_0_assigned
+      submission_1_assigned.evaluator_submission_assignments.create(evaluator: evaluator1, status: "assigned")
+      submission_1_assigned_1_recused.evaluator_submission_assignments.create(evaluator: evaluator1, status: "assigned")
+      submission_1_assigned_1_recused.evaluator_submission_assignments.create(evaluator: evaluator2, status: "recused")
+      submission_3_assigned.evaluator_submission_assignments.create(evaluator: evaluator1, status: "assigned")
+      submission_3_assigned.evaluator_submission_assignments.create(evaluator: evaluator2, status: "assigned")
+      submission_3_assigned.evaluator_submission_assignments.create(evaluator: evaluator3, status: "assigned")
+    end
+
+    it "sorts ascending" do
+      sorted_ids = phase.submissions.order_by_assignee_count(:asc).map(&:id)
+      expect(sorted_ids).to eq([submission_0_assigned.id, submission_1_assigned.id, submission_1_assigned_1_recused.id, submission_3_assigned.id])
+    end
+
+    it "sorts descending" do
+      sorted_ids = phase.submissions.order_by_assignee_count(:desc).map(&:id)
+      expect(sorted_ids).to eq([submission_3_assigned.id, submission_1_assigned_1_recused.id, submission_1_assigned.id, submission_0_assigned.id])
+    end
+  end
+
   describe "#available_evaluators" do
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge:) }
