@@ -3,6 +3,7 @@
 # Controller for evaluators CRUD actions.
 class EvaluatorsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
+  before_action -> { check_gov_access }
 
   # All routes are scoped to a Challenge Phase
   before_action :set_challenge_phase
