@@ -296,32 +296,74 @@ RSpec.describe "Submissions" do
 
         context 'when sorting submissions' do
           before do
+            assignments = create_list(:evaluator_submission_assignment, 3,
+              submission: completed_submission,
+              status: :assigned
+            )
+
+            assignments.each do |assignment|
+              create(:evaluation,
+                     evaluator_submission_assignment: assignment,
+                     submission: completed_submission,
+                     completed_at: Time.current,
+                     total_score: 90)
+            end
+
+            create(:evaluator_submission_assignment,
+              submission: completed_submission,
+              status: :recused
+            )
+
+            EvaluationStatusService.update_evaluation_status(completed_submission)
+
             create(:evaluation,
                    evaluator_submission_assignment: create(:evaluator_submission_assignment,
                                                            submission: in_progress_submission),
                    total_score: 80)
 
-            create(:evaluation,
-                   evaluator_submission_assignment: create(:evaluator_submission_assignment,
-                                                           submission: completed_submission),
-                   total_score: 90)
-          end
-
-          it 'orders submissions by score high to low' do
-            get submissions_phase_path(phase), params: { sort: 'average_score_high_to_low' }
-
-            expect(response.body).to have_css(
-              "tr[data-submission-id='#{completed_submission.id}'] " \
-              "~ tr[data-submission-id='#{in_progress_submission.id}']"
+            create_list(:evaluator_submission_assignment, 2,
+              submission: not_started_submission,
+              status: :assigned
+            )
+            create(:evaluator_submission_assignment,
+              submission: not_started_submission,
+              status: :recused
             )
           end
 
-          it 'orders submissions by score low to high' do
-            get submissions_phase_path(phase), params: { sort: 'average_score_low_to_high' }
+          it 'orders submissions by assigned evaluators high to low' do
+            get submissions_phase_path(phase), params: { sort: 'assignees_high_to_low' }
 
+            # completed_submission: 6 evaluators (4 assigned + 2 recused)
+            # not_started_submission: 3 evaluators (2 assigned + 1 recused)
+            # in_progress_submission: 2 evaluator (2 assigned)
+            # eligible_submission: 0 evaluators
             expect(response.body).to have_css(
-              "tr[data-submission-id='#{in_progress_submission.id}'] " \
-              "~ tr[data-submission-id='#{completed_submission.id}']"
+              "tr[data-submission-id='#{completed_submission.id}'] ~ tr[data-submission-id='#{not_started_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{not_started_submission.id}'] ~ tr[data-submission-id='#{in_progress_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{in_progress_submission.id}'] ~ tr[data-submission-id='#{eligible_submission.id}']"
+            )
+          end
+
+          it 'orders submissions by assigned evaluators low to high' do
+            get submissions_phase_path(phase), params: { sort: 'assignees_low_to_high' }
+
+            # eligible_submission: 0 evaluators
+            # in_progress_submission: 2 evaluator (2 assigned)
+            # not_started_submission: 3 evaluators (2 assigned + 1 recused)
+            # completed_submission: 6 evaluators (4 assigned + 2 recused)
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{eligible_submission.id}'] ~ tr[data-submission-id='#{in_progress_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{in_progress_submission.id}'] ~ tr[data-submission-id='#{not_started_submission.id}']"
+            )
+            expect(response.body).to have_css(
+              "tr[data-submission-id='#{not_started_submission.id}'] ~ tr[data-submission-id='#{completed_submission.id}']"
             )
           end
         end
@@ -350,25 +392,65 @@ RSpec.describe "Submissions" do
         context 'when sorting by average score' do
           before do
             submissions[0..24].each_with_index do |submission, index|
-              create(:evaluation,
-                     evaluator_submission_assignment: create(:evaluator_submission_assignment, submission: submission),
-                     total_score: (index + 1) * 20)
+              submission.update!(judging_status: 'selected')
+              assignment = create(:evaluator_submission_assignment, submission: submission, status: :assigned)
+
+              evaluation = create(:evaluation,
+                               evaluator_submission_assignment: assignment,
+                               submission: submission,
+                               completed_at: Time.current)
+
+              evaluation.update_column(:total_score, (25 - index) * 20)
+              submission.reload
             end
           end
 
-          it 'paginates correctly when sorted by score', bullet: :dont_raise do
+          it 'paginates and orders submissions by score high to low across pages', bullet: :dont_raise do
             get submissions_phase_path(phase, page: 1, sort: 'average_score_high_to_low')
             expect(response).to have_http_status(:success)
-            first_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
-            expect(first_page_scores.count).to eq(20)
-            expect(first_page_scores.map(&:to_i)).to eq(first_page_scores.map(&:to_i).sort.reverse)
+
+            first_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            first_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(first_page_submissions.count).to eq(20)
+            expect(first_page_scores).to eq(first_page_scores.sort.reverse)
             expect(response.body).to have_button('Load more')
 
             get submissions_phase_path(phase, page: 2, partial: true, sort: 'average_score_high_to_low')
+            second_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            second_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(second_page_submissions.count).to eq(5)
+            expect(second_page_scores).to eq(second_page_scores.sort.reverse)
+
+            all_submissions = first_page_submissions + second_page_submissions
+            all_scores = first_page_scores + second_page_scores
+            expect(all_scores).to eq(all_scores.sort.reverse)
+
+            expected_order = submissions[0..24].sort_by { |s| [-s.average_score, s.id] }.map(&:id)
+            expect(all_submissions).to eq(expected_order)
+          end
+
+          it 'paginates and orders submissions by score low to high across pages', bullet: :dont_raise do
+            get submissions_phase_path(phase, page: 1, sort: 'average_score_low_to_high')
             expect(response).to have_http_status(:success)
-            second_page_scores = response.body.scan(/data-score="(\d+)"/).flatten
-            expect(second_page_scores.count).to eq(5)
-            expect(second_page_scores.map(&:to_i)).to eq(second_page_scores.map(&:to_i).sort.reverse)
+
+            first_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            first_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(first_page_submissions.count).to eq(20)
+            expect(first_page_scores).to eq(first_page_scores.sort)
+            expect(response.body).to have_button('Load more')
+
+            get submissions_phase_path(phase, page: 2, partial: true, sort: 'average_score_low_to_high')
+            second_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
+            second_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
+            expect(second_page_submissions.count).to eq(5)
+            expect(second_page_scores).to eq(second_page_scores.sort)
+
+            all_submissions = first_page_submissions + second_page_submissions
+            all_scores = first_page_scores + second_page_scores
+            expect(all_scores).to eq(all_scores.sort)
+
+            expected_order = submissions[0..24].sort_by { |s| [s.average_score, s.id] }.map(&:id)
+            expect(all_submissions).to eq(expected_order)
           end
         end
 

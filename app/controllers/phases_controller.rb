@@ -10,7 +10,7 @@ class PhasesController < ApplicationController
   end
 
   def submissions
-    @submissions = @phase.submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
+    @submissions = @phase.submissions
 
     set_submission_counts
     set_submission_statuses
