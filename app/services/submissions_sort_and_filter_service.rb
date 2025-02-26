@@ -13,6 +13,7 @@ class SubmissionsSortAndFilterService
   def sort_and_filter
     apply_filters
     apply_sorting
+    apply_includes
     @submissions
   end
 
@@ -67,10 +68,20 @@ class SubmissionsSortAndFilterService
       @submissions = @submissions.order_by_average_score(:desc)
     when 'average_score_low_to_high'
       @submissions = @submissions.order_by_average_score(:asc)
+    when 'assignees_high_to_low'
+      @submissions = @submissions.order_by_assignee_count(:desc)
+    when 'assignees_low_to_high'
+      @submissions = @submissions.order_by_assignee_count(:asc)
     when 'submission_id_high_to_low'
       @submissions = @submissions.order(id: :desc)
     when 'submission_id_low_to_high'
       @submissions = @submissions.order(id: :asc)
     end
+  end
+
+  def apply_includes
+    association_preloads = { evaluator_submission_assignments: [:evaluator, { evaluation: :evaluation_scores }] }
+
+    @submissions = @submissions.preload(association_preloads)
   end
 end
