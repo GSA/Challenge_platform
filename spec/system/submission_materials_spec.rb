@@ -69,7 +69,7 @@ RSpec.describe "Submission Materials", :js, type: :system do
         user.update(email: generate_user_email(type: :non_gov))
       end
 
-      it "submission materials page is not viewable" do
+      it "redirects me to the evaluations page" do
         submission = assignment.submission
 
         visit materials_submission_path(submission)

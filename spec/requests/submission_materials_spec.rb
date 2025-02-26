@@ -86,7 +86,7 @@ RSpec.describe "SubmissionMaterialsController" do
         expect(response).to have_http_status(:redirect)
       end
 
-      it "renders the submission view when assigned" do
+      it "redirects away from submission view" do
         create(
           :evaluator_submission_assignment,
           submission: submission,
