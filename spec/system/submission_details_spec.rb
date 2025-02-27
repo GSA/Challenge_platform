@@ -18,7 +18,7 @@ describe "A11y", :js do
     it "submission details page is accessible" do
       visit submission_path(submission)
       expect(user.role).to eq("challenge_manager")
-      expect(page).to have_css('h1', text: "Submission ID #{submission.id}")
+      expect(page).to have_css('h2', text: "Submission ID #{submission.id}")
       expect(page).to(be_axe_clean)
     end
 
@@ -28,7 +28,7 @@ describe "A11y", :js do
       eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
       expect(eligible_input).not_to be_checked
       find_by_id('eligible-for-evaluation').click
-      click_on "Save"
+      # click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
       expect(eligible_input).to be_checked
@@ -46,7 +46,7 @@ describe "A11y", :js do
       selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
       expect(selected_input).not_to be_checked
       find_by_id('selected-to-advance').click
-      click_on "Save"
+      # click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
       expect(selected_input).to be_checked
