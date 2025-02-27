@@ -12,7 +12,9 @@ Add a list of changed settings in the form $setting: value.
     responsive: true
   ),
   $theme-accordion-button-background-color: 'blue-70v',
-  $theme-color-primary-darker: 'blue-80v'
+  $theme-color-primary-darker: 'blue-80v',
+  $theme-color-accent-warm-dark: "orange-warm-50v",
+  $theme-color-success-dark: "green-cool-60v"
 );
 
 @use "uswds" as *;
