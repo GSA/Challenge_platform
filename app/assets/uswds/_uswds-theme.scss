@@ -10,7 +10,9 @@ Add a list of changed settings in the form $setting: value.
   $theme-font-path: "fonts",
   $flex-direction-settings: (
     responsive: true
-  )
+  ),
+  $theme-color-accent-warm-dark: "orange-warm-50v",
+  $theme-color-success-dark: "green-cool-60v"
 );
 
 @use "uswds" as *;
