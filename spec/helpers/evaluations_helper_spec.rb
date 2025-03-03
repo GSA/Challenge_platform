@@ -135,7 +135,7 @@ RSpec.describe EvaluationsHelper, type: :helper do
         result = helper.evaluator_score(assignment)
         expect(result.raw_score).to eq(0)
         expect(result.formatted_score).to eq("0")
-        expect(result.display_score).to eq("N/A")
+        expect(result.display_score).to eq("-")
       end
     end
   end
@@ -144,8 +144,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
     it 'returns defaults when no completed evaluations exist' do
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(0)
-      expect(result.formatted_score).to eq("0")
-      expect(result.display_score).to eq("N/A")
+      expect(result.formatted_score).to eq("-")
+      expect(result.display_score).to eq("-")
     end
 
     it 'calculates average score from completed evaluations' do
@@ -205,17 +205,17 @@ RSpec.describe EvaluationsHelper, type: :helper do
   describe '#evaluation_submission_assignment_status_color' do
     it 'returns correct color for not started status' do
       allow(assignment).to receive(:evaluation_status).and_return(:not_started)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-error-dark')
+      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-red-vivid-60v')
     end
 
     it 'returns correct color for in_progress status' do
       allow(assignment).to receive(:evaluation_status).and_return(:in_progress)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-accent-warm-dark')
+      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-orange-warm-vivid-50v')
     end
 
     it 'returns correct color for completed status' do
       allow(assignment).to receive(:evaluation_status).and_return(:completed)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-success-dark')
+      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-green-cool-vivid-60v')
     end
   end
 

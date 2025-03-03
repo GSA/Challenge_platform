@@ -3,9 +3,9 @@
 # View helpers for calculating evaluation & submission details.
 module EvaluationsHelper
   STATUS_COLORS = {
-    not_started: 'bg-error-dark',
-    in_progress: 'bg-accent-warm-dark',
-    completed: 'bg-success-dark',
+    not_started: 'bg-red-vivid-60v',
+    in_progress: 'bg-orange-warm-vivid-50v',
+    completed: 'bg-green-cool-vivid-60v',
     recused: 'bg-base',
     unassigned: 'bg-base',
     recused_unassigned: 'bg-base'
@@ -29,9 +29,9 @@ module EvaluationsHelper
   end
 
   # individual evaluator score
-  def evaluator_score(assignment)
+  def evaluator_score(assignment, format: :zero)
     score = display_score(assignment)
-    return Score.new(0, "0", "N/A") if score == 'N/A'
+    return Score.new(0, format == :zero ? "0" : "-", "-") if score == 'N/A'
 
     Score.new(score, score.to_s, score)
   end
@@ -39,14 +39,14 @@ module EvaluationsHelper
   def average_score(submission)
     assigned_evaluations = submission.evaluator_submission_assignments.assigned
 
-    return Score.new(0, "0", "N/A") if assigned_evaluations.empty?
+    return Score.new(0, "-", "-") if assigned_evaluations.empty?
 
     completed_evaluations = submission.evaluations.
       where(evaluator_submission_assignment: assigned_evaluations).
       where.not(completed_at: nil)
 
     if completed_evaluations.count != assigned_evaluations.count
-      return Score.new(0, "0", "N/A")
+      return Score.new(0, "-", "-")
     end
 
     avg = completed_evaluations.average(:total_score)
@@ -124,7 +124,7 @@ module EvaluationsHelper
                   new_submission_evaluation_path(assignment.submission)
                 end
 
-    link_to("Evaluate", link_path, class: "usa-button font-body-2xs width-full text-no-wrap")
+    link_to("Evaluate", link_path, class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap")
   end
 
   def form_disabled?(evaluation)
