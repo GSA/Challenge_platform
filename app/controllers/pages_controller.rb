@@ -15,22 +15,17 @@ class PagesController < ApplicationController
     response = Faraday.get(path)
     if response.status == 404
       redirect_to "/"
-      return true
     else
       body = rewrite_links(response.body)
-      render body: body, content_type: response.headers["Content-Type"], status: response.status
+      render body:, content_type: response.headers["Content-Type"], status: response.status
     end
   end
 
   def assets
     if params[:ext] == "min"
-      path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}.js"
-      response = Faraday.get(path)
-      send_data(response.body, type: 'application/javascript')
+      handle_minified_asset
     else
-      path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}"
-      response = Faraday.get(path)
-      render body: response.body, content_type: response.headers["Content-Type"], status: response.status
+      handle_asset
     end
   end
 
@@ -38,10 +33,22 @@ class PagesController < ApplicationController
     path = "#{HOST}#{BASE_URL}/"
     response = Faraday.get(path)
     body = rewrite_links(response.body)
-    render body: body, content_type: response.headers["Content-Type"], status: response.status
+    render body:, content_type: response.headers["Content-Type"], status: response.status
   end
 
   private
+
+  def handle_minified_asset
+    path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}.js"
+    response = Faraday.get(path)
+    send_data(response.body, type: 'application/javascript')
+  end
+
+  def handle_asset
+    path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}"
+    response = Faraday.get(path)
+    render body: response.body, content_type: response.headers["Content-Type"], status: response.status
+  end
 
   def rewrite_links(html)
     parsed_html = html.gsub(HOST, "/")
