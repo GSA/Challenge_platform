@@ -36,23 +36,19 @@ export default class extends Controller {
     const normalizedFieldName =
       field_name.charAt(0).toUpperCase() + field_name.slice(1).toLowerCase();
     const fieldLabel = target.dataset.fieldLabel || normalizedFieldName;
-    const tagName = target.tagName;
-    const type = target.type;
+    const { tagName, type } = target;
 
-    let errorMessage;
-
-    if (tagName === "SELECT" || (tagName === "INPUT" && type === "radio")) {
-      errorMessage = `Select ${fieldLabel}`;
-    } else if (
-      tagName === "TEXTAREA" ||
-      (tagName === "INPUT" && type != "text")
-    ) {
-      errorMessage = `Provide ${fieldLabel}`;
-    } else {
-      errorMessage = `Provide ${fieldLabel}`;
+    switch (tagName) {
+      case "SELECT":
+      case "INPUT":
+        return type === "radio"
+          ? `Select ${fieldLabel}`
+          : `Provide ${fieldLabel}`;
+      case "TEXTAREA":
+        return `Provide ${fieldLabel}`;
+      default:
+        return `Provide ${fieldLabel}`;
     }
-
-    return errorMessage;
   }
 
   addErrorClasses(target, label) {
