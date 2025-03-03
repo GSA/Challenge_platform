@@ -44,7 +44,9 @@
                         style: "vertical-align: middle; margin-right: 5px;") %>
                   <% end %>
                   <span class="text-bold text-ls-1 line-height-sans-4">
-                    <%= "#{evaluator.first_name} #{evaluator.last_name}" %>
+                    <%= link_to phase_evaluator_submission_assignments_path(@submission.phase, evaluator_id: evaluator.id) do %>
+                      <%= "#{evaluator.first_name} #{evaluator.last_name}" %>
+                    <% end %>
                   </span>
                 </th>
                 <td data-label="Evaluation Status" class="text-top">
