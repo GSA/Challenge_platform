@@ -39,7 +39,7 @@ class SubmissionsSortAndFilterService
   end
 
   def filter_by_submission_id
-    return unless @params[:submission_id].present?
+    return if @params[:submission_id].blank?
 
     @submissions = @submissions.where("submissions.id::text LIKE ?", "%#{@params[:submission_id]}%")
   end
@@ -79,10 +79,6 @@ class SubmissionsSortAndFilterService
       @submissions = @submissions.order_by_assignee_count(:desc)
     when 'assignees_low_to_high'
       @submissions = @submissions.order_by_assignee_count(:asc)
-    when 'submission_id_high_to_low'
-      @submissions = @submissions.order(id: :desc)
-    when 'submission_id_low_to_high'
-      @submissions = @submissions.order(id: :asc)
     end
   end
 
