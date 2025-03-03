@@ -21,7 +21,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it "renders the headers" do
       expect(mail.subject).to eq(I18n.t("mailers.evaluation_invitation.subject", challenge_title: challenge.title))
       expect(mail.to).to eq([invitation.email])
-      expect(mail.from).to eq(["support@challenge.gov"])
+      expect(mail.from).to eq(["team@challenge.gov"])
     end
 
     it "renders the body" do
@@ -53,7 +53,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it "renders the headers" do
       expect(mail.subject).to eq(I18n.t("mailers.evaluation_invitation.subject", challenge_title: challenge.title))
       expect(mail.to).to eq([user.email])
-      expect(mail.from).to eq(["support@challenge.gov"])
+      expect(mail.from).to eq(["team@challenge.gov"])
     end
 
     it "renders the body" do
@@ -74,7 +74,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it "renders the headers" do
       expect(mail.subject).to eq(I18n.t("mailers.evaluation_assignment.subject", submission_id: submission.id))
       expect(mail.to).to eq([evaluator.email])
-      expect(mail.from).to eq(["support@challenge.gov"])
+      expect(mail.from).to eq(["team@challenge.gov"])
     end
 
     it "renders the body" do
@@ -118,7 +118,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it "renders the headers" do
       expect(mail.subject).to eq(I18n.t("mailers.recusal.subject", submission_id: submission.id))
       expect(mail.to).to eq([challenge_manager.email])
-      expect(mail.from).to eq(["support@challenge.gov"])
+      expect(mail.from).to eq(["team@challenge.gov"])
     end
 
     it "renders the body" do
