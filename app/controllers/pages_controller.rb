@@ -2,7 +2,6 @@
 
 # Proxy Cloud.gov pages content at the root of the application
 class PagesController < ApplicationController
-  include ReverseProxy::Controller
   # We must remove this for proxy of JS assets to be loaded by the browser
   protect_from_forgery except: :assets
 
@@ -12,42 +11,44 @@ class PagesController < ApplicationController
   BASE_URL = Rails.configuration.static_site_interop.fetch(:base_url)
 
   def index
-    path = "#{BASE_URL}/#{params[:path]}/"
-    reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
-      config.on_missing do |_code, _response|
-        redirect_to "/"
-        return true
-      end
-
-      config.on_response do |_code, response|
-        response.body = rewrite_links(response.body)
-      end
+    path = "#{HOST}#{BASE_URL}/#{params[:path]}/"
+    response = Faraday.get(path)
+    if response.status == 404
+      redirect_to "/"
+    else
+      body = rewrite_links(response.body)
+      render body:, content_type: response.headers["Content-Type"], status: response.status
     end
   end
 
   def assets
     if params[:ext] == "min"
-      path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}.js"
-      response = Faraday.get(path)
-      send_data(response.body, type: 'application/javascript')
+      handle_minified_asset
     else
-      path = "#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}"
-      reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN })
+      handle_asset
     end
   end
 
   def root
-    path = "#{BASE_URL}/"
-    reverse_proxy(HOST, path:, reset_accept_encoding: true, headers: { host: DOMAIN }) do |config|
-      config.on_response do |_code, response|
-        if response.body.present?
-          response.body = rewrite_links(response.body)
-        end
-      end
-    end
+    path = "#{HOST}#{BASE_URL}/"
+    response = Faraday.get(path)
+    body = rewrite_links(response.body)
+    render body:, content_type: response.headers["Content-Type"], status: response.status
   end
 
   private
+
+  def handle_minified_asset
+    path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}.js"
+    response = Faraday.get(path)
+    send_data(response.body, type: 'application/javascript')
+  end
+
+  def handle_asset
+    path = "#{HOST}#{BASE_URL}/assets/#{params[:path]}.#{params[:ext]}"
+    response = Faraday.get(path)
+    render body: response.body, content_type: response.headers["Content-Type"], status: response.status
+  end
 
   def rewrite_links(html)
     parsed_html = html.gsub(HOST, "/")

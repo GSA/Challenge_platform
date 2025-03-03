@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "3.2.4"
+ruby '~> 3.2.0'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.2", ">= 7.2.2.1"
@@ -102,7 +102,5 @@ end
 gem "factory_bot", "~> 6.5"
 
 gem "faker", "~> 3.4"
-
-gem "rails-reverse-proxy"
 
 gem "fog-aws"
