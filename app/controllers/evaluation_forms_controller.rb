@@ -27,7 +27,7 @@ class EvaluationFormsController < ApplicationController
     @evaluation_form = EvaluationForm.new(evaluation_form_params)
 
     if @evaluation_form.save
-      set_custom_success_flashes(@evaluation_form)
+      custom_success_flashes(@evaluation_form)
 
       redirect_to phases_path
     else
@@ -39,7 +39,7 @@ class EvaluationFormsController < ApplicationController
   def update
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
-        set_custom_success_flashes(@evaluation_form)
+        custom_success_flashes(@evaluation_form)
 
         format.html do
           redirect_to phases_path
@@ -122,8 +122,8 @@ class EvaluationFormsController < ApplicationController
     end
   end
 
-  def set_custom_success_flashes(evaluation_form)
-    flash[:custom_success_heading] = "Evaluation form is saved"
+  def custom_success_flashes(evaluation_form)
+    flash[:custom_success_heading] = I18n.t("evaluation_form.success.heading")
     flash.now[:custom_success_description] = "
       Your evaluation form for #{challenge_with_phase(evaluation_form)} is saved.
       You can edit it until the end date of your challenge. During evaluation period

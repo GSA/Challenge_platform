@@ -42,6 +42,8 @@ en:
     errors: 
       criteria_weight_total: "Weight for all criteria must add up to 100"
       criteria_unique_titles: "Criteria titles must be unique within the same form"
+    success:
+      heading: "Evaluation form is saved"
     phase:
       presence_error: "can't be blank"
   evaluation_criteria:
