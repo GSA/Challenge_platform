@@ -9,8 +9,8 @@ RSpec.describe NotificationMailer, type: :mailer do
   shared_examples "includes challenge manager contact info" do
     it "includes challenge manager contact information" do
       expect(mail.body.encoded).to include(challenge_manager.email)
-      expect(mail.body.encoded).to include(challenge_manager.first_name)
-      expect(mail.body.encoded).to include(challenge_manager.last_name)
+      expect(mail.body.encoded).to include(ERB::Util.html_escape(challenge_manager.first_name))
+      expect(mail.body.encoded).to include(ERB::Util.html_escape(challenge_manager.last_name))
     end
   end
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style>
@@ -42,8 +42,10 @@
     </style>
   </head>
   <body>
-    <div class="mailer-header-logo">
-      <%= image_tag attachments['challenge_gov_logo.png'].url, style: 'width: 100%; max-width: 100%; height: auto;' if attachments['challenge_gov_logo.png'] %>
+    <div class="mailer-header-logo" role="banner">
+      <%= image_tag attachments['challenge_gov_logo.png'].url, 
+          alt: "Challenge.gov",
+          style: 'width: 100%; max-width: 100%; height: auto;' if attachments['challenge_gov_logo.png'] %>
     </div>
     <div class="mailer-content">
       <%= yield %>
@@ -53,7 +55,8 @@
         <div class="button-container">
           <%= link_to "Login to Challenge.gov", 
               "#{Rails.env.development? ? 'http' : 'https'}://#{Rails.configuration.action_mailer.default_url_options[:host]}", 
-              class: "mailer-button", 
+              class: "mailer-button",
+              style: "color: #ffffff !important; text-decoration: none;",
               target: "_blank", 
               rel: "noopener noreferrer" %>
         </div>
