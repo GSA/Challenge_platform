@@ -1,25 +1,13 @@
 <h2 class="text-primary">Evaluation Form</h2>
 
-<div class="margin-top-4">
+<div class="margin-y-4">
   Required fields are marked with an asterisk 
   (<span style="color: darkred;">*</span>).
 </div>
 
 <%= form_with(url: url, model: evaluation_form, data: { controller: "evaluation-form modal form-validation" }) do |form| %>
-  <% if evaluation_form.errors.any? %>
-    <div style="color: darkred">
-      <div class="usa-alert usa-alert--error" role="alert">
-        <div class="usa-alert__body">
-          <h2 class="usa-alert__heading"><%= pluralize(evaluation_form.errors.count, "error") %> prohibited this evaluation form from being saved:</h2>
-          <ul>
-            <% evaluation_form.errors.each do |error| %>
-              <li><%= error.full_message %></li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </div>
-  <% end %>
+  <%= form_errors_alert(evaluation_form) %>
+
   <%
     if evaluation_form.challenge && evaluation_form.phase
       challenge = evaluation_form.challenge
@@ -28,6 +16,7 @@
       disabled = eval_form_disabled?(evaluation_form)
     end
   %>
+
   <ol class="usa-process-list">
     <li class="usa-process-list__item">
       <h3 class="usa-process-list__heading">Evaluation Information</h3>
@@ -42,7 +31,7 @@
             <span class="margin-right-05" style="color: darkred;">*</span>
           </div>
 
-          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field #{input_error_class(form, :instructions)}", maxlength: 3000, rows: "7", data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence"}, disabled: disabled%>
+          <%= form.text_area :instructions, class: "usa-textarea usa-character-count__field #{input_error_class(form, :instructions)}", maxlength: 3000, rows: "7", data: {"action": "form-validation#validatePresence focusout->form-validation#validatePresence", "field-label": "evaluation instructions"}, disabled: disabled%>
           <span id="with-hint-textarea-info" class="usa-character-count__message">You can enter up to 3000 characters</span>
         </div>
 
@@ -163,6 +152,7 @@
             aria-labelledby="evaluation_form_closing_date"
             aria-describedby="evaluation_form_closing_date_hint"
             data-action="form-validation#validatePresence focusout->form-validation#validatePresence"
+            data-field-label="closing date"
           />
         </div>
 

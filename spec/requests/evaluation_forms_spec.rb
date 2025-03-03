@@ -40,13 +40,21 @@ RSpec.describe "EvaluationForms" do
   describe "PATCH /evaluation_forms/:id" do
     let(:challenge_user) { create_user(role: "challenge_manager") }
     let(:challenge) { create_challenge(user: challenge_user) }
-    let(:evaluation_form) { create_evaluation_form(challenge_id: challenge.id) }
+    let(:phase) { create(:phase, challenge:) }
+    let(:evaluation_form) do
+      create(:evaluation_form, challenge:, phase:, evaluation_criteria_attrs: [
+               { title: "Criterion 1", points_or_weight: 50, scoring_type: :numeric },
+               { title: "Criterion 2", points_or_weight: 25, scoring_type: :binary },
+               { title: "Criterion 3", points_or_weight: 25, scoring_type: :rating }
+             ])
+    end
 
     before { log_in_user(challenge_user) }
 
     context "when requiring evaluator comments on scores" do
       it "updates the comments_required attribute" do
-        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: { evaluation_form: { comments_required: true } }
+        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form),
+              params: { evaluation_form: { comments_required: true } }
         evaluation_form.reload
         expect(evaluation_form.comments_required).to be_truthy
       end
@@ -54,9 +62,8 @@ RSpec.describe "EvaluationForms" do
 
     context "when updating scale type to weight" do
       it "updates the scale_type attribute" do
-        create(:evaluation_criterion, evaluation_form: evaluation_form, points_or_weight: 100)
-
-        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form), params: { evaluation_form: { scale_type: "weight" } }
+        patch phase_evaluation_form_path(evaluation_form.phase, evaluation_form),
+              params: { evaluation_form: { scale_type: "weight" } }
         evaluation_form.reload
         expect(evaluation_form.scale_type).to eq("weight")
       end
