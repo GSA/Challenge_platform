@@ -4,6 +4,9 @@
 class EvaluationFormsController < ApplicationController
   helper FormHelper
 
+  include EvaluationFormsHelper
+  include PhasesHelper
+
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_phase
   before_action :set_evaluation_form, only: %i[show edit update destroy]
@@ -24,11 +27,9 @@ class EvaluationFormsController < ApplicationController
     @evaluation_form = EvaluationForm.new(evaluation_form_params)
 
     if @evaluation_form.save
-      redirect_to confirmation_phase_evaluation_form_path(
-        @evaluation_form.phase,
-        @evaluation_form
-      ),
-                  notice: I18n.t("evaluation_form_saved")
+      set_custom_success_flashes(@evaluation_form)
+
+      redirect_to phases_path
     else
       render :new, status: :unprocessable_entity, phase: @evaluation_form.phase
     end
@@ -38,9 +39,10 @@ class EvaluationFormsController < ApplicationController
   def update
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
+        set_custom_success_flashes(@evaluation_form)
+
         format.html do
-          redirect_to confirmation_phase_evaluation_form_path(@evaluation_form.phase, @evaluation_form),
-                      notice: I18n.t("evaluation_form_saved")
+          redirect_to phases_path
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -118,5 +120,15 @@ class EvaluationFormsController < ApplicationController
     else
       permitted
     end
+  end
+
+  def set_custom_success_flashes(evaluation_form)
+    flash[:custom_success_heading] = "Evaluation form is saved"
+    flash.now[:custom_success_description] = "
+      Your evaluation form for #{challenge_with_phase(evaluation_form)} is saved.
+      You can edit it until the end date of your challenge. During evaluation period
+      the form will be available to your evaluators and you will only be able to edit
+      evaluation period end date if needed.
+    "
   end
 end
