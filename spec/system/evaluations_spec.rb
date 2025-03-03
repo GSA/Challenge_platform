@@ -71,6 +71,7 @@ RSpec.describe 'Evaluation', :js, type: :system do
       it 'shows the submission details panel' do
         visit new_submission_evaluation_path(submission)
         expect(page).to have_css('[data-controller="hotdog"]')
+        expect(page).to have_content(submission.submitter.email)
       end
     end
 
@@ -81,7 +82,9 @@ RSpec.describe 'Evaluation', :js, type: :system do
 
       it 'hides the submission details panel' do
         visit new_submission_evaluation_path(submission)
+
         expect(page).to have_no_css('[data-controller="hotdog"]')
+        expect(page).to_not have_content(submission.submitter.email)
       end
     end
   end
