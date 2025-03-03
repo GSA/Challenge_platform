@@ -4,7 +4,6 @@
 class PhasesController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_phase, except: [:index]
-  # TODO: Should this block submission exports? If so may need to additionally remove buttons on site
   before_action -> { check_gov_access }, except: [:index]
 
   def index
