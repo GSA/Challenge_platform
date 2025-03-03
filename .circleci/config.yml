@@ -11,7 +11,7 @@ executors:
   test_executor:
     working_directory: ~/Challenge_platform
     docker:
-      - image: cimg/ruby:3.2.4
+      - image: cimg/ruby:3.2.5
         environment:
           RAILS_ENV: test
       - image: cimg/postgres:16.3
@@ -85,7 +85,7 @@ jobs:
           key: repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - ruby/install-deps:
-          key: gems-ruby-3.2.4-v{{ .Environment.CACHE_VERSION }}
+          key: gems-ruby-3.2.5-v{{ .Environment.CACHE_VERSION }}
 
       - prepare_database
 
@@ -149,7 +149,7 @@ jobs:
   dev-deploy:
     parallelism: 1
     docker:
-      - image: cimg/ruby:3.2.4
+      - image: cimg/ruby:3.2.5
     steps:
       - checkout
       - run: bundle cache --all
