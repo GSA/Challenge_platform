@@ -20,14 +20,14 @@
           <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Sort & Filter</span>              
         </button>
 
-        <div id="sort-and-filter" class="usa-nav__submenu bg-white width-auto" 
-             style="position: absolute; top: 100%; left: 0; z-index: 1000; max-height: 80vh; overflow-y: auto;">
+        <div id="sort-and-filter" class="usa-nav__submenu bg-white width-auto position-absolute z-top" 
+             style="left: 0; max-height: 80vh; overflow-y: auto;">
 
           <div class="display-flex flex-justify bg-base-lightest padding-x-2 padding-y-1">
             <h2 class="margin-0 font-sans-md">Sort & Filter</h2>
             <button type="button" 
-                    class="cursor-pointer"
-                    style="background: none; border: none; padding: 0;"
+                    class="cursor-pointer bg-transparent border-0"
+                    style="padding: 0;"
                     data-action="click->sort-filter-menu#close">
               <%= image_tag "images/usa-icons/close.svg",
                   class: "usa-icon usa-icon--size-3 margin-top-2px margin-right-neg-05",
@@ -36,23 +36,25 @@
             </button>
           </div>
 
+          <!-- Filter by submission ID -->
           <div class="border-1px border-base-lighter">
             <h4 class="margin-top-0 margin-bottom-1 font-weight-normal padding-top-3 padding-x-3">Filter by submission ID</h4>
             <div class="margin-bottom-2 padding-x-3">
               <input 
-                class="usa-input width-full" 
+                class="usa-input width-full height-5"
                 id="submission-id-search"
-                type="search" 
-                name="search" 
+                type="search"
+                name="search"
                 placeholder="Enter submission ID"
                 data-sort-filter-menu-target="submissionIdSearch"
                 data-action="input->sort-filter-menu#handleSearchInput"
-                style="height: 2.5rem; border: 1px solid #1b1b1b;"
+                style="border: 1px solid #1b1b1b;"
               >
             </div>
 
+            <!-- Filter by eligibility and advancemenet -->
             <h4 class="margin-top-8 margin-bottom-1 font-weight-normal padding-x-3">Filter by</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-8">
+            <div class="usa-radio margin-left-8">
               <input class="usa-radio__input" id="eligible" type="radio" name="filter-type" 
                     data-sort-filter-menu-target="filterOption"
                     data-action="change->sort-filter-menu#handleRadioChange"
@@ -66,68 +68,58 @@
               <label class="usa-radio__label" for="selected">Selected to advance</label>
             </div>
 
+            <!-- Filter by evaluation status -->
             <h4 class="margin-bottom-1 padding-x-3">Filter by evaluation status</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-8">
-              <input class="usa-radio__input" id="completed" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="status=completed">
-              <label class="usa-radio__label" for="completed">Completed</label>
-              
-              <input class="usa-radio__input" id="in_progress" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="status=in_progress">
-              <label class="usa-radio__label" for="in_progress">In progress</label>
-              
-              <input class="usa-radio__input" id="not_started" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="status=not_started">
-              <label class="usa-radio__label" for="not_started">Not started</label>
-              
-              <input class="usa-radio__input" id="recused" type="radio" name="status" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="status=recused">
-              <label class="usa-radio__label" for="recused">Recused</label>
-            </div>
+            <div class="usa-radio margin-left-8">
+              <% [
+                ["completed", "Completed"],
+                ["in_progress", "In progress"],
+                ["not_started", "Not started"],
+                ["recused", "Recused"]
+              ].each do |value, label| %>
+                <input class="usa-radio__input" id="<%= value %>" type="radio" name="status" 
+                      data-sort-filter-menu-target="filterOption"
+                      data-action="change->sort-filter-menu#handleRadioChange"
+                      value="status=<%= value %>">
+                <label class="usa-radio__label" for="<%= value %>"><%= label %></label>
+              <% end %>
+            </div>            
             
+            <!-- Sort by average score -->
             <h4 class="margin-bottom-1 padding-x-3">Sort by average score</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-8">
-              <input class="usa-radio__input" id="score_high" type="radio" name="score_sort" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="sort=average_score_high_to_low">
-              <label class="usa-radio__label" for="score_high">High to low</label>
-              
-              <input class="usa-radio__input" id="score_low" type="radio" name="score_sort" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="sort=average_score_low_to_high">
-              <label class="usa-radio__label" for="score_low">Low to high</label>
-            </div>
+            <div class="usa-radio margin-left-8">
+              <% [
+                ["score_high", "High to low", "average_score_high_to_low"],
+                ["score_low", "Low to high", "average_score_low_to_high"]
+              ].each do |id, label, value| %>
+                <input class="usa-radio__input" id="<%= id %>" type="radio" name="score_sort" 
+                      data-sort-filter-menu-target="filterOption"
+                      data-action="change->sort-filter-menu#handleRadioChange"
+                      value="sort=<%= value %>">
+                <label class="usa-radio__label" for="<%= id %>"><%= label %></label>
+              <% end %>
+            </div>            
 
+            <!-- Sort by # of assigned evaluators -->
             <h4 class="margin-bottom-1 padding-x-3">Sort by # of assigned evaluators</h4>
-            <div class="usa-radio margin-bottom-2 margin-left-8">
-              <input class="usa-radio__input" id="eval_high" type="radio" name="evaluator_sort" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="sort=assignees_high_to_low">
-              <label class="usa-radio__label" for="eval_high">High to low</label>
-              
-              <input class="usa-radio__input" id="eval_low" type="radio" name="evaluator_sort" 
-                    data-sort-filter-menu-target="filterOption"
-                    data-action="change->sort-filter-menu#handleRadioChange"
-                    value="sort=assignees_low_to_high">
-              <label class="usa-radio__label" for="eval_low">Low to high</label>
+            <div class="usa-radio margin-left-8">
+              <% [
+                ["eval_high", "High to low", "assignees_high_to_low"],
+                ["eval_low", "Low to high", "assignees_low_to_high"]
+              ].each do |id, label, value| %>
+                <input class="usa-radio__input" id="<%= id %>" type="radio" name="evaluator_sort" 
+                      data-sort-filter-menu-target="filterOption"
+                      data-action="change->sort-filter-menu#handleRadioChange"
+                      value="sort=<%= value %>">
+                <label class="usa-radio__label" for="<%= id %>"><%= label %></label>
+              <% end %>
             </div>
 
-            <div class="display-flex flex-justify padding-2">
-              <button class="usa-button usa-button--primary-dark"
+            <div class="display-flex flex-justify padding-2 margin-top-2">
+              <button class="usa-button"
                       data-action="sort-filter-menu#applyFilters">Show results</button>
-              <a href="#" class="font-weight-normal text-primary margin-top-1 margin-right-2 margin-bottom-1" 
-                      data-action="sort-filter-menu#clearAllFilters">Reset</a>
+              <a href="#" class="font-weight-normal text-primary margin-right-2 margin-top-neg-05"
+                      data-action="click->sort-filter-menu#clearAllFilters">Reset</a>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["menuItem", "filterOption"]
+  static targets = ["filterOption", "submissionIdSearch"]
 
   connect() {
     this.searchTerm = ''
@@ -12,13 +12,12 @@ export default class extends Controller {
   setInitialFilterState() {
     const currentUrl = new URL(window.location.href)
 
-    this.filterOptionTargets.forEach(option => option.checked = false)
-
     this.filterOptionTargets.forEach(option => {
       const [param, value] = option.value.split('=')
       if (currentUrl.searchParams.get(param) === value) {
         option.checked = true
 
+        // only one radio button checked at a time
         this.filterOptionTargets.forEach(otherOption => {
           if (otherOption !== option && otherOption.checked) {
             otherOption.checked = false
@@ -26,6 +25,13 @@ export default class extends Controller {
         })
       }
     })
+
+    // preserve submission id in search input field when page loads/refreshes
+    if (this.hasSubmissionIdSearchTarget && currentUrl.searchParams.has('submission_id')) {
+      const submissionId = currentUrl.searchParams.get('submission_id')
+      this.submissionIdSearchTarget.value = submissionId
+      this.searchTerm = submissionId
+    }    
   }
 
   handleSearchInput(event) {
@@ -46,7 +52,6 @@ export default class extends Controller {
     const selectedFilters = this.filterOptionTargets
       .filter(radio => radio.checked)
       .map(radio => radio.value)
-      .join('&')
 
     let queryParams = selectedFilters
 
@@ -59,7 +64,11 @@ export default class extends Controller {
     window.location.href = `${window.location.pathname}?${queryParams}`
   }
   
-  clearAllFilters() {
+  clearAllFilters(event) {
+    if (event) {
+      event.preventDefault()
+    }
+    
     if (this.hasSubmissionIdSearchTarget) {
       this.submissionIdSearchTarget.value = ''
       this.searchTerm = ''
@@ -69,7 +78,7 @@ export default class extends Controller {
       radio.checked = false
     })
 
-    window.location.href = window.location.pathname
+    window.location.replace(window.location.pathname)
   }
 
   close() {
