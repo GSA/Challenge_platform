@@ -471,6 +471,39 @@ RSpec.describe "Submissions" do
           end
         end
       end
+
+      context 'when searching by submission ID' do
+        let!(:submission_1) { create(:submission, challenge: challenge, phase: phase, id: 12345) }
+        let!(:submission_2) { create(:submission, challenge: challenge, phase: phase, id: 12346) }
+        let!(:submission_3) { create(:submission, challenge: challenge, phase: phase, id: 54321) }
+
+        before do
+          ChallengeManager.create!(user: user, challenge: challenge)
+        end
+
+        it 'finds submissions with exact ID match' do
+          get submissions_phase_path(phase), params: { submission_id: '12345' }
+
+          expect(response.body).to have_css("[data-submission-id='#{submission_1.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{submission_2.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{submission_3.id}']")
+        end
+
+        it 'finds submissions with partial ID match' do
+          get submissions_phase_path(phase), params: { submission_id: '123' }
+
+          expect(response.body).to have_css("[data-submission-id='#{submission_1.id}']")
+          expect(response.body).to have_css("[data-submission-id='#{submission_2.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{submission_3.id}']")
+        end
+
+        it 'returns no results for non-matching IDs' do
+          get submissions_phase_path(phase), params: { submission_id: '99999' }
+
+          expect(response.body).to have_no_css("[data-submission-id]")
+          expect(response.body).to include("No submissions found.")
+        end
+      end
     end
   end
 end
