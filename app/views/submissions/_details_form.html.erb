@@ -58,7 +58,8 @@
             <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments, id: "#{rand}-comments" %>
         </div>
         <button type="submit" name="commit" class="usa-button font-body-2xs text-no-wrap margin-y-2">
-            Save
+            <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save notes") %>
+            Save Notes
         </button>
     <% end %>
 </div>
