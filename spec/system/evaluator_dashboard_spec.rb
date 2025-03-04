@@ -33,6 +33,6 @@ RSpec.describe 'Evaluator Dashboard', :js, type: :system do
     expect(page).to have_content(challenge_phase_title(challenge, phase))
     expect(page).to have_content("1 of 1 Submissions")
     expect(page).to have_content(evaluation_form.closing_date.strftime("%m/%d/%Y"))
-    expect(page).to have_content(assignment.status.to_s.titleize.upcase)
+    expect(page).to have_content(evaluator.evaluation_status(phase).to_s.titleize.upcase)
   end  
 end
