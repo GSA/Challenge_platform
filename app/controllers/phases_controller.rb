@@ -4,6 +4,7 @@
 class PhasesController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_phase, except: [:index]
+  before_action -> { check_gov_access }, except: [:index]
 
   def index
     @challenges = current_user.challenge_manager_challenges.includes([phases: [:evaluation_form, :evaluators]])
