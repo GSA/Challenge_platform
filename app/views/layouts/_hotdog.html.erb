@@ -55,7 +55,7 @@
 
       if (isMobile && evaluationFormContent.parentElement === desktopContainer) {
         mobileContainer.appendChild(evaluationFormContent);
-      } else if (isDesktop && formContent.parentElement === mobileContainer) {
+      } else if (isDesktop && evaluationFormContent.parentElement === mobileContainer) {
         desktopContainer.appendChild(evaluationFormContent);
       }
     });
