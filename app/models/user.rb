@@ -167,20 +167,6 @@ class User < ApplicationRecord
     end
   end
 
-  # Combined status of all evaluations for the phase assigned to the user
-  def evaluation_status(phase)
-    statuses = phase.evaluator_submission_assignments.where(evaluator: self).includes(:evaluation).map do |esa|
-      if esa.evaluation_status == :unassigned || esa.evaluation_status == :recused_unassigned
-        nil
-      else
-        esa.assigned_evaluation_status
-      end
-    end.compact
-    return :not_started if statuses.empty? || statuses.all? { |s| s == :not_started }
-    return :completed if statuses.all? { |s| s == :completed }
-    return :in_progress
-  end
-
   private
 
   def process_evaluator_invitations

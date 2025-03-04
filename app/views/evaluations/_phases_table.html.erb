@@ -27,8 +27,8 @@
           <% end %>
         </td>
         <td data-label="Evaluation Status" class="text-top">
-          <span class="text-top text-no-wrap usa-tag <%= evaluation_status_color(current_user.evaluation_status(phase)) %>">
-            <%= current_user.evaluation_status(phase).to_s.titleize %>
+          <span class="text-top text-no-wrap usa-tag <%= evaluation_status_color(evaluator_evaluation_status(current_user, phase)) %>">
+            <%= evaluator_evaluation_status(current_user, phase).to_s.titleize %>
           </span>
         </td> 
       </tr>
