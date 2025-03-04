@@ -6,7 +6,7 @@
     <%= assignment.submission.id %>
   </td>
   <td data-label="Evaluation status">
-    <span class="text-top usa-tag <%= evaluation_submission_assignment_status_color(assignment) %>"><%= assignment.evaluation_status.to_s.titleize %></span>
+    <span class="text-top usa-tag <%= evaluation_status_color(assignment.evaluation_status) %>"><%= assignment.evaluation_status.to_s.titleize %></span>
   </td>
   <td data-label="Score" class="text-top text-normal"><%= evaluator_score(assignment).formatted_score %></td>
   <td data-label="">
