@@ -3,9 +3,13 @@
   <%= render 'shared/back_link', path: phases_path %>
     
     <h1><%= challenge_phase_title(@challenge, @phase) %></h1>
-    <p>Create and manage a list of evaluators for the challenge.</p>
-    <h2 class="padding-top-3">Add Evaluators</h2>
-    <p>Evaluators will not be assigned to submissions until you assign in the submission detail view.</p>
+    <h2 class="text-primary">Evaluation Panel</h2>
+    <div class="margin-top-4">
+      Required fields are marked with an asterisk 
+      (<span style="color: darkred;">*</span>).
+    </div>
+
+    <h3 >Add Evaluators</h3>
     <%= form_with(model: @evaluator_invitation || EvaluatorInvitation.new, url: phase_evaluators_path(@phase), method: :post, local: true, data: { controller: "form-validation modal" }, html: { novalidate: true }) do |form| %>
       <%= form.hidden_field :challenge_id, value: @challenge.id %>
       <%= form.hidden_field :phase_id, value: @phase.id %>
@@ -31,7 +35,7 @@
       <div class="usa-form-group">
         <div class="display-flex flex-align-center text-bold">
           <%= form.label :full_name, class: "usa-label font-sans-md #{label_error_class(form, [:first_name, :last_name])}" do %>
-            <span class="text-bold">First & Last Name</span><span class="text-red">*</span>
+            <span class="text-bold">Full Name</span><span class="text-red">*</span>
           <% end %>
         </div>
         <%= form.text_field :full_name, 
@@ -65,9 +69,9 @@
         <%= inline_error(form, :email) %>        
       </div>
 
-      <%= form.button type: 'submit', class: "usa-button margin-top-5 margin-bottom-3" do %>
-        <%= image_tag('images/usa-icons/person.svg', class: "usa-icon--size-3 icon-white", alt: "") %>
-        <span>Add to evaluator list</span>
+      <%= form.button type: 'submit', class: "usa-button margin-top-5 margin-bottom-3 padding-2" do %>
+        <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
+        Add Evaluator
       <% end %>
     <% end %>
 
@@ -84,29 +88,35 @@
         <table aria-label="List of Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
           <thead>
             <tr>
-              <th scope="col">Evaluator name</th>
+              <th scope="col">Name</th>
               <th scope="col">Email address</th>
               <th scope="col">User role</th>
               <th scope="col">User status</th>
-              <th scope="col">Assigned submissions</th>
-              <th scope="col"><span class="usa-sr-only">Actions</span></th>
+              <th scope="col"># of assigned submissions</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
             <% @existing_evaluators.each do |evaluator| %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
-                <th scope="row" data-label="Evaluator name" class="text-top">
+                <th scope="row" data-label="Name" class="text-top">
                   <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span>
                 </th>
                 <td data-label="Email address" class="text-top"><%= evaluator.email %></td>
                 <td data-label="User role" class="text-top"><%= evaluator.role.titleize %></td>
                 <td data-label="User status" class="text-top"><%= user_status(evaluator) %></td>
-                <td data-label="Assigned submissions" class="text-top"><%= assigned_submissions_count(evaluator, @challenge, @phase) %></td>
+                <td data-label="# of assigned submissions" class="text-top">
+                  <% submissions_count = assigned_submissions_count(evaluator, @challenge, @phase) %>
+                  <% if submissions_count > 0 %>
+                    <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id), class: '', style: 'white-space: nowrap;' do %>
+                      <%= submissions_count %> submissions
+                    <% end %>
+                  <% else %>
+                    0 submissions
+                  <% end %>    
+                </td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
-                    <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id), class: 'usa-button font-body-3xs', style: 'white-space: nowrap;' do %>
-                      View Submissions
-                    <% end %>
                     <%= button_tag "Delete", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
                       action: "click->delete-evaluator-modal#open",
                       evaluator_id: evaluator.id, 
@@ -133,7 +143,7 @@
                     <% end %>
                   </div>
                 </td>
-                <td data-label="Assigned submissions" class="text-top">0</td>
+                <td data-label="# of assigned submissions" class="text-top">0 submissions</td>
                 <td data-label="" class="text-right">
                 <%= button_tag "Delete", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
                   action: "click->delete-evaluator-modal#open",
@@ -152,3 +162,15 @@
     <%= render 'delete_evaluator_modal' %>
   </div>
 </div>
+  <div class="usa-alert usa-alert--info width-tablet margin-bottom-5">
+    <div class="usa-alert__body">
+        <h2 class="usa-alert__heading">
+          Assign evaluators to submissions
+        </h2>
+        <p class="usa-alert__text font-body-2xs">
+            Evaluators will not be assigned to submissions until you do so for each submission.<br/>
+            <%= link_to "View the list of submissions for this challenge and assign evaluators to the submissions.", phase_evaluators_path(@phase), class: "margin-y-1"  %>
+        </p>
+      </div>
+    </div> 
+  </div>
