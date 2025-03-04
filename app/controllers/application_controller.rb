@@ -32,6 +32,12 @@ class ApplicationController < ActionController::Base
     redirect_to_landing_page(alert: I18n.t("access_denied"))
   end
 
+  def check_gov_access
+    return unless current_user.non_gov_restricted?
+
+    redirect_to_landing_page(alert: I18n.t("access_denied"))
+  end
+
   def redirect_admins_to_phoenix
     return unless %w[super_admin admin].include?(current_user&.role)
 

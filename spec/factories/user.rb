@@ -6,7 +6,7 @@ FactoryBot.define do
     # Fields
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
-    email { Faker::Internet.email }
+    email { generate_user_email }
     phone_number { Faker::PhoneNumber.cell_phone }
     token { SecureRandom.uuid }
     role { User::ROLES.sample }
@@ -52,5 +52,25 @@ FactoryBot.define do
       email_verified_at { Time.zone.now }
       email_verification_token { nil }
     end
+
+    trait :gov do
+      email { generate_user_email(type: :gov) }
+    end
+
+    trait :non_gov do
+      email { generate_user_email(type: :non_gov) }
+    end
+  end
+end
+
+def generate_user_email(type: :default)
+  case type
+  when :default
+    Faker::Internet.email
+  when :gov
+    domain = "example.#{%w[gov mil].sample}"
+    Faker::Internet.email(domain:)
+  when :non_gov
+    Faker::Internet.email(domain: "example.com")
   end
 end

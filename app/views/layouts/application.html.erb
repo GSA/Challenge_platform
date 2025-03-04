@@ -28,7 +28,10 @@
     <% if logged_in? %>
       <%= render "layouts/utility_menu" %>
     <% end %>  
-    <%= render "shared/flash" %>
+
+    <section role="region" aria-label="Site notifications">
+      <%= render "shared/flash" %>
+    </section>
 
     <main id="main-content" class="grid-container" tabindex="-1">
       <%= yield %>
