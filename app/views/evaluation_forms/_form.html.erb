@@ -164,17 +164,19 @@
         <%= inline_error(form, :closing_date) %>
       </div>
     </li>
-  </ol>
 
-  <div class="display-flex flex-wrap margin-bottom-2">
-    <button type="submit" name="commit" class="usa-button text-no-wrap">
-        <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
-        Save Form
-    </button>
-    <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
-      <%= link_to "Cancel", "#", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
-    </div>
-  </div>
+    <li class="padding-left-5">
+      <div class="display-flex flex-wrap margin-bottom-2">
+        <button type="submit" name="commit" class="usa-button width-auto text-no-wrap">
+            <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
+            Save Form
+        </button>
+        <div class="text-center width-auto margin-y-1 margin-x-3">
+          <%= link_to "Cancel", "#", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
+        </div>
+      </div>
+    </li>
+  </ol>
 
   <%= render "modals/confirmation", 
     id: "cancel",
