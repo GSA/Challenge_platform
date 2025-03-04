@@ -30,6 +30,18 @@ RSpec.describe "Evaluators", type: :request do
       expect(response.body).to include(evaluator.email)
       expect(response.body).to include(solver.email)
     end
+
+    context "with a non gov email" do
+      before do
+        challenge_manager.update(email: generate_user_email(type: :non_gov))
+      end
+
+      it 'prevents access and redirects' do
+        get phase_evaluators_path(phase)
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(phases_path)
+      end
+    end
   end
 
   describe 'POST #create' do
@@ -60,6 +72,18 @@ RSpec.describe "Evaluators", type: :request do
         post phase_evaluators_path(phase), params: valid_params
         expect(response).to redirect_to(phase_evaluators_path(phase))
         expect(flash[:notice]).to eq('Invitation sent successfully.')
+      end
+
+      context "logged in with a non gov email" do
+        before do
+          challenge_manager.update(email: generate_user_email(type: :non_gov))
+        end
+
+        it 'prevents access and redirects' do
+          post phase_evaluators_path(phase), params: valid_params
+          expect(response).to have_http_status(:redirect)
+          expect(response).to redirect_to(phases_path)
+        end
       end
     end
 
@@ -179,18 +203,19 @@ RSpec.describe "Evaluators", type: :request do
     end
 
     context 'when adding an existing user with an invalid role' do
-      let(:existing_user) { create(:user,
-        role: 'admin',
-        email: 'admin_active@example.com',
-        first_name: 'Admin',
-        last_name: 'Active'
-      ) }
+      let(:existing_user) do
+        create(:user,
+               role: 'admin',
+               email: 'admin_active@example.com',
+               first_name: 'Admin',
+               last_name: 'Active')
+      end
 
       it 'does not add the user as an evaluator and returns an error' do
         expect(evaluator_service_double).to receive(:process_evaluator_invitation).and_return({
-          success: false,
-          message: "#{existing_user.email} does not have a valid evaluator role."
-        })
+                                                                                                success: false,
+                                                                                                message: "#{existing_user.email} does not have a valid evaluator role."
+                                                                                              })
 
         post phase_evaluators_path(phase), params: {
           evaluator_invitation: {
@@ -232,6 +257,19 @@ RSpec.describe "Evaluators", type: :request do
 
         expect(response).to have_http_status(:success)
         expect(response.parsed_body).to eq({ 'success' => true, 'message' => 'Evaluator removed successfully.' })
+      end
+
+      context "logged in with a non gov email" do
+        before do
+          challenge_manager.update(email: generate_user_email(type: :non_gov))
+        end
+
+        it 'prevents access and redirects' do
+          delete phase_evaluator_path(phase, evaluator),
+                 params: { evaluator_type: 'user', phase_id: phase.id }
+          expect(response).to have_http_status(:redirect)
+          expect(response).to redirect_to(phases_path)
+        end
       end
     end
 
@@ -276,6 +314,18 @@ RSpec.describe "Evaluators", type: :request do
 
       expect(response).to redirect_to(phase_evaluators_path(phase))
       expect(flash[:notice]).to eq('Invitation resent successfully.')
+    end
+
+    context "logged in with a non gov email" do
+      before do
+        challenge_manager.update(email: generate_user_email(type: :non_gov))
+      end
+
+      it 'prevents access and redirects' do
+        post resend_invite_phase_evaluator_path(phase, invitation)
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(phases_path)
+      end
     end
   end
 

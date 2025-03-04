@@ -28,11 +28,7 @@
               <%= phase.end_date.strftime("%m/%d/%Y") %>
             </td>
             <td data-label="# of Submissions" class="text-top">
-              <% if phase.submissions_count > 0 %>
-                <%= link_to "#{phase.submissions_count} Submissions", submissions_phase_path(phase) %>
-              <% else %>
-                None Yet
-              <% end %>    
+              <%= submission_count_link(phase, current_user) %>
             </td>
             <td data-label="Evaluation Form" class="text-top">
               <% if phase.evaluation_form %>
@@ -43,13 +39,7 @@
             </td>
        
             <td data-label="# of Evaluators" class="text-top">
-              <%= link_to phase_evaluators_path(phase) do %>
-                <% if phase.evaluators.present? %>
-                  <%= phase.evaluators.count %> Evaluators
-                <% else %>
-                  Invite Evaluators
-                <% end %>    
-              <% end %>
+              <%= evaluator_count_or_invite_link(phase, current_user) %>
             </td>
             <td data-label="Evaluation Due Date" class="text-top">
               <%= phase.evaluation_form&.closing_date %>
