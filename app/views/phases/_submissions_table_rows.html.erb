@@ -124,7 +124,7 @@
               </div>
               <div class="text-right">
                 <span class="margin-x-1"><%= evaluator_score(assignment).formatted_score %></span>         
-                <span class="usa-tag padding-x-1 <%= evaluation_submission_assignment_status_color(assignment) %>">
+                <span class="usa-tag padding-x-1 <%= evaluation_status_color(assignment.evaluation_status) %>">
                   <%= assignment.evaluation_status.to_s.titleize %>
                 </span>
               </div>
