@@ -75,9 +75,10 @@ RSpec.configure do |config|
 
   config.include ActiveSupport::Testing::TimeHelpers
 
-  config.include EvaluationFormsHelper, type: :system
-  config.include PhasesHelper, type: :system
   config.include EvaluationCriteriaHelpers, type: :system
+  config.include EvaluationFormsHelper, type: :system
+  config.include EvaluatorsHelper, type: :system
+  config.include PhasesHelper, type: :system
   config.include Capybara::RSpecMatchers, type: :request
 
   config.include FactoryBot::Syntax::Methods
