@@ -20,7 +20,7 @@ module PhasesHelper
   def evaluator_count_or_invite_link(phase, viewing_user)
     return "None Yet" if viewing_user.non_gov_restricted? && phase.evaluators.blank?
 
-    link_text = phase.evaluators.any? ? "#{phase.evaluators.count} Evaluators" : "Invite Evaluators"
+    link_text = phase.evaluators.present? ? "#{phase.evaluators.count} Evaluators" : "Invite Evaluators"
 
     return link_text if viewing_user.non_gov_restricted?
 
