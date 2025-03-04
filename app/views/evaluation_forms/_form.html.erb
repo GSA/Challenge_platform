@@ -171,14 +171,10 @@
     </li>
   </ol>
 
-  <div class="display-flex flex-wrap">
-    <button type="submit" name="commit" class="mobile-lg:width-mobile usa-button font-body-2xs text-no-wrap mobile-lg:margin-left-2 mobile-lg:margin-bottom-4" style="background-color: #4d8055">
-      <%= image_tag(
-        "images/usa-icons/check_circle.svg",
-        class: "usa-icon icon-white",
-        alt: "evaluation forms"
-      )%>
-      Save
+  <div class="display-flex flex-wrap margin-bottom-2">
+    <button type="submit" name="commit" class="usa-button text-no-wrap">
+        <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
+        Save Form
     </button>
     <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
       <%= link_to "Cancel", "#", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
