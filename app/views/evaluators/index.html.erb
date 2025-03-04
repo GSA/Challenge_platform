@@ -100,7 +100,9 @@
             <% @existing_evaluators.each do |evaluator| %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                 <th scope="row" data-label="Name" class="text-top">
-                  <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span>
+                    <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id) do %>
+                      <%= "#{evaluator.first_name} #{evaluator.last_name}" %>
+                    <% end %>  
                 </th>
                 <td data-label="Email address" class="text-top"><%= evaluator.email %></td>
                 <td data-label="User role" class="text-top"><%= evaluator.role.titleize %></td>
@@ -169,7 +171,7 @@
         </h2>
         <p class="usa-alert__text font-body-2xs">
             Evaluators will not be assigned to submissions until you do so for each submission.<br/>
-            <%= link_to "View the list of submissions for this challenge and assign evaluators to the submissions.", phase_evaluators_path(@phase), class: "margin-y-1"  %>
+            <%= link_to "View the list of submissions for this challenge and assign evaluators to the submissions.", submissions_phase_path(@phase), class: "margin-y-1"  %>
         </p>
       </div>
     </div> 
