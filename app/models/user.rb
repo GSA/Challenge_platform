@@ -150,6 +150,10 @@ class User < ApplicationRecord
     /\.(gov|mil)$/.match?(email)
   end
 
+  def non_gov_restricted?
+    !/\.(gov|mil)$/.match?(email)
+  end
+
   def full_name(format: :default)
     return email if first_name.blank? && last_name.blank?
 

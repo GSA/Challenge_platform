@@ -1,5 +1,4 @@
 <div class="padding-bottom-4" data-controller="evaluator-recusal-modal">
-  <h2><%= @evaluation.evaluation_form.title %></h2>
   <p><%= @evaluation.evaluation_form.instructions %></p>
 
   <%= form_with(model: @evaluation, url: revise_evaluation_path, data: { controller: "evaluation modal form-validation" }) do |form| %>
@@ -41,7 +40,7 @@
           <h2 class="usa-accordion__heading">
             <button
               type="button"
-              class="usa-accordion__button display-flex flex-justify icon-white"
+              class="usa-accordion__button display-flex flex-justify"
               aria-expanded="true"
               aria-controls="<%= evaluation_score_id(score_fields, "accordion", rand) %>"
             >

@@ -3,6 +3,6 @@
 # The main app mailer for sending emails.
 # The app does not process inbound messages.
 class ApplicationMailer < ActionMailer::Base
-  default from: "support@challenge.gov"
+  default from: "team@challenge.gov"
   layout "mailer"
 end

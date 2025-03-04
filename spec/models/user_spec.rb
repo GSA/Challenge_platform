@@ -284,4 +284,16 @@ RSpec.describe User do
       expect(subject.evaluation_status(phase)).to eq(:in_progress)
     end
   end
+
+  describe 'non_gov_restricted?' do
+    it 'returns true if non .gov/.mil email' do
+      user = create(:user, :non_gov)
+      expect(user).to be_non_gov_restricted
+    end
+
+    it 'returns false if .gov/.mil email' do
+      user = create(:user, :gov)
+      expect(user).not_to be_non_gov_restricted
+    end
+  end
 end
