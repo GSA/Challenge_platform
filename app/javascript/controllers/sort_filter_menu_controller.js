@@ -69,16 +69,7 @@ export default class extends Controller {
       event.preventDefault()
     }
     
-    if (this.hasSubmissionIdSearchTarget) {
-      this.submissionIdSearchTarget.value = ''
-      this.searchTerm = ''
-    }
-    
-    this.filterOptionTargets.forEach(radio => {
-      radio.checked = false
-    })
-
-    window.location.replace(window.location.pathname)
+    window.location.href = window.location.pathname
   }
 
   close() {
