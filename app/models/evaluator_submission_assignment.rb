@@ -61,8 +61,6 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
     status&.to_sym
   end
 
-  private
-
   def assigned_evaluation_status
     if evaluation&.completed_at.present?
       :completed
@@ -72,6 +70,8 @@ class EvaluatorSubmissionAssignment < ApplicationRecord
       :not_started
     end
   end
+
+  private
 
   def update_submission_evaluation_status
     EvaluationStatusService.update_evaluation_status(submission)

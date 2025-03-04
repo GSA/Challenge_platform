@@ -120,12 +120,7 @@
             </div>
           </div>
         
-          <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button button-green width-full display-flex flex-column", title: "Add another criteria", data: {action: "click->evaluation-criteria#addCriteria"} do %>
-            <%= image_tag(
-              "images/usa-icons/add_circle.svg",
-              class: "usa-icon icon-white circle-4 margin-bottom-1",
-              alt: "Add criteria plus icon"
-            )%>
+          <%= button_tag type: "button", id: "add-criteria-button", class: "usa-button usa-button--outline", title: "Add another criteria", data: {action: "click->evaluation-criteria#addCriteria"} do %>
             <div class="font-sans-xs">Add another criteria</div>
           <% end %>
         <% end %>
@@ -159,21 +154,19 @@
         <%= inline_error(form, :closing_date) %>
       </div>
     </li>
-  </ol>
 
-  <div class="display-flex flex-wrap">
-    <button type="submit" name="commit" class="mobile-lg:width-mobile usa-button font-body-2xs text-no-wrap mobile-lg:margin-left-2 mobile-lg:margin-bottom-4" style="background-color: #4d8055">
-      <%= image_tag(
-        "images/usa-icons/check_circle.svg",
-        class: "usa-icon icon-white",
-        alt: "evaluation forms"
-      )%>
-      Save
-    </button>
-    <div class="text-center width-full mobile-lg:width-auto margin-y-1 mobile-lg:margin-x-3">
-      <%= link_to "Cancel", "#", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
-    </div>
-  </div>
+    <li class="padding-left-5">
+      <div class="display-flex flex-wrap margin-bottom-2">
+        <button type="submit" name="commit" class="usa-button width-auto text-no-wrap">
+            <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
+            Save Form
+        </button>
+        <div class="text-center width-auto margin-y-1 margin-x-3">
+          <%= link_to "Cancel", "#", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
+        </div>
+      </div>
+    </li>
+  </ol>
 
   <%= render "modals/confirmation", 
     id: "cancel",

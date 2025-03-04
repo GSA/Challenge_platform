@@ -13,8 +13,8 @@ module EvaluationsHelper
 
   Score = Struct.new(:raw_score, :formatted_score, :display_score)
 
-  def evaluation_submission_assignment_status_color(assignment)
-    STATUS_COLORS[assignment.evaluation_status]
+  def evaluation_status_color(status)
+    STATUS_COLORS[status]
   end
 
   def display_score(assignment)
