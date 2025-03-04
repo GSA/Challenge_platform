@@ -14,14 +14,15 @@
     <% @assigned_submissions.each do |assignment| %>
       <tr class="border-y-2px border-primary" style="height: 4rem;">
         <th data-label="Submission ID" scope="row">
-          <span class="mobile-lg:display-none">Submission ID</span>
-          <div class="margin-bottom-2">
-            <%= link_to assignment.submission.id, materials_submission_path(assignment.submission), class: "text-primary" %>
+          <div class="margin-bottom-1 mobile-lg:margin-bottom-3">
+            <%= link_to materials_submission_path(assignment.submission), class: "text-primary" do %>
+              <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
+            <% end %>
           </div>
-        </th>
+        </th>        
         <td data-label="Evaluation Status">
           <div class="display-flex flex-align-center margin-bottom-2">
-            <span class="usa-tag padding-x-1 <%= evaluation_submission_assignment_status_color(assignment) %>">
+            <span class="usa-tag padding-x-1 text-center width-15 <%= evaluation_submission_assignment_status_color(assignment) %>" style="min-width: 120px; display: inline-block;">
               <%= assignment.evaluation_status.to_s.titleize %>
             </span>
           </div>  
@@ -41,8 +42,8 @@
             <%= average_score(assignment.submission).display_score %><%= "%" if weighted_scoring?(@phase) && average_score(assignment.submission).display_score != "-" %>
           </div>
         </td>
-        <td data-label="Action">
-          <div class="display-flex flex-no-wrap grid-row grid-gap-1">
+        <td>
+          <div class="display-flex flex-no-wrap grid-row grid-gap-1 margin-y-2 width-card mobile-lg:width-auto">
             <%= evaluation_link(assignment) unless assignment.recused? || assignment.evaluation_status == :completed %>
           </div>  
         </td>
