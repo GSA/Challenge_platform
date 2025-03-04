@@ -135,7 +135,7 @@ RSpec.describe EvaluationsHelper, type: :helper do
         result = helper.evaluator_score(assignment)
         expect(result.raw_score).to eq(0)
         expect(result.formatted_score).to eq("0")
-        expect(result.display_score).to eq("N/A")
+        expect(result.display_score).to eq("-")
       end
     end
   end
@@ -144,8 +144,8 @@ RSpec.describe EvaluationsHelper, type: :helper do
     it 'returns defaults when no completed evaluations exist' do
       result = helper.average_score(submission)
       expect(result.raw_score).to eq(0)
-      expect(result.formatted_score).to eq("0")
-      expect(result.display_score).to eq("N/A")
+      expect(result.formatted_score).to eq("-")
+      expect(result.display_score).to eq("-")
     end
 
     it 'calculates average score from completed evaluations' do

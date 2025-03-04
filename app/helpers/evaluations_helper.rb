@@ -29,9 +29,9 @@ module EvaluationsHelper
   end
 
   # individual evaluator score
-  def evaluator_score(assignment)
+  def evaluator_score(assignment, format: :zero)
     score = display_score(assignment)
-    return Score.new(0, "0", "N/A") if score == 'N/A'
+    return Score.new(0, format == :zero ? "0" : "-", "-") if score == 'N/A'
 
     Score.new(score, score.to_s, score)
   end
@@ -39,14 +39,14 @@ module EvaluationsHelper
   def average_score(submission)
     assigned_evaluations = submission.evaluator_submission_assignments.assigned
 
-    return Score.new(0, "0", "N/A") if assigned_evaluations.empty?
+    return Score.new(0, "-", "-") if assigned_evaluations.empty?
 
     completed_evaluations = submission.evaluations.
       where(evaluator_submission_assignment: assigned_evaluations).
       where.not(completed_at: nil)
 
     if completed_evaluations.count != assigned_evaluations.count
-      return Score.new(0, "0", "N/A")
+      return Score.new(0, "-", "-")
     end
 
     avg = completed_evaluations.average(:total_score)
