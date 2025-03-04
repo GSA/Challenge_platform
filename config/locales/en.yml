@@ -120,6 +120,7 @@ en:
       select: "Select %{field_name}"
       too_long: "%{field_name} must be at most %{max_length} characters long"
       not_an_integer: "%{field_name} must be a whole number"
+      over_max: "%{field_name} must be less than or equal to %{max}"
   alerts:
     recused_evaluator:
       heading: "Recused Evaluator"

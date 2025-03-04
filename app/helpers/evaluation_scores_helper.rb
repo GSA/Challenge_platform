@@ -36,12 +36,14 @@ module EvaluationScoresHelper
     max = criterion.points_or_weight
 
     content_tag(:div, class: "display-flex flex-column") do
-      concat(score_fields.label(field, I18n.t("evaluation_scores.instruction_text_numeric", min:, max:), for: id))
+      concat(score_fields.label(field, I18n.t("evaluation_scores.instruction_text_numeric", min:, max:), for: id,
+                                                                                                         class: label_error_class(score_fields, :score)))
       concat(score_fields.number_field(
                field, id:, name:, min:, max:, class: "usa-input width-10",
                       data: {
                         'evaluation-score-target': "scoreInput",
-                        action: "input->evaluation-score#calculateScore"
+                        action: "input->evaluation-score#calculateScore form-validation#validatePresence",
+                        'field-label': "score"
                       }, disabled:
              ))
     end
@@ -64,7 +66,8 @@ module EvaluationScoresHelper
                field, value, id: "#{id}_#{value}", name:, class: "usa-radio__input usa-radio__input--tile",
                              data: {
                                'evaluation-score-target': "scoreInput",
-                               action: "change->evaluation-score#calculateScore"
+                               action: "change->evaluation-score#calculateScore form-validation#validatePresence",
+                               'field-name': id
                              },
                              disabled:
              ))

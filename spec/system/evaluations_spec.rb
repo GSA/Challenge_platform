@@ -45,7 +45,8 @@ RSpec.describe 'Evaluation', :js, type: :system do
 
         complete_evaluation
 
-        expect(page).to have_content("prohibited this evaluation from being saved")
+        expect(page).to have_content(/Evaluation has \d+ errors/)
+        expect(page).to have_content("Please review and complete all required fields for the evaluation.")
       end
 
       it 'allows entering scores for evaluation criteria' do
@@ -84,7 +85,7 @@ RSpec.describe 'Evaluation', :js, type: :system do
         visit new_submission_evaluation_path(submission)
 
         expect(page).to have_no_css('[data-controller="hotdog"]')
-        expect(page).to_not have_content(submission.submitter.email)
+        expect(page).to have_no_content(submission.submitter.email)
       end
     end
   end
