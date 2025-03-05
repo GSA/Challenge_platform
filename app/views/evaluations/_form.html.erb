@@ -1,7 +1,8 @@
 <div class="padding-bottom-4" data-controller="evaluator-recusal-modal">
-  <%= render 'evaluator_recusal_button' %>
+  <%= render 'evaluator_recusal_notice' %>
 
   <p><%= @evaluation.evaluation_form.instructions %></p>
+  <p>Required fields are marked with an asterisk (<span style="color: darkred;">*</span>)</p>
 
   <%= form_with(model: @evaluation, data: { controller: "evaluation modal form-validation" }) do |form| %>
     <%= form_errors_alert(@evaluation) %>
