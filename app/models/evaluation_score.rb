@@ -33,8 +33,11 @@ class EvaluationScore < ApplicationRecord
     evaluation.evaluation_form.comments_required?
   }
   validates :comment,
-            length: { maximum: 3000, message: I18n.t("form.errors.too_long", field_name: "Comment", max_length: 3000) }, allow_nil: true
-  validates :comment_override, length: { maximum: 3000, message: I18n.t("form.errors.too_long", field_name: "Comment", max_length: 3000) },
+            length: { maximum: 3000,
+                      message: I18n.t("form.errors.too_long", field_name: "Comment", max_length: 3000) },
+            allow_nil: true
+  validates :comment_override, length: { maximum: 3000, message: I18n.t("form.errors.too_long", field_name: "Comment",
+                                                                                                max_length: 3000) },
                                allow_nil: true
 
   validate :score_within_criterion_limits
