@@ -14,7 +14,8 @@ Add a list of changed settings in the form $setting: value.
   $theme-accordion-button-background-color: 'blue-70v',
   $theme-color-primary-darker: 'blue-80v',
   $theme-color-accent-warm-dark: "orange-warm-50v",
-  $theme-color-success-dark: "green-cool-60v"
+  $theme-color-success-dark: "green-cool-60v",
+  $theme-grid-container-max-width: "widescreen"
 );
 
 @use "uswds" as *;

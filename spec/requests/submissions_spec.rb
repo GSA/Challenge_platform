@@ -12,7 +12,7 @@ RSpec.describe "Submissions" do
       let(:user) { create_user(role: "challenge_manager") }
 
       it "renders a details page for an individual submission" do
-        submission = create(:submission, challenge: phase.challenge, brief_description: "This submission has legs.")
+        submission = create(:submission, challenge: phase.challenge, phase: phase, brief_description: "This submission has legs.")
 
         get submission_path(submission)
         expect(response.body).to include(submission.id.to_s)
@@ -473,6 +473,39 @@ RSpec.describe "Submissions" do
             expect(response).to have_http_status(:success)
             expect(response.body.scan(/data-submission-id="(\d+)"/).flatten.count).to eq(3)
           end
+        end
+      end
+
+      context 'when searching by submission ID' do
+        let!(:submission_1) { create(:submission, challenge: challenge, phase: phase, id: 12345) }
+        let!(:submission_2) { create(:submission, challenge: challenge, phase: phase, id: 12346) }
+        let!(:submission_3) { create(:submission, challenge: challenge, phase: phase, id: 54321) }
+
+        before do
+          ChallengeManager.create!(user: user, challenge: challenge)
+        end
+
+        it 'finds submissions with exact ID match' do
+          get submissions_phase_path(phase), params: { submission_id: '12345' }
+
+          expect(response.body).to have_css("[data-submission-id='#{submission_1.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{submission_2.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{submission_3.id}']")
+        end
+
+        it 'finds submissions with partial ID match' do
+          get submissions_phase_path(phase), params: { submission_id: '123' }
+
+          expect(response.body).to have_css("[data-submission-id='#{submission_1.id}']")
+          expect(response.body).to have_css("[data-submission-id='#{submission_2.id}']")
+          expect(response.body).to have_no_css("[data-submission-id='#{submission_3.id}']")
+        end
+
+        it 'returns no results for non-matching IDs' do
+          get submissions_phase_path(phase), params: { submission_id: '99999' }
+
+          expect(response.body).to have_no_css("[data-submission-id]")
+          expect(response.body).to include("No submissions found.")
         end
       end
 
