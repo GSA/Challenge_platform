@@ -23,13 +23,17 @@
 <div class="display-none tablet:display-flex flex-row width-full border-top-1px" data-controller="hotdog">
     <div class="width-half" data-hotdog-target="leftPane">
         <%= render partial: left %>
-    </div>  
-    <div class="bg-primary-darker margin-x-5 width-3 cursor-pointer" data-action="click->hotdog#hotdogCollapse" data-hotdog-target="hotdogCollapse">
-        <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white", alt: "Hide #{name}") %>
     </div>
-    <div class="bg-primary-darker margin-left-5 width-3 cursor-pointer display-none" data-action="click->hotdog#hotdogExpand" data-hotdog-target="hotdogExpand">
-        <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3 icon-white", alt: "Show #{name}") %>
-    </div>    
+    <div class="margin-x-4 display-flex">
+        <div class="border-right margin-right-neg-3 margin-left-3">
+        </div>    
+        <div class="position-sticky top-3 bg-primary-darker border-2px radius-bottom-pill radius-top-pill width-6 height-6 margin-top-3 cursor-pointer display-flex flex-align-center" data-action="click->hotdog#hotdogCollapse" data-hotdog-target="hotdogCollapse">
+            <%= image_tag('images/usa-icons/arrow_forward.svg', class: "usa-icon--size-3 icon-white margin-x-auto", alt: "Hide #{name}") %>
+        </div>
+        <div class="position-sticky top-3 bg-primary-darker border-2px radius-bottom-pill radius-top-pill width-6 height-6 margin-top-3 cursor-pointer display-flex flex-align-center display-none" data-action="click->hotdog#hotdogExpand" data-hotdog-target="hotdogExpand">
+            <%= image_tag('images/usa-icons/arrow_back.svg', class: "usa-icon--size-3 icon-white margin-x-auto", alt: "Show #{name}") %>
+        </div>
+    </div>      
     <div class="width-half" data-hotdog-target="rightPane">  
         <%= render partial: right %>
     </div>  
