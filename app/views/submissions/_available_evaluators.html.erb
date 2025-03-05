@@ -1,4 +1,4 @@
-<div class="usa-accordion">
+<div class="usa-accordion margin-bottom-4">
   <% rand = SecureRandom.hex(8) %>
   <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
     <button
@@ -11,9 +11,9 @@
     </button>
   </h2>
 
-  <div class="usa-accordion__content padding-x-05" id="<%= rand %>">
+  <div class="usa-accordion__content padding-left-0" id="<%= rand %>">
     <% if @submission.available_evaluators.any? %>
-        <table aria-label="List of Available Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
+        <table aria-label="List of Available Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header width-full">
           <thead>
             <tr>
               <th scope="col">Name</th>

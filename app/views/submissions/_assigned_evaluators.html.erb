@@ -20,10 +20,10 @@
       </button>
     </h2>
 
-    <div class="usa-accordion__content overflow-hidden padding-x-05" id="<%= rand %>">
+    <div class="usa-accordion__content overflow-hidden padding-left-0" id="<%= rand %>">
       <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
       <% if assigned_evaluators.any? %>
-        <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header">
+        <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header width-full">
           <thead>
             <tr>
               <th scope="col">Evaluator name</th>
