@@ -202,20 +202,20 @@ RSpec.describe EvaluationsHelper, type: :helper do
     end
   end
 
-  describe '#evaluation_submission_assignment_status_color' do
+  describe '#evaluation_status_color' do
     it 'returns correct color for not started status' do
       allow(assignment).to receive(:evaluation_status).and_return(:not_started)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-error-dark')
+      expect(helper.evaluation_status_color(assignment.evaluation_status)).to eq('bg-error-dark')
     end
 
     it 'returns correct color for in_progress status' do
       allow(assignment).to receive(:evaluation_status).and_return(:in_progress)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-accent-warm-dark')
+      expect(helper.evaluation_status_color(assignment.evaluation_status)).to eq('bg-accent-warm-dark')
     end
 
     it 'returns correct color for completed status' do
       allow(assignment).to receive(:evaluation_status).and_return(:completed)
-      expect(helper.evaluation_submission_assignment_status_color(assignment)).to eq('bg-success-dark')
+      expect(helper.evaluation_status_color(assignment.evaluation_status)).to eq('bg-success-dark')
     end
   end
 
