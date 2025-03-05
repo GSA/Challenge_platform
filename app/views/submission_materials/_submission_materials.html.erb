@@ -12,7 +12,9 @@
 <% end %>    
 
 <h2>External URL:</h2>
-<a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
+<% if @submission.external_url.present? %>
+    <a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
+<% end %>
 
 <h2>Status:</h2>
 <p class="text-normal"><%= @submission.status.capitalize %></p>
