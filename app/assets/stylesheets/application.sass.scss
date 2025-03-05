@@ -6,8 +6,33 @@ dialog::backdrop {
 }
 
 .usa-radio__input:checked + .usa-radio__label::before {
-  background-color: black;
   border-color: black;
+}
+
+#sort-and-filter {
+  .usa-radio__label {
+    padding-left: 1.6rem;
+  }
+
+  .usa-radio__label::before {
+    height: 1rem;
+    width: 1rem;
+    top: 2px;
+  }
+
+  .usa-button {
+    padding: 0.1rem 2rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    border-radius: 1.5px;
+    background-color: #0076d6;
+    color: white !important;
+    height: 2rem;
+
+    &:hover {
+      background-color: #005ea2;
+    }
+  }
 }
 
 .usa-table.usa-table--borderless.gray-header {
@@ -16,10 +41,6 @@ dialog::backdrop {
       background-color: #dfe1e2;
     }
   }
-}
-
-.usa-button.button-green {
-  background-color: #4d8055;
 }
 
 .usa-nav__primary {
