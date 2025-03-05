@@ -17,7 +17,6 @@
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Email Address</th>
               <th scope="col" class="width-"># of Assigned Submissions</th>
               <th scope="col">Action</th>
             </tr>
@@ -32,9 +31,6 @@
                     <% end %>
                   </span>
                 </th>
-                <td data-label="Email Address" class="text-top width-15">
-                  <%= evaluator.email %>
-                </td>
                 <td data-label="# of Assigned Submissions" class="text-top">
                   <span class="margin-x-1">
                     <%= evaluator.assigned_submissions.count %> submissions
