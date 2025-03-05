@@ -3,9 +3,9 @@
 # View helpers for calculating evaluation & submission details.
 module EvaluationsHelper
   STATUS_COLORS = {
-    not_started: 'bg-red-vivid-60v',
-    in_progress: 'bg-orange-warm-vivid-50v',
-    completed: 'bg-green-cool-vivid-60v',
+    not_started: 'bg-error-dark',
+    in_progress: 'bg-accent-warm-dark',
+    completed: 'bg-success-dark',
     recused: 'bg-base',
     unassigned: 'bg-base',
     recused_unassigned: 'bg-base'
