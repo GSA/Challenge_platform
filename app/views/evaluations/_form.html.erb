@@ -59,7 +59,10 @@
 
             <div class="usa-form-group">
               <div class="display-flex flex-align-center">
-                <%= score_fields.label :comment, "Add your feedback to support your choice:", for: evaluation_score_id(score_fields, :comment, rand), class: "margin-right-05 #{label_error_class(score_fields, :comment)}" %>
+                <%= score_fields.label :comment, "Add your feedback to support your choice", for: evaluation_score_id(score_fields, :comment, rand), class: "margin-right-05 #{label_error_class(score_fields, :comment)}" %>
+                <% if @evaluation.evaluation_form.comments_required? %>
+                  <span style="color: darkred;">*</span>
+                <% end %>
               </div>
 
               <div class="usa-character-count">
