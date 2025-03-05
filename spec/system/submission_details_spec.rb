@@ -67,13 +67,14 @@ describe "A11y", :js do
       challenge.challenge_phases_evaluators.create(user: evaluator1, phase: phase)
       challenge.challenge_phases_evaluators.create(user: evaluator2, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
+      submission.update(judging_status: "selected")
       visit submission_path(submission)
-      find_by_id('eligible-for-evaluation').click
-      click_on('Save')
 
       expect(page).to have_content("Available Evaluators")
-      expect(page).to have_content(evaluator1.email)
-      expect(page).to have_content(evaluator2.email)
+      evaluator_1_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator1.id)
+      evaluator_2_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator2.id)
+      expect(page).to have_css("a[href=\"#{evaluator_1_path}\"]", text: evaluator1.full_name)
+      expect(page).to have_css("a[href=\"#{evaluator_2_path}\"]", text: evaluator2.full_name)
     end
 
     it "does not show solvers in the available evaluators list" do
@@ -82,13 +83,14 @@ describe "A11y", :js do
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       challenge.challenge_phases_evaluators.create(user: solver, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
+      submission.update(judging_status: "selected")
       visit submission_path(submission)
-      find_by_id('eligible-for-evaluation').click
-      click_on('Save')
 
       expect(page).to have_content("Available Evaluators")
-      expect(page).to have_content(evaluator.email)
-      expect(page).not_to have_content(solver.email)
+      evaluator_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
+      solver_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: solver.id)
+      expect(page).to have_css("a[href=\"#{evaluator_path}\"]", text: evaluator.full_name)
+      expect(page).not_to have_css("a[href=\"#{solver_path}\"]", text: solver.full_name)
     end
 
     it "assigns and unassigns an evaluator to the submission" do
