@@ -58,16 +58,14 @@
                   <span class="margin-x-1">
                     <%= evaluator_score(assignment).formatted_score %>
                   </span>
+                  <% if assignment&.evaluation&.completed_at %>
+                    <%= link_to(revision_evaluation_path(assignment.evaluation)) do %>
+                        View Evaluation
+                    <% end %>
+                  <% end %>
                 </td>
                 <td data-label="Action">
                   <div class="display-flex flex-wrap">
-                    <% if assignment&.evaluation&.completed_at %>
-                      <%= link_to(revision_evaluation_path(assignment.evaluation)) do %>
-                        <button class="usa-button font-body-3xs text-no-wrap padding-x-1 margin-bottom-1">
-                          View Evaluation
-                        </button>
-                      <% end %>
-                    <% end %>
                     <% unless @submission.winner? %>
                       <%= button_tag "Unassign", 
                           type: 'button', 
