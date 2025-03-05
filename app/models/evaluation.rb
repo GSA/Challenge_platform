@@ -35,12 +35,14 @@ class Evaluation < ApplicationRecord
             uniqueness: { message: I18n.t('evaluations.unique_evaluator_submission_assignment') }
 
   validates :total_score, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :additional_comments, length: { maximum: 3000, message: I18n.t("form.errors.too_long",
-                                                                           field_name: "Additional comments", max_length: 3000) },
-                                  allow_nil: true
-  validates :revision_comments, length: { maximum: 3000, message: I18n.t("form.errors.too_long",
-                                                                         field_name: "Revision comments", max_length: 3000) },
-                                allow_nil: true
+  validates :additional_comments,
+            length: { maximum: 3000,
+                      message: I18n.t("form.errors.too_long", field_name: "Additional comments", max_length: 3000) },
+            allow_nil: true
+  validates :revision_comments,
+            length: { maximum: 3000,
+                      message: I18n.t("form.errors.too_long", field_name: "Revision comments", max_length: 3000) },
+            allow_nil: true
 
   validate :user_has_valid_role
 
