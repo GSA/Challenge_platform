@@ -95,4 +95,60 @@ RSpec.describe EvaluatorsHelper, type: :helper do
       end
     end
   end
+
+  describe '#evaluator_evaluation_status' do
+    let(:challenge) { create(:challenge) }
+    let(:phase) { create(:phase, challenge:) }
+    let(:submission) { create(:submission, challenge:, phase:) }
+    let(:submission_2) { create(:submission, challenge:, phase:) }
+    let(:user) { create(:user, :evaluator) }
+
+    before do
+      create(:challenge_phases_evaluator, challenge:, user:, phase:)
+    end
+
+    it 'returns :not_started when there are no assigned submissions' do
+      expect(evaluator_evaluation_status(user, phase)).to eq(:not_started)
+    end
+
+    it 'returns :not_started for only :unassigned submissions' do
+      create(:evaluator_submission_assignment, submission:, evaluator: user, status: :unassigned)
+      expect(evaluator_evaluation_status(user, phase)).to eq(:not_started)
+    end
+
+    it 'returns :not_started for only :recused_unassigned submissions' do
+      create(:evaluator_submission_assignment, submission:, evaluator: user, status: :recused_unassigned)
+      expect(evaluator_evaluation_status(user, phase)).to eq(:not_started)
+    end
+
+    it 'returns :not_started when there are no assigned submissions with evaluations started' do
+      create(:evaluator_submission_assignment, submission:, evaluator: user, status: :assigned)
+      create(:evaluator_submission_assignment, submission: submission_2, evaluator: user, status: :assigned)
+      expect(evaluator_evaluation_status(user, phase)).to eq(:not_started)
+    end
+
+    it 'returns :completed when all assigned submissions have completed evaluations' do
+      esa = create(:evaluator_submission_assignment, submission:, evaluator: user, status: :assigned)
+      create(:evaluation,
+             submission:,
+             evaluator_submission_assignment: esa,
+             completed_at: Time.current)
+      esa = create(:evaluator_submission_assignment, submission: submission_2, evaluator: user, status: :assigned)
+      create(:evaluation,
+             submission:,
+             evaluator_submission_assignment: esa,
+             completed_at: Time.current)
+      expect(evaluator_evaluation_status(user, phase)).to eq(:completed)
+    end
+
+    it 'returns :in_progress when not all assigned submissions have completed evaluations' do
+      esa = create(:evaluator_submission_assignment, submission:, evaluator: user, status: :assigned)
+      create(:evaluation,
+             submission:,
+             evaluator_submission_assignment: esa,
+             completed_at: Time.current)
+      create(:evaluator_submission_assignment, submission: submission_2, evaluator: user, status: :assigned)
+      expect(evaluator_evaluation_status(user, phase)).to eq(:in_progress)
+    end
+  end
 end
