@@ -59,7 +59,7 @@
                     <%= evaluator_score(assignment).formatted_score %>
                   </span>
                   <% if assignment&.evaluation&.completed_at %>
-                    <%= link_to(revision_evaluation_path(assignment.evaluation)) do %>
+                    <%= link_to(revision_evaluation_path(assignment.evaluation), class: "text-no-wrap") do %>
                         View Evaluation
                     <% end %>
                   <% end %>
