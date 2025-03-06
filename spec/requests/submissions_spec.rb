@@ -12,7 +12,7 @@ RSpec.describe "Submissions" do
       let(:user) { create_user(role: "challenge_manager") }
 
       it "renders a details page for an individual submission" do
-        submission = create(:submission, challenge: phase.challenge, brief_description: "This submission has legs.")
+        submission = create(:submission, challenge: phase.challenge, phase: phase, brief_description: "This submission has legs.")
 
         get submission_path(submission)
         expect(response.body).to include(submission.id.to_s)
