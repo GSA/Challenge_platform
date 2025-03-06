@@ -30,19 +30,19 @@ RSpec.describe EvaluationCriterion, type: :model do
     it "validates presence of title" do
       evaluation_criterion.title = nil
       expect(evaluation_criterion).not_to be_valid
-      expect(evaluation_criterion.errors[:title]).to include("can't be blank")
+      expect(evaluation_criterion.errors[:title]).to include("Provide title")
     end
 
     it "validates presence of description" do
       evaluation_criterion.description = nil
       expect(evaluation_criterion).not_to be_valid
-      expect(evaluation_criterion.errors[:description]).to include("can't be blank")
+      expect(evaluation_criterion.errors[:description]).to include("Provide description")
     end
 
     it "validates presence of points or weight" do
       evaluation_criterion.points_or_weight = nil
       expect(evaluation_criterion).not_to be_valid
-      expect(evaluation_criterion.errors[:points_or_weight]).to include("can't be blank")
+      expect(evaluation_criterion.errors[:points_or_weight]).to include("Provide points or weight")
     end
   end
 
@@ -54,7 +54,7 @@ RSpec.describe EvaluationCriterion, type: :model do
 
     it "does not update invalid attributes" do
       evaluation_criterion.update(title: nil)
-      expect(evaluation_criterion.errors[:title]).to include("can't be blank")
+      expect(evaluation_criterion.errors[:title]).to include("Provide title")
     end
   end
 

@@ -29,16 +29,18 @@ class EvaluationForm < ApplicationRecord
       where(challenge_manager_users: { id: user.id })
   }
 
-  validates :instructions, presence: true
-  validates :scale_type, presence: true
-  validates :closing_date, presence: true
+  validates :instructions, presence: { message: I18n.t("form.errors.input", field_name: "evaluation instructions") }
+  validates :scale_type, presence: { message: I18n.t("form.errors.radio", field_name: "scale type") }
+  validates :closing_date, presence: { message: I18n.t("form.errors.input", field_name: "closing date") }
 
   # Adds custom error message for phase presence failure instead of default from above
-  validates :phase, presence: { message: I18n.t("evaluation_form.phase.presence_error") }
+  validates :phase, presence: { message: I18n.t("form.errors.select", field_name: :phase) }
   validates :phase_id, uniqueness: true
 
   validate :criteria_weights_must_sum_to_one_hundred
   validate :validate_unique_criteria_titles
+
+  ERROR_ORDER = %i[instructions scale_type base evaluation_criteria closing_date].freeze
 
   def weighted_scoring?
     scale_type == "weight"
@@ -65,10 +67,11 @@ class EvaluationForm < ApplicationRecord
     criteria = evaluation_criteria.
       reject(&:marked_for_destruction?).
       select { |c| duplicate_titles.include?(c.title) }.
-      reject { |c| c.errors.added?(:title, I18n.t("evaluation_criteria.duplicate_title_error")) }
+      reject { |c| c.errors.added?(:title, I18n.t("evaluation_criteria.errors.duplicate_title")) }
 
-    criteria.each { |c| c.errors.add(:title, I18n.t("evaluation_criteria.duplicate_title_error")) }
-    errors.add(:base, I18n.t("evaluation_criterion_unique_title_in_form_error"))
+    criteria.each { |c| c.errors.add(:title, I18n.t("evaluation_criteria.errors.duplicate_title")) }
+
+    errors.add(:base, I18n.t("evaluation_form.errors.criteria_unique_titles"))
   end
 
   def criteria_weights_must_sum_to_one_hundred
@@ -83,8 +86,9 @@ class EvaluationForm < ApplicationRecord
 
   def add_weight_errors
     evaluation_criteria.reject(&:marked_for_destruction?).each do |criteria|
-      criteria.errors.add("points_or_weight", I18n.t("evaluation_criteria.must_sum_to_100_error"))
+      criteria.errors.add(:points_or_weight, I18n.t("evaluation_criteria.errors.must_sum_to_100"))
     end
-    errors.add(:base, I18n.t("evaluation_form_criteria_weight_total_error"))
+
+    errors.add(:base, I18n.t("evaluation_form.errors.criteria_weight_total"))
   end
 end

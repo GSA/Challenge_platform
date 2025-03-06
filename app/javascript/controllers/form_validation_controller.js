@@ -10,7 +10,10 @@ export default class extends Controller {
 
     if (!target.value) {
       this.addErrorClasses(target, label);
-      this.updateErrorMessage(fieldName, "can't be blank");
+      this.updateErrorMessage(
+        fieldName,
+        this.generateErrorMessage(fieldName, target)
+      );
     } else {
       this.removeErrorClasses(target, label);
       this.updateErrorMessage(fieldName, "");
@@ -27,6 +30,25 @@ export default class extends Controller {
     const labelQuery = isRadio ? "legend" : `label[for="${labelId}"]`;
 
     return formGroup.querySelector(labelQuery);
+  }
+
+  generateErrorMessage(field_name, target) {
+    const normalizedFieldName =
+      field_name.charAt(0).toUpperCase() + field_name.slice(1).toLowerCase();
+    const fieldLabel = target.dataset.fieldLabel || normalizedFieldName;
+    const { tagName, type } = target;
+
+    switch (tagName) {
+      case "SELECT":
+      case "INPUT":
+        return type === "radio"
+          ? `Select ${fieldLabel}`
+          : `Provide ${fieldLabel}`;
+      case "TEXTAREA":
+        return `Provide ${fieldLabel}`;
+      default:
+        return `Provide ${fieldLabel}`;
+    }
   }
 
   addErrorClasses(target, label) {

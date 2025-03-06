@@ -39,12 +39,17 @@ en:
   please_try_again: "Please try again."
   session_expired_alert: "Your session has expired. Please log in again."
   evaluation_form: 
+    errors: 
+      criteria_weight_total: "Weight for all criteria must add up to 100"
+      criteria_unique_titles: "Criteria titles must be unique within the same form"
+    success:
+      heading: "Evaluation form is saved"
     phase:
       presence_error: "can't be blank"
   evaluation_criteria:
-    duplicate_title_error: "must be unique within criteria"
-    must_sum_to_100_error: "must sum to 100 with other criteria"
-  evaluation_criterion_unique_title_in_form: "must be unique within the same form."
+    errors: 
+      duplicate_title: "Title must be unique"
+      must_sum_to_100: "Points or weight must sum to 100 with other criteria"
   evaluators:
     index:
       no_phases_alert: "This challenge has no phases. Please add at least one phase before managing evaluators."
@@ -69,8 +74,6 @@ en:
     resend_invite:
       success: "Invitation resent successfully."
       failure: "Failed to resend invitation."      
-  evaluation_criterion_unique_title_in_form_error: "Evaluation criteria title must be unique within the same form."
-  evaluation_form_criteria_weight_total_error: "The total weight of all evaluation criteria must add up to 100 when weighted scoring is enabled."
   evaluation_criteria_form_title_placeholder: "Add criteria title here"
   evaluator_submission_assignments:
     assigned_submissions: "A list of submissions assigned to the user."
@@ -110,6 +113,13 @@ en:
       not_found: "Evaluation not found"
     notices:
       submitted: "Revision submitted"
+  form:
+    errors:
+      input: "Provide %{field_name}"
+      radio: "Select %{field_name}"
+      select: "Select %{field_name}"
+      too_long: "%{field_name} must be at most %{max_length} characters long"
+      not_an_integer: "%{field_name} must be a whole number"
   alerts:
     recused_evaluator:
       heading: "Recused Evaluator"
