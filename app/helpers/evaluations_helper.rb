@@ -19,10 +19,8 @@ module EvaluationsHelper
 
   def assignment_display_score(assignment)
     return '-' if assignment.evaluation_status != :completed || assignment.evaluation&.total_score.nil?
-    # can't be nil
-    score = assignment.evaluation.total_score
-    # round off non-fractions to whole number integers
-    score = (score % 1).zero? ? score.to_i : score
+
+    score = rounded_score(assignment.evaluation.total_score)
     maybe_percent = weighted_scoring?(@phase || assignment.phase) ? "%" : ""
     maybe_revised = assignment.evaluation.revised? ? " (Revised)" : ""
 
@@ -126,5 +124,10 @@ module EvaluationsHelper
 
   def weighted_scoring?(phase)
     phase.evaluation_form&.weighted_scoring?
+  end
+
+  # display floats with no fractional part (ends in ".0") without the decimal
+  def rounded_score(score)
+    (score % 1).zero? ? score.to_i : score
   end
 end
