@@ -7,19 +7,23 @@
       <th scope="col">Evaluation Status</th>
       <th scope="col">My Score</th>
       <th scope="col">Average Score</th>
-      <th scope="col">Action</th>
+      <th scope="col" class="text-center">Action</th>
     </tr>
   </thead>
   <tbody>
     <% @assigned_submissions.each do |assignment| %>
       <tr class="border-y-2px border-primary" style="height: 4rem;">
-        <th data-label="Submission ID" scope="row">
+        <td data-label="Submission ID" scope="row">
           <div class="margin-bottom-1 mobile-lg:margin-bottom-3">
-            <%= link_to materials_submission_path(assignment.submission), class: "text-primary" do %>
+            <% if assignment.recused? %>
               <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
+            <% else %>
+              <%= link_to evaluation_form_path(assignment), class: "text-primary" do %>
+                <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
+              <% end %>
             <% end %>
           </div>
-        </th>        
+        </td>
         <td data-label="Evaluation Status">
           <div class="display-flex flex-align-center margin-bottom-2">
             <span class="usa-tag padding-x-1 text-center width-15 <%= evaluation_status_color(assignment.evaluation_status) %>" style="min-width: 120px; display: inline-block;">
@@ -30,7 +34,7 @@
         <td data-label="My Score">
           <div class="display-flex flex-align-center margin-bottom-2">  
             <% if assignment.evaluation_status == :completed %>
-              <%= link_to assignment_display_score(assignment), materials_submission_path(assignment.submission), class: "text-primary" %>
+              <%= link_to assignment_display_score(assignment), evaluation_form_path(assignment), class: "text-primary" %>
             <% else %>
               <%= assignment_display_score(assignment) %>
             <% end %>
@@ -42,7 +46,7 @@
           </div>
         </td>
         <td>
-          <div class="display-flex flex-no-wrap grid-row grid-gap-1 margin-y-2 width-card mobile-lg:width-auto">
+          <div class="display-flex flex-no-wrap grid-row grid-gap-1 margin-y-2">
             <%= evaluation_link(assignment) unless assignment.recused? || assignment.evaluation_status == :completed %>
           </div>  
         </td>

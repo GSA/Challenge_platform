@@ -106,16 +106,18 @@ module EvaluationsHelper
     counts.values.sum
   end
 
-  def evaluation_link(assignment)
+  def evaluation_form_path(assignment)
     evaluation = assignment.evaluation
 
-    link_path = if evaluation
-                  edit_evaluation_path(evaluation)
-                else
-                  new_submission_evaluation_path(assignment.submission)
-                end
+    if evaluation
+      edit_evaluation_path(evaluation)
+    else
+      new_submission_evaluation_path(assignment.submission)
+    end
+  end
 
-    link_to("Evaluate", link_path, class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap")
+  def evaluation_link(assignment)
+    link_to("Evaluate", evaluation_form_path(assignment), class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap")
   end
 
   def form_disabled?(evaluation)
