@@ -81,14 +81,14 @@ module EvaluationScoresHelper
   def radio_button_options(id, name, value, disabled)
     {
       id: "#{id}_#{value}",
-      name: name,
+      name:,
       class: "usa-radio__input usa-radio__input--tile",
       data: {
         'evaluation-score-target': "scoreInput",
         action: "change->evaluation-score#calculateScore form-validation#validatePresence",
         'field-name': id
       },
-      disabled: disabled
+      disabled:
     }
   end
 
@@ -103,7 +103,7 @@ module EvaluationScoresHelper
   end
 
   def radio_calculated_score(score, criterion)
-    return "" unless criterion&.points_or_weight && criterion.option_range_end
+    return "" unless criterion.points_or_weight && criterion.option_range_end
 
     scaled_score = (criterion.points_or_weight.to_f / criterion.option_range_end) * score
     format_score(scaled_score, criterion.evaluation_form.weighted_scoring?)
