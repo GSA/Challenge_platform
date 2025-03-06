@@ -50,7 +50,7 @@ class EvaluationsController < ApplicationController
   end
 
   def edit
-    @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find(params[:id])
+    @evaluation = Evaluation.includes([evaluation_scores: [evaluation_criterion: :evaluation_form]]).find(params[:id])
     fetch_evaluator_submission_assignment
 
     return unauthorized_redirect unless can_access_evaluation?

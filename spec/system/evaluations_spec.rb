@@ -152,7 +152,7 @@ RSpec.describe 'Evaluation', :js, type: :system do
   end
 
   def complete_evaluation
-    click_button 'Mark Complete'
+    click_button 'Complete Evaluation'
 
     assert_selector 'dialog#complete', visible: true
 
