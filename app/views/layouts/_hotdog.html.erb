@@ -1,3 +1,8 @@
+<%# share evaluation form container for both views %>
+<div id="evaluation-form-container">
+  <%= render partial: left %>
+</div>
+
 <%# burger orientation, for mobile %>
 <div class="tablet:display-none" data-controller="hotdog">
     <div data-hotdog-target="burgerCollapsible">
@@ -5,25 +10,23 @@
     </div>
     <div class="bg-primary-darker margin-y-1 width-full padding-1">
         <div class="display-flex flex-row flex-justify">
-            <div class="display-flex flex-align-center cursor-pointer padding-x-5" data-action="click->hotdog#burgerCollapse" data-hotdog-target="burgerCollapse">
+            <div class="display-flex flex-align-center cursor-pointer padding-x-1" data-action="click->hotdog#burgerCollapse" data-hotdog-target="burgerCollapse">
                 <%= image_tag('images/usa-icons/arrow_upward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05 margin-right-1", alt: "Hide #{name}") %>
                 <span class="text-white width-15 display-inline-block">Hide <%= name %></span>
             </div>
-            <div class="display-none display-flex flex-align-center cursor-pointer padding-x-5" data-action="click->hotdog#burgerExpand" data-hotdog-target="burgerExpand">
+            <div class="display-none display-flex flex-align-center cursor-pointer padding-x-1" data-action="click->hotdog#burgerExpand" data-hotdog-target="burgerExpand">
                 <%= image_tag('images/usa-icons/arrow_downward.svg', class: "usa-icon--size-3 icon-white margin-bottom-05 margin-right-1", alt: "Show #{name}") %>
                 <span class="text-white width-15 display-inline-block">Show <%= name %></span>
             </div>
             <%= render additional_action if additional_action %>
         </div>
     </div>
-    <%= render partial: left %>
+    <div id="mobile-evaluation-form"></div>
 </div>
 
 <%# hotdog orientation, for tablet and above %>
 <div class="display-none tablet:display-flex flex-row width-full border-top-1px" data-controller="hotdog">
-    <div class="width-half" data-hotdog-target="leftPane">
-        <%= render partial: left %>
-    </div>
+    <div class="width-half" data-hotdog-target="leftPane" id="desktop-evaluation-form"></div>
     <div class="margin-x-4 display-flex">
         <div class="border-right margin-right-neg-3 margin-left-3">
         </div>    
