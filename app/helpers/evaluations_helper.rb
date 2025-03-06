@@ -117,7 +117,10 @@ module EvaluationsHelper
   end
 
   def evaluation_link(assignment)
-    link_to("Evaluate", evaluation_form_path(assignment), class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap")
+    link_to(
+      "Evaluate", evaluation_form_path(assignment),
+      class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap"
+    )
   end
 
   def form_disabled?(evaluation)
