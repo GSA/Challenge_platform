@@ -1,9 +1,7 @@
 <div data-controller="unassign-evaluator-submission-modal"
      data-unassign-evaluator-submission-modal-challenge-id-value="<%= @challenge.id %>"
      data-unassign-evaluator-submission-modal-phase-id-value="<%= @phase.id %>" >
-     
-  <%= render 'shared/back_link', path: phase_evaluators_path(@phase) %>
-  
+
   <h1><%= challenge_phase_title(@challenge, @phase) %></h1>
   <p>View submissions assigned to an evaluator.</p>
 
