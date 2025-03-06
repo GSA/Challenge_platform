@@ -19,7 +19,10 @@ module EvaluationsHelper
 
   def assignment_display_score(assignment)
     return '-' if assignment.evaluation_status != :completed || assignment.evaluation&.total_score.nil?
+    # can't be nil
     score = assignment.evaluation.total_score
+    # round off non-fractions to whole number integers
+    score = (score % 1).zero? ? score.to_i : score
     maybe_percent = weighted_scoring?(@phase || assignment.phase) ? "%" : ""
     maybe_revised = assignment.evaluation.revised? ? " (Revised)" : ""
 
