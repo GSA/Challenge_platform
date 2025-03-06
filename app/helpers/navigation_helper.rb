@@ -5,7 +5,7 @@ module NavigationHelper
   def utility_menu_link(image_path, href, _alt, button_label)
     link_to(href,
             class: "display-flex flex-align-center flex-column desktop:flex-row " \
-                   "margin-x-1 desktop:margin-x-3 text-white
+                   "margin-x-1 desktop:margin-x-3 text-white text-bold text-no-underline
                     width-9 tablet:width-auto tablet:text-no-wrap text-center",
             id: "utility-menu-link-#{button_label}") do
       image_tag(

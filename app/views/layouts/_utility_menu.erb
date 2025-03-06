@@ -7,9 +7,7 @@
       <%= utility_menu_link('star_half', evaluations_path, 'Evaluate Submissions', 'Evaluations') %>
     <% end %>  
     <%= utility_menu_link('support', 'https://www.challenge.gov/cm-user-guide/', 'Support', 'Support') %>
-    <div class="display-none desktop:display-flex flex-align-center margin-x-1 margin-top-1">
-      |
-      <%= image_tag('images/usa-icons/account_circle.svg', class: "usa-icon--size-3 icon-white margin-x-2", alt: "Help") %>
+    <div class="display-none desktop:display-flex flex-align-center padding-x-3 border-left-1px">
       <%= current_user.email %>
     </div>
 </nav>
