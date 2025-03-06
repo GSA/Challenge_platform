@@ -1,4 +1,4 @@
-<div class="usa-accordion">
+<div class="usa-accordion margin-bottom-4">
   <% rand = SecureRandom.hex(8) %>
   <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
     <button
@@ -11,15 +11,33 @@
     </button>
   </h2>
 
-  <div class="usa-accordion__content bg-base-lighter width-full" id="<%= rand %>">
+  <div class="usa-accordion__content padding-left-0" id="<%= rand %>">
     <% if @submission.available_evaluators.any? %>
-      <% @submission.available_evaluators.each_with_index do |evaluator, i| %>
-        <div class="display-flex flex-justify margin-y-1">
-              <div style="word-break: break-all">
-                  <span class="text-bold"><%= "#{evaluator.first_name} #{evaluator.last_name}" %></span><br/>
-                  <%= evaluator.email %>
-              </div> 
-              <div class="margin-left-05">
+      <table aria-label="List of Available Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header width-full">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col" class="width-"># of Assigned Submissions</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @submission.available_evaluators.each do |evaluator| %>
+            <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
+              <th scope="row" data-label="Name" class="text-top">
+                <span class="text-bold text-ls-1 line-height-sans-4">
+                  <%= link_to phase_evaluator_submission_assignments_path(@submission.phase, evaluator_id: evaluator.id) do %>
+                    <%= evaluator.full_name %>
+                  <% end %>
+                </span>
+              </th>
+              <td data-label="# of Assigned Submissions" class="text-top">
+                <span class="margin-x-1">
+                  <%= evaluator.assigned_submissions.count %> submissions
+                </span>
+              </td>
+              <td data-label="Actions">
+                <div class="display-flex flex-wrap">
                   <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
                   <% unless @submission.winner? %>
                     <% if assignment %>
@@ -34,14 +52,14 @@
                         <%= f.hidden_field :submission_id, value: @submission.id %>
                         <%= f.submit "Assign", class: "usa-button font-body-2xs margin-top-1" %>
                       <% end %>
-                    <% end %>  
-                  <% end %>  
-              </div>
-          </div>
-          <% if i < @submission.available_evaluators.length - 1 %>
-            <hr/>
-          <% end %>  
-      <% end %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     <% else %>
       <div class="usa-alert usa-alert--warning">
         <div class="usa-alert__body">
@@ -50,6 +68,16 @@
           </p>
         </div>
       </div>
-    <% end %>  
+    <% end %>
+    <div class="usa-alert usa-alert--info">
+      <div class="usa-alert__body">
+        <h2 class="usa-alert__heading">
+          Need more evaluators?
+        </h2>
+        <p class="usa-alert__text font-body-2xs">
+            <%= link_to "Manage your existing evaluation panel and invite additional evaluators.", phase_evaluators_path(@submission.phase), class: "margin-y-1"  %>
+        </p>
+      </div>
+    </div> 
   </div>
 </div>
