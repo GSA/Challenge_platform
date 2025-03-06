@@ -4,11 +4,16 @@ require 'rails_helper'
 
 RSpec.describe EvaluationsHelper, type: :helper do
   let(:challenge) { create(:challenge) }
-  let(:phase) { create(:phase, challenge: challenge) }
+  let(:phase) { create(:phase, challenge:) }
   let(:evaluator) { create(:user, role: :evaluator) }
-  let(:submission) { create(:submission, challenge: challenge, phase: phase) }
-  let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission) }
+  let(:submission) { create(:submission, challenge:, phase:) }
+  let(:assignment) { create(:evaluator_submission_assignment, evaluator:, submission:) }
   let(:evaluation) { create(:evaluation, evaluator_submission_assignment: assignment, user: evaluator) }
+
+  # if the float has no fractional part (".0"), convert to whole integer
+  def rounded_score(score)
+    (score % 1).zero? ? score.to_i : score
+  end
 
   describe '#assigned_submissions_count' do
     it 'returns the correct count of assigned submissions' do
@@ -191,7 +196,7 @@ RSpec.describe EvaluationsHelper, type: :helper do
   end
 
   describe '#assignment_display_score' do
-    let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned) }
+    let(:assignment) { create(:evaluator_submission_assignment, evaluator:, submission:, status: :assigned) }
 
     it 'returns "-" for :not_started evaluations' do
       expect(assignment.evaluation_status).to eq(:not_started)
@@ -206,7 +211,7 @@ RSpec.describe EvaluationsHelper, type: :helper do
 
     it 'returns "-" for :in_progress evaluations' do
       create(:evaluation,
-        evaluation_form: create(:evaluation_form, :pointed, phase: submission.phase),
+        evaluation_form: create(:evaluation_form, :pointed, phase:),
         evaluator_submission_assignment: assignment
       )
       expect(assignment.evaluation_status).to eq(:in_progress)
@@ -219,43 +224,41 @@ RSpec.describe EvaluationsHelper, type: :helper do
       expect(helper.assignment_display_score(assignment)).to eq('-')
     end
 
-    context "with completed evaluation on a pointed form" do
-      let!(:evaluation) {
-        create(:evaluation,
-          evaluation_form: create(:evaluation_form, :pointed, phase: submission.phase),
-          evaluator_submission_assignment: assignment, completed_at: Time.current)
-      }
+    context "with completed evaluation" do
+      let!(:evaluation) { create(:evaluation, evaluation_form:,
+        evaluator_submission_assignment: assignment, completed_at: Time.current) }
 
-      it 'returns score for completed evaluations' do
-        expect(assignment.evaluation_status).to eq(:completed)
-        expect(helper.assignment_display_score(assignment)).to eq(evaluation.total_score.to_s)
+      let(:total_score) { rounded_score(evaluation.total_score).to_s }
+
+      context "on a pointed form" do
+        let(:evaluation_form) { create(:evaluation_form, :pointed, phase:) }
+
+        it 'returns score for completed evaluations' do
+          expect(assignment.evaluation_status).to eq(:completed)
+          expect(helper.assignment_display_score(assignment)).to eq(total_score)
+        end
+
+        it 'returns score with (Revised) for revised scores' do
+          # revise a score
+          evaluation.evaluation_scores.first.update(score_override: 0)
+          expect(assignment.evaluation_status).to eq(:completed)
+          expect(helper.assignment_display_score(assignment)).to eq("#{total_score} (Revised)")
+        end
       end
+      context 'on a weighted form' do
+        let(:evaluation_form) { create(:evaluation_form, :weighted, phase:) }
 
-      it 'returns score with (Revised) for revised scores' do
-        # revise a score
-        evaluation.evaluation_scores.first.update(score_override: 0)
-        expect(assignment.evaluation_status).to eq(:completed)
-        expect(helper.assignment_display_score(assignment)).to eq("#{evaluation.total_score.to_s} (Revised)")
-      end
-    end
+        it 'returns score with percent' do
+          expect(assignment.evaluation_status).to eq(:completed)
+          expect(helper.assignment_display_score(assignment)).to eq("#{total_score}%")
+        end
 
-    context 'with completed evaluation on a weighted form' do
-      let!(:evaluation) {
-        create(:evaluation,
-          evaluation_form: create(:evaluation_form, :weighted, phase: submission.phase),
-          evaluator_submission_assignment: assignment, completed_at: Time.current)
-      }
-
-      it 'returns score with percent' do
-        expect(assignment.evaluation_status).to eq(:completed)
-        expect(helper.assignment_display_score(assignment)).to eq("#{evaluation.total_score}%")
-      end
-
-      it 'returns score with percent and (Revised)' do
-        # revise a score
-        evaluation.evaluation_scores.first.update(score_override: 0)
-        expect(assignment.evaluation_status).to eq(:completed)
-        expect(helper.assignment_display_score(assignment)).to eq("#{evaluation.total_score}% (Revised)")
+        it 'returns score with percent and (Revised)' do
+          # revise a score
+          evaluation.evaluation_scores.first.update(score_override: 0)
+          expect(assignment.evaluation_status).to eq(:completed)
+          expect(helper.assignment_display_score(assignment)).to eq("#{total_score}% (Revised)")
+        end
       end
     end
   end
