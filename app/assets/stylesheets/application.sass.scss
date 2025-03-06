@@ -41,6 +41,12 @@ dialog::backdrop {
       background-color: #dfe1e2;
     }
   }
+
+  tbody {
+    tr {
+      border-top: 4px solid #005EA2;
+    }
+  }
 }
 
 .usa-nav__primary {
