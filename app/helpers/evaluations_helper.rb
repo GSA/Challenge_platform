@@ -109,18 +109,12 @@ module EvaluationsHelper
   def evaluation_form_path(assignment)
     evaluation = assignment.evaluation
 
-    if evaluation
-      edit_evaluation_path(evaluation)
-    else
-      new_submission_evaluation_path(assignment.submission)
-    end
+    evaluation ? edit_evaluation_path(evaluation) : new_submission_evaluation_path(assignment.submission)
   end
 
   def evaluation_link(assignment)
-    link_to(
-      "Evaluate", evaluation_form_path(assignment),
-      class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap"
-    )
+    link_to( "Evaluate", evaluation_form_path(assignment),
+      class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap")
   end
 
   def form_disabled?(evaluation)
