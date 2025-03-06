@@ -44,27 +44,3 @@
         <%= render partial: right %>
     </div>  
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const evaluationFormContent = document.getElementById('evaluation-form-container');
-    const mobileContainer = document.getElementById('mobile-evaluation-form');
-    const desktopContainer = document.getElementById('desktop-evaluation-form');
-
-    const container = window.innerWidth >= 640 ? desktopContainer : mobileContainer;
-    container.appendChild(evaluationFormContent);
-    
-    // Move evaluation form on resize
-    window.addEventListener('resize', function() {
-      const breakpoint = 640;
-      const isMobile = window.innerWidth < breakpoint;
-      const isDesktop = window.innerWidth >= breakpoint;
-
-      if (isMobile && evaluationFormContent.parentElement === desktopContainer) {
-        mobileContainer.appendChild(evaluationFormContent);
-      } else if (isDesktop && evaluationFormContent.parentElement === mobileContainer) {
-        desktopContainer.appendChild(evaluationFormContent);
-      }
-    });
-  });
-</script>
