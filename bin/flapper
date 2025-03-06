@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# the flapper script runs a spec file (or the full rspec suite) repeatedly
+# until it fails so that flappers can be reproduced more easily locally
+
+while
+  echo "Running specs $1";
+  bundle exec rspec $1;
+  [ $? -eq 0 ]
+do true; done

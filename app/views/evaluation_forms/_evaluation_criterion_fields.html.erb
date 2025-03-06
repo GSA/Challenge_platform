@@ -31,7 +31,8 @@
       disabled: is_template || form_disabled,
       data: {
         "evaluation-criteria-target": "titleField",
-        "action": "form-validation#validatePresence focusout->form-validation#validatePresence"
+        "action": "form-validation#validatePresence focusout->form-validation#validatePresence",
+        "field-label": "title"
         }
     %>
 
@@ -53,7 +54,8 @@
         disabled: is_template || form_disabled,
         data: {
           "evaluation-criteria-target": "descriptionField",
-          "action": "form-validation#validatePresence focusout->form-validation#validatePresence"
+          "action": "form-validation#validatePresence focusout->form-validation#validatePresence",
+          "field-label": "description"
         }
       %>
       <span class="usa-character-count__message">You can enter up to 1000 characters</span>
@@ -81,7 +83,8 @@
         action: "
           input->evaluation-criteria#checkPointsOrWeightMax blur->evaluation-criteria#checkPointsOrWeightMax
           form-validation#validatePresence focusout->form-validation#validatePresence
-        "
+        ",
+        "field-label": "points or weight"
       }
     %>
 
@@ -176,7 +179,7 @@
           <div class="display-flex flex-align-center flex-justify">
             <%= label_tag criteria_field_id(f, "option_labels", is_template) ++ "_#{index}", index, class: "font-sans-lg text-bold text-base margin-right-2 #{label_error_class(f, "option_labels_#{index}")}" %>
 
-            <%= f.text_field "option_labels",
+            <%= f.text_field "option_labels_#{index}",
               id: criteria_field_id(f, "option_labels", is_template) ++ "_#{index}",
               name: criteria_field_name(f, "option_labels", is_template) ++ "[#{index}]",
               class: "usa-input margin-0 #{input_error_class(f, "option_labels_#{index}")}",
@@ -184,7 +187,9 @@
               disabled: disabledOptionLabel || form_disabled,
               data: {
                 "action": "form-validation#validatePresence focusout->form-validation#validatePresence",
-                "evaluation-criteria-target": "optionLabelInput"
+                "evaluation-criteria-target": "optionLabelInput",
+                "field-label": "option label #{index}",
+                "skip-error-class": true
               }
             %>
           </div>
