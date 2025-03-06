@@ -17,23 +17,16 @@ module EvaluationsHelper
     STATUS_COLORS[status]
   end
 
-  def display_score(assignment)
-    return 'N/A' unless assignment.evaluation_status == :completed
-
-    score = assignment.evaluation&.total_score
-    return 'N/A' if score.nil?
-
+  def assignment_display_score(assignment)
+    return '-' if assignment.evaluation_status != :completed || assignment.evaluation&.total_score.nil?
+    # can't be nil
+    score = assignment.evaluation.total_score
+    # round off non-fractions to whole number integers
+    score = (score % 1).zero? ? score.to_i : score
     maybe_percent = weighted_scoring?(@phase || assignment.phase) ? "%" : ""
+    maybe_revised = assignment.evaluation.revised? ? " (Revised)" : ""
 
-    assignment.evaluation.revised? ? "#{score}#{maybe_percent} (Revised)" : "#{score}#{maybe_percent}"
-  end
-
-  # individual evaluator score
-  def evaluator_score(assignment, format: :zero)
-    score = display_score(assignment)
-    return Score.new(0, format == :zero ? "0" : "-", "-") if score == 'N/A'
-
-    Score.new(score, score.to_s, score)
+    "#{score}#{maybe_percent}#{maybe_revised}"
   end
 
   def average_score(submission)
