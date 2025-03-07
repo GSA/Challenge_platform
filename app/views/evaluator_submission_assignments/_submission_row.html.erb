@@ -1,25 +1,32 @@
-<tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
+<tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user" class="border-y-2px border-primary" style="height: 4rem;">
   <td data-label="Submission ID" class="text-top text-bold">
-    <% if assignment.status == "recused" %>
-      <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
-    <% end %>
-    <%= assignment.submission.id %>
-  </td>
-  <td data-label="Evaluation status">
-    <span class="text-top usa-tag <%= evaluation_status_color(assignment.evaluation_status) %>"><%= assignment.evaluation_status.to_s.titleize %></span>
-  </td>
-  <td data-label="Score" class="text-top text-normal"><%= assignment_display_score(assignment) %></td>
-  <td data-label="">
-    <div class="display-flex flex-justify-end">
-      <% if assignment.evaluation_status == :completed %>
-        <%= link_to "View Evaluation", revision_evaluation_path(assignment.evaluation), class: 'usa-button font-body-3xs margin-right-1' %>
+    <div class="margin-bottom-1 mobile-lg:margin-bottom-3">
+      <%= link_to submission_path(assignment.submission), class: "text-primary" do %>
+        <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
       <% end %>
-      <%= button_tag "Unassign", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
-        action: "click->unassign-evaluator-submission-modal#open",
-        assignment_id: assignment.id,
-        phase_id: @phase.id,
-        current_status: assignment.status
-      } %>
+    </div>
+  </td>
+  <td data-label="Evaluation Status">
+    <span class="usa-tag padding-x-1 text-center width-15 <%= evaluation_status_color(assignment.evaluation_status) %>" style="min-width: 120px; display: inline-block;">
+      <%= assignment.evaluation_status.to_s.titleize %>
+    </span>
+  </td>
+  <td data-label="Score" class="text-top text-normal">
+    <%= assignment_display_score(assignment) %>
+    <% if assignment.evaluation_status == :completed %>
+      - <%= link_to "View Evaluation", revision_evaluation_path(assignment.evaluation), class: 'margin-left-2' %>
+    <% end %>
+  </td>  
+  <td>
+    <div class="display-flex flex-justify-start tablet:flex-justify-end margin-y-2 mobile-lg:margin-y-0">
+      <%= button_tag "Unassign", type: 'button', 
+        class: "usa-button usa-button--outline font-body-3xs width-auto #{assignment.evaluation_status.to_s == 'recused' ? 'unassign-recused-button' : ''}", 
+        data: { 
+          action: "click->unassign-evaluator-submission-modal#open",
+          assignment_id: assignment.id,
+          phase_id: @phase.id,
+          current_status: assignment.status
+        } %>
     </div>
   </td>
 </tr>

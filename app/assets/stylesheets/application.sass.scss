@@ -110,3 +110,13 @@ dialog::backdrop {
 .icon-primary-blue {
   filter: brightness(0) saturate(100%) invert(19%) sepia(28%) saturate(2849%) hue-rotate(197deg) brightness(94%) contrast(87%);
 }
+
+.unassign-recused-button {
+  color: #b50909;
+  border-radius: 0.15rem;
+  box-shadow: 0 0 0 2px #b50909;
+}
+
+.unassigned-row-bg {
+  background-color: #f5f6f7 !important;
+}
