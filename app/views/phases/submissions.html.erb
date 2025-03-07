@@ -1,5 +1,5 @@
 <h1><%= challenge_phase_title(@phase.challenge, @phase) %></h1>
-<p class="text-normal">View challenge submissions and manage evaluation progress.</p>
+<h2 class="text-bold text-primary">Submissions</h2>
 
 <%= render partial: "submissions_stats" %>
 <%= render partial: "submissions_table", locals: { submissions: @submissions } %>

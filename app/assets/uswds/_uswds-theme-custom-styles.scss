@@ -25,7 +25,8 @@ i.e.
 $theme-colors: (
   'green-cool-vivid-60v': #216E1F,
   'orange-warm-vivid-50v': #CF4900,
-  'red-vivid-60v': #B50909
+  'red-vivid-60v': #B50909,
+  'blue-vivid-50v': #0076D6
 );
 
 @each $name, $color in $theme-colors {

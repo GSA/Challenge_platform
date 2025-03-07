@@ -56,7 +56,7 @@
                 </td>
                 <td data-label="Score" class="text-top">
                   <span class="margin-x-1">
-                    <%= evaluator_score(assignment).formatted_score %>
+                    <%= assignment_display_score(assignment) %>
                   </span>
                   <% if assignment&.evaluation&.completed_at %>
                     <%= link_to(revision_evaluation_path(assignment.evaluation), class: "text-no-wrap") do %>
