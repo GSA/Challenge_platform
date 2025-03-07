@@ -6,7 +6,7 @@ module NavigationHelper
     link_to(href,
             class: "display-flex flex-align-center flex-row " \
                    "margin-x-3 text-white text-bold text-no-underline" \
-                    "tablet:width-auto tablet:text-no-wrap text-center",
+                   "tablet:width-auto tablet:text-no-wrap text-center",
             id: "utility-menu-link-#{button_label}") do
       image_tag(
         "images/usa-icons/#{image_path}.svg",
