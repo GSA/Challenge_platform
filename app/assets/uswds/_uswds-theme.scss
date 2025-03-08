@@ -15,7 +15,11 @@ Add a list of changed settings in the form $setting: value.
   $theme-color-primary-darker: 'blue-80v',
   $theme-color-accent-warm-dark: "orange-warm-50v",
   $theme-color-success-dark: "green-cool-60v",
-  $theme-grid-container-max-width: "widescreen"
+  $theme-grid-container-max-width: "widescreen",
+  $theme-link-color: "blue-60v",
+  $theme-link-visited-color: "blue-70v",
+  $theme-link-hover-color: "blue-70",
+  $theme-link-active-color: "blue-80v"
 );
 
 @use "uswds" as *;
@@ -72,4 +76,21 @@ Add a list of changed settings in the form $setting: value.
 
 .usa-footer__secondary-section .usa-social-link:hover .usa-social-link__icon {
   background-color: white;
+}
+
+h1 {
+  font-weight: normal;
+}
+
+a {
+  color: color($theme-link-color);
+  &:visited {
+    color: color($theme-link-visited-color);
+  }
+  &:hover {
+    color: color($theme-link-hover-color);
+  }
+  &:active {
+    color: color($theme-link-active-color);
+  }
 }

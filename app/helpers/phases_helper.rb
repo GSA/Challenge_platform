@@ -11,16 +11,16 @@ module PhasesHelper
   end
 
   def submission_count_link(phase, viewing_user)
-    return "None Yet" if phase.submissions_count.zero?
-    return "#{phase.submissions_count} Submissions" if viewing_user.non_gov_restricted?
+    return "None yet" if phase.submissions_count.zero?
+    return "#{phase.submissions_count} submissions" if viewing_user.non_gov_restricted?
 
-    link_to("#{phase.submissions_count} Submissions", submissions_phase_path(phase))
+    link_to("#{phase.submissions_count} submissions", submissions_phase_path(phase))
   end
 
   def evaluator_count_or_invite_link(phase, viewing_user)
     return "None Yet" if viewing_user.non_gov_restricted? && phase.evaluators.blank?
 
-    link_text = phase.evaluators.present? ? "#{phase.evaluators.count} Evaluators" : "Invite Evaluators"
+    link_text = phase.evaluators.present? ? "#{phase.evaluators.count} evaluators" : "Invite evaluators"
 
     return link_text if viewing_user.non_gov_restricted?
 
