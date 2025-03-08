@@ -40,10 +40,11 @@ $theme-colors: (
   .usa-table.usa-table--borderless.challenge-table {
     border-collapse: separate;
     border-spacing: 0 0.5rem;
+    width: 100%;
 
-    tr:first-child {
-      th:first-child {
-        border-top: .25rem solid color($theme-color-primary);
+    tr {
+      th:first-child, td:first-child {
+        border-top: 2px solid color($theme-color-primary);
       }
     }
     th, td {
