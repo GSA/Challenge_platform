@@ -191,7 +191,7 @@ RSpec.describe "Evaluations" do
           get submissions_evaluation_path(phase)
 
           expect(response).to have_http_status(:success)
-          expect(response.body).to include("View challenge submissions assigned to me and complete evaluations.")
+          expect(response.body).to include("Submissions Assigned to Me")
         end
 
         it "shows assigned submissions" do

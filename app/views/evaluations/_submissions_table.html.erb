@@ -1,41 +1,55 @@
 <%= render 'shared/assignment_stats', heading: 'Total Submissions', show_all_stats: false %>
 
-<table aria-label="List of Submissions to Evaluate" class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header margin-bottom-10">
+<table aria-label="Submissions assigned to me" class="usa-table usa-table--stacked-header usa-table--borderless width-full challenge-table margin-bottom-10">
   <thead>
     <tr>
       <th scope="col">Submission ID</th>
-      <th scope="col">My evaluation status</th>
-      <th scope="col">My score</th>
+      <th scope="col">Evaluation Status</th>
+      <th scope="col">My Score</th>
       <th scope="col">Average Score</th>
-      <th scope="col"><span class="usa-sr-only">Evaluate</span></th>
+      <th scope="col" class="text-center">Action</th>
     </tr>
   </thead>
   <tbody>
     <% @assigned_submissions.each do |assignment| %>
-      <tr>
-        <th data-label="Submission ID" scope="row">
-          <span class="mobile-lg:display-none">Submission ID</span><%= assignment.submission.id %>
-        </th>
-        <td data-label="My evaluation status">
-          <div class="display-flex flex-align-center">
-            <span class="usa-tag padding-x-1 <%= evaluation_status_color(assignment.evaluation_status) %>">
+      <tr class="border-y-2px border-primary" style="height: 4rem;">
+        <td data-label="Submission ID" scope="row">
+          <div class="margin-bottom-1 mobile-lg:margin-bottom-3">
+            <% if assignment.recused? %>
+              <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
+            <% else %>
+              <%= link_to evaluation_form_path(assignment), class: "text-primary" do %>
+                <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
+              <% end %>
+            <% end %>
+          </div>
+        </td>
+        <td data-label="Evaluation Status">
+          <div class="display-flex flex-align-center margin-bottom-2">
+            <span class="usa-tag padding-x-1 text-center width-15 <%= evaluation_status_color(assignment.evaluation_status) %>" style="min-width: 120px; display: inline-block;">
               <%= assignment.evaluation_status.to_s.titleize %>
             </span>
           </div>  
         </td>
-        <td data-label="My score">
-          <div class="display-flex flex-align-center">  
-            <%= evaluator_score(assignment).formatted_score %>
+        <td data-label="My Score">
+          <div class="display-flex flex-align-center margin-bottom-2">  
+            <% if assignment.evaluation_status == :completed %>
+              <%= link_to assignment_display_score(assignment), evaluation_form_path(assignment), class: "text-primary" %>
+            <% else %>
+              <%= assignment_display_score(assignment) %>
+            <% end %>
           </div>  
         </td>
         <td data-label="Average Score">
-          <%= average_score(assignment.submission).display_score %><%= "%" if weighted_scoring?(@phase) && average_score(assignment.submission).display_score != "N/A" %>
+          <div class="margin-bottom-2">
+            <%= average_score(assignment.submission).display_score %><%= "%" if weighted_scoring?(@phase) && average_score(assignment.submission).display_score != "-" %>
+          </div>
         </td>
         <td>
-          <div class="display-flex flex-no-wrap grid-row grid-gap-1">
-            <%= evaluation_link(assignment) unless assignment.recused? %>
+          <div class="display-flex flex-no-wrap grid-row grid-gap-1 margin-y-2">
+            <%= evaluation_link(assignment) unless assignment.recused? || assignment.evaluation_status == :completed %>
           </div>  
-        </td>  
+        </td>
       </tr>
     <% end %>  
   </tbody>
