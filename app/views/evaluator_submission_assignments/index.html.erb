@@ -11,11 +11,14 @@
     <%= render 'shared/alert_error', alert_heading: t('alerts.recused_submission.heading'), alert_text: t('alerts.recused_submission.text') %>
   <% end %>
 
-  <% if @assigned_submissions.any? %>
+  <% if @assigned_submissions.any? || @unassigned_submissions.any? %>
     <%= render layout: 'submission_table' do %>
-      <% @assigned_submissions.each do |assignment| %>
-        <%= render 'submission_row', assignment: assignment, evaluator: @evaluator %>
+      <% if @assigned_submissions.any? %>
+        <% @assigned_submissions.each do |assignment| %>
+          <%= render 'submission_row', assignment: assignment, evaluator: @evaluator %>
+        <% end %>
       <% end %>
+
       <% if @unassigned_submissions.any? %>
         <% @unassigned_submissions.each do |assignment| %>
           <%= render 'unassigned_submission_row', assignment: assignment, evaluator: @evaluator, phase: @phase %>
