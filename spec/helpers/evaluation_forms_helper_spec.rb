@@ -12,11 +12,21 @@ require 'rails_helper'
 # end
 RSpec.describe EvaluationFormsHelper do
   describe "#challenge_with_phase" do
+    it "only shows challenge name with single phase challenge" do
+      user = create_user
+      agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
+      challenge = create(:challenge, user:, agency:, is_multi_phase: false, title: "Pushing a boulder up a hill")
+      phase = challenge.phases.first
+      form = create_evaluation_form(challenge_id: challenge.id, phase_id: phase.id)
+
+      expect(helper.challenge_with_phase(form)).to eq("Pushing a boulder up a hill")
+    end
+
     it "concats challenge name with challenge phase" do
       user = create_user
       agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-      challenge = create_challenge(user:, agency:, title: "Pushing a boulder up a hill")
-      phase = create_phase(challenge_id: challenge.id)
+      challenge = create(:challenge, user:, agency:, is_multi_phase: true, title: "Pushing a boulder up a hill")
+      phase = challenge.phases.first
       form = create_evaluation_form(challenge_id: challenge.id, phase_id: phase.id)
 
       expect(helper.challenge_with_phase(form)).to eq("Pushing a boulder up a hill - Phase 1")
@@ -24,11 +34,20 @@ RSpec.describe EvaluationFormsHelper do
   end
 
   describe "#challenge_phase_title" do
+    it "only shows challenge name with single phase challenge" do
+      user = create_user
+      agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
+      challenge = create(:challenge, user:, agency:, is_multi_phase: false, title: "Pushing a boulder up a hill")
+      phase = challenge.phases.first
+
+      expect(helper.challenge_phase_title(challenge, phase)).to eq("Pushing a boulder up a hill")
+    end
+
     it "concats challenge name with challenge phase" do
       user = create_user
       agency = Agency.create!(name: "Gandalf and Sons", acronym: "GAD")
-      challenge = create_challenge(user:, agency:, title: "Pushing a boulder up a hill")
-      phase = create_phase(challenge_id: challenge.id)
+      challenge = create(:challenge, user:, agency:, is_multi_phase: true, title: "Pushing a boulder up a hill")
+      phase = challenge.phases.first
 
       expect(helper.challenge_phase_title(challenge, phase)).to eq("Pushing a boulder up a hill - Phase 1")
     end

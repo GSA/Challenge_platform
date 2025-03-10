@@ -1,5 +1,5 @@
-<h1>Submission ID <%= @submission.id %></h1>
-<h2 class="font-body-sm text-normal">View submission materials and provide your scores to evaluate the submission.</h2>
+<h1><%= challenge_phase_title(@submission.challenge, @submission.phase) %></h1>
+<h2 class="text-primary">Submission ID <%= @submission.id %></h2>
 
 <% if @current_user.non_gov_restricted? %>
   <%= render partial: "evaluations/form" %>

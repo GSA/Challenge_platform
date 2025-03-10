@@ -51,7 +51,7 @@ class EvaluationsController < ApplicationController
   end
 
   def edit
-    @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find(params[:id])
+    @evaluation = Evaluation.includes([evaluation_scores: [evaluation_criterion: :evaluation_form]]).find(params[:id])
     fetch_evaluator_submission_assignment
 
     return unauthorized_redirect unless can_access_evaluation?
@@ -61,7 +61,7 @@ class EvaluationsController < ApplicationController
 
   def create
     if EvaluationSavingService.new(@evaluation, params[:subaction]).call
-      confirmation_redirect
+      custom_success_redirect
     else
       render :show, status: :unprocessable_entity
     end
@@ -69,7 +69,7 @@ class EvaluationsController < ApplicationController
 
   def update
     if EvaluationSavingService.new(@evaluation, params[:subaction]).call
-      confirmation_redirect
+      custom_success_redirect
     else
       render :show, status: :unprocessable_entity
     end
@@ -81,9 +81,7 @@ class EvaluationsController < ApplicationController
 
     if EvaluatorRecusalService.new(@evaluator_submission_assignment).call
       send_recusal_notification
-
-      flash[:notice] = I18n.t("evaluations.recusal.success")
-      redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
+      custom_recusal_redirect
     else
       unauthorized_redirect
     end
@@ -133,14 +131,17 @@ class EvaluationsController < ApplicationController
     redirect_to evaluations_path, alert: I18n.t("evaluations.alerts.unauthorized")
   end
 
-  def confirmation_redirect
-    flash[:notice] =
-      if params[:subaction] == "mark_complete"
-        I18n.t("evaluations.notices.marked_complete")
-      else
-        I18n.t("evaluations.notices.saved_draft")
-      end
+  def custom_success_redirect
+    flash[:custom_success_heading] = I18n.t("evaluations.success.#{params[:subaction]}_heading")
+    flash[:custom_success_description] = I18n.t("evaluations.success.#{params[:subaction]}_description")
 
-    redirect_to confirmation_evaluation_path(@evaluation, subaction: params[:subaction])
+    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase), status: :see_other
+  end
+
+  def custom_recusal_redirect
+    flash[:custom_success_heading] = I18n.t("evaluations.success.evaluator_recusal_heading")
+    flash[:custom_success_description] = I18n.t("evaluations.success.evaluator_recusal_description")
+
+    redirect_to submissions_evaluation_path(@evaluator_submission_assignment.phase)
   end
 end

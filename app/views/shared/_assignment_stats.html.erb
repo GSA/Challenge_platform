@@ -1,48 +1,50 @@
 <div
-  class="usa-summary-box bg-base-lightest border-1px border-base-lightest radius-0 margin-bottom-2"
+  class="usa-summary-box bg-base-lightest border-1px border-base-lightest radius-0 margin-bottom-2 margin-x-neg-2 desktop:margin-x-neg-4"
   role="region"
   aria-labelledby="summary-box-key-information"
 >
-  <div class="usa-summary-box__body margin-top-neg-2">
-    <h1 id="summary-box-key-information" class="font-sans-lg text-bold text-black margin-bottom-2">At a glance</h1>
-    <div class="border-top border-1px border-base-light margin-y-2"></div>
-  
-    <div class="display-flex flex-column tablet:flex-row tablet:flex-align-center">
-      <div class="tablet:flex-fill">
-        <ul class="add-list-reset">
-          <li class="margin-bottom-0.5 display-flex">
-              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @assigned_submissions.count %></span>
-              <span class="margin-left-2">Assigned submissions</span>
-          </li>
-          <% if local_assigns[:show_all_stats] %>
-            <li class="margin-bottom-0.5 display-flex">
-              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @recused_submissions.count %></span>
-              <span class="margin-left-2">Recused submissions</span>
-            </li>
-            <li class="margin-bottom-0.5 display-flex">
-              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @unassigned_submissions.count %></span>
-              <span class="margin-left-2">Unassigned submissions</span>
-            </li>
-          <% end %>
-          <li class="display-flex">
-              <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @phase.evaluation_form&.closing_date&.strftime('%m/%d/%Y') || "N/A" %></span>
-              <span class="margin-left-2">Evaluation due date</span>
-          </li>
-        </ul>
-      </div>
+  <div class="grid-container">
+    <div class="usa-summary-box__body margin-top-neg-2">
+      <h3 id="summary-box-key-information" class="font-sans-lg text-bold text-black margin-bottom-2">At a glance</h3>
+      <div class="border-top border-1px border-base-light margin-y-2"></div>
 
-      <div class="display-flex flex-row tablet:margin-left-auto tablet:margin-top-0 margin-top-3">
-        <div class="text-center bg-green-cool-vivid-60v padding-1 margin-right-1" style="width: 32%">
-          <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["completed"] || 0 %></span>
-          <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">Completed<br>Evaluations</span>
+      <div class="display-flex flex-column tablet:flex-row tablet:flex-align-center">
+        <div class="tablet:flex-fill">
+          <ul class="add-list-reset">
+            <li class="margin-bottom-0.5 display-flex">
+                <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @assigned_submissions.count %></span>
+                <span class="margin-left-2">Assigned submissions</span>
+            </li>
+            <% if local_assigns[:show_all_stats] %>
+              <li class="margin-bottom-0.5 display-flex">
+                <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @recused_submissions.count %></span>
+                <span class="margin-left-2">Recused submissions</span>
+              </li>
+              <li class="margin-bottom-0.5 display-flex">
+                <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @unassigned_submissions.count %></span>
+                <span class="margin-left-2">Unassigned submissions</span>
+              </li>
+            <% end %>
+            <li class="display-flex">
+                <span class="text-bold text-black" style="width: 6rem; text-align: right"><%= @phase.evaluation_form&.closing_date&.strftime('%m/%d/%Y') || "N/A" %></span>
+                <span class="margin-left-2">Evaluation due date</span>
+            </li>
+          </ul>
         </div>
-        <div class="text-center bg-orange-warm-vivid-50v padding-1 margin-right-1" style="width: 32%">
-          <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["in_progress"] || 0 %></span>
-          <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">In Progress<br>Evaluations</span>
-        </div>
-        <div class="text-center bg-red-vivid-60v padding-1" style="width: 32%">
-          <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["not_started"] || 0 %></span>
-          <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">Not&nbsp;Started<br>Evaluations</span>
+
+        <div class="display-flex flex-row tablet:margin-left-auto tablet:margin-top-0 margin-top-3">
+          <div class="text-center bg-green-cool-vivid-60v padding-1 margin-right-1" style="width: 32%">
+            <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["completed"] || 0 %></span>
+            <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">Completed<br>Evaluations</span>
+          </div>
+          <div class="text-center bg-orange-warm-vivid-50v padding-1 margin-right-1" style="width: 32%">
+            <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["in_progress"] || 0 %></span>
+            <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">In Progress<br>Evaluations</span>
+          </div>
+          <div class="text-center bg-red-vivid-60v padding-1" style="width: 32%">
+            <span class="font-sans-xl text-white text-bold display-block"><%= @submissions_count["not_started"] || 0 %></span>
+            <span class="font-sans-3xs tablet:font-sans-sm text-white text-uppercase">Not&nbsp;Started<br>Evaluations</span>
+          </div>
         </div>
       </div>
     </div>
