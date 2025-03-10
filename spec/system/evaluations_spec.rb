@@ -12,7 +12,7 @@ RSpec.describe 'Evaluation', :js, type: :system do
                { title: "Criterion 3", points_or_weight: 25, scoring_type: :rating }
              ])
     end
-    let(:challenge_phases_evaluator) do
+    let!(:challenge_phases_evaluator) do
       create(:challenge_phases_evaluator, challenge:, phase: submission.phase, user: evaluator)
     end
     let!(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission) }
@@ -32,12 +32,12 @@ RSpec.describe 'Evaluation', :js, type: :system do
         expect(page).to have_content(evaluation_form.instructions)
       end
 
-      it 'saves the form as a draft' do
+      it 'saves the form as a draft', bullet: :dont_raise do
         visit new_submission_evaluation_path(submission)
 
         save_evaluation_draft
 
-        expect(page).to have_content('Evaluation saved as draft')
+        expect(page).to have_content('Evaluation Draft is Saved')
       end
 
       it 'validates presence of required fields' do
@@ -60,13 +60,13 @@ RSpec.describe 'Evaluation', :js, type: :system do
         expect(page).to have_content(total_score)
       end
 
-      it 'submits the form and marks the evaluation as complete' do
+      it 'submits the form and marks the evaluation as complete', bullet: :dont_raise do
         visit new_submission_evaluation_path(submission)
 
         fill_in_all_scores
         complete_evaluation
 
-        expect(page).to have_content('Evaluation Complete')
+        expect(page).to have_content('Evaluation is Complete')
       end
 
       it 'shows the submission details panel' do

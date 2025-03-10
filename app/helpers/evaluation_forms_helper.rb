@@ -7,8 +7,6 @@ module EvaluationFormsHelper
   end
 
   def challenge_phase_title(challenge, phase)
-    # pp challenge
-    # pp phase
     title = challenge.title
     title += " - Phase #{phase_number(challenge, phase)}" if challenge.is_multi_phase?
     title

@@ -3,7 +3,6 @@ import { Controller } from "@hotwired/stimulus";
 // Connects to data-controller="form-validation"
 export default class extends Controller {
   validatePresence(e) {
-    console.log(e);
     const target = e.target;
     const formGroup = target.closest(".usa-form-group");
     const fieldName = target.dataset.fieldName || target.id;
@@ -16,9 +15,6 @@ export default class extends Controller {
         this.generateErrorMessage(fieldName, target)
       );
     } else {
-      console.log("Clear");
-      console.log(fieldName);
-
       this.removeErrorClasses(target, label);
       this.updateErrorMessage(fieldName, "");
     }

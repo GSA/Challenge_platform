@@ -442,8 +442,9 @@ RSpec.describe "Evaluations" do
           expect(score.comment).to be_nil
         end
 
-        expect(response).to redirect_to(confirmation_evaluation_path(saved_evaluation, subaction: "save_draft"))
-        expect(flash[:notice]).to eq(I18n.t('evaluations.notices.saved_draft'))
+        expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+        expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.save_draft_heading'))
+        expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.save_draft_description'))
       end
 
       it "does not allow me to save a draft evaluation for a submission I'm not assigned to" do
@@ -495,8 +496,9 @@ RSpec.describe "Evaluations" do
           expect(score.score).not_to be_nil
         end
 
-        expect(response).to redirect_to(confirmation_evaluation_path(saved_evaluation, subaction: "mark_complete"))
-        expect(flash[:notice]).to eq(I18n.t("evaluations.notices.marked_complete"))
+        expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+        expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.mark_complete_heading'))
+        expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.mark_complete_description'))
       end
 
       it "does not allow me to mark my new evaluation as complete if it fails validations" do
@@ -668,8 +670,9 @@ RSpec.describe "Evaluations" do
           expect(updated_evaluation.errors).to be_empty
           expect(updated_evaluation.completed_at).to be_nil
 
-          expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "save_draft"))
-          expect(flash[:notice]).to include(I18n.t("evaluations.notices.saved_draft"))
+          expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.save_draft_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.save_draft_description'))
         end
 
         it "does not allow me to save a draft of an evaluation I did not create", bullet: :dont_raise do
@@ -715,8 +718,9 @@ RSpec.describe "Evaluations" do
           expect(updated_evaluation.errors).to be_empty
           expect(updated_evaluation.completed_at).not_to be_nil
 
-          expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "mark_complete"))
-          expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
+          expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.mark_complete_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.mark_complete_description'))
         end
 
         it "does not allow me to mark my existing evaluation as complete if it fails validations",
@@ -725,7 +729,8 @@ RSpec.describe "Evaluations" do
           phase = create(:phase, challenge:)
           submission = create(:submission, challenge:, phase:)
 
-          evaluator_submission_assignment = create(:evaluator_submission_assignment, submission:, user_id: current_user.id)
+          evaluator_submission_assignment = create(:evaluator_submission_assignment, submission:,
+                                                                                     user_id: current_user.id)
 
           evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
@@ -804,8 +809,9 @@ RSpec.describe "Evaluations" do
           mail = ActionMailer::Base.deliveries.last
           expect(mail.subject).to eq(I18n.t("mailers.recusal.subject", submission_id: submission.id))
 
-          expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))
           expect(response).to redirect_to(submissions_evaluation_path(phase))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.evaluator_recusal_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.evaluator_recusal_description'))
         end
 
         context "when recusal update fails" do
@@ -861,7 +867,8 @@ RSpec.describe "Evaluations" do
           expect(mail.to).to match_array(challenge.challenge_managers.map(&:user).map(&:email))
 
           expect(response).to redirect_to(submissions_evaluation_path(phase))
-          expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.evaluator_recusal_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.evaluator_recusal_description'))
         end
 
         it "prevents unauthorized recusal of another evaluator's evaluation" do

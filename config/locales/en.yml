@@ -98,6 +98,16 @@ en:
       save_draft_error:  "Failed to save evaluation as draft: %{errors}."
       mark_complete_error: "Failed to mark evaluation as complete: %{errors}."
       unauthorized: "No assignment found for this submission"
+    success:
+      save_draft_heading: "Evaluation Draft is Saved"
+      save_draft_description: "Your evaluation draft is saved. You can edit your scores anytime. 
+        Evaluation will not be final and will not be shared with challenge managers until you complete your evaluation."
+      mark_complete_heading: "Evaluation is Complete"
+      mark_complete_description: "Thank you for completing your evaluation! Your evaluation scores are now available for challenge managers to review
+        and determine the winners of their challenge."
+      evaluator_recusal_heading: "You recused yourself from evaluation"
+      evaluator_recusal_description: "We notified a challenge manager that you recused from evaluating this submission and 
+        they will unassign you from the submission."
     notices:
       saved_draft: "Evaluation saved as draft"
       marked_complete: "Evaluation complete"

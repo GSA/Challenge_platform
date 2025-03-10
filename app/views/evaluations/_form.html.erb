@@ -3,7 +3,7 @@
 
   <h2>Evaluation Form</h2>
   <p><%= @evaluation.evaluation_form.instructions %></p>
-  <p>Required fields are marked with an asterisk (<span style="color: darkred;">*</span>)</p>
+  <p>Required fields are marked with an asterisk (<span style="color: darkred;">*</span>).</p>
 
   <%= form_with(model: @evaluation, data: { controller: "evaluation modal form-validation" }) do |form| %>
     <%= form_errors_alert(@evaluation) %>
