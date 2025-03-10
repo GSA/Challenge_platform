@@ -54,7 +54,7 @@
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
 
             <div class="usa-form-group">
-              <%= evaluation_score_input(score_fields, :score, criterion, rand, disabled) %>
+              <%= evaluation_score_input(score_fields, :score, criterion, rand, disabled:) %>
 
               <%= inline_error(score_fields, :score, rand) %>
             </div>
@@ -121,7 +121,7 @@
 
     <% if !disabled %>
       <div class="display-flex flex-justify-center">
-        <%= form.button "Mark Complete", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "complete"} do %>
+        <%= form.button class: "usa-button", data: {"action": "modal#open", "modal-target-id": "complete"} do %>
           <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "Complete evaluation check icon") %>
           Complete Evaluation
         <% end %>

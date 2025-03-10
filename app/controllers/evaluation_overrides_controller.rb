@@ -19,7 +19,8 @@ class EvaluationOverridesController < ApplicationController
   private
 
   def set_instance_variables
-    @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
+    @evaluation = Evaluation.includes([evaluation_scores: [evaluation_criterion: :evaluation_form]]).
+      find_by(id: params[:id])
 
     return redirect_to dashboard_path, alert: I18n.t("evaluation_overrides.alerts.not_found") unless @evaluation
 
