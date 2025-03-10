@@ -45,15 +45,16 @@ $theme-colors: (
     tr {
       th:first-child, td:first-child {
         border-top: 2px solid color($theme-color-primary);
+        background-color: color($theme-color-base-lightest);
       }
     }
     th, td {
       border-top: 0;
-      border-left: 1px solid color($theme-color-base-lighter);
-      border-right: 1px solid color($theme-color-base-lighter);
+      border-left: 1px solid color($theme-color-base-lightest);
+      border-right: 1px solid color($theme-color-base-lightest);
     }
     th:last-child, td:last-child {
-      border-bottom: 1px solid color($theme-color-base-lighter);
+      border-bottom: 1px solid color($theme-color-base-lightest);
     }
   }
 }
@@ -66,7 +67,7 @@ $theme-colors: (
     thead {
       th {
         border: 0;
-        background-color: color($theme-color-base-lighter);
+        background-color: color($theme-color-base-lightest);
       }
     }
 
@@ -75,13 +76,13 @@ $theme-colors: (
         th, td {
           border-top: 4px solid color($theme-color-primary);
           border-bottom: transparent;
-          border-bottom: 1px solid color($theme-color-base-lighter);
+          border-bottom: 1px solid color($theme-color-base-lightest);
         }
         th:first-child, td:first-child {
-          border-left: 1px solid color($theme-color-base-lighter);
+          border-left: 1px solid color($theme-color-base-lightest);
         }
         th:last-child, td:last-child {
-          border-right: 1px solid color($theme-color-base-lighter);
+          border-right: 1px solid color($theme-color-base-lightest);
         }
       }
     }

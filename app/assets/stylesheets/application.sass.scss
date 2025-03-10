@@ -60,5 +60,12 @@ dialog::backdrop {
 }
 
 .unassigned-row-bg {
-  background-color: #f5f6f7 !important;
+  @media screen and (max-width: 480px) {
+    td:first-child {
+      background-color: #f0f0f0 !important;
+    }
+  }
+  th, td {
+    background-color: #f5f6f7 !important;
+  }
 }
