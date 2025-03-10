@@ -107,7 +107,7 @@
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                 <th scope="row" data-label="Name" class="text-top">
                     <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id) do %>
-                      <%= "#{evaluator.first_name} #{evaluator.last_name}" %>
+                      <%= evaluator.full_name %>
                     <% end %>  
                 </th>
                 <td data-label="Email address" class="text-top"><%= evaluator.email %></td>
