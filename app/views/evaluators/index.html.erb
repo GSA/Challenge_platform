@@ -72,6 +72,8 @@
         <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
         Add Evaluator
       <% end %>
+
+      <input type="reset" value="Cancel" class="usa-button usa-button--unstyled"/>
     <% end %>
     <% if @evaluator_invitations.empty? && @existing_evaluators.empty? %>
       <div class="usa-alert usa-alert--warning width-tablet margin-bottom-5">
