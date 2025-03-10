@@ -6,7 +6,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   let!(:phase) { create(:phase, challenge: challenge) }
 
   describe "new evaluation form page" do
-
     before do
       system_login_user(user)
     end
@@ -71,9 +70,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       save_form
 
-      # Click through confirmation page
-      expect(page).to have_content("Evaluation Form Saved")
-      click_link_or_button "Back to Challenge Phases"
+      expect(page).to have_content("Evaluation form is saved")
 
       # Should be on phases index view
       evaluation_form = EvaluationForm.first
@@ -91,7 +88,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       visit new_phase_evaluation_form_path(phase)
       fill_in_full_form
       save_form
-      click_link_or_button "Back to Challenge Phases"
       expect(page).to have_link("Edit form")
       evaluation_form = phase.evaluation_form
       click_link("Edit form", href: edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form))
@@ -131,14 +127,14 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_criterion_points_weight(1, 10)
 
       save_form
-      expect(page).to have_content(I18n.t("evaluation_form_criteria_weight_total_error"))
+      expect(page).to have_content(I18n.t("evaluation_form.errors.criteria_weight_total"))
 
       # Fix weights to add up to 100 and form should submit
       fill_in_criterion_points_weight(0, 50)
       fill_in_criterion_points_weight(1, 50)
 
       save_form
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_content("Evaluation form is saved")
     end
 
     it "expands all criteria if switching to weighted scale with value over 100" do
@@ -277,8 +273,8 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(updated_end_date)
 
       save_form
-      expect(page).to have_current_path(confirmation_phase_evaluation_form_path(phase, evaluation_form))
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_current_path(phases_path)
+      expect(page).to have_content("Evaluation form is saved")
 
       evaluation_form.reload
       expect(evaluation_form.instructions).to eq(updated_instructions)
@@ -303,7 +299,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_content("Evaluation form is saved")
 
       expect(evaluation_form.reload.evaluation_criteria.length).to eq(num_criteria + 3)
     end
@@ -324,7 +320,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_content("Evaluation form is saved")
 
       evaluation_form.reload
       # Criteria count should be the same since one was added and removed

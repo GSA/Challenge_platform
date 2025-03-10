@@ -20,7 +20,8 @@ class EvaluationsController < ApplicationController
     @challenge = @phase.challenge
 
     @assigned_submissions = @phase.evaluator_submission_assignments.
-      where(evaluator: current_user).where(status: %i[assigned recused]).includes(:submission, :evaluation).
+      where(evaluator: current_user).where(status: %i[assigned recused]).
+      includes(submission: {}, evaluation: :evaluation_scores).
       ordered_by_status
 
     @submissions_count = helpers.calculate_submissions_count(@assigned_submissions)
