@@ -96,7 +96,8 @@ RSpec.describe Evaluation, type: :model do
       expect do
         evaluation.update!(additional_comments: Faker::Lorem.characters(number: 3001))
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Additional comments is too long (maximum is 3000 characters)")
+                         "Validation failed: Additional comments #{I18n.t('form.errors.too_long',
+                                                                          field_name: 'Additional comments', max_length: 3000)}")
     end
 
     it "is valid if revision_comments length is 3000 or less" do
@@ -108,7 +109,8 @@ RSpec.describe Evaluation, type: :model do
       expect do
         evaluation.update!(revision_comments: Faker::Lorem.characters(number: 3001))
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Revision comments is too long (maximum is 3000 characters)")
+                         "Validation failed: Revision comments #{I18n.t('form.errors.too_long',
+                                                                        field_name: 'Revision comments', max_length: 3000)}")
     end
   end
 end

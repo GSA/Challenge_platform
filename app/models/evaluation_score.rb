@@ -25,11 +25,19 @@ class EvaluationScore < ApplicationRecord
   }
 
   validates :score, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :score, presence: true, if: -> { evaluation.completed_at.present? }
+  validates :score, presence: { message: I18n.t("form.errors.input", field_name: "score") }, if: lambda {
+    evaluation.completed_at.present?
+  }
   validates :score_override, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :comment, presence: true, if: -> { evaluation.evaluation_form.comments_required? }
-  validates :comment, length: { maximum: 3000 }, allow_nil: true
-  validates :comment_override, length: { maximum: 3000 },
+  validates :comment, presence: { message: I18n.t("form.errors.input", field_name: "comment") }, if: lambda {
+    evaluation.evaluation_form.comments_required?
+  }
+  validates :comment,
+            length: { maximum: 3000,
+                      message: I18n.t("form.errors.too_long", field_name: "Comment", max_length: 3000) },
+            allow_nil: true
+  validates :comment_override, length: { maximum: 3000, message: I18n.t("form.errors.too_long", field_name: "Comment",
+                                                                                                max_length: 3000) },
                                allow_nil: true
 
   validate :score_within_criterion_limits
@@ -92,13 +100,13 @@ class EvaluationScore < ApplicationRecord
     max_score = evaluation_criterion.points_or_weight
 
     if score && score > max_score
-      errors.add(:score, "must be less than or equal to #{max_score}")
+      errors.add(:score, I18n.t("form.errors.over_max", field_name: "Score", max: max_score))
     end
 
     # This is written differently than above because of rubocop
     return unless score_override && score_override > max_score
 
-    errors.add(:score_override, "must be less than or equal to #{max_score}")
+    errors.add(:score_override, I18n.t("form.errors.over_max", field_name: "Score", max: max_score))
   end
 
   def validate_range_score
