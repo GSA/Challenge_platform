@@ -73,11 +73,17 @@
         Add Evaluator
       <% end %>
     <% end %>
-
     <% if @evaluator_invitations.empty? && @existing_evaluators.empty? %>
-      <div class="text-normal margin-bottom-10">
-        <p>There currently are no evaluators available for this challenge phase. Please enter and add evaluators in the section above.</p>
-      </div>
+      <div class="usa-alert usa-alert--warning width-tablet margin-bottom-5">
+        <div class="usa-alert__body">
+            <h2 class="usa-alert__heading">
+              No Evaluators
+            </h2>
+            <p class="usa-alert__text font-body-2xs">
+              Currently you do not have any evaluators added to your evaluation panel for this challenge. Add evaluators using the form above.
+            </p>
+        </div>
+      </div>   
     <% else %>
       <div class="text-normal">
         <p>Review evaluators for this challenge phase and track their submissions assignments.</p>
@@ -158,11 +164,7 @@
           </tbody>
         </table>
       </div>
-    <% end %>
-    <%= render 'delete_evaluator_modal' %>
-  </div>
-</div>
-  <div class="usa-alert usa-alert--info width-tablet margin-bottom-5">
+    <div class="usa-alert usa-alert--info width-tablet margin-bottom-5">
     <div class="usa-alert__body">
         <h2 class="usa-alert__heading">
           Assign evaluators to submissions
@@ -171,6 +173,10 @@
             Evaluators will not be assigned to submissions until you do so for each submission.<br/>
             <%= link_to "View the list of submissions for this challenge and assign evaluators to the submissions.", submissions_phase_path(@phase), class: "margin-y-1"  %>
         </p>
-      </div>
-    </div> 
+    </div>
+    </div>   
+    <% end %>
+    <%= render 'delete_evaluator_modal' %>
   </div>
+</div>
+</div>
