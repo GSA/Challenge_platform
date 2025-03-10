@@ -1,6 +1,6 @@
 <h1><%= challenge_phase_title(@phase.challenge, @phase) %></h1>
-<p class="text-normal">View challenge submissions assigned to me and complete evaluations.</p>
-
+<h2 class="text-bold text-primary">Submissions Assigned to Me</h2>
+<%= form_success_notice(flash[:custom_success_heading], flash[:custom_success_description]) %>
 <% if @assigned_submissions.empty? %>
   <div class="text-normal">
     <p>This challenge phase does not currently have any submissions.</p>

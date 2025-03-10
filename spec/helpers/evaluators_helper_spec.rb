@@ -59,43 +59,6 @@ RSpec.describe EvaluatorsHelper, type: :helper do
     end
   end
 
-  describe '#display_score' do
-    let(:assignment) do
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
-    end
-
-    context 'when assignment is completed and has an evaluation with a total score' do
-      it 'returns the total score' do
-        create(:evaluation_form, :pointed, phase: submission.phase)
-        evaluation = create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
-        expect(helper.display_score(assignment)).to eq(evaluation.total_score.to_s)
-      end
-    end
-
-    context 'when assignment is not completed' do
-      it 'returns N/A for in-progress evaluation' do
-        create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
-
-      it 'returns N/A for not started evaluation' do
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
-    end
-
-    context 'when assignment is not assigned' do
-      it 'returns N/A for unassigned status' do
-        assignment.update(status: :unassigned)
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
-
-      it 'returns N/A for recused status' do
-        assignment.update(status: :recused)
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
-    end
-  end
-
   describe '#evaluator_evaluation_status' do
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge:) }

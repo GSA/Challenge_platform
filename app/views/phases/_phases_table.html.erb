@@ -1,4 +1,4 @@
-<table aria-label="List of Challenges" class="usa-table usa-table--stacked-header usa-table--borderless gray-header margin-bottom-10">
+<table aria-label="List of Challenges" class="usa-table usa-table--stacked-header usa-table--borderless challenge-table margin-bottom-10">
     <thead>
       <tr>
         <th scope="col">Challenge</th>
@@ -42,7 +42,7 @@
               <%= evaluator_count_or_invite_link(phase, current_user) %>
             </td>
             <td data-label="Evaluation Due Date" class="text-top">
-              <%= phase.evaluation_form&.closing_date %>
+              <%= phase.evaluation_form&.closing_date&.strftime("%m/%d/%Y") %>
             </td>
             <td data-label="Evaluation Status" class="text-top">
               <span class="text-top text-no-wrap usa-tag <%= evaluation_status_color(phase.evaluation_status) %>">

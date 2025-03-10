@@ -17,36 +17,27 @@ module EvaluationsHelper
     STATUS_COLORS[status]
   end
 
-  def display_score(assignment)
-    return 'N/A' unless assignment.evaluation_status == :completed
+  def assignment_display_score(assignment)
+    return '-' if assignment.evaluation_status != :completed || assignment.evaluation&.total_score.nil?
 
-    score = assignment.evaluation&.total_score
-    return 'N/A' if score.nil?
-
+    score = rounded_score(assignment.evaluation.total_score)
     maybe_percent = weighted_scoring?(@phase || assignment.phase) ? "%" : ""
+    maybe_revised = assignment.evaluation.revised? ? " (Revised)" : ""
 
-    assignment.evaluation.revised? ? "#{score}#{maybe_percent} (Revised)" : "#{score}#{maybe_percent}"
-  end
-
-  # individual evaluator score
-  def evaluator_score(assignment)
-    score = display_score(assignment)
-    return Score.new(0, "0", "N/A") if score == 'N/A'
-
-    Score.new(score, score.to_s, score)
+    "#{score}#{maybe_percent}#{maybe_revised}"
   end
 
   def average_score(submission)
     assigned_evaluations = submission.evaluator_submission_assignments.assigned
 
-    return Score.new(0, "0", "N/A") if assigned_evaluations.empty?
+    return Score.new(0, "-", "-") if assigned_evaluations.empty?
 
     completed_evaluations = submission.evaluations.
       where(evaluator_submission_assignment: assigned_evaluations).
       where.not(completed_at: nil)
 
     if completed_evaluations.count != assigned_evaluations.count
-      return Score.new(0, "0", "N/A")
+      return Score.new(0, "-", "-")
     end
 
     avg = completed_evaluations.average(:total_score)
@@ -115,16 +106,15 @@ module EvaluationsHelper
     counts.values.sum
   end
 
-  def evaluation_link(assignment)
+  def evaluation_form_path(assignment)
     evaluation = assignment.evaluation
 
-    link_path = if evaluation
-                  edit_evaluation_path(evaluation)
-                else
-                  new_submission_evaluation_path(assignment.submission)
-                end
+    evaluation ? edit_evaluation_path(evaluation) : new_submission_evaluation_path(assignment.submission)
+  end
 
-    link_to("Evaluate", link_path, class: "usa-button font-body-2xs width-full text-no-wrap")
+  def evaluation_link(assignment)
+    link_to("Evaluate", evaluation_form_path(assignment),
+            class: "usa-button usa-button--outline font-body-2xs width-full text-no-wrap")
   end
 
   def form_disabled?(evaluation)
@@ -133,5 +123,10 @@ module EvaluationsHelper
 
   def weighted_scoring?(phase)
     phase.evaluation_form&.weighted_scoring?
+  end
+
+  # display floats with no fractional part (ends in ".0") without the decimal
+  def rounded_score(score)
+    (score % 1).zero? ? score.to_i : score
   end
 end
