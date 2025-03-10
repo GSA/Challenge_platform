@@ -68,12 +68,12 @@
         <%= inline_error(form, :email) %>        
       </div>
 
-      <%= form.button type: 'submit', class: "usa-button margin-top-5 margin-bottom-3 padding-2" do %>
+      <%= form.button type: 'submit', class: "usa-button width-auto margin-y-3 padding-2" do %>
         <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
         Add Evaluator
       <% end %>
 
-      <input type="reset" value="Cancel" class="usa-button usa-button--unstyled"/>
+      <input type="reset" value="Cancel" class="usa-button usa-button--unstyled width-auto"/>
     <% end %>
     <% if @evaluator_invitations.empty? && @existing_evaluators.empty? %>
       <div class="usa-alert usa-alert--warning maxw-tablet margin-bottom-5">
