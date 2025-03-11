@@ -141,7 +141,7 @@ en:
       text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."
     recused_submission:
       heading: "Recused Evaluation"
-      text: "An evaluator recused themselves from evaluating one or more of this challenge submissions. Please review the list of submissions below and unassign the evaluator from the submission(s)."
+      text: "An evaluator recused themselves from evaluating one or more of the challenge submissions. Please review the list of submissions below and unassign the evaluator from the submission(s)."
     recused_evaluator_submission:
       heading: "Recused Evaluator"
       text: "This submission has a recused evaluator. Please unassign a recused evaluator."
