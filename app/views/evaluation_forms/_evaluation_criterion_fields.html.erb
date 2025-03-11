@@ -105,7 +105,7 @@
             <%= f.radio_button :scoring_type, value,
                 id: criteria_field_id(f, "scoring_type_#{value}", is_template),
                 name: criteria_field_name(f, :scoring_type, is_template),
-                class: "usa-radio__input scoring-type-radio",
+                class: "usa-radio__input usa-radio__input--tile scoring-type-radio",
                 checked: f.object.scoring_type == value,
                 disabled: is_template || form_disabled,
                 data: {
@@ -127,7 +127,9 @@
   </div>
 
   <div class="criteria-scale-options usa-form-group" style="<%= f.object.numeric? || !f.object.scoring_type.present? || is_template ? 'display: none;' : '' %>">
-    <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template), class: "text-bold" %>
+    <% scale_options_main_label = f.object.binary? ? "Binary Scale Options" : "Rating Scale Options" %>
+    <span class="text-bold scale-options-main-label"><%= scale_options_main_label %></span>
+    <span class="margin-right-05" style="color: darkred;">*</span>
 
     <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>">
       <%= f.hidden_field :option_range_start, 
@@ -204,7 +206,7 @@
   <% if !form_disabled %>
     <div class="margin-top-2">
       <%= button_tag type: "button", id: criteria_field_id(f, "delete_criteria", is_template), class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria", data: {"action": "modal#open", "modal-target-id": "remove-criteria"} do %>
-        Remove Criteria <%= f.options[:child_index] + 1 %>
+        <span>Remove Criteria <span class="criteria-number"><%= f.options[:child_index] + 1 %></span></span>
       <% end %>
     </div>
   <% end %>

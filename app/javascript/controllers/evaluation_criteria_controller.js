@@ -118,8 +118,10 @@ export default class extends Controller {
 
   updateCriteriaTitles() {
     this.visibleRows().forEach((row, index) => {
-      const numberElement = row.querySelector(".criteria-number");
-      numberElement.textContent = index + 1;
+      const criteriaNumberElements = row.querySelectorAll(".criteria-number");
+      criteriaNumberElements.forEach((element, _index) => {
+        element.textContent = index + 1;
+      });
     });
   }
 
@@ -145,16 +147,22 @@ export default class extends Controller {
 
     switch (scoringType) {
       case "binary":
+        this.setScaleOptionsMainLabel(row, "Binary Scale Options");
         this.showBinaryOptions(options);
         this.toggleOptionLabels(row, 0, 1);
         break;
       case "rating":
+        this.setScaleOptionsMainLabel(row, "Rating Scale Options");
         this.showRatingOptions(row, options);
         break;
       default:
         this.hideAllOptions(options);
         break;
     }
+  }
+
+  setScaleOptionsMainLabel(row, text) {
+    row.querySelector(".scale-options-main-label").textContent = text;
   }
 
   showBinaryOptions(options) {

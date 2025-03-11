@@ -48,7 +48,7 @@
           <div class="display-flex flex-row">
             <div class="usa-radio margin-right-205">
               <input
-                class="usa-radio__input"
+                class="usa-radio__input usa-radio__input--tile"
                 id="point_scale"
                 type="radio"
                 name="evaluation_form[scale_type]"
@@ -62,7 +62,7 @@
             </div>
             <div class="usa-radio">
               <input
-                class="usa-radio__input"
+                class="usa-radio__input usa-radio__input--tile"
                 id="weighted_scale"
                 type="radio"
                 name="evaluation_form[scale_type]"
@@ -81,12 +81,14 @@
           </div>
 
           <div class="display-flex flex-align-center text-bold margin-top-3">
-            <div class="usa-checkbox">
-              <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
-              <%= form.label :comments_required, "Require score comments (optional) ", class: "usa-checkbox__label text-bold" %>
+            <div class="usa-checkbox ">
+              <%= form.check_box :comments_required, class: "usa-checkbox__input usa-checkbox__input--tile", id: "evaluation_form_comments_required", disabled: disabled %>
+              <%= form.label :comments_required, class: "usa-checkbox__label" do %>
+                <span class="text-bold">Require score comments (optional)</span>
+                <span class="usa-checkbox__label-description">Check the box if the evaluators are required to provide comments on their scores.</span>
+              <% end %>
             </div>
           </div>
-          <p class="margin-left-4 margin-top-05 font-body-2xs width-mobile">Check the box if the evaluators are required to provide comments on their scores.</p>
         </fieldset>
       </div>
     </li>
