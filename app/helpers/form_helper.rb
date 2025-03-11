@@ -26,7 +26,7 @@ module FormHelper
     heading = content_tag(:h2, heading, class: "usa-alert__heading")
     description = content_tag(:p, description)
 
-    content_tag(:div, class: "usa-alert usa-alert--success margin-top-4", role: "alert") do
+    content_tag(:div, class: "usa-alert usa-alert--success margin-top-4 maxw-tablet", role: "alert") do
       content_tag(:div, class: "usa-alert__body") do
         heading + description
       end
@@ -38,7 +38,7 @@ module FormHelper
 
     errors = ordered_errors_for(form)
 
-    content_tag(:div, class: "usa-alert usa-alert--error margin-y-4", role: "alert") do
+    content_tag(:div, class: "usa-alert usa-alert--error margin-y-4 maxw-tablet", role: "alert") do
       content_tag(:div, class: "usa-alert__body") do
         form_errors_heading(form, errors) + form_errors_description(form) + form_errors_list(form, errors)
       end

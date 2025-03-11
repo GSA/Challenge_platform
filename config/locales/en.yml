@@ -121,6 +121,9 @@ en:
     alerts:
       unuathorized: "You are not authorized to access this evaluation."
       not_found: "Evaluation not found"
+    success:
+      heading: "Evaluation is revised"
+      description: "The submission evaluation scores and the average scores are updated."
     notices:
       submitted: "Revision submitted"
   form:
