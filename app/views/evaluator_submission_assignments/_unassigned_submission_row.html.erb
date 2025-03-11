@@ -1,12 +1,10 @@
-<tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user" class="unassigned-row-bg border-y-2px border-primary" style="height: 4rem;">
-  <td data-label="Submission ID" class="text-top text-bold unassigned-row-bg">
-    <div class="margin-bottom-1 mobile-lg:margin-bottom-3">
-      <%= link_to submission_path(assignment.submission), class: "text-primary" do %>
-        <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
-      <% end %>
-    </div>
+<tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user" class="unassigned-row-bg">
+  <td data-label="Submission ID" class="text-bold unassigned-row-bg">
+    <%= link_to submission_path(assignment.submission), class: "text-primary" do %>
+      <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
+    <% end %>
   </td>  
-  <td data-label="Evaluation status" class="unassigned-row-bg">
+  <td data-label="Evaluation Status" class="unassigned-row-bg">
     <span class="usa-tag padding-x-1 text-center width-15 <%= evaluation_status_color(assignment.evaluation_status) %>" 
           style="min-width: 120px; display: inline-block;">
       <% if assignment.evaluation_status.to_s == 'recused_unassigned' %>
@@ -16,7 +14,7 @@
       <% end %>
     </span>
   </td>  
-  <td data-label="Score" class="text-top text-light unassigned-row-bg">
+  <td data-label="Score" class="text-light unassigned-row-bg">
     <%= assignment_display_score(assignment) %>
   </td>
   <td data-label="" class="unassigned-row-bg">
