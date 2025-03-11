@@ -258,7 +258,6 @@ export default class extends Controller {
     this.element
       .querySelectorAll(".delete-criteria-button")
       .forEach((button) => {
-        console.log(button);
         button.classList.toggle("display-none", !show);
       });
   }
