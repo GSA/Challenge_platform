@@ -40,7 +40,7 @@ RSpec.describe "Evaluations" do
 
     context "when logged in as an evaluator" do
       before do
-        create_and_log_in_user(role: "evaluator")
+        create_and_log_in_user(role: "evaluator", status: "active")
         get "/evaluations"
       end
 
@@ -70,7 +70,7 @@ RSpec.describe "Evaluations" do
     end
 
     context "when logged in as an evaluator" do
-      let(:evaluator) { create_and_log_in_user(role: 'evaluator') }
+      let(:evaluator) { create_and_log_in_user(role: 'evaluator', status: 'active') }
 
       let(:challenge_with_submissions) do
         create(:challenge, title: "Challenge with Submissions", is_multi_phase: false)
@@ -164,10 +164,82 @@ RSpec.describe "Evaluations" do
         end
       end
     end
+
+    context "when evaluator status authorization" do
+      let(:challenge) { create(:challenge) }
+      let(:phase) { create(:phase, challenge: challenge) }
+      let(:submission) { create(:submission, phase: phase, challenge: challenge) }
+      let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+
+      context "when evaluator is pending" do
+        let(:pending_evaluator) { create(:user, role: 'evaluator', status: 'pending') }
+
+        before do
+          log_in_user(pending_evaluator)
+          ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: pending_evaluator)
+        end
+
+        it "cannot access evaluations index" do
+          get evaluations_path
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+
+        it "cannot access submissions page" do
+          get submissions_evaluation_path(phase)
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+
+        it "cannot access new evaluation page" do
+          get new_submission_evaluation_path(submission)
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+
+        it "cannot access edit evaluation page" do
+          evaluation = create(:evaluation, user: pending_evaluator, evaluation_form: evaluation_form)
+          get edit_evaluation_path(evaluation)
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+      end
+
+      context "when evaluator is active" do
+        let(:active_evaluator) { create(:user, role: 'evaluator', status: 'active') }
+        let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+        let!(:assignment) do
+          create(:evaluator_submission_assignment,
+                 submission: submission,
+                 evaluator: active_evaluator,
+                 status: :assigned)
+        end
+
+        before do
+          log_in_user(active_evaluator)
+          ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: active_evaluator)
+        end
+
+        it "can access evaluations index" do
+          get evaluations_path
+          expect(response).to have_http_status(:success)
+        end
+
+        it "can access submissions page" do
+          get submissions_evaluation_path(phase)
+          expect(response).to have_http_status(:success)
+        end
+
+        it "can access new evaluation page" do
+          get new_submission_evaluation_path(submission)
+          expect(response).to have_http_status(:success)
+        end
+      end
+    end
   end
 
   describe "GET /evaluations/:id/submissions" do
-    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:evaluator) { create(:user, role: 'evaluator', status: 'active') }
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge: challenge) }
     let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
@@ -243,7 +315,7 @@ RSpec.describe "Evaluations" do
     end
 
     context "when logged in as an evaluator not associated with the challenge phase" do
-      let(:unassociated_evaluator) { create(:user, role: 'evaluator') }
+      let(:unassociated_evaluator) { create(:user, role: 'evaluator', status: 'active') }
       let(:other_challenge) { create(:challenge) }
       let(:other_phase) { create(:phase, challenge: other_challenge) }
 
@@ -274,7 +346,7 @@ RSpec.describe "Evaluations" do
   end
 
   describe "GET /evaluations/:id/revision" do
-    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:evaluator) { create(:user, role: 'evaluator', status: 'active') }
     let(:challenge_manager) { create(:user, role: 'challenge_manager') }
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge: challenge) }
@@ -352,7 +424,7 @@ RSpec.describe "Evaluations" do
   # new_submission_evaluation_path
   describe "GET /evaluator_submission_assignments/:evaluator_submission_assignment_id/evaluations/new" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
       let(:challenge) { create(:challenge) }
       let(:phase) { create(:phase, challenge:) }
       let(:submission) { create(:submission, challenge:, phase:) }
@@ -412,7 +484,7 @@ RSpec.describe "Evaluations" do
   # evaluations_path
   describe "POST /evaluations" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
 
       before { log_in_user(current_user) }
 
@@ -473,7 +545,7 @@ RSpec.describe "Evaluations" do
 
   describe "POST /evaluations" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
 
       before { log_in_user(current_user) }
 
@@ -551,7 +623,7 @@ RSpec.describe "Evaluations" do
   # edit_evaluation_path
   describe "GET /evaluations/:id/edit" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
       let(:challenge) { create(:challenge) }
       let(:phase) { create(:phase, challenge:) }
       let(:submission) { create(:submission, challenge:, phase:) }
@@ -634,7 +706,7 @@ RSpec.describe "Evaluations" do
 
   describe "PATCH /evaluations/:id" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
 
       before { log_in_user(current_user) }
 
@@ -785,7 +857,7 @@ RSpec.describe "Evaluations" do
   # recuse on a new evaluation that has not been started
   describe "PATCH /submissions/:submission_id/evaluations/recuse" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
 
       before { log_in_user(current_user) }
 
