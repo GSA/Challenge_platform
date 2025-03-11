@@ -18,7 +18,7 @@
   %>
 
   <ol class="usa-process-list">
-    <li class="usa-process-list__item">
+    <li class="usa-process-list__item usa-process-list__item--primary">
       <h3 class="usa-process-list__heading">Evaluation Information</h3>
 
       <%= form.hidden_field :phase_id, value: @phase.id %>
@@ -41,14 +41,14 @@
       <div class="usa-form-group">
         <fieldset class="usa-fieldset margin-top-205">
           <legend class="usa-legend usa-process-list__heading display-flex flex-align-center font-sans-md text-bold <%= label_error_class(form, :scale_type) %>">
-            <span class="margin-right-05">Scale Type</span>
+            <span class="margin-right-05">Scoring Type</span>
             <span class="margin-right-05" style="color: darkred;">*</span>
           </legend>
 
-          <div class="display-flex flex-row">
-            <div class="usa-radio margin-right-205">
+          <div class="display-flex flex-column maxw-mobile-lg">
+            <div class="usa-radio">
               <input
-                class="usa-radio__input"
+                class="usa-radio__input usa-radio__input--tile"
                 id="point_scale"
                 type="radio"
                 name="evaluation_form[scale_type]"
@@ -58,11 +58,11 @@
                 <%= 'checked' if evaluation_form.point_scoring? %>
                 <%= 'disabled' if disabled %>
               >
-              <label class="usa-radio__label font-sans-xs" for="point_scale">Point Scale</label>
+              <label class="usa-radio__label font-sans-xs" for="point_scale">Points</label>
             </div>
             <div class="usa-radio">
               <input
-                class="usa-radio__input"
+                class="usa-radio__input usa-radio__input--tile"
                 id="weighted_scale"
                 type="radio"
                 name="evaluation_form[scale_type]"
@@ -72,7 +72,7 @@
                 <%= 'checked' if evaluation_form.weighted_scoring? %>
                 <%= 'disabled' if disabled %>
               >
-              <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weighted Scale (%)</label>
+              <label class="usa-radio__label font-sans-xs" for="weighted_scale">Weights (%)</label>
             </div>
           </div>
 
@@ -80,18 +80,20 @@
             <%= inline_error(form, :scale_type) %>
           </div>
 
-          <div class="display-flex flex-align-center text-bold margin-top-3">
-            <div class="usa-checkbox">
-              <%= form.check_box :comments_required, class: "usa-checkbox__input", id: "evaluation_form_comments_required", disabled: disabled %>
-              <%= form.label :comments_required, "Require score comments (optional) ", class: "usa-checkbox__label text-bold" %>
+          <div class="display-flex flex-align-center text-bold margin-top-3 maxw-mobile-lg">
+            <div class="usa-checkbox ">
+              <%= form.check_box :comments_required, class: "usa-checkbox__input usa-checkbox__input--tile", id: "evaluation_form_comments_required", disabled: disabled %>
+              <%= form.label :comments_required, class: "usa-checkbox__label" do %>
+                <span class="text-bold">Require score comments (optional)</span>
+                <span class="usa-checkbox__label-description">Check the box if the evaluators are required to provide comments on their scores.</span>
+              <% end %>
             </div>
           </div>
-          <p class="margin-left-4 margin-top-05 font-body-2xs width-mobile">Check the box if the evaluators are required to provide comments on their scores.</p>
         </fieldset>
       </div>
     </li>
 
-    <li class="usa-process-list__item">
+    <li class="usa-process-list__item usa-process-list__item--primary">
       <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
 
       <div data-controller="evaluation-criteria">
@@ -127,14 +129,14 @@
       </div>
     </li>
 
-    <li class="usa-process-list__item">
+    <li class="usa-process-list__item usa-process-list__item--primary">
       <h3 class="usa-process-list__heading">Evaluation Period</h3>
-      <div class="usa-label text-bold font-sans-sm">Evaluation Start Date:</div>
+      <div class="usa-label text-bold font-sans-sm">Evaluation Start Date</div>
       <div class="usa-hint"><%= @phase.end_date.strftime('%m/%d/%Y') %></div>
 
       <div class="usa-form-group">
         <div class="display-flex flex-align-center text-bold">
-          <%= form.label :closing_date, "Evaluation End Date:", class: "margin-right-05 #{label_error_class(form, :closing_date)}" %>
+          <%= form.label :closing_date, "Evaluation End Date", class: "margin-right-05 #{label_error_class(form, :closing_date)}" %>
           <span style="color: darkred;">*</span>
         </div>
         <div class="usa-hint" id="evaluation_form_closing_date_hint">mm/dd/yyyy</div>
