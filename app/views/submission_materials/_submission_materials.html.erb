@@ -1,32 +1,28 @@
-<h2>Brief Description:</h2>
+<h3>Title:</h3>
+<p class="text-normal"><%= @submission.title %></p>
+
+<h3>Brief Description:</h3>
 <p class="text-normal"><%= @submission.brief_description %></p>
 
-<h2>Description:</h2>
+<h3>Description:</h3>
 <p class="text-normal"><%= @submission.description %></p>
 
-<h2>Uploaded Files:</h2>
+<h3>Uploaded Files:</h3>
 <% @submission&.documents.each do |document| %>
     <p class="text-normal">
         <%= link_to document.display_name, document.external_url, target: "_blank", download:true %>
     </p>
 <% end %>    
 
-<h2>External URL:</h2>
+<h3>External URL:</h3>
 <% if @submission.external_url.present? %>
     <a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
 <% end %>
 
-<h2>Status:</h2>
-<p class="text-normal"><%= @submission.status.capitalize %></p>
+<h3>Submitter:</h3>
+<p class="text-normal">
+  <a href="mailto:<%= @submission.submitter.email %>"><%= @submission.submitter.email %></a>
+</p>
 
-<h2>Submitter:</h2>
-<p class="text-normal"><%= @submission.submitter.email %></p>
-
-<h2>Last Updated Date:</h2>
+<h3>Last Updated Date:</h3>
 <p class="text-normal"><%= @submission.updated_at %></p>
-
-<h2>Submission ID:</h2>
-<p class="text-normal"><%= @submission.id %></p>
-
-<h2>Title:</h2>
-<p class="text-normal"><%= @submission.title %></p>
