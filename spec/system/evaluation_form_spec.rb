@@ -112,6 +112,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       # Being on the last criteria hides the remove criteria button
       expect(visible_criterion_indicies.length).to eq(1)
+      expect(page).to have_no_css("button.delete-criteria-button")
       expect(page).to have_no_content("Remove Criteria")
       expect(visible_criterion_indicies).to include(2)
     end
@@ -465,6 +466,7 @@ def add_criterion
 end
 
 def remove_criterion(index)
+  expect(page).to have_css("button.delete-criteria-button")
   click_link_or_button "evaluation_form_evaluation_criteria_attributes_#{index}_delete_criteria"
 
   assert_selector 'dialog#remove-criteria', visible: true
