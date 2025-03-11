@@ -102,16 +102,18 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # Starts with 3
       expect(visible_criterion_indicies.length).to eq(3)
       toggle_criteria_accordion(0)
+      expect(page).to have_content("Remove Criteria 1")
       remove_criterion(0)
+
       expect(visible_criterion_indicies.length).to eq(2)
       toggle_criteria_accordion(1)
+      expect(page).to have_content("Remove Criteria 2")
       remove_criterion(1)
-      expect(visible_criterion_indicies.length).to eq(1)
 
-      # Removing last criteria creates a new blank one
-      remove_criterion(2)
+      # Being on the last criteria hides the remove criteria button
       expect(visible_criterion_indicies.length).to eq(1)
-      expect(visible_criterion_indicies).to include(3)
+      expect(page).to have_no_content("Remove Criteria")
+      expect(visible_criterion_indicies).to include(2)
     end
 
     it "shows an error if criteria points don't add up to 100 for weighted form" do
