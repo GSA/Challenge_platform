@@ -7,6 +7,7 @@ export default class extends Controller {
   connect() {
     // -1 to match the 0 indexed eval criteria elements
     this.counter = this.criteriaRowTargets.length - 1;
+    this.toggleRemoveCriteriaButtons();
   }
 
   addCriteria() {
@@ -21,6 +22,7 @@ export default class extends Controller {
 
     this.criteriaListTarget.appendChild(newCriteria);
 
+    this.toggleRemoveCriteriaButtons();
     this.updateCriteriaTitles();
   }
 
@@ -40,6 +42,7 @@ export default class extends Controller {
       return this.addCriteria();
     }
 
+    this.toggleRemoveCriteriaButtons();
     this.updateCriteriaTitles();
   }
 
@@ -248,5 +251,15 @@ export default class extends Controller {
     return Array.from(section.querySelectorAll("[required]")).every((field) =>
       field.reportValidity()
     );
+  }
+
+  toggleRemoveCriteriaButtons() {
+    let show = this.visibleRows().length > 1;
+    this.element
+      .querySelectorAll(".delete-criteria-button")
+      .forEach((button) => {
+        console.log(button);
+        button.classList.toggle("display-none", !show);
+      });
   }
 }
