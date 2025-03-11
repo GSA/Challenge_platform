@@ -42,7 +42,10 @@ RSpec.describe "Submission Materials", :js, type: :system do
 
   context "as an evaluator" do
     let(:user) { create(:user, :evaluator) }
-    let(:assignment) { create(:evaluator_submission_assignment, :assigned, evaluator: user) }
+    let(:challenge) { create(:challenge) }
+    let(:phase) { create(:phase, challenge: challenge) }
+    let(:submission) { create(:submission, phase: phase, challenge: challenge) }
+    let(:assignment) { create(:evaluator_submission_assignment, :assigned, submission:, evaluator: user) }
 
     before do
       system_login_user(user)
