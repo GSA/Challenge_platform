@@ -99,11 +99,11 @@ export default class extends Controller {
 
     // Reset all within the fieldset to bg-base
     allScoreValues.forEach((el) => el.classList.remove("bg-primary"));
-    allScoreValues.forEach((el) => el.classList.add("bg-base"));
+    allScoreValues.forEach((el) => el.classList.add("bg-base-dark"));
 
     // Set clicked one to bg-primary
     if (scoreValue) {
-      scoreValue.classList.remove("bg-base");
+      scoreValue.classList.remove("bg-base-dark");
       scoreValue.classList.add("bg-primary");
     }
   }

@@ -87,7 +87,7 @@ module EvaluationScoresHelper
 
   def selected_radio_bg_class(score_fields, value, opts)
     score = opts[:override] ? score_fields.object.score_override.to_s : score_fields.object.score.to_s
-    score == value.to_s && !opts[:disabled] ? "bg-primary" : "bg-base"
+    score == value.to_s && !opts[:disabled] ? "bg-primary" : "bg-base-dark"
   end
 
   def radio_button_tag(score_fields, value, opts)

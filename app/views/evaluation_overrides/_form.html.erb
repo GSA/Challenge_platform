@@ -132,14 +132,14 @@
           <div class="usa-form-group width-full margin-auto margin-top-0">
             <%= form.label :revision_comments, "Your Comments:", class: "#{label_error_class(form, :revision_comments)}" %>
 
-            <div class="usa-character-count">
+            <div class="usa-character-count usa-character-count--darker">
               <%= form.text_area :revision_comments,
                 maxlength: 3000,
                 rows: "7",
                 class: "usa-textarea usa-character-count__field #{input_error_class(form, :revision_comments)}",
                 disabled:
                 %>
-              <span class="usa-character-count__message"></span>
+              <span class="usa-character-count__message text-base"></span>
             </div>
 
             <%= inline_error(form, :revision_comments, rand) %>
