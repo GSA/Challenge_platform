@@ -129,6 +129,7 @@ class EvaluationsController < ApplicationController
 
   def authorize_active_evaluators
     return if current_user.status == 'active'
+
     redirect_to "/", alert: I18n.t("evaluator_pending_approval")
   end
 
