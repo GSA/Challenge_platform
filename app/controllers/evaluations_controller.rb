@@ -3,6 +3,7 @@
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
+  before_action :authorize_active_evaluators
   before_action :set_evaluation_and_submission_assignment, only: %i[create update]
 
   def index
@@ -124,6 +125,11 @@ class EvaluationsController < ApplicationController
   # Auth Helpers
   def can_access_evaluation?
     @evaluator_submission_assignment && @evaluator_submission_assignment.user_id == current_user.id
+  end
+
+  def authorize_active_evaluators
+    return if current_user.status == 'active'
+    redirect_to "/", alert: I18n.t("evaluator_pending_approval")
   end
 
   # Redirect Helpers
