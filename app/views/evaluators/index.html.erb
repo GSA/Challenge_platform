@@ -116,12 +116,18 @@
                 <td data-label="# of Assigned Submissions" class="text-top">
                   <% submissions_count = assigned_submissions_count(evaluator, @challenge, @phase) %>
                   <% if submissions_count > 0 %>
-                    <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id), class: '', style: 'white-space: nowrap;' do %>
-                      <%= submissions_count %> submissions
+                    <% if evaluator_available_for_assignment?(evaluator) %>
+                      <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id), class: '', style: 'white-space: nowrap;' do %>
+                        <%= submissions_count %> submissions
+                      <% end %>
+                    <% else %>
+                      <span style="white-space: nowrap;">
+                        <%= submissions_count %> submissions
+                      </span>
                     <% end %>
                   <% else %>
                     0 submissions
-                  <% end %>    
+                  <% end %>
                 </td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
