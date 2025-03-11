@@ -19,7 +19,7 @@
 
   <div class="usa-form-group margin-top-0">
     <div class="display-flex flex-align-center text-bold">
-      <%= f.label :title, "Criteria title", for: criteria_field_id(f, "title", is_template), class: "margin-right-05 #{label_error_class(f, :title)}" %>
+      <%= f.label :title, "Criteria Title", for: criteria_field_id(f, "title", is_template), class: "margin-right-05 #{label_error_class(f, :title)}" %>
       <span class="margin-right-05" style="color: darkred;">*</span>
     </div>
 
@@ -42,7 +42,7 @@
   <div class="usa-form-group">
     <div class="usa-character-count">
       <div class="display-flex flex-align-center text-bold">
-        <%= f.label :description, "Criteria description", for: criteria_field_id(f, "description", is_template), class: "margin-right-05 #{label_error_class(f, :description)}" %>
+        <%= f.label :description, "Criteria Description", for: criteria_field_id(f, "description", is_template), class: "margin-right-05 #{label_error_class(f, :description)}" %>
         <span class="margin-right-05" style="color: darkred;">*</span>
       </div>
 
@@ -94,18 +94,18 @@
   <div class="usa-form-group">
     <fieldset class="usa-fieldset margin-top-205">
       <legend class="usa-legend display-flex flex-align-center text-bold <%= label_error_class(f, :scoring_type) %>">
-        <span class="margin-right-05">Scoring type</span>
+        <span class="margin-right-05">Scale Type</span>
         <span class="margin-right-05" style="color: darkred;">*</span>
       </legend>
 
-      <% scoring_types = { "numeric" => "Numeric score / points", "rating" => "Rating scale", "binary" => "Binary scale" } %>
+      <% scoring_types = { "numeric" => "Numeric / Points", "rating" => "Rating Scale", "binary" => "Binary Scale" } %>
       <div>
         <% scoring_types.each_with_index do |(value, label), index| %>
-          <div class="usa-radio">
+          <div class="usa-radio maxw-mobile-lg">
             <%= f.radio_button :scoring_type, value,
                 id: criteria_field_id(f, "scoring_type_#{value}", is_template),
                 name: criteria_field_name(f, :scoring_type, is_template),
-                class: "usa-radio__input scoring-type-radio",
+                class: "usa-radio__input usa-radio__input--tile scoring-type-radio",
                 checked: f.object.scoring_type == value,
                 disabled: is_template || form_disabled,
                 data: {
@@ -127,7 +127,9 @@
   </div>
 
   <div class="criteria-scale-options usa-form-group" style="<%= f.object.numeric? || !f.object.scoring_type.present? || is_template ? 'display: none;' : '' %>">
-    <%= f.label :rating_scale_options, "Rating Scale Options", for: criteria_field_id(f, "rating_scale_options", is_template), class: "text-bold" %>
+    <% scale_options_main_label = f.object.binary? ? "Binary Scale Options" : "Rating Scale Options" %>
+    <span class="text-bold scale-options-main-label"><%= scale_options_main_label %></span>
+    <span class="margin-right-05" style="color: darkred;">*</span>
 
     <div class="criteria-binary-options" style="<%= f.object.binary? ? '' : 'display: none;'%>">
       <%= f.hidden_field :option_range_start, 
@@ -182,7 +184,7 @@
             <%= f.text_field "option_labels_#{index}",
               id: criteria_field_id(f, "option_labels", is_template) ++ "_#{index}",
               name: criteria_field_name(f, "option_labels", is_template) ++ "[#{index}]",
-              class: "usa-input margin-0 #{input_error_class(f, "option_labels_#{index}")}",
+              class: "usa-input margin-0 maxw-mobile-lg #{input_error_class(f, "option_labels_#{index}")}",
               value: f.object.option_labels[index.to_s],
               disabled: disabledOptionLabel || form_disabled,
               data: {
@@ -204,7 +206,7 @@
   <% if !form_disabled %>
     <div class="margin-top-2">
       <%= button_tag type: "button", id: criteria_field_id(f, "delete_criteria", is_template), class: "delete-criteria-button usa-button usa-button--unstyled", title: "Delete criteria", data: {"action": "modal#open", "modal-target-id": "remove-criteria"} do %>
-        Remove Criteria <%= f.options[:child_index] + 1 %>
+        <span>Remove Criteria <span class="criteria-number"><%= f.options[:child_index] + 1 %></span></span>
       <% end %>
     </div>
   <% end %>
