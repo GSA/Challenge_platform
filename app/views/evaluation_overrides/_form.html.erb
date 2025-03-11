@@ -1,21 +1,17 @@
 <div class="padding-bottom-4" data-controller="evaluator-recusal-modal">
-  <p><%= @evaluation.evaluation_form.instructions %></p>
+  <div class="usa-alert usa-alert--info margin-top-4 maxw-tablet" role="alert">
+    <div class="usa-alert__body">
+      <h2 class="usa-alert__heading">Need to revise Evaluator's scores?</h2>
+      <p>
+        You can revise evaluator's scores by selecting different scale options or entering different values for point scores in the form below
+      </p>
+    </div>
+  </div>
+
+  <h3 class="margin-y-4">Evaluation Form</h3>
 
   <%= form_with(model: @evaluation, url: revise_evaluation_path, data: { controller: "evaluation modal form-validation" }) do |form| %>
-    <% if @evaluation.errors.any? %>
-      <div style="color: darkred" class="margin-bottom-4">
-        <div class="usa-alert usa-alert--error" role="alert">
-          <div class="usa-alert__body">
-            <h2 class="usa-alert__heading"><%= pluralize(@evaluation.errors.count, "error") %> prohibited this evaluation from being saved:</h2>
-            <ul>
-              <% @evaluation.errors.each do |error| %>
-                <li><%= error.full_message %></li>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      </div>
-    <% end %>
+    <%= form_errors_alert(@evaluation) %>
 
     <% disabled = !@evaluation.revisable? %>
     <% maybe_percent = weighted_scoring?(@phase) ? "%" : "" %>
@@ -49,13 +45,13 @@
           </h2>
 
           <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible" data-evaluation-target="score">
-            <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
+            <div class="display-none flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Evaluator Score:</span>
               <span class="font-sans-xl text-bold" data-evaluation-target="evaluatorScore"><%= score_fields.object.calculated_score(score_fields.object.score) %></span>
               <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
             </div>
 
-            <div class="display-flex flex-align-center bg-primary-light padding-x-205 padding-y-1 text-base-lightest">
+            <div class="display-none flex-align-center bg-primary-light padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">Revised Score:</span>
               <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= display_revised_score(score_fields.object) %></span>
               <span class="font-sans-xl text-bold"><%= maybe_percent %></span>
@@ -64,20 +60,20 @@
             <p><%= "#{criterion.description} (#{criterion.points_or_weight} points)" %></p>
 
             <div class="usa-form-group">
-              <%= evaluation_score_input(score_fields, :score_override, criterion, rand, disabled) %>
+              <%= evaluation_score_input(score_fields, :score_override, criterion, rand, disabled:, override: true) %>
 
               <%= inline_error(score_fields, :score_override, rand) %>
             </div>
 
-            <div>
-              <p>Evaluator Feedback:</p>
+            <div class="margin-top-4">
+              <p class="margin-bottom-0">Evaluator's feedback:</p>
 
-              <%= score_fields.object.comment.presence || "N/A" %>
+              <div class="usa-textarea height-auto minh-15" style="background: #c9c9c9"><%= score_fields.object.comment %></textarea>
             </div>
 
             <div class="usa-form-group">
               <div class="display-flex flex-align-center">
-                <%= score_fields.label :comment_override, "Add your feedback to support your choice:", for: evaluation_score_id(score_fields, :comment_override, rand), class: "margin-right-05 #{label_error_class(score_fields, :comment_overrides)}" %>
+                <%= score_fields.label :comment_override, "Your feedback:", for: evaluation_score_id(score_fields, :comment_override, rand), class: "margin-right-05 #{label_error_class(score_fields, :comment_overrides)}" %>
               </div>
 
               <div class="usa-character-count">
@@ -100,57 +96,65 @@
       </div>
     <% end %>
 
-    <div class="bg-base padding-2 text-base-lightest">
-      <div class="display-flex flex-align-center flex-justify-center">
-        <span class="text-bold margin-right-1">Evaluator Score:</span>
-        <span class="font-sans-2xl text-bold total-score"><%= @evaluation.calculated_total_score(use_evaluator_scores: true) %></span>
-        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
-      </div>
+    <div class="display-flex gap-2 flex-column tablet:flex-row">
+      <div class="flex-1 bg-base-lightest margin-bottom-4 padding-2 tablet:margin-right-2">
+        <div class="display-flex flex-align-center">
+          <span class="font-sans-xl text-bold text-primary margin-right-1">Evaluator's score:</span>
+          <span class="font-sans-xl text-bold text-primary"><%= @evaluation.calculated_total_score(use_evaluator_scores: true) %></span>
+          <span class="font-sans-xl text-bold text-primary"><%= maybe_percent %></span>
+        </div>
 
-      <hr/>
+        <hr/>
 
-      <div class="display-flex flex-align-center flex-justify-center">
-        <div class="usa-form-group width-full margin-auto margin-top-0">
-          <%= form.label :additional_comments, "Evaluator Comments", class: "#{label_error_class(form, :additional_comments)}" %>
+        <div class="display-flex flex-align-center flex-justify-center">
+          <div class="usa-form-group width-full margin-auto margin-top-0">
+            <%= form.label :additional_comments, "Evaluator's Comments", class: "#{label_error_class(form, :additional_comments)}" %>
 
-          <%= form.text_area :additional_comments,
-            maxlength: 3000,
-            rows: "7",
-            class: "usa-textarea #{input_error_class(form, :additional_comments)}",
-            disabled: true %>
+            <%= form.text_area :additional_comments,
+              maxlength: 3000,
+              rows: "7",
+              class: "usa-textarea #{input_error_class(form, :additional_comments)}",
+              disabled: true %>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="bg-base-light margin-bottom-4 padding-2 text-base-lightest">
-      <div class="display-flex flex-align-center flex-justify-center">
-        <span class="text-bold margin-right-1">Revised Score:</span>
-        <span class="font-sans-2xl text-bold total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score %></span>
-        <span class="font-sans-2xl text-bold"><%= maybe_percent %></span>
-      </div>
+      <div class="flex-1 bg-base-lightest margin-bottom-4 padding-2">
+        <div class="display-flex flex-align-center">
+          <span class="font-sans-xl text-bold text-primary margin-right-1">Revised score:</span>
+          <span class="font-sans-xl text-bold text-primary total-score" data-evaluation-target="totalScore"><%= @evaluation.calculated_total_score %></span>
+          <span class="font-sans-xl text-bold text-primary"><%= maybe_percent %></span>
+        </div>
 
-      <hr/>
+        <hr/>
 
-      <div class="display-flex flex-align-center flex-justify-center">
-        <div class="usa-form-group width-full margin-auto margin-top-0">
-          <%= form.label :revision_comments, "Revision Supporting Comments", class: "#{label_error_class(form, :revision_comments)}" %>
+        <div class="display-flex flex-align-center flex-justify-center">
+          <div class="usa-form-group width-full margin-auto margin-top-0">
+            <%= form.label :revision_comments, "Your Comments:", class: "#{label_error_class(form, :revision_comments)}" %>
 
-          <%= form.text_area :revision_comments,
-            maxlength: 3000,
-            rows: "7",
-            class: "usa-textarea #{input_error_class(form, :revision_comments)}",
-            disabled:
-            %>
+            <div class="usa-character-count usa-character-count--darker">
+              <%= form.text_area :revision_comments,
+                maxlength: 3000,
+                rows: "7",
+                class: "usa-textarea usa-character-count__field #{input_error_class(form, :revision_comments)}",
+                disabled:
+                %>
+              <span class="usa-character-count__message text-base"></span>
+            </div>
 
-          <%= inline_error(form, :revision_comments, rand) %>
+            <%= inline_error(form, :revision_comments, rand) %>
+          </div>
         </div>
       </div>
     </div>
 
     <% if !disabled %>
-      <div class="display-flex flex-justify-center">
-        <%= link_to "Cancel", "#", class: "usa-button usa-button--outline", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
-        <%= form.button "Revise Evaluation", class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} %>
+      <div class="display-flex">
+        <%= form.button class: "usa-button", data: {"action": "modal#open", "modal-target-id": "revise"} do %>
+          <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "Revise evaluation check icon") %>
+          Revise Evaluation
+        <% end %>
+        <%= link_to "Cancel", "#", class: "usa-button usa-button--unstyled font-sans-3xs", data: {"action": "modal#open", "modal-target-id": "cancel"} %>
       </div>
     <% end %>
 
