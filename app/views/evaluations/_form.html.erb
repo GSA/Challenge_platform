@@ -1,7 +1,7 @@
 <div class="padding-bottom-4" data-controller="evaluator-recusal-modal">
   <%= render 'evaluator_recusal_notice' %>
 
-  <h2>Evaluation Form</h2>
+  <h3>Evaluation Form</h3>
   <p><%= @evaluation.evaluation_form.instructions %></p>
   <p>Required fields are marked with an asterisk (<span style="color: darkred;">*</span>).</p>
 
@@ -33,7 +33,7 @@
            data-option-range-end="<%= criterion.option_range_end %>">
 
         <div class="usa-accordion usa-accordion__multiselectable margin-bottom-4" data-allow-multiple>
-          <h2 class="usa-accordion__heading">
+          <h4 class="usa-accordion__heading">
             <button
               type="button"
               class="usa-accordion__button display-flex flex-justify"
@@ -42,10 +42,10 @@
             >
               <div><%= "#{criterion.title} " %></div>
             </button>
-          </h2>
+          </h4>
 
           <div id="<%= evaluation_score_id(score_fields, "accordion", rand) %>" class="usa-accordion__content padding-0 overflow-visible" data-evaluation-target="score">
-            <div class="display-flex flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
+            <div class="display-none flex-align-center bg-primary padding-x-205 padding-y-1 text-base-lightest">
               <span class="font-sans-sm margin-right-1 text-normal">My Score:</span>
               <span class="font-sans-xl text-bold calculated-score" data-evaluation-score-target="calculatedScore" data-evaluation-target="calculatedScore"><%= score_fields.object.calculated_score %></span>
               <span class="font-sans-xl text-bold"><%= maybe_percent %></span>

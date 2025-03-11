@@ -20,7 +20,7 @@ RSpec.describe "Submission Materials", :js, type: :system do
         visit materials_submission_path(submission)
 
         assert_current_path materials_submission_path(submission)
-        expect(page).to have_css('h1', text: "Submission ID #{submission.id}")
+        expect(page).to have_css('h2', text: "Submission ID #{submission.id}")
         expect(page).to(be_axe_clean)
       end
     end
@@ -62,7 +62,7 @@ RSpec.describe "Submission Materials", :js, type: :system do
         visit materials_submission_path(submission)
 
         assert_current_path materials_submission_path(submission)
-        expect(page).to have_css('h1', text: "Submission ID #{submission.id}")
+        expect(page).to have_css('h2', text: "Submission ID #{submission.id}")
         expect(page).to(be_axe_clean)
       end
     end
