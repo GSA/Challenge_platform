@@ -3,12 +3,7 @@
      data-unassign-evaluator-submission-modal-phase-id-value="<%= @phase.id %>" >
 
   <h1><%= challenge_phase_title(@challenge, @phase) %></h1>
-  <p>View submissions assigned to an evaluator.</p>
-
-  <h2 class="text-primary font-body-md padding-top-1">Evaluator: <%= "#{@evaluator.first_name} #{@evaluator.last_name}" %></h2>
-
-  <h3 class="font-body-lg">Assigned Submissions</h3>
-  <p><%= t('evaluator_submission_assignments.assigned_submissions') %></p>
+  <h2 class="text-primary padding-top-1 padding-bottom-2">Submissions Assigned to <%= @evaluator.full_name %> - <%= "#{@evaluator.email}" %></h2>
 
   <%= render 'shared/assignment_stats', heading: 'Assigned Submissions', show_all_stats: true %>
 
@@ -16,10 +11,18 @@
     <%= render 'shared/alert_error', alert_heading: t('alerts.recused_submission.heading'), alert_text: t('alerts.recused_submission.text') %>
   <% end %>
 
-  <% if @assigned_submissions.any? %>
+  <% if @assigned_submissions.any? || @unassigned_submissions.any? %>
     <%= render layout: 'submission_table' do %>
-      <% @assigned_submissions.each do |assignment| %>
-        <%= render 'submission_row', assignment: assignment, evaluator: @evaluator %>
+      <% if @assigned_submissions.any? %>
+        <% @assigned_submissions.each do |assignment| %>
+          <%= render 'submission_row', assignment: assignment, evaluator: @evaluator %>
+        <% end %>
+      <% end %>
+
+      <% if @unassigned_submissions.any? %>
+        <% @unassigned_submissions.each do |assignment| %>
+          <%= render 'unassigned_submission_row', assignment: assignment, evaluator: @evaluator, phase: @phase %>
+        <% end %>
       <% end %>
     <% end %>
   <% else %>
@@ -28,16 +31,19 @@
     </p>
   <% end %>
 
-  <% if @unassigned_submissions.any? %>
-    <h3 class="font-body-lg">Unassigned Submissions</h3>
-    <p><%= t('evaluator_submission_assignments.unassigned_submissions') %></p>
-
-    <%= render layout: 'submission_table' do %>
-      <% @unassigned_submissions.each do |assignment| %>
-        <%= render 'unassigned_submission_row', assignment: assignment, evaluator: @evaluator, phase: @phase %>
-      <% end %>
-    <% end %>
-  <% end %>
-
   <%= render 'unassign_evaluator_submission_modal' %>
+</div>
+
+<div class="maxw-tablet">
+  <div class="usa-alert usa-alert--info margin-bottom-10 margin-top-neg-4">
+    <div class="usa-alert__body">
+      <h2 class="usa-alert__heading">
+        <%= t('alerts.assign_more_evaluator.heading') %>
+      </h2>
+      <p class="usa-alert__text font-body-2xs">
+          <%= t('alerts.assign_more_evaluator.text') %> </br>
+          <%= link_to t('alerts.assign_more_evaluator.link'), submissions_phase_path(@phase), class: "margin-y-1 text-primary text-underline"  %>
+      </p>
+    </div>
+  </div>
 </div>
