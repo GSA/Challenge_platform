@@ -9,7 +9,7 @@
 
   <div class="usa-accordion margin-bottom-4">
     <% rand = SecureRandom.hex(8) %>
-    <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
+    <h4 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
       <button
         type="button"
         class="usa-accordion__button display-flex flex-justify"
@@ -18,7 +18,7 @@
       >
         <div>Assigned Evaluators</div>
       </button>
-    </h2>
+    </h4>
 
     <div class="usa-accordion__content overflow-hidden padding-left-0" id="<%= rand %>">
       <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
