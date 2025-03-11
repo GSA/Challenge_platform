@@ -49,11 +49,12 @@ RSpec.describe "Evaluations" do
       it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for an evaluator"
 
-      it "renders the index view with the correct header" do
+      it "renders the index view with the correct content" do
         get evaluations_path
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include("Evaluations")
+        expect(response.body).to include("Resources and support")
       end
     end
 
