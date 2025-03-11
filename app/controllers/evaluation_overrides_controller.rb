@@ -10,7 +10,10 @@ class EvaluationOverridesController < ApplicationController
 
   def update
     if @evaluation.revisable? && @evaluation.update(evaluation_params)
-      redirect_to @return_path, notice: I18n.t("evaluation_overrides.notices.submitted")
+      flash[:custom_success_heading] = I18n.t("evaluation_overrides.success.heading")
+      flash[:custom_success_description] = I18n.t("evaluation_overrides.success.description")
+
+      redirect_to @return_path
     else
       render :show, status: :unprocessable_entity
     end
