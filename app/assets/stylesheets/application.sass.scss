@@ -56,3 +56,18 @@ dialog::backdrop {
 .usa-character-count--darker .usa-hint {
   color: #565c65
 }
+
+.usa-process-list__item--primary::before {
+  height: 2.5rem;
+  border-radius: 99rem;
+  width: 2.5rem;
+  font-weight: 400;
+  font-feature-settings: "tnum" 1, "kern" 1;
+  color: #fff;
+  display: inline-block;
+  padding: calc((2.5rem - 2ex* 1.1)* .5);
+  text-align: center;
+  line-height: 1;
+  border: none;
+  background-color: #0076D6;
+}

@@ -18,7 +18,7 @@
   %>
 
   <ol class="usa-process-list">
-    <li class="usa-process-list__item">
+    <li class="usa-process-list__item usa-process-list__item--primary">
       <h3 class="usa-process-list__heading">Evaluation Information</h3>
 
       <%= form.hidden_field :phase_id, value: @phase.id %>
@@ -93,7 +93,7 @@
       </div>
     </li>
 
-    <li class="usa-process-list__item">
+    <li class="usa-process-list__item usa-process-list__item--primary">
       <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
 
       <div data-controller="evaluation-criteria">
@@ -129,7 +129,7 @@
       </div>
     </li>
 
-    <li class="usa-process-list__item">
+    <li class="usa-process-list__item usa-process-list__item--primary">
       <h3 class="usa-process-list__heading">Evaluation Period</h3>
       <div class="usa-label text-bold font-sans-sm">Evaluation Start Date:</div>
       <div class="usa-hint"><%= @phase.end_date.strftime('%m/%d/%Y') %></div>
