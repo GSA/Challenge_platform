@@ -10,7 +10,10 @@ class EvaluationOverridesController < ApplicationController
 
   def update
     if @evaluation.revisable? && @evaluation.update(evaluation_params)
-      redirect_to @return_path, notice: I18n.t("evaluation_overrides.notices.submitted")
+      flash[:custom_success_heading] = I18n.t("evaluation_overrides.success.heading")
+      flash[:custom_success_description] = I18n.t("evaluation_overrides.success.description")
+
+      redirect_to @return_path
     else
       render :show, status: :unprocessable_entity
     end
@@ -19,7 +22,8 @@ class EvaluationOverridesController < ApplicationController
   private
 
   def set_instance_variables
-    @evaluation = Evaluation.includes([evaluation_scores: :evaluation_criterion]).find_by(id: params[:id])
+    @evaluation = Evaluation.includes([evaluation_scores: [evaluation_criterion: :evaluation_form]]).
+      find_by(id: params[:id])
 
     return redirect_to dashboard_path, alert: I18n.t("evaluation_overrides.alerts.not_found") unless @evaluation
 

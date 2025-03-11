@@ -1,5 +1,8 @@
 <h1><%= challenge_phase_title(@submission.challenge, @submission.phase) %></h1>
 <h2 class="text-primary">Submission ID <%= @submission.id %></h2>
+<div class="margin-bottom-4">
+  <%= form_success_notice(flash[:custom_success_heading], flash[:custom_success_description]) %>
+</div>
 
 <%= render partial: "layouts/hotdog", locals: {
   name: 'Submission Materials',
