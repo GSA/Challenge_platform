@@ -13,7 +13,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     @evaluator_assignments = @phase.evaluator_submission_assignments.includes(:submission).where(user_id: @evaluator.id)
     @assigned_submissions = @evaluator_assignments.
       where(status: %i[assigned recused]).
-      includes(:evaluation).
+      includes([evaluation: :evaluation_scores]).
       ordered_by_status
     @unassigned_submissions = @evaluator_assignments.
       where(status: %i[unassigned recused_unassigned]).
