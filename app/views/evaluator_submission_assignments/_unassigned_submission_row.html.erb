@@ -5,12 +5,11 @@
     <% end %>
   </td>  
   <td data-label="Evaluation Status" class="unassigned-row-bg">
-    <span class="usa-tag padding-x-1 text-center width-15 <%= evaluation_status_color(assignment.evaluation_status) %>" 
-          style="min-width: 120px; display: inline-block;">
+    <span class="usa-tag padding-x-1 text-center minw-15 display-inline-block <%= evaluation_status_color(assignment.evaluation_status) %>">
       <% if assignment.evaluation_status.to_s == 'recused_unassigned' %>
         Recused
       <% else %>
-        <%= assignment.evaluation_status.to_s.titleize %>
+        <%= assignment.evaluation_status.to_s %>
       <% end %>
     </span>
   </td>  

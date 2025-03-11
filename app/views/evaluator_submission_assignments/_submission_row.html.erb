@@ -5,8 +5,8 @@
     <% end %>
   </td>
   <td data-label="Evaluation Status">
-    <span class="usa-tag padding-x-1 text-center width-15 <%= evaluation_status_color(assignment.evaluation_status) %>" style="min-width: 120px; display: inline-block;">
-      <%= assignment.evaluation_status.to_s.titleize %>
+    <span class="usa-tag padding-x-1 text-center minw-15 display-inline-block <%= evaluation_status_color(assignment.evaluation_status) %>">
+      <%= assignment.evaluation_status.to_s %>
     </span>
   </td>
   <td data-label="Score" class="text-normal">
