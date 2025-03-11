@@ -20,7 +20,9 @@
 <% end %>
 
 <h3>Submitter:</h3>
-<p class="text-normal"><%= @submission.submitter.email %></p>
+<p class="text-normal">
+  <a href="mailto:<%= @submission.submitter.email %>"><%= @submission.submitter.email %></a>
+</p>
 
 <h3>Last Updated Date:</h3>
 <p class="text-normal"><%= @submission.updated_at %></p>
