@@ -50,7 +50,7 @@ RSpec.describe EvaluatorSubmissionAssignmentsController, type: :request do
       get phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
       expect(response).to have_http_status(:success)
       expect(response.body).to have_css("td[data-label='Evaluation Status'] span.usa-tag.bg-success-dark",
-                                        text: "Completed")
+                                        text: "completed")
       expect(response.body).to have_css("a[href='/evaluations/#{evaluation.id}/revision']", text: "View Evaluation")
     end
 
