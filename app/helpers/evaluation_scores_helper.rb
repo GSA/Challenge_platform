@@ -42,11 +42,10 @@ module EvaluationScoresHelper
       concat(score_fields.label(field,
                                 I18n.t("evaluation_scores.instruction_text_numeric", min:, max:),
                                 for: id, class: label_error_class(score_fields, :score)))
-      concat(content_tag(:p, "Evaluator's score", class: "text-base margin-bottom-0")) if opts[:override]
       if opts[:override]
-        concat(score_fields.number_field(
-                 :score, class: "usa-input width-10", disabled: true
-               ))
+        concat(content_tag(:p, "Evaluator's score", class: "text-base margin-bottom-0"))
+        concat(content_tag(:div, score_fields.object.score, class: "usa-input width-10 bg-base-light",
+                                                            style: "background: #c9c9c9"))
       end
       concat(content_tag(:p, "Revised score", class: "margin-bottom-0")) if opts[:override]
       concat(score_fields.number_field(
