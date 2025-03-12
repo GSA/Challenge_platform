@@ -63,13 +63,36 @@ export default class extends Controller {
 
     window.location.href = `${window.location.pathname}?${queryParams}`
   }
-  
-  clearAllFilters(event) {
-    if (event) {
-      event.preventDefault()
+
+  clearAllFilters(e) {
+    if (e) {
+      e.preventDefault();
     }
     
-    window.location.href = window.location.pathname
+    if (this.hasSubmissionIdSearchTarget) {
+      this.submissionIdSearchTarget.value = "";
+      this.searchTerm = "";
+    }
+    
+    this.filterOptionTargets.forEach((radio) => {
+      radio.checked = false;
+    });
+
+    window.history.pushState({}, '', window.location.pathname);
+
+    fetch(`${window.location.pathname}?partial=true`, {
+      headers: {
+        'Accept': 'text/html',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.text())
+    .then(html => {
+      const tableBody = document.querySelector('[data-load-more-target="container"]');
+      if (tableBody) {
+        tableBody.innerHTML = html;
+      }
+    });
   }
 
   close() {
