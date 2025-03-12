@@ -106,9 +106,13 @@
             <% @existing_evaluators.each do |evaluator| %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                 <th scope="row" data-label="Name" class="text-top">
-                    <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id) do %>
-                      <%= evaluator.full_name %>
-                    <% end %>  
+                <% if evaluator_available_for_assignment?(evaluator) %>
+                  <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id) do %>
+                    <%= evaluator.full_name %>
+                  <% end %>
+                <% else %>
+                  <%= evaluator.full_name %>
+                <% end %>
                 </th>
                 <td data-label="Email Address" class="text-top"><%= evaluator.email %></td>
                 <td data-label="User Role" class="text-top"><%= evaluator.role.titleize %></td>
@@ -116,12 +120,18 @@
                 <td data-label="# of Assigned Submissions" class="text-top">
                   <% submissions_count = assigned_submissions_count(evaluator, @challenge, @phase) %>
                   <% if submissions_count > 0 %>
-                    <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id), class: '', style: 'white-space: nowrap;' do %>
-                      <%= submissions_count %> submissions
+                    <% if evaluator_available_for_assignment?(evaluator) %>
+                      <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id), class: '', style: 'white-space: nowrap;' do %>
+                        <%= submissions_count %> submissions
+                      <% end %>
+                    <% else %>
+                      <span style="white-space: nowrap;">
+                        <%= submissions_count %> submissions
+                      </span>
                     <% end %>
                   <% else %>
                     0 submissions
-                  <% end %>    
+                  <% end %>
                 </td>
                 <td data-label="">
                   <div class="display-flex flex-no-wrap grid-row">
@@ -166,7 +176,7 @@
           </tbody>
         </table>
       </div>
-      <div class="usa-alert usa-alert--info width-tablet margin-bottom-5">
+      <div class="usa-alert usa-alert--info maxw-tablet margin-bottom-5">
         <div class="usa-alert__body">
           <h2 class="usa-alert__heading">
             Assign evaluators to submissions

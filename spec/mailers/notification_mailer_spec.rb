@@ -66,7 +66,7 @@ RSpec.describe NotificationMailer, type: :mailer do
   end
 
   describe "#evaluation_assignment" do
-    let(:evaluator) { create(:user, role: "evaluator") }
+    let(:evaluator) { create(:user, role: "evaluator", status: "active") }
     let(:submission) { create(:submission, challenge: challenge, phase: phase) }
     let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned) }
     let(:mail) { described_class.evaluation_assignment(assignment) }
@@ -105,7 +105,7 @@ RSpec.describe NotificationMailer, type: :mailer do
   end
 
   describe "#recusal" do
-    let(:evaluator) { create(:user, role: "evaluator") }
+    let(:evaluator) { create(:user, role: "evaluator", status: "active") }
     let(:submission) { create(:submission, challenge: challenge, phase: phase) }
     let(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :recused) }
     let(:mail) { described_class.recusal(assignment) }

@@ -47,7 +47,7 @@ RSpec.describe "SubmissionMaterialsController" do
 
   context "when logged in as an evaluator" do
     let(:user) do
-      create_and_log_in_user(role: "evaluator")
+      create_and_log_in_user(role: "evaluator", status: "active")
     end
 
     context "with a gov email" do
