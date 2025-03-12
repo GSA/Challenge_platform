@@ -1,12 +1,4 @@
 <div data-controller="unassign-evaluator-submission-modal">
-  <% if @submission.evaluator_submission_assignments.recused.exists? %>
-    <div class="margin-bottom-2">
-      <%= render 'shared/alert_error', 
-          alert_heading: t('alerts.recused_evaluator.heading'), 
-          alert_text: t('alerts.recused_evaluator_submission.text') %>
-    </div>
-  <% end %>
-
   <div class="usa-accordion margin-bottom-4">
     <% rand = SecureRandom.hex(8) %>
     <h4 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
@@ -21,6 +13,14 @@
     </h4>
 
     <div class="usa-accordion__content overflow-hidden padding-left-0" id="<%= rand %>">
+      <% if @submission.evaluator_submission_assignments.recused.exists? %>
+        <div class="margin-bottom-2">
+          <%= render 'shared/alert_error', 
+              alert_heading: t('alerts.recused_evaluator.heading'), 
+              alert_text: t('alerts.recused_evaluator_submission.text') %>
+        </div>
+      <% end %>
+
       <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
       <% if assigned_evaluators.any? %>
         <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless challenge-table width-full">
@@ -37,12 +37,6 @@
               <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                 <th scope="row" data-label="Evaluator name" class="text-top">
-                  <% if assignment.status == "recused" %>
-                    <%= image_tag('images/usa-icons/error.svg', 
-                        class: "usa-icon--size-3", 
-                        alt: "Recused", 
-                        style: "vertical-align: middle; margin-right: 5px;") %>
-                  <% end %>
                   <span class="text-bold text-ls-1 line-height-sans-4">
                     <%= link_to phase_evaluator_submission_assignments_path(@submission.phase, evaluator_id: evaluator.id) do %>
                       <%= "#{evaluator.first_name} #{evaluator.last_name}" %>
