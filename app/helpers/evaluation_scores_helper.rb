@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 # View helpers for evaluation score form inputs
-
-# rubocop:disable Metrics/ModuleLength
 module EvaluationScoresHelper
   def evaluation_score_id(_form, attribute, identifier)
     prefix = "evaluation_evaluation_scores_attributes"
@@ -132,4 +130,3 @@ module EvaluationScoresHelper
     weighted_scoring ? "#{formatted_score}%" : formatted_score
   end
 end
-# rubocop:enable Metrics/ModuleLength

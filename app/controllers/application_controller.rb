@@ -32,6 +32,13 @@ class ApplicationController < ActionController::Base
     redirect_to_landing_page(alert: I18n.t("access_denied"))
   end
 
+  # All evaluators must be active to pass this authorization
+  def authorize_active_evaluators
+    return unless current_user.role == 'evaluator' && current_user.status != 'active'
+
+    redirect_to "/", alert: I18n.t("evaluator_pending_approval")
+  end
+
   def check_gov_access
     return unless current_user.non_gov_restricted?
 

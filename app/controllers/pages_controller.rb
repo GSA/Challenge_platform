@@ -32,7 +32,11 @@ class PagesController < ApplicationController
   def root
     path = "#{HOST}#{BASE_URL}/"
     response = Faraday.get(path)
-    body = rewrite_links(response.body)
+    body = render_flash_message(
+      rewrite_links(
+        response.body
+      )
+    )
     render body:, content_type: response.headers["Content-Type"], status: response.status
   end
 
@@ -61,5 +65,13 @@ class PagesController < ApplicationController
     # rubocop:disable Rails/OutputSafety
     parsed_html.html_safe
     # rubocop:enable Rails/OutputSafety
+  end
+
+  def render_flash_message(html)
+    main_index = html.index('<main id="main-content">')
+    return html if flash.empty? || main_index.nil?
+
+    flash_message = render_to_string(partial: "shared/flash")
+    html.insert(main_index, flash_message)
   end
 end

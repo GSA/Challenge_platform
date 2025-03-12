@@ -52,18 +52,18 @@ RSpec.describe EvaluatorInvitation, type: :model do
   it "requires a first name" do
     invitation = build(:evaluator_invitation, first_name: nil)
     expect(invitation).not_to be_valid
-    expect(invitation.errors[:first_name]).to include("can't be blank")
+    expect(invitation.errors[:full_name]).to include("Please provide evaluator's full name")
   end
 
   it "requires a last name" do
     invitation = build(:evaluator_invitation, last_name: nil)
     expect(invitation).not_to be_valid
-    expect(invitation.errors[:last_name]).to include("can't be blank")
+    expect(invitation.errors[:full_name]).to include("Please provide evaluator's full name")
   end
 
   it "requires a valid email" do
     invitation = build(:evaluator_invitation, email: "invalid_email")
     expect(invitation).not_to be_valid
-    expect(invitation.errors[:email]).to include("is invalid")
+    expect(invitation.errors[:email]).to include("Please provide evaluator's valid email address")
   end
 end

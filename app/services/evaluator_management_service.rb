@@ -51,11 +51,10 @@ class EvaluatorManagementService
       )
       { success: true }
     else
-      name_errors = temp_invitation.errors.messages.slice(:first_name, :last_name)
-      first_error_field, first_error_message = name_errors.first
+      full_name_error = temp_invitation.errors.messages.slice(:full_name)
       { success: false,
-        message: "#{first_error_field.to_s.humanize} #{first_error_message.first}",
-        errors: name_errors }
+        message: full_name_error[:full_name]&.first,
+        errors: full_name_error }
     end
   end
 

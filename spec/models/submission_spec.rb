@@ -114,7 +114,7 @@ RSpec.describe Submission, type: :model do
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge:) }
     let(:evaluator) do
-      evaluator = create(:user, role: "evaluator")
+      evaluator = create(:user, role: "evaluator", status: "active")
       evaluator.challenge_phases_evaluators.create(challenge:, phase:)
       evaluator
     end

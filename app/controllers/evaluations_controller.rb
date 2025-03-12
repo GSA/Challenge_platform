@@ -3,6 +3,7 @@
 # Controller for evaluations CRUD actions.
 class EvaluationsController < ApplicationController
   before_action -> { authorize_user('evaluator') }
+  before_action -> { authorize_active_evaluators }
   before_action :set_evaluation_and_submission_assignment, only: %i[create update]
 
   def index

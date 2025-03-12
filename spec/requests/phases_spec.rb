@@ -61,7 +61,7 @@ RSpec.describe "Phases" do
 
     context "when logged in as an evaluator" do
       before do
-        create_and_log_in_user(role: "evaluator")
+        create_and_log_in_user(role: "evaluator", status: "active")
       end
 
       it "redirects to the evaluator landing page" do
