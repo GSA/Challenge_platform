@@ -41,7 +41,7 @@ RSpec.describe EvaluatorManagementService do
       it 'requires full name when adding an existing user' do
         result = service.process_evaluator_invitation(evaluator.email, { email: evaluator.email, full_name: 'Santos' })
         expect(result[:success]).to be false
-        expect(result[:message]).to eq("Last name can't be blank")
+        expect(result[:message]).to eq("Please provide evaluator's full name")
       end
 
       it 'updates user name when adding as evaluator' do
