@@ -1,4 +1,3 @@
-<h3>Submission Evaluation</h3>
 <% if @submission.phase.evaluation_form.nil? %>
   <%= render 'shared/alert_error', alert_heading: t('alerts.no_evaluation_form.heading'), alert_text: t('alerts.no_evaluation_form.text') %>
 <% else %>

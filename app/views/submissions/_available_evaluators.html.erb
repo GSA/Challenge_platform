@@ -60,24 +60,33 @@
           <% end %>
         </tbody>
       </table>
+    <% end %>
+
+    <% if !@submission.phase.challenge_phases_evaluators.any? %>
+      <div class="usa-alert usa-alert--info maxw-tablet">
+        <div class="usa-alert__body">
+          <h3 class="usa-alert__heading">
+            Need more evaluators?
+          </h3>
+          <p class="usa-alert__text font-body-2xs">
+            <%= link_to "Manage your existing evaluation panel and invite additional evaluators.", phase_evaluators_path(@submission.phase), class: "margin-y-1"  %>
+          </p>
+        </div>
+      </div> 
     <% else %>
       <div class="usa-alert usa-alert--warning maxw-tablet">
         <div class="usa-alert__body">
+          <h3 class="usa-alert__heading">
+            No Evaluation Panel
+          </h3>
           <p class="usa-alert__text font-body-2xs">
-            There are no evaluators available for this submission. Please visit Evaluation Panel section to manage your list of available evaluators.
+            You have not yet created an evaluation panel for this challenge. 
+            <%= link_to "Create an evaluation panel and invite evaluators to start an evaluation process.", phase_evaluators_path(@submission.phase) %> 
           </p>
         </div>
       </div>
     <% end %>
-    <div class="usa-alert usa-alert--info maxw-tablet">
-      <div class="usa-alert__body">
-        <h3 class="usa-alert__heading">
-          Need more evaluators?
-        </h3>
-        <p class="usa-alert__text font-body-2xs">
-            <%= link_to "Manage your existing evaluation panel and invite additional evaluators.", phase_evaluators_path(@submission.phase), class: "margin-y-1"  %>
-        </p>
-      </div>
-    </div> 
   </div>
 </div>
+
+
