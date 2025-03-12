@@ -67,4 +67,44 @@ export default class extends Controller {
       errorElement.innerHTML = message;
     }
   }
+  
+  clearForm(e) {
+    e.preventDefault();
+    const form = e.target.closest('form');
+
+    form.reset();
+    
+    form.querySelectorAll('input[type="text"], input[type="email"]').forEach(input => {
+      input.value = '';
+    });
+    
+    this.clearAllErrors(form);
+  }
+  
+  clearAllErrors(form) {
+    const errorAlert = form.querySelector('.usa-alert--error');
+    if (errorAlert) {
+      errorAlert.remove();
+    }
+  
+    const formGroups = form.querySelectorAll('.usa-form-group');
+    formGroups.forEach(group => {
+      const input = group.querySelector('input, textarea, select');
+      if (input) {
+        input.className = input.className.replace(/usa-input--error/g, '');
+        
+        const label = this.findLabel(input, group);
+        if (label) {
+          label.className = label.className.replace(/usa-label--error/g, '');
+        }
+        
+        this.removeErrorClasses(input, label);
+  
+        const errorSpan = group.querySelector('[id$="_error"]');
+        if (errorSpan) {
+          errorSpan.textContent = '';
+        }
+      }
+    });
+  }
 }
