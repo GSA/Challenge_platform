@@ -109,7 +109,7 @@
           <tbody>
             <% @existing_evaluators.each do |evaluator| %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
-                <th scope="row" data-label="Name" class="text-top">
+                <th scope="row" data-label="Name">
                 <% if evaluator_available_for_assignment?(evaluator) %>
                   <%= link_to phase_evaluator_submission_assignments_path(@phase, evaluator_id: evaluator.id) do %>
                     <%= evaluator.full_name %>
@@ -118,10 +118,10 @@
                   <%= evaluator.full_name %>
                 <% end %>
                 </th>
-                <td data-label="Email Address" class="text-top"><%= evaluator.email %></td>
-                <td data-label="User Role" class="text-top"><%= evaluator.role.titleize %></td>
-                <td data-label="User Status" class="text-top"><%= user_status(evaluator) %></td>
-                <td data-label="# of Assigned Submissions" class="text-top">
+                <td data-label="Email Address"><%= evaluator.email %></td>
+                <td data-label="User Role"><%= evaluator.role.titleize %></td>
+                <td data-label="User Status"><%= user_status(evaluator) %></td>
+                <td data-label="# of Assigned Submissions">
                   <% submissions_count = assigned_submissions_count(evaluator, @challenge, @phase) %>
                   <% if submissions_count > 0 %>
                     <% if evaluator_available_for_assignment?(evaluator) %>
@@ -152,20 +152,20 @@
             <% end %>
             <% @challenge.evaluator_invitations.where(phase: @phase).each do |invitation| %>
               <tr data-evaluator-id="<%= invitation.id %>" data-evaluator-type="invitation">
-                <th scope="row" data-label="Evaluator name" class="text-top">
+                <th scope="row" data-label="Evaluator name">
                   <span class="text-ls-1 line-height-sans-4"><%= invitation.full_name %></span>
                 </th>
-                <td data-label="Email Address" class="text-top"><%= invitation.email %></td>
-                <td data-label="User Role" class="text-top">Evaluator</td>
-                <td data-label="User Status" class="text-top">
-                  <div class="display-flex flex-row flex-justify">
-                    <span>Invite Sent</span>
-                    <%= button_to resend_invite_phase_evaluator_path(@phase, invitation), method: :post, class: 'usa-button usa-button--unstyled margin-left-2', style: 'white-space: nowrap;', form: { class: 'display-inline' } do %>
+                <td data-label="Email Address"><%= invitation.email %></td>
+                <td data-label="User Role">Evaluator</td>
+                <td data-label="User Status">
+                  <div>
+                    <span>Invite Sent</span> -
+                    <%= button_to resend_invite_phase_evaluator_path(@phase, invitation), method: :post, class: 'usa-button usa-button--unstyled', form: {class: "display-inline-block"} do %>
                       <span class="text-primary">Resend</span>
                     <% end %>
                   </div>
                 </td>
-                <td data-label="# of Assigned Submissions" class="text-top">0 submissions</td>
+                <td data-label="# of Assigned Submissions">0 submissions</td>
                 <td data-label="">
                 <%= button_tag "Delete", type: 'button', class: 'usa-button usa-button--outline font-body-3xs', data: { 
                   action: "click->delete-evaluator-modal#open",
