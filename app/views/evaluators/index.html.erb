@@ -22,16 +22,11 @@
                 <%= pluralize(form.object.errors.count, "error") %> prohibited this evaluator from being added:
               </h3>
               <ul>
-                <% if form.object.errors[:first_name].present? || form.object.errors[:last_name].present? %>
+                <% if form.object.errors[:full_name].present? %>
                   <li><%= t('evaluators.error.full_name') %></li>
                 <% end %>
                 <% if form.object.errors[:email].present? %>
                   <li><%= t('evaluators.error.email_address') %></li>
-                <% end %>
-                <% form.object.errors.each do |error| %>
-                  <% unless [:first_name, :last_name, :email].include?(error.attribute) %>
-                    <li><%= error.full_message %></li>
-                  <% end %>
                 <% end %>
               </ul>
             </div>
@@ -41,12 +36,12 @@
 
       <div class="usa-form-group">
         <div class="display-flex flex-align-center text-bold">
-          <%= form.label :full_name, class: "usa-label font-sans-md #{label_error_class(form, [:first_name, :last_name])}" do %>
+          <%= form.label :full_name, class: "usa-label font-sans-md #{label_error_class(form, [:full_name])}" do %>
             <span class="text-bold">Full Name</span><span class="text-red">*</span>
           <% end %>
         </div>
         <%= form.text_field :full_name, 
-          class: "usa-input #{input_error_class(form, [:first_name, :last_name])}", 
+          class: "usa-input #{input_error_class(form, [:full_name])}",
           required: true,
           autocomplete: "name",
           style: "border: 1.5px solid #565c65;",
@@ -55,7 +50,7 @@
             "field-label": "full name"
           }
         %>
-        <%= inline_error(form, :last_name) %>
+        <%= inline_error(form, :full_name) %>
       </div>
 
       <div class="usa-form-group">
@@ -158,7 +153,7 @@
             <% @challenge.evaluator_invitations.where(phase: @phase).each do |invitation| %>
               <tr data-evaluator-id="<%= invitation.id %>" data-evaluator-type="invitation">
                 <th scope="row" data-label="Evaluator name" class="text-top">
-                  <span class="text-bold text-ls-1 line-height-sans-4"><%= "#{invitation.first_name} #{invitation.last_name}" %></span>
+                  <span class="text-ls-1 line-height-sans-4"><%= invitation.full_name %></span>
                 </th>
                 <td data-label="Email Address" class="text-top"><%= invitation.email %></td>
                 <td data-label="User Role" class="text-top">Evaluator</td>

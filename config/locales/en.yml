@@ -76,8 +76,8 @@ en:
       success: "Invitation resent successfully."
       failure: "Failed to resend invitation."
     error:
-      full_name: "Please provide evaluator's full name"
-      email_address: "Please provide evaluator's valid email address"
+      full_name: "Please provide full name"
+      email_address: "Please provide valid email address"
   evaluation_criteria_form_title_placeholder: "Add criteria title here"
   evaluator_submission_assignments:
     empty_state: "There currently are no assigned submissions to this evaluator. Please assign submissions to this evaluator to view."
