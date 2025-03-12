@@ -55,7 +55,7 @@ describe "A11y", :js do
 
     it "saves comments" do
       visit submission_path(submission)
-      fill_in "Comments and notes:", with: fake_comments
+      fill_in "Notes:", with: fake_comments
       click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       assert_text(fake_comments)
@@ -101,7 +101,7 @@ describe "A11y", :js do
       find_by_id('eligible-for-evaluation').click
       click_on('Save')
 
-      expect(page).to have_content("You currently do not have any evaluators assigned to this submission.")
+      expect(page).to have_content("This submission does not have any assigned evaluators. Please use the Available Evaluators section above to assign evaluators.")
 
       click_on('Assign')
       expect(page).to have_css("p.usa-alert__text", text: "Evaluator assigned successfully")
