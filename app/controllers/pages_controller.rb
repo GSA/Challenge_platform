@@ -72,6 +72,6 @@ class PagesController < ApplicationController
     return html if flash.empty? || main_index.nil?
 
     flash_message = render_to_string(partial: "shared/flash")
-    return html.insert(main_index, flash_message)
+    html.insert(main_index, flash_message)
   end
 end
