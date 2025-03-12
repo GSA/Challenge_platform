@@ -37,7 +37,7 @@ describe "A11y", :js do
 
     it "allows marking judging status selected to advance" do
       # evaluations must exist and all be completed before selecting the submission to advance
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       submission.update(judging_status: :selected)
       assignment = create(:evaluator_submission_assignment, status: :assigned, evaluator:, submission:)
       create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
@@ -62,8 +62,8 @@ describe "A11y", :js do
     end
 
     it "displays a list of available evaluators" do
-      evaluator1 = create_user(role: "evaluator")
-      evaluator2 = create_user(role: "evaluator")
+      evaluator1 = create_user(role: "evaluator", status: "active")
+      evaluator2 = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator1, phase: phase)
       challenge.challenge_phases_evaluators.create(user: evaluator2, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
@@ -78,7 +78,7 @@ describe "A11y", :js do
     end
 
     it "does not show solvers in the available evaluators list" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       solver = create_user(role: "solver")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       challenge.challenge_phases_evaluators.create(user: solver, phase: phase)
@@ -94,7 +94,7 @@ describe "A11y", :js do
     end
 
     it "assigns and unassigns an evaluator to the submission" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)
@@ -117,7 +117,7 @@ describe "A11y", :js do
     end
 
     it "unassigns a recused evaluator from the submission" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)

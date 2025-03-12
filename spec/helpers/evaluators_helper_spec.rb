@@ -53,6 +53,29 @@ RSpec.describe EvaluatorsHelper, type: :helper do
     end
   end
 
+  describe '#evaluator_available_for_assignment?' do
+    let(:evaluator) { create(:user, role: 'evaluator') }
+
+    it 'returns true for active evaluator' do
+      evaluator.update(status: 'active')
+      expect(helper.evaluator_available_for_assignment?(evaluator)).to be true
+    end
+
+    it 'returns false for pending evaluator' do
+      evaluator.update(status: 'pending')
+      expect(helper.evaluator_available_for_assignment?(evaluator)).to be false
+    end
+
+    it 'returns false for non-evaluator user' do
+      user = create(:user, role: 'challenge_manager')
+      expect(helper.evaluator_available_for_assignment?(user)).to be false
+    end
+
+    it 'returns false for nil user' do
+      expect(helper.evaluator_available_for_assignment?(nil)).to be false
+    end
+  end
+
   describe '#user_status' do
     it 'returns "Invite Sent" for non-User objects' do
       expect(helper.user_status(nil)).to eq("Invite Sent")

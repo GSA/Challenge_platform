@@ -15,6 +15,12 @@ module EvaluatorsHelper
     end
   end
 
+  def evaluator_available_for_assignment?(evaluator)
+    return false unless evaluator.is_a?(User)
+
+    evaluator.role == 'evaluator' && evaluator.status == 'active'
+  end
+
   # Combined status of all evaluations for the phase assigned to the user
   # NOTE: :recused is considered 'assigned' for evaluation_status here
   def evaluator_evaluation_status(evaluator, phase)
