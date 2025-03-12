@@ -62,7 +62,7 @@
       </table>
     <% end %>
 
-    <% if !@submission.phase.challenge_phases_evaluators.any? %>
+    <% if @submission.phase.challenge_phases_evaluators.any? %>
       <div class="usa-alert usa-alert--info maxw-tablet">
         <div class="usa-alert__body">
           <h3 class="usa-alert__heading">
