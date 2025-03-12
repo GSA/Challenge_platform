@@ -20,10 +20,8 @@
           <span class="text-primary text-bold font-sans-md text-underline" style="text-decoration-thickness: 2px;">Sort & Filter</span>              
         </button>
 
-        <div id="sort-and-filter" class="usa-nav__submenu bg-white width-auto position-absolute z-top" 
-             style="left: 0; max-height: 80vh; overflow-y: auto;">
-
-          <div class="display-flex flex-justify bg-base-lightest padding-x-2 padding-y-1">
+        <div id="sort-and-filter" class="usa-nav__submenu bg-white position-absolute z-top">
+          <div class="mobile-header display-flex flex-justify bg-base-lightest padding-x-2 padding-y-1 display-block tablet:display-none">
             <h2 class="margin-0 font-sans-md">Sort & Filter</h2>
             <button type="button" 
                     class="cursor-pointer bg-transparent border-0"
@@ -45,7 +43,6 @@
                 id="submission-id-search"
                 type="search"
                 name="search"
-                placeholder="Enter submission ID"
                 data-sort-filter-menu-target="submissionIdSearch"
                 data-action="input->sort-filter-menu#handleSearchInput"
                 style="border: 1px solid #1b1b1b;"
@@ -116,7 +113,7 @@
             </div>
 
             <div class="display-flex flex-justify padding-2 margin-top-2">
-              <button class="usa-button"
+              <button class="usa-button width-card-lg tablet:width-card"
                       data-action="sort-filter-menu#applyFilters">Show results</button>
               <a href="#" class="font-weight-normal text-primary margin-right-2 margin-top-neg-05"
                       data-action="click->sort-filter-menu#clearAllFilters">Reset</a>
