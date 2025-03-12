@@ -7,6 +7,7 @@ export default class extends Controller {
   connect() {
     // -1 to match the 0 indexed eval criteria elements
     this.counter = this.criteriaRowTargets.length - 1;
+    this.toggleRemoveCriteriaButtons();
   }
 
   addCriteria() {
@@ -21,6 +22,7 @@ export default class extends Controller {
 
     this.criteriaListTarget.appendChild(newCriteria);
 
+    this.toggleRemoveCriteriaButtons();
     this.updateCriteriaTitles();
   }
 
@@ -40,6 +42,7 @@ export default class extends Controller {
       return this.addCriteria();
     }
 
+    this.toggleRemoveCriteriaButtons();
     this.updateCriteriaTitles();
   }
 
@@ -118,8 +121,10 @@ export default class extends Controller {
 
   updateCriteriaTitles() {
     this.visibleRows().forEach((row, index) => {
-      const numberElement = row.querySelector(".criteria-number");
-      numberElement.textContent = index + 1;
+      const criteriaNumberElements = row.querySelectorAll(".criteria-number");
+      criteriaNumberElements.forEach((element, _index) => {
+        element.textContent = index + 1;
+      });
     });
   }
 
@@ -145,16 +150,22 @@ export default class extends Controller {
 
     switch (scoringType) {
       case "binary":
+        this.setScaleOptionsMainLabel(row, "Binary Scale Options");
         this.showBinaryOptions(options);
         this.toggleOptionLabels(row, 0, 1);
         break;
       case "rating":
+        this.setScaleOptionsMainLabel(row, "Rating Scale Options");
         this.showRatingOptions(row, options);
         break;
       default:
         this.hideAllOptions(options);
         break;
     }
+  }
+
+  setScaleOptionsMainLabel(row, text) {
+    row.querySelector(".scale-options-main-label").textContent = text;
   }
 
   showBinaryOptions(options) {
@@ -240,5 +251,14 @@ export default class extends Controller {
     return Array.from(section.querySelectorAll("[required]")).every((field) =>
       field.reportValidity()
     );
+  }
+
+  toggleRemoveCriteriaButtons() {
+    let show = this.visibleRows().length > 1;
+    this.element
+      .querySelectorAll(".delete-criteria-button")
+      .forEach((button) => {
+        button.classList.toggle("display-none", !show);
+      });
   }
 }
