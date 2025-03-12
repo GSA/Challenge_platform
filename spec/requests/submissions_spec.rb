@@ -138,7 +138,7 @@ RSpec.describe "Submissions" do
     end
 
     context "when logged in as an evaluator" do
-      let(:user) { create_user(role: "evaluator") }
+      let(:user) { create_user(role: "evaluator", status: "active") }
 
       it "redirects to the landing page" do
         get submissions_phase_path(phase)
