@@ -148,7 +148,7 @@ en:
       text: "An evaluator recused themselves from evaluating one or more of the challenge submissions. Please review the list of submissions below and unassign the evaluator from the submission(s)."
     recused_evaluator_submission:
       heading: "Recused Evaluator"
-      text: "This submission has a recused evaluator. Unassign recused evaluators"
+      text: "This submission has a recused evaluator. Unassign recused evaluators."
     assign_more_evaluator:
       heading: "Need to assign the evaluator to more submissions?"
       text: "You can assign as many evaluators as needed to each submission."
