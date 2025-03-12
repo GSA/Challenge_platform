@@ -28,6 +28,11 @@
                 <% if form.object.errors[:email].present? %>
                   <li><%= t('evaluators.error.email_address') %></li>
                 <% end %>
+                <% form.object.errors.each do |error| %>
+                  <% unless [:full_name, :email].include?(error.attribute) %>
+                    <li><%= error.full_message %></li>
+                  <% end %>
+                <% end %>
               </ul>
             </div>
           </div>
