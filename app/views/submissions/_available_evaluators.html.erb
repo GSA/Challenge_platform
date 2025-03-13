@@ -33,7 +33,7 @@
               </th>
               <td data-label="# of Assigned Submissions" class="text-top">
                 <span class="margin-x-1">
-                  <%= evaluator.assigned_submissions.count %> submissions
+                  <%= assigned_submissions_count(evaluator, @submission.challenge, @submission.phase) %> submissions
                 </span>
               </td>
               <td data-label="Actions">
