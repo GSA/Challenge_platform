@@ -37,7 +37,7 @@ class EvaluationCriterion < ApplicationRecord
     I18n.t("form.errors.input", field_name: obj.class.human_attribute_name(data[:attribute]).downcase)
   } }
   validates :scoring_type, presence: { message: lambda { |obj, data|
-    I18n.t("form.errors.select", field_name: obj.class.human_attribute_name(data[:attribute]).downcase)
+    I18n.t("form.errors.select", field_name: "scale type")
   } }
   validates :title,
             length: { maximum: 150, message: I18n.t("form.errors.too_long", field_name: "Title", max_length: 150) }

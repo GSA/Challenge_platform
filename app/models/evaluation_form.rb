@@ -30,7 +30,7 @@ class EvaluationForm < ApplicationRecord
   }
 
   validates :instructions, presence: { message: I18n.t("form.errors.input", field_name: "evaluation instructions") }
-  validates :scale_type, presence: { message: I18n.t("form.errors.radio", field_name: "scale type") }
+  validates :scale_type, presence: { message: I18n.t("form.errors.radio", field_name: "scoring type") }
   validates :closing_date, presence: { message: I18n.t("form.errors.input", field_name: "closing date") }
 
   # Adds custom error message for phase presence failure instead of default from above
