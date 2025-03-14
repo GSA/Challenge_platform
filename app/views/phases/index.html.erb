@@ -8,8 +8,12 @@
 <% end %>
 <% if @challenges.empty? %>
   <% if @current_user.non_gov_restricted? %>
-    <div class="text-normal">
-      <p>You currently do not have any challenges.</p>
+    <div class="usa-alert usa-alert--warning maxw-tablet">
+      <div class="usa-alert__body">
+        <h3 class="usa-alert__heading">
+          You currently do not have any challenges.
+        </h3>
+      </div>
     </div>
   <% else %>
     <div class="usa-alert usa-alert--warning maxw-tablet">
