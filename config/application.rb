@@ -11,12 +11,12 @@ Bundler.require(*Rails.groups)
 module ChallengePlatform
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults(7.1)
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w(assets tasks))
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -36,11 +36,11 @@ module ChallengePlatform
       idp_host: ENV.fetch("LOGIN_IDP_HOST", "https://idp.int.identitysandbox.gov"),
       login_redirect_uri: ENV.fetch("LOGIN_REDIRECT_EVAL_URL", "https://challenge-dev.app.cloud.gov/auth/result"),
       logout_redirect_uri: ENV.fetch("LOGOUT_REDIRECT_EVAL_URL", "https://challenge-dev.app.cloud.gov/"),
-      acr_value: "http://idmanagement.gov/ns/assurance/loa/1",
+      acr_value: "urn:acr.login.gov:auth-only",
       client_id: ENV.fetch("LOGIN_CLIENT_ID", "urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:_client_id"), # default fake ID for CI
       private_key_password: ENV.fetch("LOGIN_PRIVATE_KEY_PASSWORD", nil), # optional
       public_key_path: ENV.fetch("LOGIN_PUBLIC_KEY_PATH", "config/public.crt"),
-      private_key_path: ENV.fetch("LOGIN_PRIVATE_KEY_PATH", "config/private.pem"),
+      private_key_path: ENV.fetch("LOGIN_PRIVATE_KEY_PATH", "config/private.pem")
     }
 
     config.phx_interop = {

@@ -1234,7 +1234,8 @@ CREATE TABLE public.users (
     active_session boolean DEFAULT false,
     renewal_request character varying(255),
     jwt_token text,
-    recertification_expired_at timestamp(0) without time zone
+    recertification_expired_at timestamp(0) without time zone,
+    ial_level integer DEFAULT 1 NOT NULL
 );
 
 
@@ -2479,6 +2480,7 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250319141025),
 (20250220185334),
 (20250210211648),
 (20250204131151),

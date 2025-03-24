@@ -1,0 +1,13 @@
+<% if @current_user.non_gov_restricted? %>
+  <div class="usa-alert usa-alert--info margin-top-4 maxw-tablet" role="alert">
+    <%= link_to LoginGov.new.authorization_url(ial2: true), class: "text-no-underline" do %>
+      <div class="usa-alert__body">
+        <h2 class="usa-alert__heading">
+          Verify with 
+            <img class="height-205 margin-left-1" src="<%= image_path("login-gov-logo.svg") %>" alt="Login.gov logo" />
+        </h2>
+        <p class="usa-alert__text">To view submission information on Challenge.gov, you must verify your identity with Login.gov</p>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -153,6 +153,9 @@ en:
       heading: "Need to assign the evaluator to more submissions?"
       text: "You can assign as many evaluators as needed to each submission."
       link: "View the list of submissions for this challenge and assign evaluators to the submissions."
+    failure_to_proof:
+      heading: "We can't verify your identity."
+      text: "We can't verify your identity through Login.gov and grant access to submission information. This may be due to a variety of reasons, such as incorrect information or technical difficulties."
   mailers:
     evaluation_invitation:
       subject: "You have been invited to %{challenge_title} Evaluation Panel"
