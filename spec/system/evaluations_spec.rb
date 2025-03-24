@@ -78,9 +78,8 @@ RSpec.describe 'Evaluation', :js, type: :system do
       it "does not show the identity verification banner" do
         visit phases_path
 
-        expect(page).to
-        have_no_css(".usa-alert--info",
-                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+        expect(page).to have_no_css(".usa-alert--info",
+                                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
       end
     end
 
@@ -99,18 +98,16 @@ RSpec.describe 'Evaluation', :js, type: :system do
       it "shows the identity verification banner if not ial_level 2" do
         visit phases_path
 
-        expect(page).to
-        have_css(".usa-alert--info",
-                 text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+        expect(page).to have_css(".usa-alert--info",
+                                 text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
       end
 
       it "does not show the identity verification banner if ial_level 2" do
         evaluator.update(ial_level: 2)
         visit phases_path
 
-        expect(page).to
-        have_no_css(".usa-alert--info",
-                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+        expect(page).to have_no_css(".usa-alert--info",
+                                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
       end
     end
   end
