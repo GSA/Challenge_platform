@@ -39,6 +39,16 @@ RSpec.describe "SessionsController" do
     expect(response).to redirect_to("/")
   end
 
+  it "test" do
+    user = User.new(email: "test@example.com", token: SecureRandom.uuid)
+    code = "ABC123"
+    mock_login_gov(user, code)
+
+    get "/auth/failure_to_proof"
+
+    expect(response).to have_http_status(:success)
+  end
+
   it "times out the session" do
     session_timeout_in_minutes = SessionsController::SESSION_TIMEOUT_IN_MINUTES
 
