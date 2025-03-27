@@ -70,6 +70,7 @@ class ApplicationController < ActionController::Base
 
   def sign_in(login_userinfo)
     user = User.user_from_userinfo(login_userinfo)
+    update_ial_level(user, login_userinfo[0]["ial"])
 
     user_jwt = generate_user_jwt(user)
     send_user_jwt_to_phoenix(user_jwt)
@@ -101,6 +102,12 @@ class ApplicationController < ActionController::Base
     else
       renew_session
     end
+  end
+
+  def update_ial_level(user, ial_value)
+    return unless ial_value&.end_with?("verified-facial-match-required")
+
+    user.update(ial_level: 2)
   end
 
   def generate_user_jwt(user)

@@ -98,6 +98,8 @@ class User < ApplicationRecord
   USER_STATUSES = %w[pending active suspended revoked deactivated decertified evaluator_role_requested].freeze
   validates :status, inclusion: { in: USER_STATUSES }
 
+  enum :ial_level, { ial1: 1, ial2: 2 }
+
   # Finds, creates, or updates user from userinfo
   # Find in case of user with existing token matching userinfo["sub"]
   # Create in case of no token or email matching in userinfo
@@ -151,7 +153,7 @@ class User < ApplicationRecord
   end
 
   def non_gov_restricted?
-    !/\.(gov|mil)$/.match?(email)
+    !/\.(gov|mil)$/.match?(email) && !ial2?
   end
 
   def full_name(format: :default)

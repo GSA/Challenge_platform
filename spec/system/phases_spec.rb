@@ -38,6 +38,13 @@ describe "A11y", :js do
           expect(page).to have_button("Create New Challenge")
         end
 
+        it "does not show the identity verification banner" do
+          visit phases_path
+
+          expect(page).to have_no_css(".usa-alert--info",
+                                      text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+        end
+
         it "displays none yet text under submissions when no submissions" do
           visit phases_path
 
@@ -84,6 +91,21 @@ describe "A11y", :js do
         visit phases_path
 
         expect(page).to have_no_button("Create New Challenge")
+      end
+
+      it "shows the identity verification banner if not ial_level 2" do
+        visit phases_path
+
+        expect(page).to have_css(".usa-alert--info",
+                                 text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+      end
+
+      it "does not show the identity verification banner if ial_level 2" do
+        user.update(ial_level: 2)
+        visit phases_path
+
+        expect(page).to have_no_css(".usa-alert--info",
+                                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
       end
 
       it "displays none yet text under submissions when no submissions" do

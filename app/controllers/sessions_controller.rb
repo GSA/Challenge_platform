@@ -40,6 +40,8 @@ class SessionsController < ApplicationController
     head(:ok)
   end
 
+  def failure_to_proof; end
+
   private
 
   def check_error_result
