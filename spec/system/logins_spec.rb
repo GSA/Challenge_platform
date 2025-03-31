@@ -28,7 +28,7 @@ describe "A11y", :js do
   end
 
   describe "Logged-in as an Evaluator" do
-    let(:user) { create_user(role: "evaluator") }
+    let(:user) { create_user(role: "evaluator", status: "active") }
 
     it "evaluations index page is accessible" do
       visit evaluations_path

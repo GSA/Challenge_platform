@@ -37,7 +37,7 @@ describe "A11y", :js do
 
     it "allows marking judging status selected to advance" do
       # evaluations must exist and all be completed before selecting the submission to advance
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       submission.update(judging_status: :selected)
       assignment = create(:evaluator_submission_assignment, status: :assigned, evaluator:, submission:)
       create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
@@ -55,15 +55,15 @@ describe "A11y", :js do
 
     it "saves comments" do
       visit submission_path(submission)
-      fill_in "Comments and notes:", with: fake_comments
+      fill_in "Notes:", with: fake_comments
       click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       assert_text(fake_comments)
     end
 
     it "displays a list of available evaluators" do
-      evaluator1 = create_user(role: "evaluator")
-      evaluator2 = create_user(role: "evaluator")
+      evaluator1 = create_user(role: "evaluator", status: "active")
+      evaluator2 = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator1, phase: phase)
       challenge.challenge_phases_evaluators.create(user: evaluator2, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
@@ -78,7 +78,7 @@ describe "A11y", :js do
     end
 
     it "does not show solvers in the available evaluators list" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       solver = create_user(role: "solver")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       challenge.challenge_phases_evaluators.create(user: solver, phase: phase)
@@ -94,14 +94,14 @@ describe "A11y", :js do
     end
 
     it "assigns and unassigns an evaluator to the submission" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)
       find_by_id('eligible-for-evaluation').click
       click_on('Save')
 
-      expect(page).to have_content("You currently do not have any evaluators assigned to this submission.")
+      expect(page).to have_content("This submission does not have any assigned evaluators. Please use the Available Evaluators section above to assign evaluators.")
 
       click_on('Assign')
       expect(page).to have_css("p.usa-alert__text", text: "Evaluator assigned successfully")
@@ -117,7 +117,7 @@ describe "A11y", :js do
     end
 
     it "unassigns a recused evaluator from the submission" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)

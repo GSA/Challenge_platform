@@ -1,21 +1,28 @@
-<tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
-  <td data-label="Submission ID" class="text-top text-bold">
-    <% if assignment.recused? %>
-      <%= image_tag('images/usa-icons/error.svg', class: "usa-icon--size-3", alt: "Recused", style: "vertical-align: middle; margin-right: 5px;") %>
+<tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user" class="unassigned-row-bg">
+  <td data-label="Submission ID" class="text-bold unassigned-row-bg">
+    <%= link_to submission_path(assignment.submission), class: "text-primary" do %>
+      <span class="mobile-lg:display-none">Submission ID </span><%= assignment.submission.id %>
     <% end %>
-    <%= assignment.submission.id %>
+  </td>  
+  <td data-label="Evaluation Status" class="unassigned-row-bg">
+    <span class="usa-tag padding-x-1 text-center minw-15 display-inline-block <%= evaluation_status_color(assignment.evaluation_status) %>">
+      <% if assignment.evaluation_status.to_s == 'recused_unassigned' %>
+        Recused
+      <% else %>
+        <%= assignment.evaluation_status.to_s %>
+      <% end %>
+    </span>
+  </td>  
+  <td data-label="Score" class="text-light unassigned-row-bg">
+    <%= assignment_display_score(assignment) %>
   </td>
-  <td data-label="Evaluation status">
-    <span class="text-top usa-tag <%= evaluation_status_color(assignment.evaluation_status) %>"><%= assignment.evaluation_status.to_s.titleize %></span>
-  </td>
-  <td data-label="Score" class="text-top text-light"><%= evaluator_score(assignment).formatted_score %></td>
-  <td data-label="">
-    <div class="display-flex flex-justify-end">
+  <td data-label="" class="unassigned-row-bg">
+    <div class="display-flex flex-justify-start tablet:flex-justify-end">
       <% if assignment.unassigned? %>
         <%= button_to "Reassign", phase_evaluator_submission_assignment_path(@phase, assignment), 
           method: :patch, 
           params: { status: :assigned, evaluator_id: evaluator.id }, 
-          class: 'usa-button usa-button--outline font-body-3xs' %>
+          class: 'usa-button usa-button--outline font-body-3xs bg-white' %>
       <% end %>
     </div>
   </td>

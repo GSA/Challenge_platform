@@ -95,7 +95,8 @@ RSpec.describe EvaluationScore, type: :model do
       expect do
         evaluation_score.update!(score: points_or_weight + 1)
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Score must be less than or equal to #{points_or_weight}")
+                         "Validation failed: Score #{I18n.t('form.errors.over_max', field_name: 'Score',
+                                                                                    max: points_or_weight)}")
 
       # Clear validation error
       new_score = rand(0..points_or_weight)
@@ -104,7 +105,8 @@ RSpec.describe EvaluationScore, type: :model do
       expect do
         evaluation_score.update!(score_override: points_or_weight + 1)
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Score override must be less than or equal to #{points_or_weight}")
+                         "Validation failed: Score override #{I18n.t('form.errors.over_max', field_name: 'Score',
+                                                                                             max: points_or_weight)}")
     end
   end
 
@@ -265,14 +267,16 @@ RSpec.describe EvaluationScore, type: :model do
       expect do
         evaluation_score.update!(comment: Faker::Lorem.characters(number: 3001))
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Comment is too long (maximum is 3000 characters)")
+                         "Validation failed: Comment #{I18n.t('form.errors.too_long', field_name: 'Comment',
+                                                                                      max_length: 3000)}")
 
       evaluation_score.update!(comment: Faker::Lorem.characters(number: 3000))
 
       expect do
         evaluation_score.update!(comment_override: Faker::Lorem.characters(number: 3001))
       end.to raise_error(ActiveRecord::RecordInvalid,
-                         "Validation failed: Comment override is too long (maximum is 3000 characters)")
+                         "Validation failed: Comment override #{I18n.t('form.errors.too_long', field_name: 'Comment',
+                                                                                               max_length: 3000)}")
     end
   end
 end

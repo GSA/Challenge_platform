@@ -54,7 +54,7 @@
     </div>
     <%= form_with(model: @submission, url: submission_path(@submission), class: "maxw-mobile-lg") do |form| %>
         <div class="usa-form-group">
-            <%= form.label :comments, "Comments and notes:", class: "usa-label", for: "#{rand}-comments" %>
+            <%= form.label :comments, "Notes:", class: "usa-label", for: "#{rand}-comments" %>
             <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments, id: "#{rand}-comments" %>
         </div>
         <button type="submit" name="commit" class="usa-button font-body-2xs text-no-wrap margin-y-2">

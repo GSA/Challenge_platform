@@ -32,6 +32,13 @@ class ApplicationController < ActionController::Base
     redirect_to_landing_page(alert: I18n.t("access_denied"))
   end
 
+  # All evaluators must be active to pass this authorization
+  def authorize_active_evaluators
+    return unless current_user.role == 'evaluator' && current_user.status != 'active'
+
+    redirect_to "/", alert: I18n.t("evaluator_pending_approval")
+  end
+
   def check_gov_access
     return unless current_user.non_gov_restricted?
 
@@ -63,6 +70,7 @@ class ApplicationController < ActionController::Base
 
   def sign_in(login_userinfo)
     user = User.user_from_userinfo(login_userinfo)
+    update_ial_level(user, login_userinfo[0]["ial"])
 
     user_jwt = generate_user_jwt(user)
     send_user_jwt_to_phoenix(user_jwt)
@@ -94,6 +102,12 @@ class ApplicationController < ActionController::Base
     else
       renew_session
     end
+  end
+
+  def update_ial_level(user, ial_value)
+    return unless ial_value&.end_with?("verified-facial-match-required")
+
+    user.update(ial_level: 2)
   end
 
   def generate_user_jwt(user)

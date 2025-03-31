@@ -1,6 +1,6 @@
-<h1>Submission ID <%= @submission.id %></h1>
-<p class="font-body-sm text-normal margin-bottom-3">Review evaluator's scores and provide your revisions</p>
-
-<h2 class="text-primary font-body-md"><%= "Evaluator: #{@evaluator.full_name}" %></h2>
+<h1><%= challenge_phase_title(@submission.challenge, @submission.phase) %></h1>
+<h2 class="text-primary">
+  <%= "#{@evaluator.full_name}'s Evaluation for Submission ID #{@submission.id}" %>
+</h2>
 
 <%= render partial: "evaluation_overrides/form" %>

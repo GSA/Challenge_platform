@@ -138,7 +138,7 @@ RSpec.describe "Submissions" do
     end
 
     context "when logged in as an evaluator" do
-      let(:user) { create_user(role: "evaluator") }
+      let(:user) { create_user(role: "evaluator", status: "active") }
 
       it "redirects to the landing page" do
         get submissions_phase_path(phase)
@@ -383,14 +383,14 @@ RSpec.describe "Submissions" do
         it 'returns first page of submissions' do
           get submissions_phase_path(phase)
           expect(response.body).to have_css('tr[data-submission-id]', count: 20)
-          expect(response.body).to have_button('Load more')
+          expect(response.body).to have_button('Show more')
         end
 
         it 'returns next page of submissions via partial' do
           get submissions_phase_path(phase, page: 2, partial: true)
           expect(response).to have_http_status(:success)
           expect(response.body).to have_css('tr[data-submission-id]', count: 5)
-          expect(response.body).to have_no_button('Load more')
+          expect(response.body).to have_no_button('Show more')
         end
 
         context 'when sorting by average score' do
@@ -417,7 +417,7 @@ RSpec.describe "Submissions" do
             first_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
             expect(first_page_submissions.count).to eq(20)
             expect(first_page_scores).to eq(first_page_scores.sort.reverse)
-            expect(response.body).to have_button('Load more')
+            expect(response.body).to have_button('Show more')
 
             get submissions_phase_path(phase, page: 2, partial: true, sort: 'average_score_high_to_low')
             second_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
@@ -441,7 +441,7 @@ RSpec.describe "Submissions" do
             first_page_scores = response.body.scan(/data-score="(\d+(?:\.\d+)?)"/).flatten.map(&:to_f)
             expect(first_page_submissions.count).to eq(20)
             expect(first_page_scores).to eq(first_page_scores.sort)
-            expect(response.body).to have_button('Load more')
+            expect(response.body).to have_button('Show more')
 
             get submissions_phase_path(phase, page: 2, partial: true, sort: 'average_score_low_to_high')
             second_page_submissions = response.body.scan(/data-submission-id="(\d+)"/).flatten.map(&:to_i)
@@ -467,7 +467,7 @@ RSpec.describe "Submissions" do
             get submissions_phase_path(phase, page: 1, eligible_for_evaluation: 'true')
             expect(response).to have_http_status(:success)
             expect(response.body.scan(/data-submission-id="(\d+)"/).flatten.count).to eq(20)
-            expect(response.body).to have_button('Load more')
+            expect(response.body).to have_button('Show more')
 
             get submissions_phase_path(phase, page: 2, partial: true, eligible_for_evaluation: 'true')
             expect(response).to have_http_status(:success)

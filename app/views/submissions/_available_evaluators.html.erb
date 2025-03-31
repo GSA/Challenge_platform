@@ -1,6 +1,6 @@
 <div class="usa-accordion margin-bottom-4">
   <% rand = SecureRandom.hex(8) %>
-  <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
+  <h4 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
     <button
       type="button"
       class="usa-accordion__button display-flex flex-justify"
@@ -9,11 +9,11 @@
     >
       <div>Available Evaluators</div>
     </button>
-  </h2>
+  </h4>
 
   <div class="usa-accordion__content padding-left-0" id="<%= rand %>">
     <% if @submission.available_evaluators.any? %>
-      <table aria-label="List of Available Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header width-full">
+      <table aria-label="List of Available Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless challenge-table width-full">
         <thead>
           <tr>
             <th scope="col">Name</th>
@@ -33,7 +33,7 @@
               </th>
               <td data-label="# of Assigned Submissions" class="text-top">
                 <span class="margin-x-1">
-                  <%= evaluator.assigned_submissions.count %> submissions
+                  <%= assigned_submissions_count(evaluator, @submission.challenge, @submission.phase) %> submissions
                 </span>
               </td>
               <td data-label="Actions">
@@ -60,24 +60,33 @@
           <% end %>
         </tbody>
       </table>
-    <% else %>
-      <div class="usa-alert usa-alert--warning">
+    <% end %>
+
+    <% if @submission.phase.challenge_phases_evaluators.any? %>
+      <div class="usa-alert usa-alert--info maxw-tablet">
         <div class="usa-alert__body">
+          <h3 class="usa-alert__heading">
+            Need more evaluators?
+          </h3>
           <p class="usa-alert__text font-body-2xs">
-            There are no evaluators available for this submission. Please visit Evaluation Panel section to manage your list of available evaluators.
+            <%= link_to "Manage your existing evaluation panel and invite additional evaluators.", phase_evaluators_path(@submission.phase), class: "margin-y-1"  %>
+          </p>
+        </div>
+      </div> 
+    <% else %>
+      <div class="usa-alert usa-alert--warning maxw-tablet">
+        <div class="usa-alert__body">
+          <h3 class="usa-alert__heading">
+            No Evaluation Panel
+          </h3>
+          <p class="usa-alert__text font-body-2xs">
+            You have not yet created an evaluation panel for this challenge. 
+            <%= link_to "Create an evaluation panel and invite evaluators to start an evaluation process.", phase_evaluators_path(@submission.phase) %> 
           </p>
         </div>
       </div>
     <% end %>
-    <div class="usa-alert usa-alert--info">
-      <div class="usa-alert__body">
-        <h2 class="usa-alert__heading">
-          Need more evaluators?
-        </h2>
-        <p class="usa-alert__text font-body-2xs">
-            <%= link_to "Manage your existing evaluation panel and invite additional evaluators.", phase_evaluators_path(@submission.phase), class: "margin-y-1"  %>
-        </p>
-      </div>
-    </div> 
   </div>
 </div>
+
+

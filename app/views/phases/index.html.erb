@@ -1,5 +1,6 @@
 <%= form_success_notice(flash[:custom_success_heading], flash[:custom_success_description]) %>
 <h1>My Challenges</h1>
+<%= render 'shared/identity_verification_banner' %>
 <% if !@current_user.non_gov_restricted? %>
   <%= link_to "#{Rails.configuration.phx_interop[:phx_uri]}/challenges/new" do %>
     <button class="usa-button padding-2">Create New Challenge</button>
@@ -12,3 +13,4 @@
 <% else %>
   <%= render partial: "phases_table", locals: { challenges: @challenges } %>
 <% end %>  
+<%= render partial: "shared/resources_content_challenge_manager" %>

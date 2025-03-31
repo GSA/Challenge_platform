@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   get 'auth/result', to: 'sessions#result'
+  get 'auth/failure_to_proof', to: 'sessions#failure_to_proof'
   resource 'session', only: [:new, :create, :destroy] do
     post 'renew'
     delete 'timeout'
@@ -10,7 +11,6 @@ Rails.application.routes.draw do
 
   resources :evaluations, only: %i[index edit create update] do
     member do
-      get 'confirmation'
       get 'submissions'
       get 'revision', to: 'evaluation_overrides#show'
       patch 'revision', to: 'evaluation_overrides#update', as: 'revise'

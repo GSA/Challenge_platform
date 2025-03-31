@@ -1,15 +1,7 @@
 <div data-controller="unassign-evaluator-submission-modal">
-  <% if @submission.evaluator_submission_assignments.recused.exists? %>
-    <div class="margin-bottom-2">
-      <%= render 'shared/alert_error', 
-          alert_heading: t('alerts.recused_evaluator.heading'), 
-          alert_text: t('alerts.recused_evaluator_submission.text') %>
-    </div>
-  <% end %>
-
   <div class="usa-accordion margin-bottom-4">
     <% rand = SecureRandom.hex(8) %>
-    <h2 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
+    <h4 class="usa-accordion__heading" id="<%= "#{rand}-accordion-heading" %>">
       <button
         type="button"
         class="usa-accordion__button display-flex flex-justify"
@@ -18,12 +10,20 @@
       >
         <div>Assigned Evaluators</div>
       </button>
-    </h2>
+    </h4>
 
     <div class="usa-accordion__content overflow-hidden padding-left-0" id="<%= rand %>">
+      <% if @submission.evaluator_submission_assignments.recused.exists? %>
+        <div class="margin-bottom-2">
+          <%= render 'shared/alert_error', 
+              alert_heading: t('alerts.recused_evaluator.heading'), 
+              alert_text: t('alerts.recused_evaluator_submission.text') %>
+        </div>
+      <% end %>
+
       <% assigned_evaluators = @submission.evaluators.where("evaluator_submission_assignments.status" => ["assigned", "recused"]) %>
       <% if assigned_evaluators.any? %>
-        <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless gray-header width-full">
+        <table aria-label="List of Assigned Evaluators" class="usa-table usa-table--stacked-header usa-table--borderless challenge-table width-full">
           <thead>
             <tr>
               <th scope="col">Evaluator name</th>
@@ -37,12 +37,6 @@
               <% assignment = evaluator.evaluator_submission_assignments.where(submission_id: @submission.id).first %>
               <tr data-evaluator-id="<%= evaluator.id %>" data-evaluator-type="user">
                 <th scope="row" data-label="Evaluator name" class="text-top">
-                  <% if assignment.status == "recused" %>
-                    <%= image_tag('images/usa-icons/error.svg', 
-                        class: "usa-icon--size-3", 
-                        alt: "Recused", 
-                        style: "vertical-align: middle; margin-right: 5px;") %>
-                  <% end %>
                   <span class="text-bold text-ls-1 line-height-sans-4">
                     <%= link_to phase_evaluator_submission_assignments_path(@submission.phase, evaluator_id: evaluator.id) do %>
                       <%= "#{evaluator.first_name} #{evaluator.last_name}" %>
@@ -56,7 +50,7 @@
                 </td>
                 <td data-label="Score" class="text-top">
                   <span class="margin-x-1">
-                    <%= evaluator_score(assignment).formatted_score %>
+                    <%= assignment_display_score(assignment) %>
                   </span>
                   <% if assignment&.evaluation&.completed_at %>
                     <%= link_to(revision_evaluation_path(assignment.evaluation), class: "text-no-wrap") do %>
@@ -84,10 +78,13 @@
           </tbody>
         </table>
       <% else %>
-        <div class="usa-alert usa-alert--warning">
+        <div class="usa-alert usa-alert--warning maxw-tablet">
           <div class="usa-alert__body">
+            <h3 class="usa-alert__heading">
+              No Assigned Evaluators
+            </h3>
             <p class="usa-alert__text font-body-2xs">
-              You currently do not have any evaluators assigned to this submission. Please use the section below to review and assign available evaluators.
+              This submission does not have any assigned evaluators. Please use the Available Evaluators section above to assign evaluators.
             </p>
           </div>
         </div>

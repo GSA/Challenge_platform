@@ -26,7 +26,7 @@ module FormHelper
     heading = content_tag(:h2, heading, class: "usa-alert__heading")
     description = content_tag(:p, description)
 
-    content_tag(:div, class: "usa-alert usa-alert--success margin-top-4", role: "alert") do
+    content_tag(:div, class: "usa-alert usa-alert--success margin-top-4 maxw-tablet", role: "alert") do
       content_tag(:div, class: "usa-alert__body") do
         heading + description
       end
@@ -36,9 +36,11 @@ module FormHelper
   def form_errors_alert(form)
     return unless form.errors.any?
 
-    content_tag(:div, class: "usa-alert usa-alert--error", role: "alert") do
+    errors = ordered_errors_for(form)
+
+    content_tag(:div, class: "usa-alert usa-alert--error margin-y-4 maxw-tablet", role: "alert") do
       content_tag(:div, class: "usa-alert__body") do
-        form_errors_heading(form) + form_errors_description(form) + form_errors_list(form)
+        form_errors_heading(form, errors) + form_errors_description(form) + form_errors_list(form, errors)
       end
     end
   end
@@ -46,15 +48,15 @@ module FormHelper
   def ordered_errors_for(form)
     return [] if form.errors.empty?
 
-    form.class::ERROR_ORDER.flat_map do |attribute|
+    error_order(form).flat_map do |attribute|
       association?(form, attribute) ? association_errors(form, attribute) : attribute_errors(form, attribute)
     end
   end
 
   private
 
-  def form_errors_heading(form)
-    error_count = form.errors.count
+  def form_errors_heading(form, errors)
+    error_count = errors.count
     form_name = form.class.model_name.human
     content_tag(:h2, "#{form_name} has #{error_count} #{'error'.pluralize(error_count)}",
                 class: "usa-alert__heading")
@@ -62,13 +64,12 @@ module FormHelper
 
   def form_errors_description(form)
     form_name = form.class.model_name.human
-    content_tag(:p, "Please review and complete all required fields for the #{form_name}.")
+    content_tag(:p, "Please review and complete all required fields for the #{form_name.downcase}.")
   end
 
-  def form_errors_list(form)
-    ordered_errors = ordered_errors_for(form)
+  def form_errors_list(_form, errors)
     content_tag(:ul) do
-      safe_join(ordered_errors.map { |error| content_tag(:li, error) })
+      safe_join(errors.map { |error| content_tag(:li, error) })
     end
   end
 
@@ -88,7 +89,7 @@ module FormHelper
     form.errors.messages_for(attribute)
   end
 
-  def association_error_order(record)
+  def error_order(record)
     if record.class.const_defined?(:ERROR_ORDER)
       record.class::ERROR_ORDER
     else
@@ -97,7 +98,7 @@ module FormHelper
   end
 
   def ordered_association_errors(record, index, association_name)
-    error_order = association_error_order(record)
+    error_order = error_order(record)
 
     error_order.flat_map do |field|
       next [] if record.errors[field].blank?
@@ -109,7 +110,8 @@ module FormHelper
   end
 
   def format_association_error(msg, association_name, index)
-    "#{msg} for #{association_name.to_s.humanize.downcase} #{index}"
+    singular_name = association_name.to_s.singularize.humanize.downcase
+    "#{msg} for #{singular_name} #{index}"
   end
 
   def formatted_object_name(form, identifier)

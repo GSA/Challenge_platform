@@ -40,7 +40,7 @@ RSpec.describe "Evaluations" do
 
     context "when logged in as an evaluator" do
       before do
-        create_and_log_in_user(role: "evaluator")
+        create_and_log_in_user(role: "evaluator", status: "active")
         get "/evaluations"
       end
 
@@ -49,11 +49,12 @@ RSpec.describe "Evaluations" do
       it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for an evaluator"
 
-      it "renders the index view with the correct header" do
+      it "renders the index view with the correct content" do
         get evaluations_path
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include("Evaluations")
+        expect(response.body).to include("Resources and support")
       end
     end
 
@@ -70,7 +71,7 @@ RSpec.describe "Evaluations" do
     end
 
     context "when logged in as an evaluator" do
-      let(:evaluator) { create_and_log_in_user(role: 'evaluator') }
+      let(:evaluator) { create_and_log_in_user(role: 'evaluator', status: 'active') }
 
       let(:challenge_with_submissions) do
         create(:challenge, title: "Challenge with Submissions", is_multi_phase: false)
@@ -164,10 +165,82 @@ RSpec.describe "Evaluations" do
         end
       end
     end
+
+    context "when evaluator status authorization" do
+      let(:challenge) { create(:challenge) }
+      let(:phase) { create(:phase, challenge: challenge) }
+      let(:submission) { create(:submission, phase: phase, challenge: challenge) }
+      let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+
+      context "when evaluator is pending" do
+        let(:pending_evaluator) { create(:user, role: 'evaluator', status: 'pending') }
+
+        before do
+          log_in_user(pending_evaluator)
+          ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: pending_evaluator)
+        end
+
+        it "cannot access evaluations index" do
+          get evaluations_path
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+
+        it "cannot access submissions page" do
+          get submissions_evaluation_path(phase)
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+
+        it "cannot access new evaluation page" do
+          get new_submission_evaluation_path(submission)
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+
+        it "cannot access edit evaluation page" do
+          evaluation = create(:evaluation, user: pending_evaluator, evaluation_form: evaluation_form)
+          get edit_evaluation_path(evaluation)
+          expect(response).to redirect_to("/")
+          expect(flash[:alert]).to eq(I18n.t("evaluator_pending_approval"))
+        end
+      end
+
+      context "when evaluator is active" do
+        let(:active_evaluator) { create(:user, role: 'evaluator', status: 'active') }
+        let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
+        let!(:assignment) do
+          create(:evaluator_submission_assignment,
+                 submission: submission,
+                 evaluator: active_evaluator,
+                 status: :assigned)
+        end
+
+        before do
+          log_in_user(active_evaluator)
+          ChallengePhasesEvaluator.create!(challenge: challenge, phase: phase, user: active_evaluator)
+        end
+
+        it "can access evaluations index" do
+          get evaluations_path
+          expect(response).to have_http_status(:success)
+        end
+
+        it "can access submissions page" do
+          get submissions_evaluation_path(phase)
+          expect(response).to have_http_status(:success)
+        end
+
+        it "can access new evaluation page" do
+          get new_submission_evaluation_path(submission)
+          expect(response).to have_http_status(:success)
+        end
+      end
+    end
   end
 
   describe "GET /evaluations/:id/submissions" do
-    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:evaluator) { create(:user, role: 'evaluator', status: 'active') }
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge: challenge) }
     let!(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
@@ -191,7 +264,7 @@ RSpec.describe "Evaluations" do
           get submissions_evaluation_path(phase)
 
           expect(response).to have_http_status(:success)
-          expect(response.body).to include("View challenge submissions assigned to me and complete evaluations.")
+          expect(response.body).to include("Submissions Assigned to Me")
         end
 
         it "shows assigned submissions" do
@@ -243,7 +316,7 @@ RSpec.describe "Evaluations" do
     end
 
     context "when logged in as an evaluator not associated with the challenge phase" do
-      let(:unassociated_evaluator) { create(:user, role: 'evaluator') }
+      let(:unassociated_evaluator) { create(:user, role: 'evaluator', status: 'active') }
       let(:other_challenge) { create(:challenge) }
       let(:other_phase) { create(:phase, challenge: other_challenge) }
 
@@ -274,7 +347,7 @@ RSpec.describe "Evaluations" do
   end
 
   describe "GET /evaluations/:id/revision" do
-    let(:evaluator) { create(:user, role: 'evaluator') }
+    let(:evaluator) { create(:user, role: 'evaluator', status: 'active') }
     let(:challenge_manager) { create(:user, role: 'challenge_manager') }
     let(:challenge) { create(:challenge) }
     let(:phase) { create(:phase, challenge: challenge) }
@@ -282,9 +355,9 @@ RSpec.describe "Evaluations" do
     let(:submission) { create(:submission, challenge:, phase: phase) }
     let!(:assignment) do
       create(:evaluator_submission_assignment,
-              submission: submission,
-              evaluator: evaluator,
-              status: :assigned)
+             submission: submission,
+             evaluator: evaluator,
+             status: :assigned)
     end
 
     context "when logged in as an evaluator" do
@@ -318,17 +391,18 @@ RSpec.describe "Evaluations" do
       end
 
       it "does not allow viewing revision for a draft evaluation", bullet: :dont_raise do
-          evaluation = create(:evaluation,
-                              evaluation_form:,
-                              submission:,
-                              user: evaluator,
-                              evaluator_submission_assignment: assignment)
+        evaluation = create(:evaluation,
+                            evaluation_form:,
+                            submission:,
+                            user: evaluator,
+                            evaluator_submission_assignment: assignment)
 
-          # redirected to landing page
-          get revision_evaluation_path(evaluation)
-          expect(response).to redirect_to(submission_path(submission))
-          follow_redirect!
-          expect(response.body).to have_css('div.usa-alert__body', text: I18n.t("evaluation_overrides.alerts.not_found"))
+        # redirected to landing page
+        get revision_evaluation_path(evaluation)
+        expect(response).to redirect_to(submission_path(submission))
+        follow_redirect!
+        expect(response.body).to have_css('div.usa-alert__body',
+                                          text: I18n.t("evaluation_overrides.alerts.not_found"))
       end
 
       it "does allow viewing revision for a completed evaluation", bullet: :dont_raise do
@@ -342,8 +416,8 @@ RSpec.describe "Evaluations" do
         # redirected to landing page
         get revision_evaluation_path(evaluation)
         expect(response).to have_http_status(:success)
-        expect(response.body).to have_css('h1', text: "Submission ID #{submission.id}")
-        expect(response.body).to have_css('p.text-normal', text: "Review evaluator's scores and provide your revisions")
+        expect(response.body).to have_css('h2',
+                                          text: "#{evaluation.user.full_name}'s Evaluation for Submission ID #{evaluation.submission.id}")
       end
     end
   end
@@ -351,15 +425,20 @@ RSpec.describe "Evaluations" do
   # new_submission_evaluation_path
   describe "GET /evaluator_submission_assignments/:evaluator_submission_assignment_id/evaluations/new" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
-      let(:evaluator_submission_assignment) { create(:evaluator_submission_assignment, user_id: current_user.id) }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
+      let(:challenge) { create(:challenge) }
+      let(:phase) { create(:phase, challenge:) }
+      let(:submission) { create(:submission, challenge:, phase:) }
+      let!(:evaluator_submission_assignment) do
+        create(:evaluator_submission_assignment, user_id: current_user.id, submission:)
+      end
 
       before { log_in_user(current_user) }
 
       it "takes me to the new evaluation page if I was assigned to the submission" do
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
+        evaluation_form = create(:evaluation_form, challenge:, phase:)
 
-        get new_submission_evaluation_path(evaluator_submission_assignment.submission_id)
+        get new_submission_evaluation_path(submission)
 
         expect(response).to have_http_status(:success)
 
@@ -406,7 +485,7 @@ RSpec.describe "Evaluations" do
   # evaluations_path
   describe "POST /evaluations" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
 
       before { log_in_user(current_user) }
 
@@ -436,8 +515,9 @@ RSpec.describe "Evaluations" do
           expect(score.comment).to be_nil
         end
 
-        expect(response).to redirect_to(confirmation_evaluation_path(saved_evaluation, subaction: "save_draft"))
-        expect(flash[:notice]).to eq(I18n.t('evaluations.notices.saved_draft'))
+        expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+        expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.save_draft_heading'))
+        expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.save_draft_description'))
       end
 
       it "does not allow me to save a draft evaluation for a submission I'm not assigned to" do
@@ -466,7 +546,7 @@ RSpec.describe "Evaluations" do
 
   describe "POST /evaluations" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
 
       before { log_in_user(current_user) }
 
@@ -489,12 +569,18 @@ RSpec.describe "Evaluations" do
           expect(score.score).not_to be_nil
         end
 
-        expect(response).to redirect_to(confirmation_evaluation_path(saved_evaluation, subaction: "mark_complete"))
-        expect(flash[:notice]).to eq(I18n.t("evaluations.notices.marked_complete"))
+        expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+        expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.mark_complete_heading'))
+        expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.mark_complete_description'))
       end
 
       it "does not allow me to mark my new evaluation as complete if it fails validations" do
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
+        challenge = create(:challenge)
+        phase = create(:phase, challenge:)
+        submission = create(:submission, challenge:, phase:)
+
+        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id,
+                                                                                   submission:)
         create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
         evaluation = build_evaluation(evaluator_submission_assignment)
@@ -538,13 +624,17 @@ RSpec.describe "Evaluations" do
   # edit_evaluation_path
   describe "GET /evaluations/:id/edit" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
+      let(:challenge) { create(:challenge) }
+      let(:phase) { create(:phase, challenge:) }
+      let(:submission) { create(:submission, challenge:, phase:) }
 
       before { log_in_user(current_user) }
 
       it "allows me to view an existing draft evaluation I created" do
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
+        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id,
+                                                                                   submission:)
+        evaluation_form = create(:evaluation_form, phase:)
 
         evaluation = create(:evaluation,
                             user: current_user,
@@ -568,9 +658,10 @@ RSpec.describe "Evaluations" do
         expect(score_criteria_ids).to match_array(criteria_ids)
       end
 
-      it "allows me to view an existing complete evaluation I created" do
-        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
-        evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
+      it "allows me to view an existing complete evaluation I created", bullet: :dont_raise do
+        evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id,
+                                                                                   submission:)
+        evaluation_form = create(:evaluation_form, phase:)
 
         evaluation = create(:evaluation,
                             user: current_user,
@@ -616,13 +707,13 @@ RSpec.describe "Evaluations" do
 
   describe "PATCH /evaluations/:id" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
 
       before { log_in_user(current_user) }
 
       describe "draft evaluations" do
         it "allows me to save a draft of my existing evaluation to skip validations and not set completed_at",
-          bullet: :dont_raise do
+           bullet: :dont_raise do
           evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
           evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
@@ -652,8 +743,9 @@ RSpec.describe "Evaluations" do
           expect(updated_evaluation.errors).to be_empty
           expect(updated_evaluation.completed_at).to be_nil
 
-          expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "save_draft"))
-          expect(flash[:notice]).to include(I18n.t("evaluations.notices.saved_draft"))
+          expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.save_draft_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.save_draft_description'))
         end
 
         it "does not allow me to save a draft of an evaluation I did not create", bullet: :dont_raise do
@@ -675,6 +767,7 @@ RSpec.describe "Evaluations" do
           expect(flash[:alert]).to eq(I18n.t("evaluations.alerts.unauthorized"))
         end
       end
+
       describe "complete evaluations" do
         it "allows me to mark my existing evaluation as complete", bullet: :dont_raise do
           evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
@@ -698,12 +791,20 @@ RSpec.describe "Evaluations" do
           expect(updated_evaluation.errors).to be_empty
           expect(updated_evaluation.completed_at).not_to be_nil
 
-          expect(response).to redirect_to(confirmation_evaluation_path(updated_evaluation, subaction: "mark_complete"))
-          expect(flash[:notice]).to include(I18n.t("evaluations.notices.marked_complete"))
+          expect(response).to redirect_to(submissions_evaluation_path(evaluator_submission_assignment.phase))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.mark_complete_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.mark_complete_description'))
         end
 
-        it "does not allow me to mark my existing evaluation as complete if it fails validations", bullet: :dont_raise do
-          evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id)
+        it "does not allow me to mark my existing evaluation as complete if it fails validations",
+           bullet: :dont_raise do
+          challenge = create(:challenge)
+          phase = create(:phase, challenge:)
+          submission = create(:submission, challenge:, phase:)
+
+          evaluator_submission_assignment = create(:evaluator_submission_assignment, submission:,
+                                                                                     user_id: current_user.id)
+
           evaluation_form = create(:evaluation_form, phase: evaluator_submission_assignment.phase)
 
           evaluation = create(:evaluation,
@@ -757,7 +858,8 @@ RSpec.describe "Evaluations" do
   # recuse on a new evaluation that has not been started
   describe "PATCH /submissions/:submission_id/evaluations/recuse" do
     context "when logged in as an evaluator" do
-      let(:current_user) { create_user(role: "evaluator") }
+      let(:current_user) { create_user(role: "evaluator", status: "active") }
+
       before { log_in_user(current_user) }
 
       context "when the evaluation does not exist" do
@@ -766,22 +868,23 @@ RSpec.describe "Evaluations" do
         let(:submission) { create(:submission, phase: phase, challenge: challenge) }
         let!(:evaluator_submission_assignment) do
           create(:evaluator_submission_assignment,
-                  submission: submission,
-                  evaluator: current_user,
-                  status: :assigned)
+                 submission: submission,
+                 evaluator: current_user,
+                 status: :assigned)
         end
 
         it "successfully recuses without an evaluation" do
           expect do
             patch recuse_submission_evaluations_path(submission)
-          end.to change { evaluator_submission_assignment.reload.status }.from("assigned").to("recused")
-            .and change { ActionMailer::Base.deliveries.count }.by(1)
+          end.to change { evaluator_submission_assignment.reload.status }.from("assigned").to("recused").
+            and change { ActionMailer::Base.deliveries.count }.by(1)
 
           mail = ActionMailer::Base.deliveries.last
           expect(mail.subject).to eq(I18n.t("mailers.recusal.subject", submission_id: submission.id))
 
-          expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))
           expect(response).to redirect_to(submissions_evaluation_path(phase))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.evaluator_recusal_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.evaluator_recusal_description'))
         end
 
         context "when recusal update fails" do
@@ -807,17 +910,17 @@ RSpec.describe "Evaluations" do
         let(:evaluation_form) { create(:evaluation_form, phase: phase, challenge: challenge) }
         let(:evaluator_submission_assignment) do
           create(:evaluator_submission_assignment,
-                  submission: submission,
-                  evaluator: current_user,
-                  status: :assigned)
+                 submission: submission,
+                 evaluator: current_user,
+                 status: :assigned)
         end
         let!(:evaluation) do
           create(:evaluation,
-                  user: current_user,
-                  evaluation_form: evaluation_form,
-                  submission: submission,
-                  evaluator_submission_assignment: evaluator_submission_assignment,
-                  completed_at: Time.current)
+                 user: current_user,
+                 evaluation_form: evaluation_form,
+                 submission: submission,
+                 evaluator_submission_assignment: evaluator_submission_assignment,
+                 completed_at: Time.current)
         end
 
         before do
@@ -837,7 +940,8 @@ RSpec.describe "Evaluations" do
           expect(mail.to).to match_array(challenge.challenge_managers.map(&:user).map(&:email))
 
           expect(response).to redirect_to(submissions_evaluation_path(phase))
-          expect(flash[:notice]).to eq(I18n.t("evaluations.recusal.success"))
+          expect(flash[:custom_success_heading]).to eq(I18n.t('evaluations.success.evaluator_recusal_heading'))
+          expect(flash[:custom_success_description]).to eq(I18n.t('evaluations.success.evaluator_recusal_description'))
         end
 
         it "prevents unauthorized recusal of another evaluator's evaluation" do
@@ -848,10 +952,10 @@ RSpec.describe "Evaluations" do
                                     evaluator: other_evaluator,
                                     status: :assigned)
           create(:evaluation,
-                  user: other_evaluator,
-                  evaluation_form: evaluation_form,
-                  submission: submission,
-                  evaluator_submission_assignment: other_assignment)
+                 user: other_evaluator,
+                 evaluation_form: evaluation_form,
+                 submission: submission,
+                 evaluator_submission_assignment: other_assignment)
 
           # patch recuse_evaluation_path(other_evaluation)
           patch recuse_submission_evaluations_path(submission)

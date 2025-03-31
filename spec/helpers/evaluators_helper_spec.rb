@@ -53,46 +53,32 @@ RSpec.describe EvaluatorsHelper, type: :helper do
     end
   end
 
-  describe '#user_status' do
-    it 'returns "Invite Sent" for non-User objects' do
-      expect(helper.user_status(nil)).to eq("Invite Sent")
+  describe '#evaluator_available_for_assignment?' do
+    let(:evaluator) { create(:user, role: 'evaluator') }
+
+    it 'returns true for active evaluator' do
+      evaluator.update(status: 'active')
+      expect(helper.evaluator_available_for_assignment?(evaluator)).to be true
+    end
+
+    it 'returns false for pending evaluator' do
+      evaluator.update(status: 'pending')
+      expect(helper.evaluator_available_for_assignment?(evaluator)).to be false
+    end
+
+    it 'returns false for non-evaluator user' do
+      user = create(:user, role: 'challenge_manager')
+      expect(helper.evaluator_available_for_assignment?(user)).to be false
+    end
+
+    it 'returns false for nil user' do
+      expect(helper.evaluator_available_for_assignment?(nil)).to be false
     end
   end
 
-  describe '#display_score' do
-    let(:assignment) do
-      create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission, status: :assigned)
-    end
-
-    context 'when assignment is completed and has an evaluation with a total score' do
-      it 'returns the total score' do
-        create(:evaluation_form, :pointed, phase: submission.phase)
-        evaluation = create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
-        expect(helper.display_score(assignment)).to eq(evaluation.total_score.to_s)
-      end
-    end
-
-    context 'when assignment is not completed' do
-      it 'returns N/A for in-progress evaluation' do
-        create(:evaluation, evaluator_submission_assignment: assignment, completed_at: nil)
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
-
-      it 'returns N/A for not started evaluation' do
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
-    end
-
-    context 'when assignment is not assigned' do
-      it 'returns N/A for unassigned status' do
-        assignment.update(status: :unassigned)
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
-
-      it 'returns N/A for recused status' do
-        assignment.update(status: :recused)
-        expect(helper.display_score(assignment)).to eq('N/A')
-      end
+  describe '#user_status' do
+    it 'returns "Invite Sent" for non-User objects' do
+      expect(helper.user_status(nil)).to eq("Invite Sent")
     end
   end
 

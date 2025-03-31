@@ -10,6 +10,11 @@ dialog::backdrop {
 }
 
 #sort-and-filter {
+  position: absolute;
+  width: 320px;
+  max-height: 80vh;
+  overflow-y: auto;
+
   .usa-radio__label {
     padding-left: 1.6rem;
   }
@@ -28,69 +33,34 @@ dialog::backdrop {
     background-color: #0076d6;
     color: white !important;
     height: 2rem;
+    text-align: center;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
 
     &:hover {
       background-color: #005ea2;
     }
   }
-}
 
-.usa-table.usa-table--borderless.gray-header {
-  thead {
-    th {
-      background-color: #dfe1e2;
-    }
-  }
-}
-
-.usa-nav__primary {
-  button.usa-accordion__button {
-    &::before,
-    &::after,
-    span::after {
-      display: none !important;
-      content: none !important;
-      -webkit-mask: none !important;
-      mask: none !important;
-    }
-
-    .usa-icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      fill: #005ea2;
-      vertical-align: middle;
-      position: relative;
-      top: -2px;
-
-      @media (min-width: 64em) {
-        margin-left: -16px;
-      }
-    }
-
-    .icon-up {
-      display: none;
-    }
-
-    &[aria-expanded="true"] {
-      .icon-down {
-        display: none;
-      }
-      .icon-up {
-        display: inline-block;
-      }
-    }
+  .mobile-header {
+    display: none;
   }
 
-  @media (max-width: 64em) {
-    a:not(.usa-button):hover {
-      background-color: #005ea2;
-      color: white;
+  @media (max-width: 480px) {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    max-height: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    .mobile-header {
+      display: flex;
     }
   }
-}
-
-.usa-combo-box .border-secondary + input {
-  border: 1px solid red;
 }
 
 .export-checkboxes {
@@ -109,4 +79,34 @@ dialog::backdrop {
 
 .icon-primary-blue {
   filter: brightness(0) saturate(100%) invert(19%) sepia(28%) saturate(2849%) hue-rotate(197deg) brightness(94%) contrast(87%);
+}
+
+.unassign-recused-button {
+  color: #b50909;
+  box-shadow: inset 0 0 0 2px #b50909;
+}
+
+.unassigned-row-bg {
+  @media screen and (max-width: 480px) {
+    td:first-child {
+      background-color: #f0f0f0 !important;
+    }
+  }
+  th, td {
+    background-color: #f5f6f7 !important;
+  }
+}
+
+.usa-character-count--darker .usa-hint {
+  color: #565c65
+}
+
+.usa-process-list__item--primary::before {
+  color: #fff;
+  display: inline-block;
+  padding: calc((2.5rem - 2ex* 1.1)* .5);
+  text-align: center;
+  line-height: 1;
+  border: none;
+  background-color: #0076D6;
 }

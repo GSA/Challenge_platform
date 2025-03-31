@@ -29,6 +29,7 @@
 
 en:
   access_denied: "You do not have access to this section of Challenge.gov."
+  evaluator_pending_approval: "You do not have access to Challenge.gov, your account is pending approval."
   already_logged_in_notice: "You are already logged in."
   evaluation_form_destroyed: "Evaluation form was successfully destroyed."
   evaluation_form_saved: "Evaluation form was saved successfully."
@@ -73,11 +74,12 @@ en:
       success: "Evaluator created and added to challenge phase successfully."   
     resend_invite:
       success: "Invitation resent successfully."
-      failure: "Failed to resend invitation."      
+      failure: "Failed to resend invitation."
+    error:
+      full_name: "Please provide evaluator's full name"
+      email_address: "Please provide evaluator's valid email address"
   evaluation_criteria_form_title_placeholder: "Add criteria title here"
   evaluator_submission_assignments:
-    assigned_submissions: "A list of submissions assigned to the user."
-    unassigned_submissions: "A list of recused and unassigned submissions. Reassigning a user to a submission will make the submission available for the user to evaluate."
     empty_state: "There currently are no assigned submissions to this evaluator. Please assign submissions to this evaluator to view."
     assigned:
       success: "Evaluator assigned successfully"
@@ -98,6 +100,16 @@ en:
       save_draft_error:  "Failed to save evaluation as draft: %{errors}."
       mark_complete_error: "Failed to mark evaluation as complete: %{errors}."
       unauthorized: "No assignment found for this submission"
+    success:
+      save_draft_heading: "Evaluation Draft is Saved"
+      save_draft_description: "Your evaluation draft is saved. You can edit your scores anytime. 
+        Evaluation will not be final and will not be shared with challenge managers until you complete your evaluation."
+      mark_complete_heading: "Evaluation is Complete"
+      mark_complete_description: "Thank you for completing your evaluation! Your evaluation scores are now available for challenge managers to review
+        and determine the winners of their challenge."
+      evaluator_recusal_heading: "You recused yourself from evaluation"
+      evaluator_recusal_description: "We notified a challenge manager that you recused from evaluating this submission and 
+        they will unassign you from the submission."
     notices:
       saved_draft: "Evaluation saved as draft"
       marked_complete: "Evaluation complete"
@@ -111,6 +123,9 @@ en:
     alerts:
       unuathorized: "You are not authorized to access this evaluation."
       not_found: "Evaluation not found"
+    success:
+      heading: "Evaluation is revised"
+      description: "The submission evaluation scores and the average scores are updated."
     notices:
       submitted: "Revision submitted"
   form:
@@ -120,6 +135,7 @@ en:
       select: "Select %{field_name}"
       too_long: "%{field_name} must be at most %{max_length} characters long"
       not_an_integer: "%{field_name} must be a whole number"
+      over_max: "%{field_name} must be less than or equal to %{max}"
   alerts:
     recused_evaluator:
       heading: "Recused Evaluator"
@@ -128,11 +144,18 @@ en:
       heading: "No Evaluation Form"
       text: "This challenge does not have an assigned evaluation form. Please create an evaluation form and assign it to the challenge."
     recused_submission:
-      heading: "Recused"
-      text: "A user recused from evaluations for one of the challenge submissions. Please review the list of submissions and unassign a recused evaluator."
+      heading: "Recused Evaluation"
+      text: "An evaluator recused themselves from evaluating one or more of the challenge submissions. Please review the list of submissions below and unassign the evaluator from the submission(s)."
     recused_evaluator_submission:
       heading: "Recused Evaluator"
-      text: "This submission has a recused evaluator. Please unassign a recused evaluator."
+      text: "This submission has a recused evaluator. Unassign recused evaluators."
+    assign_more_evaluator:
+      heading: "Need to assign the evaluator to more submissions?"
+      text: "You can assign as many evaluators as needed to each submission."
+      link: "View the list of submissions for this challenge and assign evaluators to the submissions."
+    failure_to_proof:
+      heading: "We can't verify your identity."
+      text: "We can't verify your identity through Login.gov and grant access to submission information. This may be due to a variety of reasons, such as incorrect information or technical difficulties."
   mailers:
     evaluation_invitation:
       subject: "You have been invited to %{challenge_title} Evaluation Panel"

@@ -40,14 +40,14 @@ RSpec.describe "SubmissionMaterialsController" do
       get materials_submission_path(submission)
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to have_css("h1", text: "Submission ID #{submission.id}")
-      expect(response.body).to have_css("h2", text: "Brief Description:")
+      expect(response.body).to have_css("h2", text: "Submission ID #{submission.id}")
+      expect(response.body).to have_css("h3", text: "Brief Description:")
     end
   end
 
   context "when logged in as an evaluator" do
     let(:user) do
-      create_and_log_in_user(role: "evaluator")
+      create_and_log_in_user(role: "evaluator", status: "active")
     end
 
     context "with a gov email" do
@@ -70,8 +70,8 @@ RSpec.describe "SubmissionMaterialsController" do
         get materials_submission_path(submission)
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to have_css("h1", text: "Submission ID #{submission.id}")
-        expect(response.body).to have_css("h2", text: "Brief Description:")
+        expect(response.body).to have_css("h2", text: "Submission ID #{submission.id}")
+        expect(response.body).to have_css("h3", text: "Brief Description:")
       end
     end
 

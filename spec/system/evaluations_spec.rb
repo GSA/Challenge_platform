@@ -12,7 +12,7 @@ RSpec.describe 'Evaluation', :js, type: :system do
                { title: "Criterion 3", points_or_weight: 25, scoring_type: :rating }
              ])
     end
-    let(:challenge_phases_evaluator) do
+    let!(:challenge_phases_evaluator) do
       create(:challenge_phases_evaluator, challenge:, phase: submission.phase, user: evaluator)
     end
     let!(:assignment) { create(:evaluator_submission_assignment, evaluator: evaluator, submission: submission) }
@@ -32,12 +32,12 @@ RSpec.describe 'Evaluation', :js, type: :system do
         expect(page).to have_content(evaluation_form.instructions)
       end
 
-      it 'saves the form as a draft' do
+      it 'saves the form as a draft', bullet: :dont_raise do
         visit new_submission_evaluation_path(submission)
 
         save_evaluation_draft
 
-        expect(page).to have_content('Evaluation saved as draft')
+        expect(page).to have_content('Evaluation Draft is Saved')
       end
 
       it 'validates presence of required fields' do
@@ -45,7 +45,8 @@ RSpec.describe 'Evaluation', :js, type: :system do
 
         complete_evaluation
 
-        expect(page).to have_content("prohibited this evaluation from being saved")
+        expect(page).to have_content(/Evaluation has \d+ errors/)
+        expect(page).to have_content("Please review and complete all required fields for the evaluation.")
       end
 
       it 'allows entering scores for evaluation criteria' do
@@ -59,19 +60,26 @@ RSpec.describe 'Evaluation', :js, type: :system do
         expect(page).to have_content(total_score)
       end
 
-      it 'submits the form and marks the evaluation as complete' do
+      it 'submits the form and marks the evaluation as complete', bullet: :dont_raise do
         visit new_submission_evaluation_path(submission)
 
         fill_in_all_scores
         complete_evaluation
 
-        expect(page).to have_content('Evaluation Complete')
+        expect(page).to have_content('Evaluation is Complete')
       end
 
       it 'shows the submission details panel' do
         visit new_submission_evaluation_path(submission)
         expect(page).to have_css('[data-controller="hotdog"]')
         expect(page).to have_content(submission.submitter.email)
+      end
+
+      it "does not show the identity verification banner" do
+        visit phases_path
+
+        expect(page).to have_no_css(".usa-alert--info",
+                                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
       end
     end
 
@@ -84,7 +92,22 @@ RSpec.describe 'Evaluation', :js, type: :system do
         visit new_submission_evaluation_path(submission)
 
         expect(page).to have_no_css('[data-controller="hotdog"]')
-        expect(page).to_not have_content(submission.submitter.email)
+        expect(page).to have_no_content(submission.submitter.email)
+      end
+
+      it "shows the identity verification banner if not ial_level 2" do
+        visit phases_path
+
+        expect(page).to have_css(".usa-alert--info",
+                                 text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+      end
+
+      it "does not show the identity verification banner if ial_level 2" do
+        evaluator.update(ial_level: 2)
+        visit phases_path
+
+        expect(page).to have_no_css(".usa-alert--info",
+                                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
       end
     end
   end
@@ -151,7 +174,7 @@ RSpec.describe 'Evaluation', :js, type: :system do
   end
 
   def complete_evaluation
-    click_button 'Mark Complete'
+    click_button 'Complete Evaluation'
 
     assert_selector 'dialog#complete', visible: true
 

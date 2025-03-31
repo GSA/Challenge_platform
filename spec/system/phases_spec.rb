@@ -38,10 +38,17 @@ describe "A11y", :js do
           expect(page).to have_button("Create New Challenge")
         end
 
+        it "does not show the identity verification banner" do
+          visit phases_path
+
+          expect(page).to have_no_css(".usa-alert--info",
+                                      text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+        end
+
         it "displays none yet text under submissions when no submissions" do
           visit phases_path
 
-          expect(page).to have_css('td[data-label="# of Submissions"]', text: "None Yet")
+          expect(page).to have_css('td[data-label="# of Submissions"]', text: "None yet")
         end
 
         it "displays submissions count link when submissions exist" do
@@ -49,15 +56,15 @@ describe "A11y", :js do
 
           visit phases_path
 
-          expect(page).to have_css('td[data-label="# of Submissions"]', text: "1 Submissions")
-          expect(page).to have_link("1 Submissions", href: submissions_phase_path(phase))
+          expect(page).to have_css('td[data-label="# of Submissions"]', text: "1 submissions")
+          expect(page).to have_link("1 submissions", href: submissions_phase_path(phase))
         end
 
         it "displays evaluator invite link under evaluators when no evaluators" do
           visit phases_path
 
-          expect(page).to have_css('td[data-label="# of Evaluators"]', text: "Invite Evaluators")
-          expect(page).to have_link("Invite Evaluators", href: phase_evaluators_path(phase))
+          expect(page).to have_css('td[data-label="# of Evaluators"]', text: "Invite evaluators")
+          expect(page).to have_link("Invite evaluators", href: phase_evaluators_path(phase))
         end
 
         it "displays evaluators count text instead of link when evaluators exist" do
@@ -66,8 +73,8 @@ describe "A11y", :js do
 
           visit phases_path
 
-          expect(page).to have_css('td[data-label="# of Evaluators"]', text: "1 Evaluators")
-          expect(page).to have_link("1 Evaluators", href: phase_evaluators_path(phase))
+          expect(page).to have_css('td[data-label="# of Evaluators"]', text: "1 evaluators")
+          expect(page).to have_link("1 evaluators", href: phase_evaluators_path(phase))
         end
       end
     end
@@ -86,10 +93,25 @@ describe "A11y", :js do
         expect(page).to have_no_button("Create New Challenge")
       end
 
+      it "shows the identity verification banner if not ial_level 2" do
+        visit phases_path
+
+        expect(page).to have_css(".usa-alert--info",
+                                 text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+      end
+
+      it "does not show the identity verification banner if ial_level 2" do
+        user.update(ial_level: 2)
+        visit phases_path
+
+        expect(page).to have_no_css(".usa-alert--info",
+                                    text: "To view submission information on Challenge.gov, you must verify your identity with Login.gov")
+      end
+
       it "displays none yet text under submissions when no submissions" do
         visit phases_path
 
-        expect(page).to have_css('td[data-label="# of Submissions"]', text: "None Yet")
+        expect(page).to have_css('td[data-label="# of Submissions"]', text: "None yet")
       end
 
       it "displays submissions count text instead of link when submissions exist" do
@@ -97,7 +119,7 @@ describe "A11y", :js do
 
         visit phases_path
 
-        expect(page).to have_css('td[data-label="# of Submissions"]', text: "1 Submissions")
+        expect(page).to have_css('td[data-label="# of Submissions"]', text: "1 submissions")
         expect(page).to have_no_link("1 Submissions")
       end
 
@@ -114,8 +136,8 @@ describe "A11y", :js do
 
         visit phases_path
 
-        expect(page).to have_css('td[data-label="# of Evaluators"]', text: "1 Evaluators")
-        expect(page).to have_no_link("1 Evaluators")
+        expect(page).to have_css('td[data-label="# of Evaluators"]', text: "1 evaluators")
+        expect(page).to have_no_link("1 evaluators")
       end
     end
   end
