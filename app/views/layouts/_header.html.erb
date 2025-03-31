@@ -93,13 +93,13 @@ aria-label="Official website of the United States government"
   <div class="usa-overlay"></div>
 </section> 
 <header class="usa-header usa-header--basic site-header">
-  <div class="desktop:display-flex desktop:width-full">
+  <div class="grid-container desktop:display-flex desktop:width-full">
     <div class="usa-navbar">
       <div class="usa-logo">
         <em class="usa-logo__text"
           ><a href="/" title="challenge.gov">
           <span class="site-title--long">
-            <img width="300" class="usa-header__logo-img desktop:margin-bottom-2" src="<%= image_path("challenge-logo.svg") %>" alt="challenge logo" />
+            <img class="height-4 usa-header__logo-img desktop:margin-bottom-2" src="<%= image_path("challenge-logo.svg") %>" alt="challenge logo" />
           </span>  
           </a></em
         >
@@ -181,7 +181,7 @@ aria-label="Official website of the United States government"
           </form>
         </section>
         <% if logged_in? %>
-          <div class="text-primary font-body-2xs margin-y-1 padding-top-1">
+          <div class="text-primary font-body-2xs margin-y-1 padding-top-1" style="overflow-wrap: break-word;">
             <%= current_user.email %>
           </div>  
           <%= button_to("Logout", session_path, method: :delete, class: "usa-button font-body-3xs usa-button--outline margin-y-1 text-no-wrap desktop:margin-left-1 width-full", type: "button") %>

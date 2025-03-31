@@ -399,7 +399,6 @@ ALTER SEQUENCE public.evaluation_criteria_id_seq OWNED BY public.evaluation_crit
 
 CREATE TABLE public.evaluation_forms (
     id bigint NOT NULL,
-    title character varying NOT NULL,
     instructions character varying NOT NULL,
     comments_required boolean DEFAULT false,
     closing_date date NOT NULL,
@@ -1235,7 +1234,8 @@ CREATE TABLE public.users (
     active_session boolean DEFAULT false,
     renewal_request character varying(255),
     jwt_token text,
-    recertification_expired_at timestamp(0) without time zone
+    recertification_expired_at timestamp(0) without time zone,
+    ial_level integer DEFAULT 1 NOT NULL
 );
 
 
@@ -2480,6 +2480,8 @@ ALTER TABLE ONLY public.winners
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+(20250319141025),
+(20250220185334),
 (20250210211648),
 (20250204131151),
 (20250202220815),

@@ -1,5 +1,5 @@
 <!-- Utility Menu -->
-<nav aria-label="Utility navigation" class="bg-primary-darker w-full display-flex flex-justify-center desktop:flex-justify-end padding-1 font-body-3xs desktop:font-body-2xs text-white">
+<nav aria-label="Utility navigation" class="bg-primary-darker grid-container w-full display-flex flex-justify-center desktop:flex-justify-end padding-1 font-body-3xs text-white">
     <% if current_user.role == "challenge_manager" %>
       <%= utility_menu_link('grid_view', phases_path, 'Manage Challenges', 'Challenges') %>
     <% end %>
@@ -7,9 +7,7 @@
       <%= utility_menu_link('star_half', evaluations_path, 'Evaluate Submissions', 'Evaluations') %>
     <% end %>  
     <%= utility_menu_link('support', 'https://www.challenge.gov/cm-user-guide/', 'Support', 'Support') %>
-    <div class="display-none desktop:display-flex flex-align-center margin-x-1 margin-top-1">
-      |
-      <%= image_tag('images/usa-icons/account_circle.svg', class: "usa-icon--size-3 icon-white margin-x-2", alt: "Help") %>
+    <div class="display-none desktop:display-flex flex-align-center padding-x-3 border-left-1px">
       <%= current_user.email %>
     </div>
 </nav>

@@ -1,54 +1,65 @@
 <div data-controller="submission-details">
     <% rand = SecureRandom.hex(8) %>
-    <%= form_with(model: @submission, url: submission_path(@submission), class: "maxw-mobile-lg") do |form| %>
-        <div class="usa-checkbox" id="eligible-for-evaluation">
+        <%= form_with(
+            model: @submission,
+            url: submission_path(@submission),
+            # method: :patch,
+            data: { 
+            submission_details_target: "judgingStatusForm"
+        }) do |f| %>  
             <input
-            class="usa-checkbox__input usa-checkbox__input--tile"
-            type="checkbox"
-            id="<%= "#{rand}-judging-status-selected" %>"
-            value="selected"
-            <%= "disabled" if @submission.evaluators_assigned? %>
-            <%= "checked" if @submission.judging_status.in?(["selected", "winner"]) %>
-            data-action="change->submission-details#eligibleCheck"
-            data-submission-details-target="eligibleCheckbox"
+            id="judging-status-hidden"
+            type="hidden"
+            name="submission[judging_status]"
+            data-submission-details-target="judgingStatusHidden"
+            value=<%= @submission.judging_status %>
             />
-            <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-selected" %>"
-            >This submission is eligible for evaluation.
-            <span class="usa-checkbox__label-description"
-                >Check the box if the submission is pre-screened and is eligible for the evaluation process.</span
-            ></label
-            >
-        </div>
-        <div class="usa-checkbox" id="selected-to-advance">
-            <input
-            class="usa-checkbox__input usa-checkbox__input--tile"
-            id="<%= "#{rand}-judging-status-winner" %>"
-            type="checkbox"
-            <%= "disabled" if @submission.evaluations_missing_or_incomplete? %>
-            <%= "checked" if @submission.judging_status == "winner" %>
-            data-action="change->submission-details#selectedCheck"
-            data-submission-details-target="winnerCheckbox"
-            />
-            <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-winner" %>"
-            >This submission is selected to advance.
-            <span class="usa-checkbox__label-description"
-                >Check the box to select this submission to advance or for award after all evaluations are completed.</span
-            ></label
-            >
-        </div>
+        <% end %>
+
+    <div class="usa-checkbox" id="eligible-for-evaluation">
         <input
-        id="judging-status-hidden"
-        type="hidden"
-        name="submission[judging_status]"
-        data-submission-details-target="judgingStatusHidden"
-        value=<%= @submission.judging_status %>
+        class="usa-checkbox__input usa-checkbox__input--tile"
+        type="checkbox"
+        id="<%= "#{rand}-judging-status-selected" %>"
+        value="selected"
+        <%= "disabled" if @submission.evaluators_assigned? %>
+        <%= "checked" if @submission.judging_status.in?(["selected", "winner"]) %>
+        data-action="change->submission-details#eligibleCheck"
+        data-submission-details-target="eligibleCheckbox"
         />
+        <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-selected" %>"
+        >This submission is eligible for evaluation.
+        <span class="usa-checkbox__label-description"
+            >Check the box if the submission is pre-screened and is eligible for the evaluation process.</span
+        ></label
+        >
+    </div>
+
+    <div class="usa-checkbox" id="selected-to-advance">
+        <input
+        class="usa-checkbox__input usa-checkbox__input--tile"
+        id="<%= "#{rand}-judging-status-winner" %>"
+        type="checkbox"
+        <%= "disabled" if @submission.evaluations_missing_or_incomplete? %>
+        <%= "checked" if @submission.judging_status == "winner" %>
+        data-action="change->submission-details#selectedCheck"
+        data-submission-details-target="winnerCheckbox"
+        />
+        <label class="usa-checkbox__label" for="<%= "#{rand}-judging-status-winner" %>"
+        >This submission is selected to advance.
+        <span class="usa-checkbox__label-description"
+            >Check the box to select this submission to advance or for award after all evaluations are completed.</span
+        ></label
+        >
+    </div>
+    <%= form_with(model: @submission, url: submission_path(@submission), class: "maxw-mobile-lg") do |form| %>
         <div class="usa-form-group">
-            <%= form.label :comments, "Comments and notes:", class: "usa-label", for: "#{rand}-comments" %>
+            <%= form.label :comments, "Notes:", class: "usa-label", for: "#{rand}-comments" %>
             <%= form.text_area :comments, class: "usa-textarea", default: @submission.comments, id: "#{rand}-comments" %>
         </div>
         <button type="submit" name="commit" class="usa-button font-body-2xs text-no-wrap margin-y-2">
-            Save
+            <%= image_tag('images/usa-icons/check.svg', class: "usa-icon icon-white", alt: "save") %>
+            Save Notes
         </button>
     <% end %>
 </div>

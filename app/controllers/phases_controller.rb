@@ -4,13 +4,14 @@
 class PhasesController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
   before_action :set_phase, except: [:index]
+  before_action -> { check_gov_access }, except: [:index]
 
   def index
     @challenges = current_user.challenge_manager_challenges.includes([phases: [:evaluation_form, :evaluators]])
   end
 
   def submissions
-    @submissions = @phase.submissions.includes(evaluator_submission_assignments: [:evaluator, :evaluation])
+    @submissions = @phase.submissions
 
     set_submission_counts
     set_submission_statuses

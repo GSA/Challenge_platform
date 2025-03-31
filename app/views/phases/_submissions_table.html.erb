@@ -14,15 +14,14 @@
 <div data-controller="load-more"
      data-load-more-total-count-value="<%= @filtered_count %>">
 
-  <table aria-label="List of Submissions" class="usa-table usa-table--stacked-header usa-table--borderless width-full gray-header">
+  <table aria-label="List of Submissions" class="usa-table usa-table--stacked-header usa-table--borderless width-full challenge-table">
     <thead>
       <tr>
         <th scope="col" style="width: 15%">Submission ID</th>
         <th scope="col" style="width: 15%">Eligible for Evaluation</th>
         <th scope="col" style="width: 15%">Selected to Advance</th>
         <th scope="col" style="width: 40%">Assigned Evaluators</th>
-        <th scope="col" style="width: 10%">Average Score</th>
-        <th scope="col" style="width: 5%"><span class="usa-sr-only">View Submission</span></th>
+        <th scope="col" style="width: 10%" class="text-no-wrap">Average Score</th>
       </tr>
     </thead>
     <tbody data-load-more-target="container">
@@ -31,11 +30,11 @@
   </table>
 
   <div class="display-flex flex-justify-center margin-top-6 margin-bottom-6 width-full">
-    <button class="usa-button mobile:width-mobile" 
+    <button class="usa-button bg-blue-vivid-50v width-card" 
             data-load-more-target="loadMoreButton"
             data-action="click->load-more#loadMore"
-            aria-label="Load more submissions">
-      Load more
+            aria-label="Show more submissions">
+      Show more
     </button>
   </div>
 </div>

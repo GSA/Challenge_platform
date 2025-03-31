@@ -25,7 +25,8 @@ i.e.
 $theme-colors: (
   'green-cool-vivid-60v': #216E1F,
   'orange-warm-vivid-50v': #CF4900,
-  'red-vivid-60v': #B50909
+  'red-vivid-60v': #B50909,
+  'blue-vivid-50v': #0076D6
 );
 
 @each $name, $color in $theme-colors {
@@ -33,3 +34,104 @@ $theme-colors: (
      background-color: $color;
    }
  }
+
+/* Custom table styling */
+@media screen and (max-width: 479px) {
+  .usa-table.usa-table--borderless.challenge-table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+    width: 100%;
+
+    tr {
+      th:first-child, td:first-child {
+        border-top: 2px solid color($theme-color-primary);
+        background-color: color($theme-color-base-lightest);
+      }
+    }
+    th, td {
+      border-top: 0;
+      border-left: 1px solid color($theme-color-base-lightest);
+      border-right: 1px solid color($theme-color-base-lightest);
+    }
+    th:last-child, td:last-child {
+      border-bottom: 1px solid color($theme-color-base-lightest);
+    }
+  }
+}
+
+@media screen and (min-width: 480px) {
+  .usa-table.usa-table--borderless.challenge-table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+
+    thead {
+      th {
+        border: 0;
+        background-color: color($theme-color-base-lightest);
+      }
+    }
+
+    tbody {
+      tr {
+        th, td {
+          border-top: 4px solid color($theme-color-primary);
+          border-bottom: transparent;
+          border-bottom: 1px solid color($theme-color-base-lightest);
+        }
+        th:first-child, td:first-child {
+          border-left: 1px solid color($theme-color-base-lightest);
+        }
+        th:last-child, td:last-child {
+          border-right: 1px solid color($theme-color-base-lightest);
+        }
+      }
+    }
+  }
+}
+
+/* Nav button customization */
+.usa-nav__primary {
+  button.usa-accordion__button {
+    &::before,
+    &::after,
+    span::after {
+      display: none !important;
+      content: none !important;
+      -webkit-mask: none !important;
+      mask: none !important;
+    }
+
+    .usa-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      fill: color($theme-color-primary);
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+
+      @media (min-width: 64em) {
+        margin-left: -16px;
+      }
+    }
+
+    .icon-up {
+      display: none;
+    }
+
+    &[aria-expanded="true"] {
+      .icon-down {
+        display: none;
+      }
+      .icon-up {
+        display: inline-block;
+      }
+    }
+  }
+
+  @media (max-width: 64em) {
+    a:not(.usa-button):hover {
+      background-color: color($theme-color-primary);
+      color: white;
+    }
+  }
+}

@@ -98,6 +98,8 @@ class User < ApplicationRecord
   USER_STATUSES = %w[pending active suspended revoked deactivated decertified evaluator_role_requested].freeze
   validates :status, inclusion: { in: USER_STATUSES }
 
+  enum :ial_level, { ial1: 1, ial2: 2 }
+
   # Finds, creates, or updates user from userinfo
   # Find in case of user with existing token matching userinfo["sub"]
   # Create in case of no token or email matching in userinfo
@@ -148,6 +150,10 @@ class User < ApplicationRecord
 
   def self.default_challenge_manager?(email)
     /\.(gov|mil)$/.match?(email)
+  end
+
+  def non_gov_restricted?
+    !/\.(gov|mil)$/.match?(email) && !ial2?
   end
 
   def full_name(format: :default)

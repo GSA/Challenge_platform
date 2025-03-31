@@ -1,0 +1,16 @@
+<div class="usa-alert usa-alert--warning margin-top-4 maxw-tablet" role="alert">
+  <div class="usa-alert__body">
+    <h2 class="usa-alert__heading">Evaluation Recusal</h2>
+    <p>If there are circumstances preventing you from providing a fair and timely evaluation, please 
+      <a data-action="click->evaluator-recusal-modal#open"
+        data-assignment-id="<%= @evaluator_submission_assignment.id %>"
+        data-submission-id="<%= @evaluator_submission_assignment.submission.id %>"
+        data-evaluation-id="<%= @evaluation.id %>"
+        aria-controls="evaluator-recusal-modal"
+        class="text-primary text-underline cursor-pointer"
+      >
+        recuse yourself from evaluating this submission.
+      </a>
+    </p>
+  </div>
+</div>

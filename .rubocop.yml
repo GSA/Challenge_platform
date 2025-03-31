@@ -53,6 +53,7 @@ Metrics/BlockLength:
     - 'spec/**/*'
 
 Metrics/ClassLength:
+  Max: 150
   CountAsOne:
     - array
     - hash
@@ -60,6 +61,13 @@ Metrics/ClassLength:
 
 Metrics/MethodLength:
   Max: 20
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+
+Metrics/ModuleLength:
+  Max: 150
   CountAsOne:
     - array
     - hash

@@ -1,3 +1,6 @@
+<h3>Title:</h3>
+<p class="text-normal"><%= @submission.title %></p>
+
 <h3>Brief Description:</h3>
 <p class="text-normal"><%= @submission.brief_description %></p>
 
@@ -12,19 +15,14 @@
 <% end %>    
 
 <h3>External URL:</h3>
-<a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
-
-<h3>Status:</h3>
-<p class="text-normal"><%= @submission.status.capitalize %></p>
+<% if @submission.external_url.present? %>
+    <a href=<%= @submission.external_url %>><%= @submission.external_url %></a>
+<% end %>
 
 <h3>Submitter:</h3>
-<p class="text-normal"><%= @submission.submitter.email %></p>
+<p class="text-normal">
+  <a href="mailto:<%= @submission.submitter.email %>"><%= @submission.submitter.email %></a>
+</p>
 
 <h3>Last Updated Date:</h3>
 <p class="text-normal"><%= @submission.updated_at %></p>
-
-<h3>Submission ID:</h3>
-<p class="text-normal"><%= @submission.id %></p>
-
-<h3>Title:</h3>
-<p class="text-normal"><%= @submission.title %></p>

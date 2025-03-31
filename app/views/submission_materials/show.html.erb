@@ -1,2 +1,3 @@
-<h1>Submission ID <%= @submission.id %></h1>
+<h1><%= challenge_phase_title(@submission.challenge, @submission.phase) %></h1>
+<h2 class="text-primary">Submission ID <%= @submission.id %></h2>
 <%= render partial: 'submission_materials' %>

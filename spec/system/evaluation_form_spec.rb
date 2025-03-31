@@ -6,7 +6,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
   let!(:phase) { create(:phase, challenge: challenge) }
 
   describe "new evaluation form page" do
-
     before do
       system_login_user(user)
     end
@@ -71,9 +70,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       save_form
 
-      # Click through confirmation page
-      expect(page).to have_content("Evaluation Form Saved")
-      click_link_or_button "Back to Challenge Phases"
+      expect(page).to have_content("Evaluation form is saved")
 
       # Should be on phases index view
       evaluation_form = EvaluationForm.first
@@ -88,13 +85,11 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
     end
 
     it "contains the evaluation form data when editing after creation" do
-      title = "Editing after creation"
       visit new_phase_evaluation_form_path(phase)
-      fill_in_full_form(title:)
+      fill_in_full_form
       save_form
-      click_link_or_button "Back to Challenge Phases"
       expect(page).to have_link("Edit form")
-      evaluation_form = EvaluationForm.find_by(title:)
+      evaluation_form = phase.evaluation_form
       click_link("Edit form", href: edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form))
       expect_form_to_match_all_evaluation_form_values(evaluation_form)
     end
@@ -107,16 +102,19 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       # Starts with 3
       expect(visible_criterion_indicies.length).to eq(3)
       toggle_criteria_accordion(0)
+      expect(page).to have_content("Remove Criteria 1")
       remove_criterion(0)
+
       expect(visible_criterion_indicies.length).to eq(2)
       toggle_criteria_accordion(1)
+      expect(page).to have_content("Remove Criteria 2")
       remove_criterion(1)
-      expect(visible_criterion_indicies.length).to eq(1)
 
-      # Removing last criteria creates a new blank one
-      remove_criterion(2)
+      # Being on the last criteria hides the remove criteria button
       expect(visible_criterion_indicies.length).to eq(1)
-      expect(visible_criterion_indicies).to include(3)
+      expect(page).to have_no_css("button.delete-criteria-button")
+      expect(page).to have_no_content("Remove Criteria")
+      expect(visible_criterion_indicies).to include(2)
     end
 
     it "shows an error if criteria points don't add up to 100 for weighted form" do
@@ -132,14 +130,14 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_criterion_points_weight(1, 10)
 
       save_form
-      expect(page).to have_content(I18n.t("evaluation_form_criteria_weight_total_error"))
+      expect(page).to have_content(I18n.t("evaluation_form.errors.criteria_weight_total"))
 
       # Fix weights to add up to 100 and form should submit
       fill_in_criterion_points_weight(0, 50)
       fill_in_criterion_points_weight(1, 50)
 
       save_form
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_content("Evaluation form is saved")
     end
 
     it "expands all criteria if switching to weighted scale with value over 100" do
@@ -263,7 +261,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       visit edit_phase_evaluation_form_path(evaluation_form.phase, evaluation_form)
 
       # Prep updated form field values for comparison
-      updated_title = "Updated #{evaluation_form.title}"
       # TODO: Might affect disabled state, start_date, etc.
       updated_instructions = "Updated #{evaluation_form.instructions}"
       updated_comments_required = !evaluation_form.comments_required
@@ -272,7 +269,6 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       updated_end_date = evaluation_form.closing_date + 1.day
 
       # Update form field values
-      fill_in_title(updated_title)
       fill_in_instructions(updated_instructions)
       check_comments_required
       # TODO: When switching to weighted it needs to make sure criteria values sum to 100
@@ -280,11 +276,10 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
       fill_in_end_date(updated_end_date)
 
       save_form
-      expect(page).to have_current_path(confirmation_phase_evaluation_form_path(phase, evaluation_form))
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_current_path(phases_path)
+      expect(page).to have_content("Evaluation form is saved")
 
       evaluation_form.reload
-      expect(evaluation_form.title).to eq(updated_title)
       expect(evaluation_form.instructions).to eq(updated_instructions)
       expect(evaluation_form.comments_required).to eq(updated_comments_required)
       # TODO: Enable this when weighted scoring issue above is solved
@@ -307,7 +302,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_content("Evaluation form is saved")
 
       expect(evaluation_form.reload.evaluation_criteria.length).to eq(num_criteria + 3)
     end
@@ -328,7 +323,7 @@ RSpec.describe 'Evaluation Form', :js, type: :system do
 
       rebalance_criteria_weights if evaluation_form.weighted_scoring?
       save_form
-      expect(page).to have_content("Evaluation Form Saved")
+      expect(page).to have_content("Evaluation form is saved")
 
       evaluation_form.reload
       # Criteria count should be the same since one was added and removed
@@ -370,14 +365,13 @@ end
 #######################################
 
 ##### Form Fill Helpers #####
-def fill_in_full_form(title: "New Evaluation Form")
-  fill_in_base_form_info(title:)
+def fill_in_full_form
+  fill_in_base_form_info
   fill_in_all_eval_criteria_types
 end
 
-def fill_in_base_form_info(title: "New Evaluation Form")
+def fill_in_base_form_info
   # Fill in main form fields
-  fill_in_title(title)
   fill_in_instructions("Example instructions")
   check_comments_required
   select_scale_type("point")
@@ -426,10 +420,6 @@ def fill_in_rating_criteria_type(initial: false)
   fill_in_criterion_option_label(index, 5, "Agree")
 end
 
-def fill_in_title(value)
-  fill_in 'evaluation_form[title]', with: value
-end
-
 def fill_in_instructions(value)
   fill_in 'evaluation_form[instructions]', with: value
 end
@@ -476,6 +466,7 @@ def add_criterion
 end
 
 def remove_criterion(index)
+  expect(page).to have_css("button.delete-criteria-button")
   click_link_or_button "evaluation_form_evaluation_criteria_attributes_#{index}_delete_criteria"
 
   assert_selector 'dialog#remove-criteria', visible: true
@@ -562,16 +553,6 @@ def expect_field_to_be_focused(selector)
   expect(page).to have_css("#{selector}:focus", visible: :all)
 end
 
-def expect_form_title_to_be_focused
-  selector = "input[name='evaluation_form[title]']"
-  expect_field_to_be_focused(selector)
-end
-
-def expect_form_phase_to_be_focused
-  selector = "#challenge-combo"
-  expect_field_to_be_focused(selector)
-end
-
 def expect_form_instructions_to_be_focused
   selector = "textarea[name='evaluation_form[instructions]']"
   expect_field_to_be_focused(selector)
@@ -620,7 +601,6 @@ def expect_form_to_match_all_evaluation_form_values(evaluation_form)
 end
 
 def expect_base_form_field_to_match(evaluation_form)
-  expect_form_title_to_equal(evaluation_form.title)
   expect_form_instructions_to_equal(evaluation_form.instructions)
   expect_form_comments_required_to_equal(evaluation_form.comments_required)
   expect_form_scale_type_to_equal(evaluation_form.scale_type)
@@ -655,10 +635,6 @@ def expect_criterion_scoring_type_specific_fields_to_match(index, criterion)
 end
 
 # Base form value checkers
-def expect_form_title_to_equal(value)
-  expect(find_by_id('evaluation_form_title').value).to eq(value)
-end
-
 def expect_form_phase_select_to_not_contain(value)
   expect(page).to have_no_select(
     class: "usa-combo-box__select",

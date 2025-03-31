@@ -24,11 +24,7 @@ class EvaluationFormsController < ApplicationController
     @evaluation_form = EvaluationForm.new(evaluation_form_params)
 
     if @evaluation_form.save
-      redirect_to confirmation_phase_evaluation_form_path(
-        @evaluation_form.phase,
-        @evaluation_form
-      ),
-                  notice: I18n.t("evaluation_form_saved")
+      custom_success_redirect(@evaluation_form)
     else
       render :new, status: :unprocessable_entity, phase: @evaluation_form.phase
     end
@@ -39,8 +35,7 @@ class EvaluationFormsController < ApplicationController
     respond_to do |format|
       if @evaluation_form.update(evaluation_form_params)
         format.html do
-          redirect_to confirmation_phase_evaluation_form_path(@evaluation_form.phase, @evaluation_form),
-                      notice: I18n.t("evaluation_form_saved")
+          custom_success_redirect(@evaluation_form)
         end
         format.json { render :show, status: :ok, location: @evaluation_form }
       else
@@ -118,5 +113,17 @@ class EvaluationFormsController < ApplicationController
     else
       permitted
     end
+  end
+
+  def custom_success_redirect(evaluation_form)
+    flash[:custom_success_heading] = I18n.t("evaluation_form.success.heading")
+    flash[:custom_success_description] = "
+      Your evaluation form for #{helpers.challenge_with_phase(evaluation_form)} is saved.
+      You can edit it until the end date of your challenge. During evaluation period
+      the form will be available to your evaluators and you will only be able to edit
+      evaluation period end date if needed.
+    "
+
+    redirect_to phases_path
   end
 end
