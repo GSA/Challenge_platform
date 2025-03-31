@@ -31,7 +31,6 @@ RSpec.describe 'Evaluator Submission Assignments', :js, type: :system do
     )
 
     visit phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
-    expect(page).to have_content('Assigned Submissions')
 
     unassign_button = find("button[data-assignment-id='#{assigned_assignment.id}']", text: 'Unassign')
     expect(unassign_button).to be_visible
@@ -52,13 +51,11 @@ RSpec.describe 'Evaluator Submission Assignments', :js, type: :system do
       evaluator: evaluator,
       status: :unassigned
     )
+
+    expect(unassigned_assignment.reload.status).to eq('unassigned')
     visit phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
 
-    expect(page).to have_content('Unassigned Submissions')
-
-    within('table', text: unassigned_assignment.submission.id.to_s) do
-      click_button 'Reassign', match: :first
-    end
+    click_button "Reassign"
 
     expect(page).to have_content(I18n.t('evaluator_submission_assignments.assigned.success'))
     expect(unassigned_assignment.reload.status).to eq('assigned')

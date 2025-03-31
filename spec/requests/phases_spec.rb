@@ -37,9 +37,10 @@ RSpec.describe "Phases" do
       it_behaves_like "a page with utility menu links for all users"
       it_behaves_like "a page with utility menu links for a challenge manager"
 
-      it "renders the index view with the correct header" do
+      it "renders the index view with the correct content" do
         expect(response).to have_http_status(:success)
         expect(response.body).to include("My Challenges")
+        expect(response.body).to include("Resources and support")
       end
 
       it "renders an empty list" do
@@ -60,7 +61,7 @@ RSpec.describe "Phases" do
 
     context "when logged in as an evaluator" do
       before do
-        create_and_log_in_user(role: "evaluator")
+        create_and_log_in_user(role: "evaluator", status: "active")
       end
 
       it "redirects to the evaluator landing page" do

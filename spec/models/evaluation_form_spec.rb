@@ -17,22 +17,16 @@ require 'rails_helper'
 
 RSpec.describe EvaluationForm do
   describe 'validations' do
-    it 'validates presence of title' do
-      evaluation_form = described_class.new(title: nil)
-      expect(evaluation_form).not_to be_valid
-      expect(evaluation_form.errors[:title]).to include("can't be blank")
-    end
-
     it 'validates presence of instructions' do
       evaluation_form = described_class.new(instructions: nil)
       expect(evaluation_form).not_to be_valid
-      expect(evaluation_form.errors[:instructions]).to include("can't be blank")
+      expect(evaluation_form.errors[:instructions]).to include("Provide evaluation instructions")
     end
 
     it 'validates presence of closing date' do
       evaluation_form = described_class.new(closing_date: nil)
       expect(evaluation_form).not_to be_valid
-      expect(evaluation_form.errors[:closing_date]).to include("can't be blank")
+      expect(evaluation_form.errors[:closing_date]).to include("Provide closing date")
     end
 
     it 'validates the presence of a phase' do

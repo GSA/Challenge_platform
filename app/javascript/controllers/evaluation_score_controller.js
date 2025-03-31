@@ -28,6 +28,8 @@ export default class extends Controller {
 
     this.updateCalculatedScore(criterionElement, scoreValue);
 
+    this.setRadioScoreClass(event);
+
     this.dispatch("scoreUpdated");
   }
 
@@ -81,6 +83,28 @@ export default class extends Controller {
     const scoreSpan = criterionElement.querySelector(".calculated-score");
     if (scoreSpan) {
       scoreSpan.textContent = scoreValue;
+    }
+  }
+
+  setRadioScoreClass(event) {
+    if (!event || !event.target) return; // Prevent error on page load
+
+    const radio = event.target;
+    const fieldset = radio.closest(".usa-fieldset"); // Scope to the fieldset
+    if (!fieldset) return;
+
+    const allScoreValues = fieldset.querySelectorAll(".radio-score-value"); // Get only in fieldset
+    const container = radio.closest(".usa-radio");
+    const scoreValue = container?.querySelector(".radio-score-value");
+
+    // Reset all within the fieldset to bg-base
+    allScoreValues.forEach((el) => el.classList.remove("bg-primary"));
+    allScoreValues.forEach((el) => el.classList.add("bg-base-dark"));
+
+    // Set clicked one to bg-primary
+    if (scoreValue) {
+      scoreValue.classList.remove("bg-base-dark");
+      scoreValue.classList.add("bg-primary");
     }
   }
 }

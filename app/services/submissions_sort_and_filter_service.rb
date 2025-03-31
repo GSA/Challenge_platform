@@ -13,6 +13,7 @@ class SubmissionsSortAndFilterService
   def sort_and_filter
     apply_filters
     apply_sorting
+    apply_includes
     @submissions
   end
 
@@ -21,6 +22,7 @@ class SubmissionsSortAndFilterService
   def apply_filters
     filter_by_eligibility
     filter_by_status
+    filter_by_submission_id
   end
 
   def filter_by_eligibility
@@ -34,6 +36,12 @@ class SubmissionsSortAndFilterService
     return unless @params[:status]
 
     @submissions = apply_status_filter(@submissions)
+  end
+
+  def filter_by_submission_id
+    return if @params[:submission_id].blank?
+
+    @submissions = @submissions.where("submissions.id::text LIKE ?", "%#{@params[:submission_id]}%")
   end
 
   def apply_status_filter(submissions)
@@ -67,10 +75,16 @@ class SubmissionsSortAndFilterService
       @submissions = @submissions.order_by_average_score(:desc)
     when 'average_score_low_to_high'
       @submissions = @submissions.order_by_average_score(:asc)
-    when 'submission_id_high_to_low'
-      @submissions = @submissions.order(id: :desc)
-    when 'submission_id_low_to_high'
-      @submissions = @submissions.order(id: :asc)
+    when 'assignees_high_to_low'
+      @submissions = @submissions.order_by_assignee_count(:desc)
+    when 'assignees_low_to_high'
+      @submissions = @submissions.order_by_assignee_count(:asc)
     end
+  end
+
+  def apply_includes
+    association_preloads = { evaluator_submission_assignments: [:evaluator, { evaluation: :evaluation_scores }] }
+
+    @submissions = @submissions.preload(association_preloads)
   end
 end

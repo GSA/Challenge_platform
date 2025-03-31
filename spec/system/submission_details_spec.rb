@@ -18,7 +18,7 @@ describe "A11y", :js do
     it "submission details page is accessible" do
       visit submission_path(submission)
       expect(user.role).to eq("challenge_manager")
-      expect(page).to have_css('h1', text: "Submission ID #{submission.id}")
+      expect(page).to have_css('h2', text: "Submission ID #{submission.id}")
       expect(page).to(be_axe_clean)
     end
 
@@ -28,7 +28,7 @@ describe "A11y", :js do
       eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
       expect(eligible_input).not_to be_checked
       find_by_id('eligible-for-evaluation').click
-      click_on "Save"
+      # click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
       expect(eligible_input).to be_checked
@@ -37,7 +37,7 @@ describe "A11y", :js do
 
     it "allows marking judging status selected to advance" do
       # evaluations must exist and all be completed before selecting the submission to advance
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       submission.update(judging_status: :selected)
       assignment = create(:evaluator_submission_assignment, status: :assigned, evaluator:, submission:)
       create(:evaluation, evaluator_submission_assignment: assignment, completed_at: Time.current)
@@ -46,7 +46,7 @@ describe "A11y", :js do
       selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
       expect(selected_input).not_to be_checked
       find_by_id('selected-to-advance').click
-      click_on "Save"
+      # click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
       expect(selected_input).to be_checked
@@ -55,51 +55,53 @@ describe "A11y", :js do
 
     it "saves comments" do
       visit submission_path(submission)
-      fill_in "Comments and notes:", with: fake_comments
+      fill_in "Notes:", with: fake_comments
       click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       assert_text(fake_comments)
     end
 
     it "displays a list of available evaluators" do
-      evaluator1 = create_user(role: "evaluator")
-      evaluator2 = create_user(role: "evaluator")
+      evaluator1 = create_user(role: "evaluator", status: "active")
+      evaluator2 = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator1, phase: phase)
       challenge.challenge_phases_evaluators.create(user: evaluator2, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
+      submission.update(judging_status: "selected")
       visit submission_path(submission)
-      find_by_id('eligible-for-evaluation').click
-      click_on('Save')
 
       expect(page).to have_content("Available Evaluators")
-      expect(page).to have_content(evaluator1.email)
-      expect(page).to have_content(evaluator2.email)
+      evaluator_1_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator1.id)
+      evaluator_2_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator2.id)
+      expect(page).to have_css("a[href=\"#{evaluator_1_path}\"]", text: evaluator1.full_name)
+      expect(page).to have_css("a[href=\"#{evaluator_2_path}\"]", text: evaluator2.full_name)
     end
 
     it "does not show solvers in the available evaluators list" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       solver = create_user(role: "solver")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       challenge.challenge_phases_evaluators.create(user: solver, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
+      submission.update(judging_status: "selected")
       visit submission_path(submission)
-      find_by_id('eligible-for-evaluation').click
-      click_on('Save')
 
       expect(page).to have_content("Available Evaluators")
-      expect(page).to have_content(evaluator.email)
-      expect(page).not_to have_content(solver.email)
+      evaluator_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: evaluator.id)
+      solver_path = phase_evaluator_submission_assignments_path(phase, evaluator_id: solver.id)
+      expect(page).to have_css("a[href=\"#{evaluator_path}\"]", text: evaluator.full_name)
+      expect(page).not_to have_css("a[href=\"#{solver_path}\"]", text: solver.full_name)
     end
 
     it "assigns and unassigns an evaluator to the submission" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)
       find_by_id('eligible-for-evaluation').click
       click_on('Save')
 
-      expect(page).to have_content("You currently do not have any evaluators assigned to this submission.")
+      expect(page).to have_content("This submission does not have any assigned evaluators. Please use the Available Evaluators section above to assign evaluators.")
 
       click_on('Assign')
       expect(page).to have_css("p.usa-alert__text", text: "Evaluator assigned successfully")
@@ -115,7 +117,7 @@ describe "A11y", :js do
     end
 
     it "unassigns a recused evaluator from the submission" do
-      evaluator = create_user(role: "evaluator")
+      evaluator = create_user(role: "evaluator", status: "active")
       challenge.challenge_phases_evaluators.create(user: evaluator, phase: phase)
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)

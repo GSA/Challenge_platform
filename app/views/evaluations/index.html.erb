@@ -1,5 +1,5 @@
-<h1>Evaluations</h1>
-<p class="text-normal padding-bottom-2">View challenges with submissions assigned to me to evaluate.</p>
+<h1>My Evaluations</h1>
+<%= render 'shared/identity_verification_banner' %>
 
 <% if @phases.empty? %>
   <div class="text-normal">
@@ -8,3 +8,4 @@
 <% else %>
   <%= render partial: "phases_table" %>
 <% end %>
+<%= render partial: "shared/resources_content_evaluator" %>

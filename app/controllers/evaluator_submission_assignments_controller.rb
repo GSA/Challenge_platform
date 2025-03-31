@@ -3,6 +3,7 @@
 # Controller for evaluator submissions assignments index and update status
 class EvaluatorSubmissionAssignmentsController < ApplicationController
   before_action -> { authorize_user('challenge_manager') }
+  before_action -> { check_gov_access }
   before_action :set_challenge_and_phase
   before_action :set_evaluator, only: [:index, :create]
   before_action :set_assignment, only: [:update]
@@ -12,7 +13,7 @@ class EvaluatorSubmissionAssignmentsController < ApplicationController
     @evaluator_assignments = @phase.evaluator_submission_assignments.includes(:submission).where(user_id: @evaluator.id)
     @assigned_submissions = @evaluator_assignments.
       where(status: %i[assigned recused]).
-      includes(:evaluation).
+      includes([evaluation: :evaluation_scores]).
       ordered_by_status
     @unassigned_submissions = @evaluator_assignments.
       where(status: %i[unassigned recused_unassigned]).

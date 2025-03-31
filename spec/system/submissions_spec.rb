@@ -25,5 +25,23 @@ describe "A11y", :js do
 
       expect(page).to(be_axe_clean)
     end
+
+    context "with a non gov email" do
+      before do
+        user.update(email: generate_user_email(type: :non_gov))
+      end
+
+      it "prevents access and redirects" do
+        challenge = create_challenge(user: user, title: "Boston Tea Party Cleanup")
+        phase = create_phase(challenge_id: challenge.id)
+        create(:submission, challenge: challenge, phase: phase)
+
+        visit submissions_phase_path(phase)
+
+        assert_current_path phases_path
+        expect(page).to have_css('.usa-alert', text: I18n.t("access_denied"))
+        expect(page).to(be_axe_clean)
+      end
+    end
   end
 end

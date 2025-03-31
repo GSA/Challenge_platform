@@ -40,7 +40,7 @@ def system_login_user(user)
     expect(page).to have_current_path(evaluations_path)
   else
     expect(page).to have_current_path(phases_path)
-  end  
+  end
 end
 
 def system_logout
@@ -74,11 +74,10 @@ def create_phase(attrs = {})
 end
 
 def create_evaluation_form(attrs = {})
-  title = attrs[:title] || "test challenge"
   challenge_id = attrs[:challenge_id] || create_challenge.id
   phase_id = attrs[:phase_id] || create_phase.id
   scale_type = attrs[:scale_type] || "point"
-  EvaluationForm.create!(title:, challenge_id:, phase_id:, instructions: "test instructions",
+  EvaluationForm.create!(challenge_id:, phase_id:, instructions: "test instructions",
                          closing_date: Date.tomorrow, scale_type: scale_type)
 end
 
@@ -94,6 +93,7 @@ def mock_login_gov(user, code = "ABC123") # rubocop:disable Metrics/AbcSize
   allow(login_gov).to receive(:exchange_token_from_auth_result).with(code).and_return(
     [{ email: user.email, sub: user.token }]
   )
+  allow(login_gov).to receive(:authorization_url)
 
   allow_any_instance_of(SessionsController).to( # rubocop:disable RSpec/AnyInstance
     receive(:send_user_jwt_to_phoenix).with(instance_of(String)).and_return(true)
