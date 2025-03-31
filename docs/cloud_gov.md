@@ -29,7 +29,7 @@ Learn more generally about [cloud.gov](https://cloud.gov/), and specifically und
 
 ## Deployment
 
-1. [CircleCI](../.cirlceci/config.yml) manages the deployment.
+1. [CircleCI](../.circleci/config.yml) manages the deployment.
 1. There are 3 branches that cover all environments for automatic deployment. At this time, only dev is set up, see the portal code circle config for approach to deploy the platform to higher environments.
     - `dev` deploys to the development cloud.gov space
     - `staging` will deploy to the staging cloud.gov space
