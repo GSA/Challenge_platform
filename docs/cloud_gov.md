@@ -57,10 +57,10 @@ To access the running node, run, for example:
 cf ssh challenge-dev
 ```
 
-To run IEx commands or others, you'll need elixir and erlang on the path, just run:
+To run ruby, rails console, or rake tasks on the path, just run:
 `/tmp/lifecycle/shell` when connected via SSH
 
-You can then work from the `app` directory and should be able to perform the irb and other commands you need.
+You can then work from the `app` directory and should be able to perform the irb, rails, rake and other commands you need.
 
 ## PSQL
 
