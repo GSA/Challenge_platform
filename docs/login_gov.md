@@ -62,9 +62,21 @@ public_key_path: "local_cert.pem"
 ### For Deployment Via CircleCI
 
 To create the key and certificate ready for usage in the CircleCI ENV Vars, use the python script in the root of the project.
-CircleCI will then create these files just in time of deployment so they are not part of the codebase.
+
+The key and cert should be stored as project env vars in circle.
+
+CircleCI will then create these files in the file system using the ENV Vars in circle, so the files will be part of the deployed app but not part of the codebase.
+
+The relevant lines of the circleci config are:
+```
+- run: echo -e $DEV_PRIVATE_KEY > dev_key.pem
+- run: echo -e $DEV_PUBLIC_CERT > dev_cert.pem
+```
+Those lines take the cert and key from the escape-eol output and write it to the file system as part of the deploy.
+
 The password used to encrypt the private key will need to be set in the Cloud.gov env for the app, per the [configuration variables](./configuration_variables.md) documentation.
 
 `cat env_cert.pem | python escape-eol.py`
 
 `cat env_key.pem | python escape-eol.py`
+
