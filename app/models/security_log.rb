@@ -16,6 +16,72 @@
 #  logged_at             :datetime         not null
 #  originator_remote_ip  :string(255)
 #
+
+# originator id, role, and identifier (email) are from the user that initiated the action
+#
+# target id, type (user, challenge, submission, etc), identifier (email, challenge title, etc)
+# are the record the action is being performed on
+#
+# Actions and their possible details
+# status_change
+# - Used for status changes in records (evaluations)
+# - Details:
+#   - status: the status the record was changed to
+#   - previous_status: status a record was before changing
+#   - new_status: status a record was changed to
+#
+# account_update
+# - Used when terms are updated for a user
+# - Details:
+#   - terms_of_use: boolean if they accepted
+#   - privacy_guidelines: boolean for if they accepted
+#   - first_name: user first name
+#   - last_name: user last name
+#
+# role_change
+# - Used when the role of a user is changed
+# - Details:
+#   - previous_role: the role a user was
+#   - new_role: the role a user was changed to
+#
+# accessed_site
+# - Used when a user logs in. Also when an admin updates a user (Intended?)
+# - No details
+#
+# session_duration
+# - Used when a user logs out or has a session timeout
+# - Details:
+#   - duration: the difference in time from when the user last had an accesed_site action
+#
+# create
+# - Used when a challenge is created or a dap_report is uploaded
+# - Details:
+#   - upload: for dap reports value "site analytics report (DAP)"
+#
+# read
+# - Used when a challenge is viewed
+# - No details
+#
+# update
+# - Used when a challenge is updated
+# - Details:
+#   - action: used in challenge wizard (back, save_draft, etc)
+#   - section: the section of the wizard the action occured on
+#
+# delete
+# - Used when a challenge is soft deleted
+# - No details
+#
+# submit
+# - Used when a submission is submitted
+# - No details
+#
+# renewal_request
+# - Used when a user requests recertification
+# - Details:
+#   - renewal_requested: Type of recertification requested (recertification, reactivation)
+#     and if it was approved (Recertification Approved)
+
 class SecurityLog < ApplicationRecord
   self.table_name = 'security_log'
 
@@ -43,11 +109,39 @@ class SecurityLog < ApplicationRecord
   attribute :target_identifier, :string
   attribute :logged_at, :datetime
 
+  def self.log_event(action:, originator: nil, remote_ip: nil, target: nil, details: {})
+    create!(
+      action:,
+      originator_id: originator&.id,
+      originator_role: originator&.role,
+      originator_identifier: originator&.email,
+      originator_remote_ip: remote_ip,
+      target_id: target&.id,
+      target_type: target&.class&.name,
+      target_identifier: target_identifier(target),
+      logged_at: Time.current.utc,
+      details:
+    )
+  end
+
   def self.timestamp_attributes_for_create
     super + %w[logged_at]
   end
 
   private
+
+  def self.target_identifier(target)
+    return nil unless target
+
+    case target
+    when User
+      target.email
+    when Challenge
+      target.title
+    else
+      target.id.to_s
+    end
+  end
 
   def set_logged_at
     self.logged_at ||= DateTime.now

@@ -29,6 +29,28 @@ RSpec.describe "EvaluationOverrides", :js do
       it "has a mail link to team@challenge.gov" do
         expect(page).to have_link("team@challenge.gov", href: "mailto:team@challenge.gov")
       end
+
+      it "creates an accessed_site security log event on login" do
+        login_event = SecurityLog.where(action: "accessed_site").first
+
+        expect(SecurityLog.count).to eq(1)
+        expect(login_event.action).to eq("accessed_site")
+        expect(login_event.originator_id).to eq(user.id)
+        expect(login_event.originator_role).to eq(user.role)
+        expect(login_event.originator_identifier).to eq(user.email)
+      end
+
+      it "creates a session_duration security log event on logout" do
+        system_logout
+        logout_event = SecurityLog.where(action: "session_duration").first
+
+        expect(SecurityLog.count).to eq(2)
+        expect(logout_event.action).to eq("session_duration")
+        expect(logout_event.originator_id).to eq(user.id)
+        expect(logout_event.originator_role).to eq(user.role)
+        expect(logout_event.originator_identifier).to eq(user.email)
+        expect(logout_event.details["duration"]).not_to be_nil
+      end
     end
 
     context "when logged in as an evaluator" do
