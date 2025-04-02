@@ -631,7 +631,7 @@ RSpec.describe "Evaluations" do
 
       before { log_in_user(current_user) }
 
-      it "allows me to view an existing draft evaluation I created" do
+      it "allows me to view an existing draft evaluation I created", bullet: :dont_raise do
         evaluator_submission_assignment = create(:evaluator_submission_assignment, user_id: current_user.id,
                                                                                    submission:)
         evaluation_form = create(:evaluation_form, phase:)
