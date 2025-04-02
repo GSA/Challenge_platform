@@ -35,7 +35,7 @@ RSpec.describe SecurityLog do
 
       expect(event.action).to eq("accessed_site")
       expect(event.originator_id).to eq(user.id)
-      expect(event.originator_role).to eq(user.role)
+      expect(event.originator_role).to eq(described_class.originator_role(user))
       expect(event.originator_identifier).to eq(user.email)
       expect(event.originator_remote_ip).to eq("127.0.0.1")
     end
@@ -49,7 +49,7 @@ RSpec.describe SecurityLog do
 
       expect(event.action).to eq("create")
       expect(event.originator_id).to eq(user.id)
-      expect(event.originator_role).to eq(user.role)
+      expect(event.originator_role).to eq(described_class.originator_role(user))
       expect(event.originator_identifier).to eq(user.email)
       expect(event.originator_remote_ip).to eq("127.0.0.1")
 

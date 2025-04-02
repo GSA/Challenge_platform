@@ -81,7 +81,6 @@
 # - Details:
 #   - renewal_requested: Type of recertification requested (recertification, reactivation)
 #     and if it was approved (Recertification Approved)
-
 class SecurityLog < ApplicationRecord
   self.table_name = 'security_log'
 
@@ -113,7 +112,7 @@ class SecurityLog < ApplicationRecord
     create!(
       action:,
       originator_id: originator&.id,
-      originator_role: originator&.role,
+      originator_role: originator_role(originator),
       originator_identifier: originator&.email,
       originator_remote_ip: remote_ip,
       target_id: target&.id,
@@ -128,7 +127,15 @@ class SecurityLog < ApplicationRecord
     super + %w[logged_at]
   end
 
-  private
+  def self.originator_role(originator)
+    return nil unless originator
+
+    if %w[challenge_manager evaluator].include?(originator.role) && originator.non_gov?
+      return "#{originator.role}_ng"
+    end
+
+    originator.role
+  end
 
   def self.target_identifier(target)
     return nil unless target
@@ -142,6 +149,8 @@ class SecurityLog < ApplicationRecord
       target.id.to_s
     end
   end
+
+  private
 
   def set_logged_at
     self.logged_at ||= DateTime.now
