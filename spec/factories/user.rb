@@ -22,6 +22,7 @@ FactoryBot.define do
     active_session { Faker::Boolean.boolean }
     jwt_token { Faker::Internet.password(min_length: 20, max_length: 30) }
     recertification_expired_at { 1.year.from_now }
+    ial_level { 1 }
 
     # Factory options
     trait :super_admin do

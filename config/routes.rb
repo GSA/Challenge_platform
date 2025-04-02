@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   get 'auth/result', to: 'sessions#result'
+  get 'auth/failure_to_proof', to: 'sessions#failure_to_proof'
   resource 'session', only: [:new, :create, :destroy] do
     post 'renew'
     delete 'timeout'

@@ -33,11 +33,13 @@ class LoginGov
     config[:client_id]
   end
 
-  def authorization_url
+  def authorization_url(ial2: false)
+    acr_value = ial2 ? "urn:acr.login.gov:verified-facial-match-required" : config[:acr_value]
+
     query = {
       client_id:,
       response_type: "code",
-      acr_values: config[:acr_value],
+      acr_values: acr_value,
       scope: "openid email",
       redirect_uri: config[:login_redirect_uri],
       state: random_value,
