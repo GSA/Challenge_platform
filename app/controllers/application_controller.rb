@@ -92,15 +92,13 @@ class ApplicationController < ActionController::Base
 
     duration = if last_login
                  Time.current - last_login.logged_at
-               else
-                 nil # or handle the case where there's no prior login event
                end
 
     SecurityLog.log_event(
       action: "session_duration",
       originator: @current_user,
       remote_ip: request.remote_ip,
-      details: { duration: duration }
+      details: { duration: }
     )
 
     @current_user = nil
