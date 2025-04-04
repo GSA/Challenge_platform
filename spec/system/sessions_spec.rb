@@ -9,6 +9,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates an accessed_site security log event on login" do
@@ -27,6 +28,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates an accessed_site security log event on login" do
@@ -45,6 +47,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates an accessed_site security log event on login" do
@@ -63,6 +66,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates an accessed_site security log event on login" do
@@ -83,6 +87,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates a session_duration security log event on logout" do
@@ -103,6 +108,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates a session_duration security log event on logout" do
@@ -123,6 +129,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates a session_duration security log event on logout" do
@@ -143,6 +150,7 @@ RSpec.describe "Sessions", :js do
 
       before do
         system_login_user(user)
+        mock_login_security_log_event(user)
       end
 
       it "creates a session_duration security log event on logout" do
@@ -213,5 +221,14 @@ RSpec.describe "Sessions", :js do
         expect(page).to have_link("team@challenge.gov", href: "mailto:team@challenge.gov")
       end
     end
+  end
+
+  def mock_login_security_log_event(user)
+    SecurityLog.log_event(
+      action: "accessed_site",
+      originator: user,
+      remote_ip: "127.0.0.1",
+      details: { ial_level: user.ial_level }
+    )
   end
 end

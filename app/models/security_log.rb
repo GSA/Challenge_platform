@@ -109,6 +109,8 @@ class SecurityLog < ApplicationRecord
   attribute :logged_at, :datetime
 
   def self.log_event(action:, originator: nil, remote_ip: nil, target: nil, details: {})
+    details = details.merge({ ial_level: originator&.ial_level })
+
     create!(
       action:,
       originator_id: originator&.id,

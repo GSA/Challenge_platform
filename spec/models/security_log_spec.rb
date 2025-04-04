@@ -38,6 +38,7 @@ RSpec.describe SecurityLog do
       expect(event.originator_role).to eq(described_class.originator_role(user))
       expect(event.originator_identifier).to eq(user.email)
       expect(event.originator_remote_ip).to eq("127.0.0.1")
+      expect(event.details["ial_level"]).not_to be_nil
     end
 
     it 'allows logging of an event with a target and details' do
@@ -57,6 +58,7 @@ RSpec.describe SecurityLog do
       expect(event.target_type).to eq("Challenge")
       expect(event.target_identifier).to eq(challenge.title)
       expect(event.details["status"]).to eq(challenge.status)
+      expect(event.details["ial_level"]).not_to be_nil
     end
   end
 end

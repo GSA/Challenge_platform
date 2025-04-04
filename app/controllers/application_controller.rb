@@ -78,21 +78,16 @@ class ApplicationController < ActionController::Base
     @current_user = user
     renew_session
 
-    SecurityLog.log_event(
-      action: "accessed_site",
-      originator: @current_user,
-      remote_ip: request.remote_ip
-    )
-
     session[:userinfo] = login_userinfo
   end
 
   def sign_out
     last_login = SecurityLog.where(originator: @current_user, action: "accessed_site").order(logged_at: :desc).first
 
-    duration = if last_login
-                 Time.current - last_login.logged_at
-               end
+    duration =
+      if last_login
+        Time.current.to_i - last_login.logged_at.to_i
+      end
 
     SecurityLog.log_event(
       action: "session_duration",

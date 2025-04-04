@@ -13,12 +13,6 @@ module Dev
       email = params[:email]
       @current_user = User.find_by(email:)
 
-      SecurityLog.log_event(
-        action: "accessed_site",
-        originator: @current_user,
-        remote_ip: request.remote_ip
-      )
-
       renew_session
       session[:userinfo] = [{ "email" => email, "sub" => @current_user.token }]
 
