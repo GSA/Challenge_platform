@@ -12,6 +12,7 @@ module Dev
     def login
       email = params[:email]
       @current_user = User.find_by(email:)
+
       renew_session
       session[:userinfo] = [{ "email" => email, "sub" => @current_user.token }]
 

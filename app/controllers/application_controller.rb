@@ -77,15 +77,29 @@ class ApplicationController < ActionController::Base
 
     @current_user = user
     renew_session
+
     session[:userinfo] = login_userinfo
   end
 
   def sign_out
+    last_login = SecurityLog.where(originator: @current_user, action: "accessed_site").order(logged_at: :desc).first
+
+    duration =
+      if last_login
+        Time.current.to_i - last_login.logged_at.to_i
+      end
+
+    SecurityLog.log_event(
+      action: "session_duration",
+      originator: @current_user,
+      remote_ip: request.remote_ip,
+      details: { duration: }
+    )
+
     @current_user = nil
 
     session.delete(:userinfo)
     session.delete(:session_timeout_at)
-
     delete_phoenix_session_cookie
   end
 
