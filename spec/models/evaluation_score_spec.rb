@@ -5,7 +5,7 @@
 #  id                      :bigint           not null, primary key
 #  evaluation_id           :bigint           not null
 #  evaluation_criterion_id :bigint           not null
-#  score                   :integer          not null
+#  score                   :integer
 #  score_override          :integer
 #  comment                 :text
 #  comment_override        :text
