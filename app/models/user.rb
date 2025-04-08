@@ -152,6 +152,10 @@ class User < ApplicationRecord
     /\.(gov|mil)$/.match?(email)
   end
 
+  def non_gov?
+    !/\.(gov|mil)$/.match?(email)
+  end
+
   def non_gov_restricted?
     !/\.(gov|mil)$/.match?(email) && !ial2?
   end
