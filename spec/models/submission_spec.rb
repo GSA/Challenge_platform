@@ -22,6 +22,7 @@
 #  brief_description_delta :text
 #  pdf_reference           :string(255)
 #  comments                :text
+#  evaluation_status       :string           default("not_started"), not null
 #
 require 'rails_helper'
 

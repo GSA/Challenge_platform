@@ -24,6 +24,7 @@
 #  brief_description_delta :text
 #  pdf_reference           :string(255)
 #  comments                :text
+#  evaluation_status       :string           default("not_started"), not null
 #
 class Submission < ApplicationRecord
   enum :status, { draft: "draft", submitted: "submitted" }
