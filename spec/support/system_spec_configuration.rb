@@ -1,13 +1,20 @@
 Capybara.default_max_wait_time = 5
 Capybara.predicates_wait = true
 Capybara.register_driver :selenium_chrome_headless do |app|
-  options = Selenium::WebDriver::Chrome::Options.new
+  # store any downloads in a temp directory
+  options = Selenium::WebDriver::Chrome::Options.new(
+    prefs: {
+    'download.prompt_for_download' => false,
+    'download.default_directory' => '/tmp/chromedriver-downloads'
+  })
   options.add_argument('--headless')
+  options.add_argument('--enable-automation')
+  options.add_argument('--test-type')
   options.add_argument('--disable-gpu')
   options.add_argument('--no-sandbox')
   options.add_argument('--disable-dev-shm-usage')
   options.add_argument('--window-size=1400,1400')
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
 end
 
 RSpec.configure do |config|
