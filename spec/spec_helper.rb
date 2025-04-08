@@ -45,6 +45,8 @@ end
 
 def system_logout
   click_on "Logout"
+  login_gov = LoginGov.new
+  expect(page).to have_current_path(login_gov.logout_url)
 end
 
 def create_user(attrs = {})
