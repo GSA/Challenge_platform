@@ -33,11 +33,13 @@
           <div>
             <div class="grid-row grid-gap padding-top-2">
               <div class="grid-col-12 margin-bottom-2">
-                <%= link_to @challenge.how_to_enter_link.start_with?('http') ? @challenge.how_to_enter_link : "https://#{@challenge.how_to_enter_link}", 
-                    class: "usa-button usa-button--accent bg-orange-vivid-30v width-full padding-x-4 padding-y-3 tablet:padding-8 radius-lg challenge-apply-button",
-                    target: "_blank",
-                    rel: "noopener" do %>
-                  <span class="text-black font-sans-lg text-no-wrap text-normal">Apply on external website</span>
+                <% if safe_url = safe_how_to_enter_link(@challenge) %>
+                  <%= link_to safe_url,
+                      class: "usa-button usa-button--accent bg-orange-vivid-30v width-full padding-x-4 padding-y-3 tablet:padding-8 radius-lg challenge-apply-button",
+                      target: "_blank",
+                      rel: "noopener" do %>
+                    <span class="text-black font-sans-lg text-no-wrap text-normal">Apply on external website</span>
+                  <% end %>
                 <% end %>
               </div>
               <div class="tablet:grid-col-6 grid-col-12 margin-bottom-2 tablet:margin-bottom-0">

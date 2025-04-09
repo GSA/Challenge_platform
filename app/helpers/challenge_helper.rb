@@ -56,6 +56,24 @@ module ChallengeHelper
     challenge.non_monetary_prizes.present?
   end
 
+  def safe_how_to_enter_link(challenge)
+    return nil unless challenge.how_to_enter_link.present?
+
+    url = if challenge.how_to_enter_link.start_with?('http')
+      challenge.how_to_enter_link
+    else
+      "https://#{challenge.how_to_enter_link}"
+    end
+
+    begin
+      uri = URI.parse(url)
+      raise URI::InvalidURIError unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+      url
+    rescue URI::InvalidURIError
+      nil
+    end
+  end
+
   private
 
   def phase_number(challenge, phase)
