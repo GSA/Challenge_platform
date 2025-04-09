@@ -1,0 +1,21 @@
+<div class="usa-card" data-controller="challenge-detail">
+  <div class="grid-row border-bottom" style="border-color: #c6cace">
+    <div class="grid-col">
+      <h2 class="font-sans-xl margin-y-2">Winners</h2>
+    </div>
+  </div>
+
+  <div class="margin-top-6">
+    <% if !@challenge.winner_information.present? %>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= sanitize @challenge.winner_information %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <p class="usa-prose">No winner information available at this time.</p>
+    <% end %>
+  </div>
+</div>
