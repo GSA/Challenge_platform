@@ -1,0 +1,14 @@
+<h2><strong>New message from Challenge.gov visitor</strong></h2>
+
+<p>
+  You have received a message regarding the challenge: <strong><%= @challenge.title %></strong>
+</p>
+<p>
+  From: <%= @from_email %>
+</p>
+<p>
+  Message:
+</p>
+<blockquote>
+  <%= simple_format @body %>
+</blockquote>
