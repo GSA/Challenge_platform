@@ -1,0 +1,47 @@
+<div class="challenge-nav-container challenge-detail-nav" data-controller="challenge-detail">
+  <!-- Accordions for nav sections on mobile -->
+  <div class="usa-accordion usa-accordion--multiselectable challenge-detail-accordion" data-allow-multiple>
+    <% nav_items = [
+      { name: 'Overview', section: 'overview' },
+      { name: 'Timeline', section: 'timeline' },
+      { name: 'Prizes', section: 'prizes' },
+      { name: 'Rules', section: 'rules' },
+      { name: 'Judging', section: 'judging' },
+      { name: 'How to enter', section: 'how_to_enter' },
+      { name: 'Resources', section: 'resources' },
+      { name: 'FAQ', section: 'faq' },
+      { name: 'Contact', section: 'contact' },
+      { name: 'Winners', section: 'winners' }
+    ] %>
+
+    <% nav_items.each do |item| %>
+      <h4 class="usa-accordion__heading">
+        <button class="usa-accordion__button nav-accordion-button"
+            aria-expanded="<%= params[:section] == item[:section] || (params[:section].nil? && item[:section] == 'overview') ? 'true' : 'false' %>" 
+            aria-controls="accordion-<%= item[:section] %>"
+            data-action="">
+          <%= item[:name] %>
+        </button>
+      </h4>
+      <div id="accordion-<%= item[:section] %>" class="usa-accordion__content nav-accordion-content">
+        <%= render partial: "challenges/#{item[:section]}", locals: { challenge: @challenge } %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Horizontal navbar for tablet and desktop -->
+  <div class="collapse navbar-collapse challenge-detail-accordion" id="challenge-nav">
+    <ul class="nav navbar-nav width-full display-flex flex-justify">
+      <% nav_items.each do |item| %>
+        <li class="<%= 'active' if params[:section] == item[:section] || (params[:section].nil? && item[:section] == 'overview') %>">
+          <%= link_to item[:name], 
+                      "#{request.original_fullpath.split('#').first}##{item[:section]}", 
+                      class: "padding-x-2 padding-y-1 text-no-underline font-sans-md",
+                      data: { 
+                        turbo: false
+                      } %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
