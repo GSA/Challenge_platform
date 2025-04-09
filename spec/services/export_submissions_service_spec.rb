@@ -105,17 +105,12 @@ RSpec.describe ExportSubmissionsService do
     context 'when exporting attachments' do
       let(:service) { described_class.new(phase, 'attachments') }
 
-      before do
-        allow(Rails.configuration.phx_interop).to receive(:[]).with(:phx_uri)
-          .and_return(ENV.fetch("PHOENIX_URI", nil))
-      end
-
       it 'returns the correct phoenix download attachments URL' do
         result = service.export
         expected_path = "/challenges/#{challenge.id}/phases/#{phase.id}"
 
         expect(result[:status]).to eq(:see_other)
-        expect(result[:redirect_url]).to eq("#{ENV.fetch('PHOENIX_URI', nil)}#{expected_path}")
+        expect(result[:redirect_url]).to eq("#{Rails.configuration.phx_interop[:phx_uri]}#{expected_path}")
       end
     end
   end

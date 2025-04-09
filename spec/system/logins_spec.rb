@@ -36,4 +36,14 @@ describe "A11y", :js do
       expect(page).to(be_axe_clean)
     end
   end
+
+  describe "Logged-in as a Solver" do
+    let(:user) { create_user(role: "solver") }
+
+    it "solver dashboard page is accessible" do
+      visit solver_dashboard_path
+      expect(user.role).to eq("solver")
+      expect(page).to(be_axe_clean)
+    end
+  end
 end
