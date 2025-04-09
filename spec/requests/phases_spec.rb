@@ -44,7 +44,7 @@ RSpec.describe "Phases" do
       end
 
       it "renders an empty list" do
-        expect(response.body).to include("You currently do not have any challenges.")
+        expect(response.body).to include("You have not started any challenges yet.")
       end
 
       it "renders a list of challenges" do
