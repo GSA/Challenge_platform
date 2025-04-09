@@ -43,8 +43,9 @@ module ChallengePlatform
       private_key_path: ENV.fetch("LOGIN_PRIVATE_KEY_PATH", "config/private.pem")
     }
 
+    # TODO: revert this
     config.phx_interop = {
-      phx_uri: ENV.fetch("PHOENIX_URI", nil),
+      phx_uri: ENV.fetch("PHOENIX_URI", "http://localhost:4000"),
       login_secret: ENV.fetch("LOGIN_SECRET", "login_secret_123"),
       jwt_secret: ENV.fetch("JWT_SECRET", "jwt_secret_123")
     }
@@ -56,5 +57,8 @@ module ChallengePlatform
     }
 
     config.assets.initialize_on_precompile = false
+
+    # TODO: Remove this, it helps show mailer previews in the browser
+    puts "ActionMailer::Base methods: #{ActionMailer::Base.methods.sort}"
   end
 end

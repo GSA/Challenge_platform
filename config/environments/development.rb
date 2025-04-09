@@ -60,6 +60,9 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
+  # TODO: Remove this, it shows mailer previews in the browser
+  config.action_mailer.show_previews = true
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 

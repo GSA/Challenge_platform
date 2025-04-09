@@ -43,6 +43,11 @@ Rails.application.routes.draw do
     get 'materials', on: :member, to: "submission_materials#show"
   end
 
+  resources :challenges, only: [:show], param: :challenge do
+    get 'archived', on: :member
+    post 'contact', on: :member
+  end
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
