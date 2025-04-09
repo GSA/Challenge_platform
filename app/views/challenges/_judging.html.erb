@@ -1,0 +1,44 @@
+<div class="usa-card inner-accordion-details" data-controller="challenge-detail">
+  <div class="grid-row border-bottom" style="border-color: #c6cace">
+    <div class="grid-col">
+      <h2 class="font-sans-xl margin-y-2">Judging</h2>
+    </div>
+  </div>
+
+  <div class="usa-card usa-card__container margin-top-6">
+    <div class="usa-card-body">
+      <% if single_phase?(@challenge) %>
+        <div>
+          <%= sanitize @challenge.phases.first.judging_criteria %>
+        </div>
+      <% else %>
+        <div id="judging-accordion" 
+             class="usa-accordion usa-accordion--multiselectable inner-section-accordion" 
+             data-allow-multiple>
+          <% @challenge.phases.each_with_index do |phase, index| %>
+            <h4 class="usa-accordion__heading">
+              <button
+                class="usa-accordion__button"
+                aria-expanded="false"
+                aria-controls="phase-judging-<%= phase.id %>">
+                <div class="display-flex flex-justify text-black">
+                  <span>
+                    Phase <%= phase_number(@challenge, phase) %>
+                    <%= ": #{phase.title}" if phase.title.present? %>
+                  </span>
+                  <span class="<%= phase_status_class(phase) %>">
+                    <%= phase_status_text(phase) %>
+                  </span>
+                </div>
+              </button>
+            </h4>
+            <div id="phase-judging-<%= phase.id %>" 
+                 class="usa-accordion__content usa-prose">
+              <%= sanitize phase.judging_criteria %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
