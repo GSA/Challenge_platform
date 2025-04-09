@@ -4,6 +4,8 @@ export default class extends Controller {
   static targets = ["email", "body", "emailError", "bodyError"]
 
   handleSubmit(event) {    
+    event.preventDefault() 
+    
     if (this.validateForm()) {
       this.submitForm()
     }
