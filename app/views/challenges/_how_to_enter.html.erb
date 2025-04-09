@@ -1,48 +1,41 @@
 <div class="usa-card inner-accordion-details" data-controller="challenge-detail">
-  <div class="grid-row border-bottom" style="border-color: #c6cace">
+  <div class="grid-row border-bottom margin-bottom-6" style="border-color: #c6cace">
     <div class="grid-col">
       <h2 class="font-sans-xl margin-y-2">How to enter</h2>
     </div>
   </div>
 
-  <div class="usa-card usa-card__container margin-top-6">
-    <div class="usa-card-body">
-      <% if single_phase?(@challenge) %>
-        <div>
-          <%= sanitize @challenge.phases.first.how_to_enter %>
+  <% if single_phase?(@challenge) %>
+    <div>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= sanitize @challenge.phases.first.how_to_enter %>
+          </div>
         </div>
-      <% else %>
-        <div id="how-to-enter-accordion" 
-             class="usa-accordion usa-accordion--multiselectable" 
-             data-allow-multiple>
-          <% @challenge.phases.each_with_index do |phase, index| %>
-            <h4 class="usa-accordion__heading">
-              <button
-                class="usa-accordion__button"
-                aria-expanded="false"
-                aria-controls="phase-how-to-enter-<%= phase.id %>"
-                type="button"
-                data-challenge-detail-target="button">
-                <div class="display-flex flex-justify text-black">
-                  <span>
-                    Phase <%= phase_number(@challenge, phase) %>
-                    <%= ": #{phase.title}" if phase.title.present? %>
-                  </span>
-                  <span class="<%= phase_status_class(phase) %>">
-                    <%= phase_status_text(phase) %>
-                  </span>
-                </div>
-              </button>
-            </h4>
-            <div id="phase-how-to-enter-<%= phase.id %>" 
-                 class="usa-accordion__content usa-prose"
-                 style="display: none;"
-                 data-challenge-detail-target="content">
+      </div>
+    </div>
+  <% else %>
+    <% @challenge.phases.each do |phase| %>
+      <div class="margin-bottom-8">
+        <h3 class="font-sans-lg margin-1">
+          <div class="display-flex flex-justify">
+            <span>
+              <b>Phase <%= phase_number(@challenge, phase) %><%= ": #{phase.title}" if phase.title.present? %></b>
+            </span>
+            <span class="phase__text <%= phase_status_class(phase) %>">
+              <%= phase_status_text(phase) %>
+            </span>
+          </div>
+        </h3>
+        <div class="usa-card usa-card__container">
+          <div class="usa-card-body">
+            <div>
               <%= sanitize phase.how_to_enter %>
             </div>
-          <% end %>
+          </div>
         </div>
-      <% end %>
-    </div>
-  </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>
