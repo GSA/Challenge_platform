@@ -168,6 +168,7 @@ class Challenge < ApplicationRecord
   attribute :short_url, :string
   attribute :upload_logo, :boolean
   attribute :is_multi_phase, :boolean
+  attribute :logo_alt_text, :string
   attribute :terms_equal_rules, :boolean
   attribute :file_upload_required, :boolean
   attribute :upload_instruction_note, :string
