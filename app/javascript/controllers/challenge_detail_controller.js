@@ -59,7 +59,9 @@ export default class extends Controller {
         window.open('https://www.linkedin.com/company/challengegov/', '_blank')
         break
       case 'email':
-        window.open('https://public.govdelivery.com/accounts/USGSATTS/signup/30826', '_blank')
+        const subject = encodeURIComponent("Sharing a challenge from Challenge.Gov!")
+        const body = encodeURIComponent(`Check out this challenge: ${window.location.href}`)
+        window.location.href = `mailto:?subject=${subject}&body=${body}`
         break
     }
   }
