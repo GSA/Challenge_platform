@@ -9,6 +9,10 @@ Rails.application.routes.draw do
     delete 'timeout'
   end
 
+  scope '/solver' do
+    get '/dashboard', to: 'solvers#dashboard', as: 'solver_dashboard'
+  end
+
   resources :evaluations, only: %i[index edit create update] do
     member do
       get 'submissions'

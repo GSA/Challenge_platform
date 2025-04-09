@@ -6,6 +6,9 @@
     <% if current_user.role == "evaluator" %>
       <%= utility_menu_link('star_half', evaluations_path, 'Evaluate Submissions', 'Evaluations') %>
     <% end %>  
+    <% if current_user.role == "solver" %>
+      <%= utility_menu_link('grid_view', solver_dashboard_path, 'Dashboard', 'Dashboard') %>
+    <% end %>
     <%= utility_menu_link('support', 'https://www.challenge.gov/cm-user-guide/', 'Support', 'Support') %>
     <div class="display-none desktop:display-flex flex-align-center padding-x-3 border-left-1px">
       <%= current_user.email %>

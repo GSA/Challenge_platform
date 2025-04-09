@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
 
   before_action :check_session_expiration, except: [:sign_out]
   before_action :redirect_admins_to_phoenix
-  before_action :redirect_solvers_to_phoenix
 
   def current_user
     return unless session[:userinfo]
@@ -51,14 +50,10 @@ class ApplicationController < ActionController::Base
     redirect_to Rails.configuration.phx_interop[:phx_uri], allow_other_host: true
   end
 
-  def redirect_solvers_to_phoenix
-    return unless current_user&.role == 'solver'
-
-    redirect_to Rails.configuration.phx_interop[:phx_uri], allow_other_host: true
-  end
-
   def redirect_to_landing_page(options = {})
     case @current_user&.role
+    when "solver"
+      redirect_to solver_dashboard_path, options
     when "evaluator"
       redirect_to evaluations_path, options
     when "challenge_manager"
