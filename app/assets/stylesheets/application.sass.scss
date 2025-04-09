@@ -420,3 +420,30 @@ dialog::backdrop {
     transition: box-shadow 0.2s ease;
   }
 }
+
+// follow challenge modal
+.follow-challenge-modal {
+  .border-top {
+    border-top: 1px solid #c6cace;
+  }
+
+  .border-bottom {
+    border-bottom: 1px solid #c6cace;
+  }
+}
+
+body.usa-js-modal--active {
+  overflow: hidden;
+}
+
+#follow-challenge-modal {
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  &.radius-lg {
+    border-radius: 0.5rem;
+    border: none;
+    padding: 0;
+  }
+}

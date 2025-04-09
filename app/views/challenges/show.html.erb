@@ -1,4 +1,4 @@
-<div class="challenge-show-page" data-controller="challenge-detail">
+<div class="challenge-show-page" data-controller="challenge-detail modal"">
   <div class="radius-lg usa-card usa-card__container margin-y-8">
     <div class="padding-top-4 usa-card__header">
       <div class="usa-grid">
@@ -43,7 +43,12 @@
                 <% end %>
               </div>
               <div class="tablet:grid-col-6 grid-col-12 margin-bottom-2 tablet:margin-bottom-0">
-                <%= link_to "#", class: "usa-button usa-button--outline width-full padding-x-4 padding-y-2 tablet:padding-4 radius-lg" do %>
+                <%= link_to "#", 
+                    class: "usa-button usa-button--outline width-full padding-x-4 padding-y-2 tablet:padding-4 radius-lg",
+                    data: { 
+                      action: "modal#open",
+                      modal_target_id: "follow-challenge-modal"
+                    } do %>
                   <%= image_tag('images/usa-icons/bookmark.svg', class: "usa-icon usa-icon--size-3 tablet:usa-icon--size-4 icon-primary-orange", alt: "bookmark") %>
                   <span class="font-sans-lg text-wrap tablet:text-no-wrap text-normal"><%= follow_button_text(@challenge) %></span>
                 <% end %>
@@ -97,6 +102,7 @@
   </div>
   
   <%= render 'challenge_detail_navbar' %>
+  <%= render 'follow_challenge_modal' %>
 
   <div class="grid-container margin-top-4 challenge-sections-container">
     <div id="overview"  class="challenge-section"><%= render partial: 'overview', locals: { challenge: @challenge } %></div>
@@ -111,8 +117,3 @@
     <div id="winners"   class="challenge-section"><%= render partial: 'winners', locals: { challenge: @challenge } %></div>
   </div>
 </div>
-
-
-
-
-
