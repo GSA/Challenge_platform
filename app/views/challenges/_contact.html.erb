@@ -1,0 +1,48 @@
+<div data-controller="contact-form">
+  <div class="border-bottom" style="border-color: #c6cace">
+    <h2 class="font-sans-xl margin-y-2">Contact</h2>
+  </div>
+
+  <div class="margin-top-6">
+    <p class="font-sans-md">
+      Have a question or comment about this challenge? Reach out by completing the form below.
+    </p>
+
+    <%= form_with url: contact_challenge_path(@challenge), 
+              method: :post, 
+              local: true, 
+              data: { action: "submit->contact-form#handleSubmit" } do |f| %>
+      <div class="grid-row justify-center">
+        <div class="grid-col-12">
+          <div class="margin-bottom-2">
+            <label class="usa-label" for="input-type-email">Email address *</label>
+            <input 
+              class="usa-input width-full"
+              id="input-type-email" 
+              name="email" 
+              type="email"
+              required
+              data-contact-form-target="email"
+            />
+            <div class="usa-error-message display-none" data-contact-form-target="emailError"></div>
+          </div>
+
+          <div class="margin-bottom-2">
+            <label class="usa-label" for="input-type-textarea">Question or comment *</label>
+            <textarea
+              class="usa-textarea width-full"
+              id="input-type-textarea"
+              name="body"
+              rows="5"
+              required
+              data-contact-form-target="body"
+            ></textarea>
+            <div class="usa-error-message display-none" data-contact-form-target="bodyError"></div>
+          </div>
+
+          <%= f.submit "Submit", class: "usa-button margin-top-2 margin-bottom-6" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
