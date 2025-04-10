@@ -7,9 +7,26 @@
   <% end %>
 <% end %>
 <% if @challenges.empty? %>
-  <div class="text-normal">
-    <p>You currently do not have any challenges.</p>
-  </div>
+  <% if @current_user.non_gov_restricted? %>
+    <div class="usa-alert usa-alert--warning maxw-tablet">
+      <div class="usa-alert__body">
+        <h2 class="usa-alert__heading">
+          You currently do not have any challenges.
+        </h2>
+      </div>
+    </div>
+  <% else %>
+    <div class="usa-alert usa-alert--warning maxw-tablet">
+      <div class="usa-alert__body">
+        <h2 class="usa-alert__heading">
+          You have not started any challenges yet.
+        </h2>
+        <p class="usa-alert__text font-body-2xs">
+          Select “Create New Challenge” to create your first challenge.
+        </p>
+      </div>
+    </div>
+  <% end %>
 <% else %>
   <%= render partial: "phases_table", locals: { challenges: @challenges } %>
 <% end %>  
