@@ -31,7 +31,7 @@
         <button class="usa-accordion__button nav-accordion-button"
             aria-expanded="<%= params[:section] == item[:section] || (params[:section].nil? && item[:section] == 'overview') ? 'true' : 'false' %>" 
             aria-controls="accordion-<%= item[:section] %>"
-            style="<%= item[:disabled] ? 'color: #c9c9c9; cursor: not-allowed;' : nil %>"
+            style="<%= item[:disabled] ? 'cursor: not-allowed;' : nil %>"
             <%= 'disabled' if item[:disabled] %>>
           <%= item[:name] %>
         </button>
