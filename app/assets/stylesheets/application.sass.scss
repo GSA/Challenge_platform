@@ -432,10 +432,6 @@ dialog::backdrop {
   }
 }
 
-body.usa-js-modal--active {
-  overflow: hidden;
-}
-
 #follow-challenge-modal {
   &::backdrop {
     background: rgba(0, 0, 0, 0.5);
@@ -445,5 +441,42 @@ body.usa-js-modal--active {
     border-radius: 0.5rem;
     border: none;
     padding: 0;
+  }
+}
+
+// agency logos
+.challenge-show-page {
+  .agency-logos {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .agency-logo {
+      max-height: 50px;
+      width: auto;
+      object-fit: contain;
+    }
+  }
+}
+
+.winners-section {
+  margin-top: 2rem;
+
+  .winner-card {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #dfe1e2;
+    border-radius: 0.25rem;
+
+    .winner-image {
+      max-width: 100%;
+      height: auto;
+      margin: 1rem 0;
+    }
+
+    .winner-details {
+      margin-top: 1rem;
+    }
   }
 }

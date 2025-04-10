@@ -2,7 +2,8 @@
 
 class ChallengesController < ApplicationController
   def show
-    @challenge = Challenge.find_by(custom_url: params[:challenge])
+    @challenge = Challenge.includes(phases: {phase_winner: :winners})
+                          .find_by(custom_url: params[:challenge])
     @section = params[:section] || 'overview'
 
     if @challenge.nil?

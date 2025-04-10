@@ -4,6 +4,27 @@
       <div class="usa-grid">
         <div class="grid-row">
           <div class="grid-col-12 tablet:grid-col-6">
+            <div class="agency-logos margin-bottom-2">
+              <% if @challenge.agency.present? && @challenge.agency.avatar_key.present? %>
+                <%= image_tag(
+                  agency_logo_url(@challenge),
+                  alt: "Agency logo for #{@challenge.agency_name}",
+                  class: "agency-logo"
+                ) %>
+              <% end %>
+              
+              <% if @challenge.federal_partner_agencies.any? %>
+                <% @challenge.federal_partner_agencies.each do |partner| %>
+                  <% if partner.avatar_key.present? %>
+                    <%= image_tag(
+                      agency_logo_url(Challenge.new(agency: partner)),
+                      alt: "Partner logo for #{partner.name}",
+                      class: "agency-logo"
+                    ) %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
             <h1 class="usa-card__heading font-sans-3xl"><%= @challenge.title %></h1>
             <p class="usa-card__tagline font-sans-xl margin-y-1"><%= @challenge.tagline %></p>
             <p class="font-sans-lg margin-y-1"><%= @challenge.brief_description %></p>
@@ -106,12 +127,15 @@
 
   <div class="grid-container margin-top-4 challenge-sections-container">
     <div id="overview"  class="challenge-section"><%= render partial: 'overview', locals: { challenge: @challenge } %></div>
-    <div id="timeline"  class="challenge-section"><%= render partial: 'timeline', locals: { challenge: @challenge } %></div>
+    <% if @challenge.timeline_events.present? %>
+      <div id="timeline"  class="challenge-section"><%= render partial: 'timeline', locals: { challenge: @challenge } %></div>
+    <% end %>
     <div id="prizes"    class="challenge-section"><%= render partial: 'prizes', locals: { challenge: @challenge } %></div>
     <div id="rules"     class="challenge-section"><%= render partial: 'rules', locals: { challenge: @challenge } %></div>
     <div id="judging"   class="challenge-section"><%= render partial: 'judging', locals: { challenge: @challenge } %></div>
     <div id="how_to_enter" class="challenge-section"><%= render partial: 'how_to_enter', locals: { challenge: @challenge } %></div>
-    <div id="resources" class="challenge-section"><%= render partial: 'resources', locals: { challenge: @challenge } %></div>
+    <%# Resources section hidden - supporting_documents feature currently non-functional %>
+    <%# <div id="resources" class="challenge-section"><%= render partial: 'resources', locals: { challenge: @challenge } %>
     <div id="faq"       class="challenge-section"><%= render partial: 'faq', locals: { challenge: @challenge } %></div>
     <div id="contact"   class="challenge-section"><%= render partial: 'contact', locals: { challenge: @challenge } %></div>
     <div id="winners"   class="challenge-section"><%= render partial: 'winners', locals: { challenge: @challenge } %></div>

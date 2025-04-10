@@ -34,4 +34,15 @@ class Agency < ApplicationRecord
 
   validates :name, presence: true
   validates :acronym, presence: true
+
+  def avatar_url
+    return nil unless avatar_key.present?
+    Storage.url(storage_key)
+  end
+
+  private
+
+  def storage_key
+    "agencies/original-#{avatar_key}#{avatar_extension}"
+  end
 end
