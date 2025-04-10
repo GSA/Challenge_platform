@@ -46,7 +46,8 @@ class User < ApplicationRecord
   # Challenges the User(challenge_manager) is a Manager of
   has_many :challenge_manager_challenges, through: :challenge_managers, source: :challenge, dependent: :destroy
   # Challenges the User(solver) saved to their account
-  has_and_belongs_to_many :saved_challenges, join_table: :saved_challenges, class_name: 'Challenge', dependent: :destroy
+  has_many :saved_challenges, dependent: :destroy
+  has_many :challenges_saved, through: :saved_challenges, source: :challenge
   has_many :members, dependent: :destroy
   has_many :supporting_documents, class_name: 'Document', dependent: :destroy
   has_many :submissions, foreign_key: :submitter_id, inverse_of: :submitter, dependent: :destroy

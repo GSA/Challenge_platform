@@ -5,23 +5,21 @@ class SavedChallengesController < ApplicationController
   before_action -> { authorize_user('solver') }
 
   def index
-    saved_challenges = current_user.saved_challenges.includes([:agency, :sub_agency])
-    @open_saved_challenges = saved_challenges.open
-    @open_soon_saved_challenges = saved_challenges.opening_soon
-    @closed_saved_challenges = saved_challenges.closed
+    @challenges_saved = current_user.challenges_saved
+    @open_saved_challenges = @challenges_saved.open.includes([:agency, :sub_agency])
+    @open_soon_saved_challenges = @challenges_saved.opening_soon.includes([:agency, :sub_agency])
+    @closed_saved_challenges = @challenges_saved.closed.includes([:agency, :sub_agency])
   end
+
   def create
     saved_challenge = SavedChallenge.new(user: current_user, challenge_id: params[:challenge_id])
-
-    if saved_challenge.save
-      redirect_to saved_challenges_path, notice: "Challenge saved successfully."
-    else
-      redirect_to challenges_path, alert: "Failed to save challenge."
-    end
+    saved_challenge.save
+    # If save failed, the challenge is already saved (violates unique constraint)
+    redirect_to saved_challenges_path, notice: "Challenge saved."
   end
+
   def destroy
-    challenge = current_user.saved_challenges.find(params[:id])
-    current_user.saved_challenges.destroy(challenge)
+    current_user.saved_challenges.find_by!(challenge_id: params[:id]).destroy
 
     redirect_to saved_challenges_path, notice: "Challenge removed successfully."
   end

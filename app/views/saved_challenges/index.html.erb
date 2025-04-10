@@ -1,15 +1,15 @@
 <h1>Saved Challenges</h1>
 
-<% if @open_saved_challenges.empty?  %>
+<% if @challenges_saved.empty?  %>
   <p>You have no saved challenges.</p>
 <% else %>
   <section class="saved-challenges-grid container-fluid">
     <% if @open_saved_challenges.any? %>
-      <h2>Open for submissions  (<%= @open_saved_challenges.count %>)</h2>
+      <h2>Open for submissions (<%= @open_saved_challenges.count %>)</h2>
       <hr/>
       <ul class="usa-card-group">
-        <% @open_saved_challenges.each do |challenge| %>
-          <%= render partial: "challenge_card", locals: {challenge:} %>
+        <% @open_saved_challenges.each do |c| %>
+          <%= render partial: "challenge_card", locals: {challenge: c} %>
         <% end %>
       </ul>
     <% end %>
@@ -17,21 +17,21 @@
     <% if @open_soon_saved_challenges.any? %>
       <h2>Opening soon (<%= @open_soon_saved_challenges.count %>)</h2>
       <hr/>
-      <div class="cards margin-top-3 flex flex-row">
-        <% @open_soon_saved_challenges.each do |challenge| %>
-          <%= render partial: "challenge_card", locals: {challenge:} %>
+      <ul class="usa-card-group">
+        <% @open_soon_saved_challenges.each do |c| %>
+          <%= render partial: "challenge_card", locals: {challenge: c} %>
         <% end %>
-      </div>
+      </ul>
     <% end %>
 
     <% if @closed_saved_challenges.any? %>
       <h2>Closed to submissions</h2>
       <hr/>
-      <div class="cards margin-top-3 flex flex-row">
-        <% @closed_saved_challenges.each do |challenge| %>
-          <%= render partial: "challenge_card", locals: {challenge:} %>
+      <ul class="usa-card-group">
+        <% @closed_saved_challenges.each do |c| %>
+          <%= render partial: "challenge_card", locals: {challenge: c} %>
         <% end %>
-      </div>
+      </ul>
     <% end %>
   </section>
 <% end %>
