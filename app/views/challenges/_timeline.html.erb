@@ -8,23 +8,19 @@
   <div class="usa-card usa-card__container margin-y-6">
     <div class="usa-card-body">
       <div class="timeline-events">
-        <% if @challenge.timeline_events.present? %>
-          <% sorted_events = @challenge.timeline_events.sort_by { |event| event['date'] } %>
-          <% sorted_events.each_with_index do |event, index| %>
-            <div class="timeline-event" style="text-align: left; padding: 10px">
-              <div>
-                <span class="text-bold">
-                  <%= format_datetime(DateTime.parse(event['date'])) %>
-                </span>: 
-                <%= event['title'] %>
-              </div>
-              <% unless index == sorted_events.length - 1 %>
-                <hr style="margin: 5px 0" />
-              <% end %>
+        <% sorted_events = @challenge.timeline_events.sort_by { |event| event['date'] } %>
+        <% sorted_events.each_with_index do |event, index| %>
+          <div class="timeline-event" style="text-align: left; padding: 10px">
+            <div>
+              <span class="text-bold">
+                <%= format_local_datetime(DateTime.parse(event['date'])) %>
+              </span>: 
+              <%= event['title'] %>
             </div>
-          <% end %>
-        <% else %>
-          <p>No timeline events available.</p>
+            <% unless index == sorted_events.length - 1 %>
+              <hr style="margin: 5px 0" />
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>

@@ -27,14 +27,16 @@
     </div>
   </div>
 
-  <div>
-    <h3 class="font-sans-xl margin-1"><b>Terms and conditions</b></h3>
-    <div class="usa-card usa-card__container">
-      <div class="usa-card-body">
-        <div>
-          <%= sanitize @challenge.terms_and_conditions %>
+  <% unless @challenge.terms_equal_rules %>
+    <div>
+      <h3 class="font-sans-xl margin-1"><b>Terms and conditions</b></h3>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= sanitize @challenge.terms_and_conditions %>
+          </div>
         </div>
       </div>
     </div>
-  </div>  
+  <% end %>
 </div>
