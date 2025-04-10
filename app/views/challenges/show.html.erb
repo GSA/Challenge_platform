@@ -9,7 +9,7 @@
                 <%= image_tag(
                   agency_logo_url(@challenge),
                   alt: "Agency logo for #{@challenge.agency_name}",
-                  class: "agency-logo"
+                  class: "agency-federal-partner-logo"
                 ) %>
               <% end %>
               
@@ -19,7 +19,7 @@
                     <%= image_tag(
                       agency_logo_url(Challenge.new(agency: partner)),
                       alt: "Partner logo for #{partner.name}",
-                      class: "agency-logo"
+                      class: "agency-federal-partner-logo"
                     ) %>
                   <% end %>
                 <% end %>
