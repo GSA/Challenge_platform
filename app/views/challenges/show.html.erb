@@ -1,12 +1,12 @@
 <div class="challenge-show-page" data-controller="challenge-detail modal"">
-  <div class="radius-lg usa-card usa-card__container margin-y-8">
+  <div class="radius-lg usa-card usa-card__container">
     <div class="padding-top-4 usa-card__header">
       <div class="usa-grid">
         <div class="grid-row">
           <div class="grid-col-12 tablet:grid-col-6">
             <h1 class="usa-card__heading font-sans-3xl"><%= @challenge.title %></h1>
-            <p class="usa-card__tagline font-sans-xl"><%= @challenge.tagline %></p>
-            <p class="font-sans-lg"><%= @challenge.brief_description %></p>
+            <p class="usa-card__tagline font-sans-xl margin-y-1"><%= @challenge.tagline %></p>
+            <p class="font-sans-lg margin-y-1"><%= @challenge.brief_description %></p>
           </div>
           <div class="grid-col-12 tablet:grid-col-6">
             <div class="logo-container">
@@ -38,7 +38,7 @@
                       class: "usa-button usa-button--accent bg-orange-vivid-30v width-full padding-x-4 padding-y-3 tablet:padding-8 radius-lg challenge-apply-button",
                       target: "_blank",
                       rel: "noopener" do %>
-                    <span class="text-black font-sans-lg text-no-wrap text-normal">Apply on external website</span>
+                    <span class="text-black font-sans-lg text-normal">Apply on external website</span>
                   <% end %>
                 <% end %>
               </div>

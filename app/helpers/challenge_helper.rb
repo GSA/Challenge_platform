@@ -152,7 +152,7 @@ module ChallengeHelper
   end
 
   def format_local_datetime(date)
-    date.strftime("%B %d, %Y %I:%M %p")
+    date.strftime("%B %d, %Y %I:%M %p %Z")
   end
 
   def get_current_phase(phases)
