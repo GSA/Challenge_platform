@@ -36,6 +36,8 @@ def system_login_user(user)
   fill_in "Email", with: user.email
   click_on "Dev Login"
   case user.role
+  when "solver"
+    expect(page).to have_current_path(solver_dashboard_path)
   when "evaluator"
     expect(page).to have_current_path(evaluations_path)
   else

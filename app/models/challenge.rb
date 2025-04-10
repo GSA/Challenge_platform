@@ -165,6 +165,7 @@ class Challenge < ApplicationRecord
   attribute :announcement, :string
   attribute :announcement_datetime, :datetime
   attribute :gov_delivery_topic, :string
+  attribute :logo_alt_text, :string
   attribute :short_url, :string
   attribute :upload_logo, :boolean
   attribute :is_multi_phase, :boolean
@@ -178,4 +179,8 @@ class Challenge < ApplicationRecord
 
   validates :title, presence: true
   validates :status, presence: true
+
+  scope :open, -> { where(sub_status: 'open') }
+  scope :opening_soon, -> { where(status: 'published', sub_status: nil) }
+  scope :closed, -> { where(sub_status: 'closed') }
 end

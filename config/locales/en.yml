@@ -128,6 +128,10 @@ en:
       description: "The submission evaluation scores and the average scores are updated."
     notices:
       submitted: "Revision submitted"
+  solvers:
+    alerts:
+      challenge_saved: "Challenge saved successfully"
+      challenge_removed: "Challenge removed successfully"
   form:
     errors:
       input: "Provide %{field_name}"
