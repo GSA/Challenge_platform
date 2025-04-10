@@ -39,7 +39,7 @@ RSpec.describe "SessionsController" do
     expect(response).to redirect_to("/solver/dashboard")
   end
 
-  it "test" do
+  it "get /auth/failure_to_proof renders the error page" do
     user = User.new(email: "test@example.com", token: SecureRandom.uuid)
     code = "ABC123"
     mock_login_gov(user, code)
@@ -47,11 +47,10 @@ RSpec.describe "SessionsController" do
     get "/auth/failure_to_proof"
 
     expect(response).to have_http_status(:success)
+    expect(response.body).to have_css('h3', text: "We can't verify your identity.")
   end
 
   it "times out the session" do
-    session_timeout_in_minutes = SessionsController::SESSION_TIMEOUT_IN_MINUTES
-
     email = "test@example.gov"
     token = SecureRandom.uuid
 
@@ -65,11 +64,35 @@ RSpec.describe "SessionsController" do
     expect(session[:userinfo]).not_to be_nil
     expect(session[:session_timeout_at]).not_to be_nil
 
-    travel_to (session_timeout_in_minutes.to_i + 1).minutes.from_now do
+    travel_to (SessionsController::SESSION_TIMEOUT_IN_MINUTES.to_i + 1).minutes.from_now do
       get phases_path
 
       expect(session[:userinfo]).to be_nil
       expect(session[:session_timeout_at]).to be_nil
+    end
+  end
+
+  it "renews the session" do
+    email = "test@example.gov"
+    token = SecureRandom.uuid
+
+    user = User.create!({ email:, token:, role: "challenge_manager" })
+
+    code = "ABC123"
+    mock_login_gov(user, code)
+
+    get "/auth/result", params: { code: }
+
+    expect(session[:userinfo]).not_to be_nil
+    expect(session[:session_timeout_at]).not_to be_nil
+    cookies[:_challenge_gov_key] = { value: "pre123", expires: SessionsController::SESSION_TIMEOUT_IN_MINUTES.minutes.from_now }
+    stub_request(:post, "http://localhost:4000/api/session/external_renew").
+      to_return(status: 200, body: "", headers: {'Set-Cookie' => "test=post123"})
+
+    travel_to (SessionsController::SESSION_TIMEOUT_IN_MINUTES.to_i - 1).minutes.from_now do
+      post "/session/renew"
+      expect(response).to have_http_status(:success)
+      expect(cookies[:_challenge_gov_key]).to eq("post123")
     end
   end
 end

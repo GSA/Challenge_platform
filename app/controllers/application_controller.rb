@@ -100,6 +100,43 @@ class ApplicationController < ActionController::Base
 
   def renew_session
     session[:session_timeout_at] = Time.current + SessionsController::SESSION_TIMEOUT_IN_MINUTES.minutes
+
+    renew_phoenix_session
+  end
+
+  def renew_phoenix_session
+    return if phoenix_session_cookie_missing?
+
+    response = send_phoenix_renew_request
+    store_updated_phoenix_cookie(response)
+  rescue => e
+    Rails.logger.warn("Phoenix session renewal failed: #{e.message}")
+  end
+
+  def phoenix_session_cookie_missing?
+    cookies[:_challenge_gov_key].blank?
+  end
+
+  def send_phoenix_renew_request
+    Net::HTTP.start(phoenix_uri.hostname, phoenix_uri.port, use_ssl: phoenix_uri.scheme == 'https') do |http|
+      http.request(build_renew_request)
+    end
+  end
+
+  def phoenix_uri
+    URI("#{Rails.configuration.phx_interop[:phx_uri]}/api/session/external_renew")
+  end
+
+  def build_renew_request
+    Net::HTTP::Post.new(phoenix_uri).tap do |req|
+      req['Login-Secret'] = Rails.configuration.phx_interop[:login_secret]
+      req['Cookie'] = "_challenge_gov_key=#{cookies[:_challenge_gov_key]}"
+    end
+  end
+
+  def store_updated_phoenix_cookie(response)
+    phoenix_cookie = extract_phoenix_cookie_from_response(response)
+    phoenix_session_cookie(phoenix_cookie)
   end
 
   def check_session_expiration
