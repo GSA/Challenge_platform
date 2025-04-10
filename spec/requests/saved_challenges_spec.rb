@@ -76,7 +76,7 @@ RSpec.describe "SavedChallenges", type: :request do
         expect(solver.challenges_saved).to include(challenge)
         expect(response).to redirect_to(saved_challenges_path)
         follow_redirect!
-        expect(response.body).to have_css('p', text: "Challenge saved.")
+        expect(response.body).to have_css('p', text: "Challenge saved successfully")
       end
     end
   end
@@ -95,7 +95,7 @@ RSpec.describe "SavedChallenges", type: :request do
         expect(solver.challenges_saved).not_to include(challenge)
         expect(response).to redirect_to(saved_challenges_path)
         follow_redirect!
-        expect(response.body).to have_css('p', text: "Challenge removed successfully.")
+        expect(response.body).to have_css('p', text: "Challenge removed successfully")
       end
     end
   end

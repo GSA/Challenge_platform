@@ -15,12 +15,12 @@ class SavedChallengesController < ApplicationController
     saved_challenge = SavedChallenge.new(user: current_user, challenge_id: params[:challenge_id])
     saved_challenge.save
     # If save failed, the challenge is already saved (violates unique constraint)
-    redirect_to saved_challenges_path, notice: I18n.t("solvers.alert.challenge_saved")
+    redirect_to saved_challenges_path, notice: I18n.t("solvers.alerts.challenge_saved")
   end
 
   def destroy
     current_user.saved_challenges.find_by!(challenge_id: params[:id]).destroy
 
-    redirect_to saved_challenges_path, notice: I18n.t("solvers.alert.challenge_removed")
+    redirect_to saved_challenges_path, notice: I18n.t("solvers.alerts.challenge_removed")
   end
 end
