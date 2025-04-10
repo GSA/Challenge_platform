@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Helper module for generating slugs and URLs for challenge logos.
 module ChallengesHelper
   def challenge_slug(challenge)
     challenge.custom_url || challenge.id
@@ -16,9 +19,9 @@ module ChallengesHelper
   end
 
   def agency_logo_url(challenge)
-    if (challenge.sub_agency && challenge.sub_agency.avatar_key)
+    if challenge.sub_agency&.avatar_key
       Storage.url(agency_avatar_path(challenge.sub_agency, "original"))
-    elsif (challenge.agency && challenge.agency.avatar_key)
+    elsif challenge.agency&.avatar_key
       Storage.url(agency_avatar_path(challenge.agency, "original"))
     else
       # Fallback to Challenge.gov logo if no agency logo is found
@@ -26,11 +29,11 @@ module ChallengesHelper
     end
   end
 
-  def agency_avatar_path(agency, size="original")
+  def agency_avatar_path(agency, size = "original")
     "agencies/#{size}-#{agency.avatar_key}#{agency.avatar_extension}"
   end
 
-  def challenge_logo_path(challenge, size="original")
+  def challenge_logo_path(challenge, size = "original")
     "challenges/#{size}-#{challenge.logo_key}#{challenge.logo_extension}"
   end
 end

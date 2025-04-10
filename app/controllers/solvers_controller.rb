@@ -4,6 +4,5 @@
 class SolversController < ApplicationController
   before_action -> { authorize_user('solver') }
 
-  def dashboard
-  end
+  def dashboard; end
 end

@@ -15,5 +15,5 @@ class SavedChallenge < ApplicationRecord
   belongs_to :user
 
   # Validations
-  validates :user_id, uniqueness: { scope: :challenge_id, message: 'has already saved this challenge' }
+  validates :user_id, uniqueness: { scope: :challenge_id }
 end
