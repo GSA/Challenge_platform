@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
   scope '/solver' do
     get '/dashboard', to: 'solvers#dashboard', as: 'solver_dashboard'
+    # solvers can save (bookmark) their favorite challenges
+    resources :saved_challenges, only: [:index, :create, :destroy]
   end
 
   resources :evaluations, only: %i[index edit create update] do
