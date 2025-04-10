@@ -1,0 +1,25 @@
+<div class="width-full padding-bottom-4">
+  <h1>Dashboard</h1>
+  <div class="grid-row grid-gap-2">
+    <%= render partial: "dashboard_card", locals: { card: {
+        title: 'My submissions',
+        subtitle: 'View my challenges submissions.',
+        href: Rails.configuration.phx_interop[:phx_uri] + "/submissions",
+        image_path: 'file_present'
+    } } %>
+    <%= render partial: "dashboard_card", locals: { card: {
+        title: 'My saved challenges',
+        subtitle: "View challenges you've saved and click for challenge details.",
+        href: saved_challenges_path,
+        image_path: 'emoji_events'
+    } } %>
+  </div>
+  <div class="grid-row grid-gap-2">
+    <%= render partial: "dashboard_card", locals: { card: {
+        title: 'Resources',
+        subtitle: 'Learn how to make the most of Challenge.gov and find support.',
+        href: Rails.configuration.phx_interop[:phx_uri] + "/solver_help",
+        image_path: 'support'
+    } } %>
+    </div>
+</div>
