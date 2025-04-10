@@ -63,10 +63,10 @@ RSpec.describe "Evaluations" do
         create_and_log_in_user(role: "solver")
       end
 
-      it "redirects to the phoenix app" do
+      it "redirects to the public solver dashboard" do
         get evaluations_path
 
-        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+        expect(response).to redirect_to(solver_dashboard_path)
       end
     end
 

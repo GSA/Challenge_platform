@@ -29,14 +29,14 @@ RSpec.describe "SessionsController" do
     expect(flash[:error]).to include("Please try again.")
   end
 
-  it "get /auth/result successful redirects to / for default user roles" do
+  it "get /auth/result successful redirects to /solver/dashboard for default user roles" do
     user = User.new(email: "test@example.com", token: SecureRandom.uuid)
     code = "ABC123"
     mock_login_gov(user, code)
 
     get "/auth/result", params: { code: }
     expect(response).to have_http_status(:redirect)
-    expect(response).to redirect_to("/")
+    expect(response).to redirect_to("/solver/dashboard")
   end
 
   it "test" do
