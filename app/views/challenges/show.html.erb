@@ -54,12 +54,18 @@
           <div>
             <div class="grid-row grid-gap padding-top-2">
               <div class="grid-col-12 margin-bottom-2">
-                <% if safe_url = safe_how_to_enter_link(@challenge) %>
-                  <%= link_to safe_url,
+                <% if show_apply_button?(@challenge) %>
+                  <%= link_to apply_button_url(@challenge),
                       class: "usa-button usa-button--accent bg-orange-vivid-30v width-full padding-x-4 padding-y-3 tablet:padding-8 radius-lg challenge-apply-button",
-                      target: "_blank",
-                      rel: "noopener" do %>
-                    <span class="text-black font-sans-lg text-normal">Apply on external website</span>
+                      target: (@challenge.external_url.present? || safe_how_to_enter_link(@challenge).present?) ? "_blank" : nil,
+                      rel: (@challenge.external_url.present? || safe_how_to_enter_link(@challenge).present?) ? "noopener" : nil,
+                      disabled: !get_current_phase(@challenge.phases) && get_next_phase(@challenge.phases) do %>
+                    <span class="text-black font-sans-lg text-normal">
+                      <%= apply_button_text(@challenge) %>
+                      <% if @challenge.external_url.present? || safe_how_to_enter_link(@challenge).present? %>
+                        <i class="fa fa-external-link-alt ms-3"></i>
+                      <% end %>
+                    </span>
                   <% end %>
                 <% end %>
               </div>

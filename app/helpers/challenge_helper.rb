@@ -80,6 +80,48 @@ module ChallengeHelper
     phase_winner.winners&.any?
   end
 
+  # apply for this challenge / apply on external website
+  def show_apply_button?(challenge)
+    return true if challenge.external_url.present?
+    return true if safe_how_to_enter_link(challenge).present?
+
+    current_phase = get_current_phase(challenge.phases)
+    next_phase = get_next_phase(challenge.phases)
+
+    return false if !current_phase && !next_phase
+    return true if current_phase&.open_to_submissions
+    return true if !current_phase && next_phase
+
+    false
+  end
+
+  def apply_button_url(challenge)
+    if challenge.external_url.present?
+      challenge.external_url
+    elsif safe_how_to_enter_link(challenge).present?
+      safe_how_to_enter_link(challenge)
+    elsif current_phase&.open_to_submissions
+      new_challenge_submission_path(challenge)
+    end
+  end
+
+  def apply_button_text(challenge)
+    if challenge.external_url.present?
+      "View on external website"
+    elsif safe_how_to_enter_link(challenge).present?
+      "Apply on external website"
+    else
+      current_phase = get_current_phase(challenge.phases)
+      next_phase = get_next_phase(challenge.phases)
+
+      if !current_phase && next_phase
+        "Apply starting #{format_date(next_phase.start_date)}"
+      elsif current_phase&.open_to_submissions
+        "Apply for this challenge"
+      end
+    end
+  end
+
   private
 
   def phase_number(challenge, phase)
@@ -123,6 +165,10 @@ module ChallengeHelper
     phase.start_date <= current_time && phase.end_date > current_time
   end
 
+  def phase_is_next?(phase)
+    phase.start_date > Time.current
+  end
+
   def phase_in_past?(phase)
     phase.end_date <= Time.current
   end
@@ -155,6 +201,10 @@ module ChallengeHelper
 
   def format_local_date(date)
     date.strftime("%m/%d/%y")
+  end
+
+  def format_date(date)
+    date.strftime("%B %-d, %Y")
   end
 
   def get_current_phase(phases)
