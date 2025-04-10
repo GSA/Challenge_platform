@@ -9,7 +9,7 @@
 #  evaluator_submission_assignment_id :bigint           not null
 #  additional_comments                :text
 #  revision_comments                  :text
-#  total_score                        :integer
+#  total_score                        :decimal(10, 2)
 #  completed_at                       :datetime
 #  created_at                         :datetime         not null
 #  updated_at                         :datetime         not null

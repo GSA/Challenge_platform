@@ -150,10 +150,10 @@ RSpec.describe "Submissions" do
     context "when logged in as a solver" do
       let(:user) { create_user(role: "solver") }
 
-      it "redirects to the phoenix app" do
+      it "redirects to the public solver dashboard" do
         get submissions_phase_path(phase)
 
-        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+        expect(response).to redirect_to(solver_dashboard_path)
       end
     end
 

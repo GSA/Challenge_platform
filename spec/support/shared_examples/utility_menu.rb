@@ -15,3 +15,9 @@ RSpec.shared_examples "a page with utility menu links for an evaluator" do
     expect(response.body).to have_css("#utility-menu-link-Evaluations")
   end
 end
+
+RSpec.shared_examples "a page with utility menu links for a solver" do
+  it "has the right links for a solver" do
+    expect(response.body).to have_css("#utility-menu-link-Dashboard")
+  end
+end

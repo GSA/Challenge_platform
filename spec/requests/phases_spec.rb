@@ -44,7 +44,7 @@ RSpec.describe "Phases" do
       end
 
       it "renders an empty list" do
-        expect(response.body).to include("You currently do not have any challenges.")
+        expect(response.body).to include("You have not started any challenges yet.")
       end
 
       it "renders a list of challenges" do
@@ -76,10 +76,10 @@ RSpec.describe "Phases" do
         create_and_log_in_user(role: "solver")
       end
 
-      it "redirects to the phoenix app" do
+      it "redirects to the public solver dashboard" do
         get phases_path
 
-        expect(response).to redirect_to(ENV.fetch("PHOENIX_URI", nil))
+        expect(response).to redirect_to(solver_dashboard_path)
       end
     end
   end

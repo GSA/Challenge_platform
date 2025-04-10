@@ -28,7 +28,6 @@ describe "A11y", :js do
       eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
       expect(eligible_input).not_to be_checked
       find_by_id('eligible-for-evaluation').click
-      # click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       eligible_input = page.find_by_id('eligible-for-evaluation').find('input.usa-checkbox__input', visible: :hidden)
       expect(eligible_input).to be_checked
@@ -46,7 +45,6 @@ describe "A11y", :js do
       selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
       expect(selected_input).not_to be_checked
       find_by_id('selected-to-advance').click
-      # click_on "Save"
       expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
       selected_input = page.find_by_id('selected-to-advance').find('input.usa-checkbox__input', visible: :hidden)
       expect(selected_input).to be_checked
@@ -99,7 +97,7 @@ describe "A11y", :js do
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)
       find_by_id('eligible-for-evaluation').click
-      click_on('Save')
+      expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
 
       expect(page).to have_content("This submission does not have any assigned evaluators. Please use the Available Evaluators section above to assign evaluators.")
 
@@ -122,7 +120,7 @@ describe "A11y", :js do
       evaluation_form = create(:evaluation_form, phase: phase, challenge: challenge)
       visit submission_path(submission)
       find_by_id('eligible-for-evaluation').click
-      click_on('Save')
+      expect(page).to have_css("p.usa-alert__text", text: "Submission was updated successfully.")
 
       click_on('Assign')
       expect(page).to have_css("p.usa-alert__text", text: "Evaluator assigned successfully")

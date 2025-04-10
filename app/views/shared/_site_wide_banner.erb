@@ -1,0 +1,8 @@
+<% banner = SiteContent.site_wide_banner %>
+<% if banner&.active? %>
+  <div class="grid-container usa-alert usa-alert--warning usa-alert--no-icon usa-alert--slim site-wide-banner">
+    <div class="usa-alert__body">
+      <%= sanitize banner.content %>
+    </div>
+  </div>
+<% end %>

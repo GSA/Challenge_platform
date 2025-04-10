@@ -31,6 +31,7 @@
 #  renewal_request            :string(255)
 #  jwt_token                  :text
 #  recertification_expired_at :datetime
+#  ial_level                  :integer          default("ial1"), not null
 #
 require 'rails_helper'
 

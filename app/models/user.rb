@@ -31,6 +31,7 @@
 #  renewal_request            :string(255)
 #  jwt_token                  :text
 #  recertification_expired_at :datetime
+#  ial_level                  :integer          default("ial1"), not null
 #
 class User < ApplicationRecord
   after_create :process_evaluator_invitations
@@ -39,9 +40,14 @@ class User < ApplicationRecord
 
   belongs_to :agency, optional: true
 
+  # Challenges the User(admin or challenge_manager) created
   has_many :challenges, dependent: :destroy
   has_many :challenge_managers, dependent: :destroy
+  # Challenges the User(challenge_manager) is a Manager of
   has_many :challenge_manager_challenges, through: :challenge_managers, source: :challenge, dependent: :destroy
+  # Challenges the User(solver) saved to their account
+  has_many :saved_challenges, dependent: :destroy
+  has_many :challenges_saved, through: :saved_challenges, source: :challenge
   has_many :members, dependent: :destroy
   has_many :supporting_documents, class_name: 'Document', dependent: :destroy
   has_many :submissions, foreign_key: :submitter_id, inverse_of: :submitter, dependent: :destroy
