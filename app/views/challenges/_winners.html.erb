@@ -6,16 +6,43 @@
   </div>
 
   <div class="margin-top-6">
-    <% if !@challenge.winner_information.present? %>
-      <div class="usa-card usa-card__container">
-        <div class="usa-card-body">
-          <div>
-            <%= sanitize @challenge.winner_information %>
+    <% @challenge.phases.each do |phase| %>
+      <% phase_winner = phase.phase_winner %>
+      <% if phase_winner && has_phase_winner_data?(phase_winner) %>
+        <div class="usa-card">
+          <div class="usa-card-body ql-editor">
+            <% if phase_winner.overview_image_path.present? %>
+              <%= image_tag phase_winner.overview_image_path, 
+                  alt: "Winner overview image for #{phase.title}",
+                  class: "width-full" %>
+            <% end %>
+            
+            <h1 class="usa-tbm-1rem"><%= phase_winner.phase_title %></h1>
+            
+            <div class="usa-tbm-1rem">
+              <%= sanitize phase_winner.overview %>
+            </div>
+
+            <% if phase_winner.winners&.any? %>
+              <div class="winners-section">
+                <% phase_winner.winners.each do |winner| %>
+                  <div class="winner-card">
+                    <h3><%= winner.title %></h3>
+                    <% if winner.image_path.present? %>
+                      <%= image_tag winner.image_path, 
+                          alt: "Winner image for #{winner.title}",
+                          class: "winner-image" %>
+                    <% end %>
+                    <div class="winner-details">
+                      <%= sanitize winner.description %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
           </div>
         </div>
-      </div>
-    <% else %>
-      <p class="usa-prose">No winner information available at this time.</p>
+      <% end %>
     <% end %>
   </div>
 </div>

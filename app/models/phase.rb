@@ -28,6 +28,7 @@ class Phase < ApplicationRecord
   }, inverse_of: :phase, dependent: :destroy
   has_many :evaluator_submission_assignments, through: :submissions
   has_one :evaluation_form, dependent: :destroy
+  has_one :phase_winner, dependent: :destroy
   # has_one :winner, class_name: 'PhaseWinner'
   has_many :evaluator_invitations, dependent: :destroy
   has_many :challenge_phases_evaluators, dependent: :destroy

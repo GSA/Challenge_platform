@@ -41,8 +41,8 @@ module ChallengeHelper
   end
 
   # challenge timeline
-  def format_datetime(datetime)
-    datetime.strftime("%B %d, %Y %I:%M %p")
+  def format_local_datetime(date)
+    date.strftime("%B %d, %Y %I:%M %p")
   end
 
   # challenge prizes
@@ -72,6 +72,12 @@ module ChallengeHelper
     rescue URI::InvalidURIError
       nil
     end
+  end
+
+  def has_phase_winner_data?(phase_winner)
+    phase_winner.overview.present? ||
+    phase_winner.overview_image_path.present? ||
+    phase_winner.winners&.any?
   end
 
   private
@@ -149,10 +155,6 @@ module ChallengeHelper
 
   def format_local_date(date)
     date.strftime("%m/%d/%y")
-  end
-
-  def format_local_datetime(date)
-    date.strftime("%B %d, %Y %I:%M %p %Z")
   end
 
   def get_current_phase(phases)
