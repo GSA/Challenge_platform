@@ -100,10 +100,14 @@ module ChallengeHelper
       challenge.external_url
     elsif safe_how_to_enter_link(challenge).present?
       safe_how_to_enter_link(challenge)
-    elsif current_phase&.open_to_submissions
-      new_challenge_submission_path(challenge)
+    else
+      current_phase = get_current_phase(challenge.phases)
+      if current_phase&.open_to_submissions
+        phoenix_new_challenge_submission_url(challenge)
+      end
     end
   end
+
 
   def apply_button_text(challenge)
     if challenge.external_url.present?
@@ -123,6 +127,17 @@ module ChallengeHelper
   end
 
   private
+
+  def phoenix_new_challenge_submission_url(challenge)
+    "#{Rails.configuration.phx_interop[:phx_uri]}/challenges/#{challenge.id}/submissions/new"
+  end
+
+  def redirect_to_phoenix_new_challenge_submission
+    {
+      redirect_url: phoenix_new_challenge_submission_url,
+      status: :see_other
+    }
+  end
 
   def phase_number(challenge, phase)
     return nil unless phase
