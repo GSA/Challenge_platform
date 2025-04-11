@@ -39,15 +39,11 @@ module SubmissionPeriodHelper
   end
 
   def determine_phase_status(challenge, current_phase, previous_phase, next_phase)
-    if current_phase
-      current_phase_text(challenge, current_phase)
-    elsif !previous_phase && next_phase
-      upcoming_phase_text(challenge, next_phase)
-    elsif previous_phase && next_phase
-      transition_phase_text(challenge, previous_phase, next_phase)
-    else
-      t('challenge_listing.apply.closed_to_submissions')
-    end
+    return current_phase_text(challenge, current_phase) if current_phase
+    return upcoming_phase_text(challenge, next_phase) if next_phase && !previous_phase
+    return transition_phase_text(challenge, previous_phase, next_phase) if next_phase && previous_phase
+
+    t('challenge_listing.apply.closed_to_submissions')
   end
 
   def current_phase_text(challenge, phase)
@@ -59,7 +55,7 @@ module SubmissionPeriodHelper
   end
 
   def transition_phase_text(challenge, previous_phase, next_phase)
-    "Phase #{phase_number(challenge, previous_phase)} closed / "\
+    "Phase #{phase_number(challenge, previous_phase)} closed / " \
       "Phase #{phase_number(challenge, next_phase)} opens on #{format_local_datetime(next_phase.start_date)}"
   end
 
