@@ -6,28 +6,32 @@
 >
   <div class="usa-modal__content maxw-mobile-lg">
     <div class="usa-modal__main">
-      <h2 class="usa-modal__heading font-sans-lg margin-bottom-2" id="follow-challenge-modal-heading">
-        Follow challenge as guest
+      <% if Rails.configuration.gov_delivery_topic_subscribe_url && @challenge.gov_delivery_topic %>
+        <div class="margin-bottom-6">
+          <h2 class="usa-modal__heading font-sans-lg margin-bottom-2" id="follow-challenge-modal-heading">
+            Follow the challenge as a guest
+          </h2>
+
+          <p class="margin-bottom-4">Receive challenge updates to your email. No sign-in required</p>
+
+          <%= link_to "Follow challenge",
+              "#{Rails.configuration.gov_delivery_topic_subscribe_url}#{@challenge.gov_delivery_topic}",
+              class: "usa-button width-auto padding-x-4",
+              target: "_blank" %>
+        </div>
+      <% end %>
+
+      <h2 class="usa-modal__heading font-sans-lg margin-y-2" id="follow-challenge-modal-heading-2">
+        Save challenges to your account
       </h2>
-      <div class="">
-        <p class="margin-bottom-4">Receive challenge updates to your email. No sign-in required</p>
-        
-        <%= link_to "Follow challenge",
-            "https://public.govdelivery.com/accounts/USGSATTS/signup/30826",
-            class: "usa-button width-auto padding-x-4",
-            target: "_blank" %>
 
-        <h2 class="usa-modal__heading font-sans-lg margin-top-8 margin-bottom-2" id="follow-challenge-modal-heading-2">
-          Save challenges to your account
-        </h2>
-        <p class="margin-bottom-4">Sign in to save a challenge and receive updates. Free login.gov account required.</p>
-        
-        <%= link_to "Save challenge",
-            "#",
-            class: "usa-button width-auto padding-x-4" %>
-      </div>
+      <p class="margin-bottom-4">Sign in to save a challenge and receive updates. Free login.gov account required.</p>
 
-      <div class="usa-modal__footer margin-top-4 display-flex flex-justify-center">
+      <%= button_to "Save challenge",
+          saved_challenges_path, params: { challenge_id: @challenge.id },
+          class: "usa-button width-auto padding-x-4" %>
+
+      <div class="usa-modal__footer margin-top-4 display-flex flex-justify-end">
         <button
           type="button"
           class="usa-button usa-button--outline"
