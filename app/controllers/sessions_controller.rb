@@ -42,6 +42,34 @@ class SessionsController < ApplicationController
 
   def failure_to_proof; end
 
+  def external_login
+    return head(:unauthorized) unless request.headers["Login-Secret"] == ENV["LOGIN_SECRET"]
+
+    user_jwt = request.headers["User-JWT"]
+    decoded = decode_user_jwt(user_jwt)
+
+    if decoded
+      session[:userinfo] = decoded
+      session[:session_timeout_at] = Time.zone.now + SESSION_TIMEOUT_IN_SECONDS
+      # Ensure this returns a Set-Cookie resp_header to Phoenix
+      head(:ok)
+    else
+      head(:unauthorized)
+    end
+  end
+
+  def external_renew
+    return head(:unauthorized) unless request.headers["Login-Secret"] == ENV["LOGIN_SECRET"]
+
+    if session[:userinfo].present?
+      session[:session_timeout_at] = Time.zone.now + SESSION_TIMEOUT_IN_SECONDS
+      # Ensure this returns a Set-Cookie resp_header to Phoenix
+      head(:ok)
+    else
+      head(:unauthorized)
+    end
+  end
+
   private
 
   def check_error_result
@@ -71,5 +99,12 @@ class SessionsController < ApplicationController
     Rails.logger.error("LoginGov::LoginApiError(#{e.message}) status(#{e.status_code}):\n#{e.response_body}")
     flash[:error] = t("login_error")
     redirect_to new_session_path
+  end
+
+  def decode_user_jwt(_user_jwt)
+    # Decode the JWT from Phoenix containing user_info, etc
+  rescue JWT::DecodeError => e
+    Rails.logger.error("JWT decode failed: #{e}")
+    nil
   end
 end

@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   resource 'session', only: [:new, :create, :destroy] do
     post 'renew'
     delete 'timeout'
+
+    post 'external_login'
+    post 'external_renew'
   end
 
   scope '/solver' do
