@@ -48,6 +48,7 @@ module ChallengeHelper
   # apply for this challenge / apply on external website
   def show_apply_button?(challenge)
     return true if external_links_present?(challenge)
+
     phase_allows_apply?(challenge)
   end
 
@@ -86,6 +87,7 @@ module ChallengeHelper
   def validate_url(url)
     uri = URI.parse(url)
     return url if valid_http_uri?(uri)
+
     nil
   rescue URI::InvalidURIError
     nil
@@ -124,6 +126,7 @@ module ChallengeHelper
     next_phase = get_next_phase(challenge.phases)
 
     return false if no_valid_phases?(current_phase, next_phase)
+
     current_phase&.open_to_submissions || next_phase.present?
   end
 
