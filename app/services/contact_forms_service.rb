@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Service for sending contact form emails
 class ContactFormsService
   def self.send_email(challenge, params)
     contact_form = ContactForm.new(

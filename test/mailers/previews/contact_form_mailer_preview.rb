@@ -1,5 +1,6 @@
-# test/mailers/previews/contact_form_mailer_preview.rb
+# frozen_string_literal: true
 
+# Preview for the contact form mailer
 # http://localhost:3000/rails/mailers
 class ContactFormMailerPreview < ActionMailer::Preview
   def contact
@@ -24,7 +25,7 @@ class ContactFormMailerPreview < ActionMailer::Preview
       agency: find_or_create_agency,
       poc_email: 'challenge_manager@example.gov',
       status: 'published',
-      prize_total: 10000
+      prize_total: 10_000_000
     )
   end
 

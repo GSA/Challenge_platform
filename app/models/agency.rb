@@ -36,7 +36,8 @@ class Agency < ApplicationRecord
   validates :acronym, presence: true
 
   def avatar_url
-    return nil unless avatar_key.present?
+    return nil if avatar_key.blank?
+
     Storage.url(storage_key)
   end
 

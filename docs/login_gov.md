@@ -23,7 +23,7 @@ Description - <blank>
 Agency - GSA
 Team - Challenge.gov
 Identity protocol - openid_connect
-Identity verification level (IAL) - IAL1
+Identity verification level (IAL) - IAL2 - Identity verification permitted
 Issuer - `urn:gov:gsa:openidconnect.profiles:sp:sso:gsa:challenge_gov_<environment>`
 Logo - Upload the Challenge.gov Logo
 Public certificate - see additional steps below
