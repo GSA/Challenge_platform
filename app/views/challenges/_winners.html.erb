@@ -8,7 +8,7 @@
   <div class="margin-top-6">
     <% @challenge.phases.each do |phase| %>
       <% phase_winner = phase.phase_winner %>
-      <% if phase_winner && has_phase_winner_data?(phase_winner) %>
+      <% if phase_winner && phase_winner_data?(phase_winner) %>
         <div class="usa-card">
           <div class="usa-card-body ql-editor">
             <% if phase_winner.overview_image_path.present? %>

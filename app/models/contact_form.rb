@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+# == Class Information
+#
+# Form object for handling challenge contact form submissions
+#
+# Attributes:
+#  email        - String, visitor's email address
+#  body         - String, message content
+#  challenge_id - Integer, ID of the challenge being contacted about
+#
 class ContactForm
   attr_accessor :email, :body, :challenge_id
 

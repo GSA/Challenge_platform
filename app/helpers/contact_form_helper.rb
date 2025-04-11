@@ -3,8 +3,6 @@
 # Helper methods for the challenge contact form
 module ContactFormHelper
   def contact_form
-    @challenge = Challenge.find(params[:id])
-
     if valid_contact_form?
       render json: { success: true }, status: :ok
     else

@@ -4,10 +4,10 @@ export default class extends Controller {
   static targets = ["email", "body", "emailError", "bodyError"]
 
   handleSubmit(event) {    
-    event.preventDefault() 
+    event.preventDefault()
     
     if (this.validateForm()) {
-      this.submitForm()
+      event.target.submit()
     }
   }
 
@@ -19,7 +19,6 @@ export default class extends Controller {
     
     return isEmailValid && isBodyValid
   }
-
   clearErrorMessages() {
     this.emailErrorTarget.textContent = ""
     this.bodyErrorTarget.textContent = ""
@@ -52,38 +51,5 @@ export default class extends Controller {
 
   hideError(errorElement) {
     errorElement.classList.add('display-none')
-  }
-
-  async submitForm() {
-    const form = this.element.querySelector('form')
-    const formData = new FormData(form)
-
-    try {
-      const response = await fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-        }
-      })
-
-      if (response.ok) {
-        form.reset()
-      } else {
-        const errors = await response.json()
-        this.displayErrors(errors)
-      }
-    } catch (error) {
-      console.error('An error occurred:', error)
-    }
-  }
-
-  displayErrors(errors) {
-    if (errors.email) {
-      this.showError(this.emailErrorTarget, errors.email[0])
-    }
-    if (errors.body) {
-      this.showError(this.bodyErrorTarget, errors.body[0])
-    }
   }
 }

@@ -1,5 +1,6 @@
-# app/mailers/contact_form_mailer.rb
+# frozen_string_literal: true
 
+# Mailer for the contact form
 class ContactFormMailer < ApplicationMailer
   def contact(challenge, from_email, body)
     @challenge = challenge
@@ -8,7 +9,7 @@ class ContactFormMailer < ApplicationMailer
     attach_logo
     mail(
       to: @challenge.poc_email,
-      subject: "Message from Public Visitor: #{@challenge.title}",
+      subject: t('mailers.contact_form.subject', challenge_title: @challenge.title),
       reply_to: @from_email
     )
   end
@@ -19,7 +20,7 @@ class ContactFormMailer < ApplicationMailer
     attach_logo
     mail(
       to: to_email,
-      subject: "Challenge.gov - Challenge #{@challenge.title}: Contact Confirmation"
+      subject: t('mailers.contact_form.confirmation_subject', challenge_title: @challenge.title)
     )
   end
 
