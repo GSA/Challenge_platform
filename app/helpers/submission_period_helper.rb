@@ -38,14 +38,12 @@ module SubmissionPeriodHelper
     determine_phase_status(challenge, current_phase, previous_phase, next_phase)
   end
 
-
   def determine_phase_status(challenge, current_phase, previous_phase, next_phase)
-    case
-    when current_phase
+    if current_phase
       current_phase_text(challenge, current_phase)
-    when !previous_phase && next_phase
+    elsif !previous_phase && next_phase
       upcoming_phase_text(challenge, next_phase)
-    when previous_phase && next_phase
+    elsif previous_phase && next_phase
       transition_phase_text(challenge, previous_phase, next_phase)
     else
       t('challenge_listing.apply.closed_to_submissions')
@@ -61,8 +59,8 @@ module SubmissionPeriodHelper
   end
 
   def transition_phase_text(challenge, previous_phase, next_phase)
-    "Phase #{phase_number(challenge, previous_phase)} closed / " \
-        "Phase #{phase_number(challenge, next_phase)} opens on #{format_local_datetime(next_phase.start_date)}"
+    "Phase #{phase_number(challenge, previous_phase)} closed / "\
+      "Phase #{phase_number(challenge, next_phase)} opens on #{format_local_datetime(next_phase.start_date)}"
   end
 
   def single_phase?(challenge)
