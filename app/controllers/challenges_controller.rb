@@ -2,7 +2,6 @@
 
 # Controller for challenge listings detail page and contact form handling
 class ChallengesController < ApplicationController
-  include ChallengesHelper
 
   def show
     @challenge = Challenge.includes(phases: { phase_winner: :winners }).
@@ -15,7 +14,7 @@ class ChallengesController < ApplicationController
     end
 
     set_archived_notice if @challenge.archived?
-    @logo_url = challenge_logo_url(@challenge)
+    @logo_url = helpers.challenge_logo_url(@challenge)
     render :show
   end
 

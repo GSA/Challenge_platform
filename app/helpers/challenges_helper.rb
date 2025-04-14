@@ -25,7 +25,7 @@ module ChallengesHelper
       Storage.url(agency_avatar_path(challenge.agency, "original"))
     else
       # Fallback to Challenge.gov logo if no agency logo is found
-      helpers.image_path("challenge-logo.svg")
+      image_path("challenge-logo.svg")
     end
   end
 

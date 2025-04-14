@@ -33,7 +33,7 @@
             <div class="logo-container">
               <% if @logo_url %>
                 <% if @challenge.imported && @challenge.sub_status == "archived" && @logo_url.include?("challenge-logo-2_1") %>
-                  <%= image_tag @challenge.agency_logo, 
+                  <%= image_tag agency_logo_url(@challenge),
                       alt: "Agency logo for #{@challenge.agency_name}",
                       class: "agency-logo" %>
                 <% else %>
