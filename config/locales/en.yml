@@ -167,4 +167,17 @@ en:
       subject: "You have been assigned to evaluate submission %{submission_id}"
     recusal:
       subject: "An evaluator has recused from evaluating submission %{submission_id}"
-
+    contact_form:
+      subject: "Message from Public Visitor: %{challenge_title}"
+      confirmation_subject: "Challenge.gov - Challenge %{challenge_title}: Contact Confirmation"
+      sent_successfully: "Your message has been sent successfully."
+  challenge_listing:
+    alerts:
+      error: "Challenge not found"
+      archived: "This challenge is closed to submissions."
+    apply: 
+      view_on_external_website: "View on external website"
+      apply_on_external_website: "Apply on external website"
+      in_challenge_gov: "Apply for this challenge"
+      future_phase: "Apply starting %{date}"
+      closed_to_submissions: "Closed to submissions"

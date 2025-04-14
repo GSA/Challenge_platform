@@ -169,6 +169,7 @@ class Challenge < ApplicationRecord
   attribute :short_url, :string
   attribute :upload_logo, :boolean
   attribute :is_multi_phase, :boolean
+  attribute :logo_alt_text, :string
   attribute :terms_equal_rules, :boolean
   attribute :file_upload_required, :boolean
   attribute :upload_instruction_note, :string
@@ -182,4 +183,8 @@ class Challenge < ApplicationRecord
   scope :open, -> { where(sub_status: 'open') }
   scope :opening_soon, -> { where(status: 'published', sub_status: nil) }
   scope :closed, -> { where(sub_status: 'closed') }
+
+  def archived?
+    sub_status == "archived"
+  end
 end

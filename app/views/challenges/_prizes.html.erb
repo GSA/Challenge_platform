@@ -1,0 +1,46 @@
+<div class="usa-card" data-controller="challenge-detail">
+  <div class="grid-row border-bottom margin-bottom-6" style="border-color: #c6cace">
+    <div class="grid-col">
+      <h2 class="font-sans-xl margin-y-2">Prizes</h2>
+    </div>
+  </div>
+
+  <% if show_monetary_prizes?(@challenge) %>
+    <div>
+      <h3 class="font-sans-xl margin-1"><b>Total cash prizes</b></h3>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= number_to_currency(@challenge.prize_total / 100) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if show_non_monetary_prizes?(@challenge) %>
+    <div>
+      <h3 class="font-sans-xl margin-1"><b>Non-monetary prizes</b></h3>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= sanitize @challenge.non_monetary_prizes %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @challenge.prize_description.present? %>
+    <div>
+      <h3 class="font-sans-xl margin-1"><b>Prize description</b></h3>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= sanitize @challenge.prize_description %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
