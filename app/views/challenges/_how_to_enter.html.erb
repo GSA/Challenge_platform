@@ -1,0 +1,41 @@
+<div class="usa-card inner-accordion-details" data-controller="challenge-detail">
+  <div class="grid-row border-bottom margin-bottom-6" style="border-color: #c6cace">
+    <div class="grid-col">
+      <h2 class="font-sans-xl margin-y-2">How to enter</h2>
+    </div>
+  </div>
+
+  <% if single_phase?(@challenge) %>
+    <div>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= sanitize @challenge.phases.first.how_to_enter %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <% @challenge.phases.each do |phase| %>
+      <div class="margin-bottom-8">
+        <h3 class="font-sans-lg margin-1">
+          <div class="display-flex flex-justify">
+            <span>
+              <b>Phase <%= phase_number(@challenge, phase) %><%= ": #{phase.title}" if phase.title.present? %></b>
+            </span>
+            <span class="phase__text <%= phase_status_class(phase) %>">
+              <%= phase_status_text(phase) %>
+            </span>
+          </div>
+        </h3>
+        <div class="usa-card usa-card__container">
+          <div class="usa-card-body">
+            <div>
+              <%= sanitize phase.how_to_enter %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

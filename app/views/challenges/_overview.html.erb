@@ -1,0 +1,31 @@
+<div class="usa-card" data-controller="challenge-detail" data-check-icon-url="<%= asset_path('images/usa-icons/check.svg') %>">
+  <div class="grid-row border-bottom" style="border-color: #c6cace">
+    <div class="grid-col">
+      <h2 class="font-sans-xl margin-y-2">Overview</h2>
+    </div>
+    <div class="grid-col display-flex flex-justify-end flex-align-center">
+      <button 
+        data-challenge-detail-target="copyButton"
+        data-action="click->challenge-detail#copyUrl" 
+        class="usa-button usa-button--unstyled display-flex flex-align-center" 
+        aria-label="Copy share link">
+        <%= image_tag('images/usa-icons/content_copy.svg', class: "usa-icon usa-icon--size-3 icon-primary-orange", alt: "copy") %>
+        <span class="text-primary">Copy share link</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="usa-card usa-card__container margin-y-6">
+    <div class="usa-card-body">
+      <div>
+        <%= sanitize @challenge.description %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.usa-button--unstyled:hover {
+  background-color: transparent;
+}
+</style>

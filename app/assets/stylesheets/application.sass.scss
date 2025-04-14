@@ -81,6 +81,10 @@ dialog::backdrop {
   filter: brightness(0) saturate(100%) invert(19%) sepia(28%) saturate(2849%) hue-rotate(197deg) brightness(94%) contrast(87%);
 }
 
+.icon-primary-orange {
+  filter: brightness(0) saturate(100%) invert(65%) sepia(75%) saturate(1080%) hue-rotate(327deg) brightness(101%) contrast(96%);
+}
+
 .unassign-recused-button {
   color: #b50909;
   box-shadow: inset 0 0 0 2px #b50909;
@@ -109,4 +113,370 @@ dialog::backdrop {
   line-height: 1;
   border: none;
   background-color: #0076D6;
+}
+
+// challenge show page
+.challenge-show-page {
+  .challenge-section {
+    display: none;
+  }
+
+  #overview {
+    display: block;
+  }
+
+  @media screen and (max-width: 850px) {
+    .challenge-sections-container {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 851px) {
+    .challenge-sections-container {
+      display: block;
+    }
+  }
+
+  .info-container {
+    display: flex;
+    align-items: center;
+
+    @media screen and (max-width: 1024px) {
+      flex-direction: column;
+      align-items: flex-start;
+
+      h2 {
+        margin-bottom: 0.5rem !important;
+      }
+
+      p {
+        margin-left: 0 !important;
+      }
+    }
+  }
+
+  .challenge-apply-button {
+    &:hover {
+      background-color: #e66f0e !important;
+      outline-offset: 2px;
+      color: #1b1b1b;
+    }
+  }
+}
+
+// challenge show page nav bar
+.challenge-nav-container {
+  .nav.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    
+    li {
+      margin: 0;
+      
+      &.active {
+        border-bottom: 4px solid #FA9441;
+      }
+      
+      a {
+        display: block;
+        color: #1B1B1B;
+        text-decoration: none;
+      }
+      
+      &.active a {
+        font-weight: bold;
+      }
+    }
+  }
+
+  .nav-accordion-button {
+    background-color: #005ea2;
+    color: white;
+  }
+
+  @media screen and (max-width: 850px) {
+    .challenge-detail-accordion {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .challenge-detail-accordion .usa-accordion__content {
+      padding: 1rem;
+    }
+
+    #challenge-nav {
+      display: none !important;
+    }
+
+    .mobile-only {
+      display: block;
+    }
+  }
+
+  @media screen and (min-width: 851px) {
+    .challenge-detail-accordion:not(#challenge-nav) {
+      display: none;
+    }
+
+    #challenge-nav {
+      display: block !important;
+    }
+
+    .mobile-only {
+      display: none !important;
+    }
+  }
+}
+
+// challenge show page logo(s)
+.custom-logo {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.agency-federal-partner-logo {
+  height: 100px;
+  margin: 0 5px;
+}
+
+.challenge-logo-details-page {
+  width: 100%;
+  height: auto;
+}
+
+// Challenge details page - judging and how to enter sections
+.inner-accordion-details {
+  .phase__text {
+    font-style: italic;
+    font-weight: bold;
+    margin-left: 1rem;
+    
+    &--closed {
+      color: #d54309;
+    }
+    
+    &--open {
+      color: #00a91c;
+    }
+  }
+  
+  .usa-accordion__button {
+    &[aria-expanded=true],
+    &[aria-expanded=false] {
+      background-color: #e6e6e6;
+      
+      &:hover {
+        background-color: #d6d6d6;
+      }
+    }
+  }
+}
+
+// print challenge show page
+@media print {
+  .usa-banner,
+  .usa-header,
+  .usa-nav,
+  .usa-footer,
+  .challenge-nav-container,
+  .usa-button,
+  .usa-link[onclick*="print"] {
+    display: none !important;
+  }
+
+  .challenge-section {
+    display: block !important;
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+  }
+
+  .usa-accordion__content {
+    display: block !important;
+    height: auto !important;
+    visibility: visible !important;
+  }
+
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  @page {
+    margin: 2cm;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.3;
+  }
+
+  .usa-card {
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .grid-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
+  table {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  .usa-accordion__button {
+    &:before {
+      display: none !important;
+    }
+    
+    background-color: transparent !important;
+    color: black !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .challenge-section {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .info-container {
+    display: block !important;
+    width: 100% !important;
+    
+    h2 {
+      display: inline !important;
+      margin-right: 0.5em !important;
+    }
+
+    p, div {
+      display: inline !important;
+    }
+  }
+
+  .tablet\:grid-col-6 {
+    flex: 0 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .usa-card--border-radius {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .text-no-wrap {
+    white-space: normal !important;
+  }
+}
+
+// share social icons in challenge show page
+.share-menu-wrapper {
+  .usa-card[data-challenge-detail-target="menu"] {
+    display: none;
+  }
+
+  .usa-card[data-challenge-detail-target="menu"].is-visible {
+    display: block;
+    position: absolute;
+    background: white;
+    border: 1px solid #dfe1e2;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px 0 rgba(0, 94, 162, 0.2);
+  }
+
+  .usa-button--unstyled {
+    padding: 0.5rem;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .usa-button--unstyled:hover {
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+  }
+}
+
+// follow challenge modal
+.follow-challenge-modal {
+  .border-top {
+    border-top: 1px solid #c6cace;
+  }
+
+  .border-bottom {
+    border-bottom: 1px solid #c6cace;
+  }
+}
+
+#follow-challenge-modal {
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  &.radius-lg {
+    border-radius: 0.5rem;
+    border: none;
+    padding: 0;
+  }
+}
+
+// agency logos
+.challenge-show-page {
+  .agency-logos {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .agency-logo {
+      max-height: 50px;
+      width: auto;
+      object-fit: contain;
+    }
+  }
+}
+
+.winners-section {
+  margin-top: 2rem;
+
+  .winner-card {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #dfe1e2;
+    border-radius: 0.25rem;
+
+    .winner-image {
+      max-width: 100%;
+      height: auto;
+      margin: 1rem 0;
+    }
+
+    .winner-details {
+      margin-top: 1rem;
+    }
+  }
 }

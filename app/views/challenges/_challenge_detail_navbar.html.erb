@@ -1,0 +1,60 @@
+<div class="challenge-nav-container challenge-detail-nav" data-controller="challenge-detail">
+  <!-- Accordions for nav sections on mobile -->
+  <div class="usa-accordion usa-accordion--multiselectable challenge-detail-accordion" data-allow-multiple>
+    <% nav_items = [
+      { name: 'Overview', section: 'overview' },
+      { name: 'Timeline', section: 'timeline', hidden: !@challenge.timeline_events.present? },
+      { name: 'Prizes', section: 'prizes' },
+      { name: 'Rules', section: 'rules' },
+      { name: 'Judging', section: 'judging' },
+      { name: 'How to enter', section: 'how_to_enter' },
+      # Resources tab hidden - supporting_documents feature currently non-functional
+      # { name: 'Resources', section: 'resources' },
+      { name: 'FAQ', section: 'faq' },
+      { name: 'Contact', section: 'contact' },
+      { 
+        name: 'Winners', 
+        section: 'winners',
+        disabled: @challenge.phases.all? do |phase|
+          phase_winner = phase.phase_winner
+          !phase_winner || (
+            phase_winner.overview.blank? &&
+              phase_winner.overview_image_key.blank? &&
+              phase_winner.winners&.empty?
+          )
+        end
+      }
+    ] %>
+
+    <% nav_items.reject { |item| item[:hidden] }.each do |item| %>
+      <h4 class="usa-accordion__heading">
+        <button class="usa-accordion__button nav-accordion-button"
+            aria-expanded="<%= params[:section] == item[:section] || (params[:section].nil? && item[:section] == 'overview') ? 'true' : 'false' %>" 
+            aria-controls="accordion-<%= item[:section] %>"
+            style="<%= item[:disabled] ? 'cursor: not-allowed;' : nil %>"
+            <%= 'disabled' if item[:disabled] %>>
+          <%= item[:name] %>
+        </button>
+      </h4>
+      <div id="accordion-<%= item[:section] %>" class="usa-accordion__content nav-accordion-content">
+        <%= render partial: "challenges/#{item[:section]}", locals: { challenge: @challenge } %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Horizontal navbar for tablet and desktop -->
+  <div class="collapse navbar-collapse challenge-detail-accordion" id="challenge-nav">
+    <ul class="nav navbar-nav width-full display-flex flex-justify">
+      <% nav_items.reject { |item| item[:hidden] }.each do |item| %>
+        <li class="<%= 'active' if params[:section] == item[:section] || (params[:section].nil? && item[:section] == 'overview') %>">
+          <%= link_to item[:name], 
+              item[:disabled] ? "#" : "#{request.original_fullpath.split('#').first}##{item[:section]}", 
+              class: "padding-x-2 padding-y-1 text-no-underline font-sans-md",
+              data: { turbo: false },
+              style: item[:disabled] ? "color: #757575; cursor: not-allowed;" : nil,
+              onclick: "return #{!item[:disabled]};" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

@@ -36,4 +36,17 @@ module ChallengesHelper
   def challenge_logo_path(challenge, size = "original")
     "challenges/#{size}-#{challenge.logo_key}#{challenge.logo_extension}"
   end
+
+  def phase_winner_overview_image_path(phase_winner)
+    return nil if phase_winner.overview_image_key.nil?
+
+    Storage.url("phase_winners/#{phase_winner.id}" \
+                "/overview_image_#{phase_winner.overview_image_key}#{phase_winner.overview_image_extension}")
+  end
+
+  def winner_image_path(winner)
+    return nil if winner.image_key.nil?
+
+    Storage.url("phase_winners/#{winner.id}/winner_image_#{winner.image_key}#{winner.image_extension}")
+  end
 end
