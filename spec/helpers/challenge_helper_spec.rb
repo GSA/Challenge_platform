@@ -131,24 +131,42 @@ RSpec.describe ChallengeHelper, type: :helper do
 
   describe '#phase_winner_data?' do
     let(:phase_winner) { double('PhaseWinner') }
+    let(:winner) { double('Winner') }
 
     it 'returns true when overview is present' do
-      allow(phase_winner).to receive_messages(overview: 'Overview text', overview_image_path: nil, winners: [])
+      allow(phase_winner).to receive_messages(
+        overview: 'Overview text',
+        overview_image_key: nil,
+        winners: []
+      )
       expect(helper.phase_winner_data?(phase_winner)).to be true
     end
 
-    it 'returns true when overview_image_path is present' do
-      allow(phase_winner).to receive_messages(overview: nil, overview_image_path: 'path/to/image', winners: [])
+    it 'returns true when overview_image_key is present' do
+      allow(phase_winner).to receive_messages(
+        overview: nil,
+        overview_image_key: 'some_key.jpg',
+        winners: []
+      )
       expect(helper.phase_winner_data?(phase_winner)).to be true
     end
 
     it 'returns true when winners are present' do
-      allow(phase_winner).to receive_messages(overview: nil, overview_image_path: nil, winners: ['winner'])
+      allow(winner).to receive(:image_key).and_return('winner_image.jpg')
+      allow(phase_winner).to receive_messages(
+        overview: nil,
+        overview_image_key: nil,
+        winners: [winner]
+      )
       expect(helper.phase_winner_data?(phase_winner)).to be true
     end
 
     it 'returns false when no data is present' do
-      allow(phase_winner).to receive_messages(overview: nil, overview_image_path: nil, winners: [])
+      allow(phase_winner).to receive_messages(
+        overview: nil,
+        overview_image_key: nil,
+        winners: []
+      )
       expect(helper.phase_winner_data?(phase_winner)).to be false
     end
   end
