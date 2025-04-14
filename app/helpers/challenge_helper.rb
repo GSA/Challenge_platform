@@ -41,7 +41,7 @@ module ChallengeHelper
 
   def phase_winner_data?(phase_winner)
     phase_winner.overview.present? ||
-      phase_winner.overview_image_path.present? ||
+      phase_winner.overview_image_key.present? ||
       phase_winner.winners&.any?
   end
 

@@ -18,9 +18,9 @@
         disabled: @challenge.phases.all? do |phase|
           phase_winner = phase.phase_winner
           !phase_winner || (
-            (!phase_winner.overview || phase_winner.overview.blank?) &&
-            !phase_winner.overview_image_path &&
-            (phase_winner.winners&.empty?)
+            phase_winner.overview.blank? &&
+              phase_winner.overview_image_key.blank? &&
+              phase_winner.winners&.empty?
           )
         end
       }
