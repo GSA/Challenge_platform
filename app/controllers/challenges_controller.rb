@@ -47,7 +47,7 @@ class ChallengesController < ApplicationController
   end
 
   def return_to_section_path
-    if @challenge.status == "archived"
+    if @challenge.archived?
       archived_challenge_path(@challenge.custom_url || @challenge.id)
     else
       challenge_path(@challenge.custom_url || @challenge.id)

@@ -185,6 +185,6 @@ class Challenge < ApplicationRecord
   scope :closed, -> { where(sub_status: 'closed') }
 
   def archived?
-    status == "archived"
+    sub_status == "archived"
   end
 end
