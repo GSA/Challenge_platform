@@ -10,6 +10,7 @@ export default class extends Controller {
 
   connect() {
     window.addEventListener('hashchange', () => this.showActiveSection())
+    this.showActiveSection()
   }
 
   // Navbar
