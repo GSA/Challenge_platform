@@ -12,7 +12,7 @@ class ChallengesController < ApplicationController
       return
     end
 
-    set_archived_notice if @challenge.archived?
+    archived_notice if @challenge.archived?
     @logo_url = helpers.challenge_logo_url(@challenge)
     render :show
   end
@@ -52,7 +52,7 @@ class ChallengesController < ApplicationController
     end
   end
 
-  def set_archived_notice
+  def archived_notice
     flash[:info] = t('challenge_listing.alerts.archived')
   end
 
@@ -62,14 +62,14 @@ class ChallengesController < ApplicationController
 
   def handle_valid_contact_form
     result = ContactFormsService.send_email(@challenge, contact_form_params)
-    set_flash_for_contact_result(result)
+    flash_for_contact_result(result)
   end
 
   def handle_invalid_contact_form
     flash[:error] = helpers.contact_form_errors.values.flatten.join(", ")
   end
 
-  def set_flash_for_contact_result(result)
+  def flash_for_contact_result(result)
     if result[:success]
       flash[:notice] = t('mailers.contact_form.sent_successfully')
     else
