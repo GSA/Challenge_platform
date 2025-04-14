@@ -129,7 +129,7 @@ module SubmissionPeriodHelper
   end
 
   def format_local_datetime(date)
-    date.strftime("%B %d, %Y %I:%M %p")
+    date.strftime("%B %d, %Y %I:%M %p %Z")
   end
 
   def format_local_date(date)
