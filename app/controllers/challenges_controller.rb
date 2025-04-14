@@ -2,7 +2,6 @@
 
 # Controller for challenge listings detail page and contact form handling
 class ChallengesController < ApplicationController
-
   def show
     @challenge = Challenge.includes(phases: { phase_winner: :winners }).
       find_by(custom_url: params[:challenge])

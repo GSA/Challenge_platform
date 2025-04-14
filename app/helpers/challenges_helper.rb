@@ -40,7 +40,8 @@ module ChallengesHelper
   def phase_winner_overview_image_path(phase_winner)
     return nil if phase_winner.overview_image_key.nil?
 
-    Storage.url("phase_winners/#{phase_winner.id}/overview_image_#{phase_winner.overview_image_key}#{phase_winner.overview_image_extension}")
+    Storage.url("phase_winners/#{phase_winner.id}" \
+      "/overview_image_#{phase_winner.overview_image_key}#{phase_winner.overview_image_extension}")
   end
 
   def winner_image_path(winner)
