@@ -21,19 +21,12 @@ class ChallengesController < ApplicationController
     return unless find_challenge
 
     if helpers.valid_contact_form?
-      result = ContactFormsService.send_email(@challenge, contact_form_params)
-
-      if result[:success]
-        flash[:notice] = t('mailers.contact_form.sent_successfully')
-      else
-        flash[:error] = result[:errors].join(", ")
-      end
-
-      redirect_to return_to_section_path, allow_other_host: false
+      handle_valid_contact_form
     else
-      flash[:error] = helpers.contact_form_errors.values.flatten.join(", ")
-      redirect_to return_to_section_path, allow_other_host: false
+      handle_invalid_contact_form
     end
+
+    redirect_to return_to_section_path, allow_other_host: false
   end
 
   private
@@ -65,5 +58,22 @@ class ChallengesController < ApplicationController
 
   def contact_form_params
     params.permit(:email, :body)
+  end
+
+  def handle_valid_contact_form
+    result = ContactFormsService.send_email(@challenge, contact_form_params)
+    set_flash_for_contact_result(result)
+  end
+
+  def handle_invalid_contact_form
+    flash[:error] = helpers.contact_form_errors.values.flatten.join(", ")
+  end
+
+  def set_flash_for_contact_result(result)
+    if result[:success]
+      flash[:notice] = t('mailers.contact_form.sent_successfully')
+    else
+      flash[:error] = result[:errors].join(", ")
+    end
   end
 end

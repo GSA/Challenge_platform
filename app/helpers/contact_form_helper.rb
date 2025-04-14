@@ -4,6 +4,7 @@
 module ContactFormHelper
   def valid_contact_form?
     return false unless params[:email].present? && params[:body].present?
+
     email_valid? && body_valid?
   end
 
