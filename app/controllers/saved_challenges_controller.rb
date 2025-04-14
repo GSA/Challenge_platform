@@ -11,10 +11,9 @@ class SavedChallengesController < ApplicationController
     @closed_saved_challenges = @challenges_saved.closed.includes([:agency, :sub_agency])
   end
 
+  # This intentionally ignores failed create, because the challenge is already saved (violates unique constraint)
   def create
-    saved_challenge = SavedChallenge.new(user: current_user, challenge_id: params[:challenge_id])
-    saved_challenge.save
-    # If save failed, the challenge is already saved (violates unique constraint)
+    current_user.saved_challenges.create(challenge_id: params[:challenge_id])
     redirect_to saved_challenges_path, notice: I18n.t("solvers.alerts.challenge_saved")
   end
 

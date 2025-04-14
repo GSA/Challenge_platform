@@ -56,6 +56,8 @@ module ChallengePlatform
       base_url: ENV.fetch("PAGES_BASE_URL", "/preview/gsa/challenges-and-prizes/staging")
     }
 
+    config.gov_delivery_topic_subscribe_url = ENV.fetch("GOV_DELIVERY_TOPIC_SUBSCRIBE_URL", nil)
+
     config.assets.initialize_on_precompile = false
 
     # TODO: Remove this, it helps show mailer previews in the browser
