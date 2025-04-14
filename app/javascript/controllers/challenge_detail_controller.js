@@ -2,6 +2,11 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["copyButton", "modal", "button", "content", "menu", "section"]
+  static values = {
+    url: String,
+    title: String,
+    description: String
+  }
 
   connect() {
     window.addEventListener('hashchange', () => this.showActiveSection())
@@ -47,20 +52,35 @@ export default class extends Controller {
   share(event) {
     event.preventDefault()
     const type = event.currentTarget.dataset.shareType
-  
+    const url = this.urlValue
+    const title = this.titleValue
+    const description = this.descriptionValue
+    
     switch(type) {
       case 'facebook':
-        window.open('https://www.facebook.com/ChallengeGov', '_blank')
+        const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+        window.open(fbUrl, '_blank', 'noopener,noreferrer')
         break
-      case 'twitter':
-        window.open('https://www.twitter.com/ChallengeGov', '_blank')
-        break
+
       case 'linkedin':
-        window.open('https://www.linkedin.com/company/challengegov/', '_blank')
+        const linkedinText = `${title}\n\n${description}\n${url}`
+        const linkedinUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(linkedinText)}`
+        window.open(linkedinUrl, '_blank', 'noopener,noreferrer')
         break
+
+      case 'twitter':
+        const twitterParams = new URLSearchParams({
+          url: url,
+          text: title,
+          via: 'ChallengeGov',
+          hashtags: 'prizechallenge,innovation'
+        })
+        window.open(`https://twitter.com/intent/tweet?${twitterParams}`, '_blank', 'noopener,noreferrer')
+        break
+
       case 'email':
         const subject = encodeURIComponent("Sharing a challenge from Challenge.Gov!")
-        const body = encodeURIComponent(`Check out this challenge: ${window.location.href}`)
+        const body = encodeURIComponent(`Check out this challenge: ${url}`)
         window.location.href = `mailto:?subject=${subject}&body=${body}`
         break
     }

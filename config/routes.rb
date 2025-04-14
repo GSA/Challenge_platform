@@ -49,9 +49,13 @@ Rails.application.routes.draw do
     get 'materials', on: :member, to: "submission_materials#show"
   end
 
-  resources :challenges, only: [:show], param: :challenge do
-    get 'archived', on: :member
-    post 'contact', on: :member
+  resources :challenges, only: [:show], param: :challenge, path: '/challenges' do
+    collection do
+      get 'archived/:challenge', to: 'challenges#show', as: :archived
+    end
+    member do
+      post 'contact'
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

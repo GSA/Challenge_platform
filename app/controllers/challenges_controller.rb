@@ -14,6 +14,7 @@ class ChallengesController < ApplicationController
       return
     end
 
+    set_archived_notice if @challenge.archived?
     @logo_url = challenge_logo_url(@challenge)
     render :show
   end
@@ -53,6 +54,10 @@ class ChallengesController < ApplicationController
     else
       challenge_path(@challenge.custom_url || @challenge.id)
     end
+  end
+
+  def set_archived_notice
+    flash[:info] = t('challenge_listing.alerts.archived')
   end
 
   def contact_form_params

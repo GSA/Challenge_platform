@@ -183,4 +183,8 @@ class Challenge < ApplicationRecord
   scope :open, -> { where(sub_status: 'open') }
   scope :opening_soon, -> { where(status: 'published', sub_status: nil) }
   scope :closed, -> { where(sub_status: 'closed') }
+
+  def archived?
+    status == "archived"
+  end
 end
