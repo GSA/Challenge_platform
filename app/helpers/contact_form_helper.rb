@@ -2,19 +2,19 @@
 
 # Helper methods for the challenge contact form
 module ContactFormHelper
-  def contact_form
-    if valid_contact_form?
-      render json: { success: true }, status: :ok
-    else
-      render json: { email: email_errors, body: body_errors }, status: :unprocessable_entity
-    end
+  def valid_contact_form?
+    return false unless params[:email].present? && params[:body].present?
+    email_valid? && body_valid?
+  end
+
+  def contact_form_errors
+    {
+      email: email_errors,
+      body: body_errors
+    }
   end
 
   private
-
-  def valid_contact_form?
-    email_valid? && body_valid?
-  end
 
   def email_valid?
     params[:email].present? && params[:email] =~ URI::MailTo::EMAIL_REGEXP
