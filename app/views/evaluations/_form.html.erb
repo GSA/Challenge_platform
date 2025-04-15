@@ -77,7 +77,8 @@
                   class: "usa-textarea usa-character-count__field #{input_error_class(score_fields, :comment)}",
                   data: {
                     "action": (@evaluation.evaluation_form.comments_required? ? "form-validation#validatePresence focusout->form-validation#validatePresence" : nil),
-                    "field-label": "comment"
+                    "field-label": "comment",
+                    "field-name": evaluation_score_id(score_fields, "comment", score_fields.index)
                   }.compact_blank,
                   disabled: %>
 

@@ -22,7 +22,9 @@ module EvaluationScoresHelper
     when 'numeric'
       score_numeric_input(score_fields, field, field_id, field_name, **opts)
     else # rating or binary
-      content_tag(:div, class: "usa-fieldset") do
+      content_tag(:div, class: "usa-fieldset",
+                        data: { field_name: evaluation_score_id(score_fields, field, score_fields.index) },
+                        tabIndex: "-1") do
         score_options(criterion).each do |value, label|
           concat(score_radio_input(score_fields, value, label, field:, id: field_id, name: field_name, **opts))
         end
@@ -51,8 +53,11 @@ module EvaluationScoresHelper
                       data: {
                         'evaluation-score-target': "scoreInput",
                         action: "input->evaluation-score#calculateScore form-validation#validatePresence",
-                        'field-label': "score"
-                      }, disabled: opts[:disabled]
+                        'field-label': "score",
+                        'field-name': evaluation_score_id(score_fields, field, score_fields.index)
+                      },
+                      tabIndex: "-1",
+                      disabled: opts[:disabled]
              ))
     end
   end

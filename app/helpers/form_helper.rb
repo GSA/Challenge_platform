@@ -38,7 +38,8 @@ module FormHelper
 
     errors = ordered_errors_for(form)
 
-    content_tag(:div, class: "usa-alert usa-alert--error margin-y-4 maxw-tablet", role: "alert", data: {controller: "error-links"}) do
+    content_tag(:div, class: "usa-alert usa-alert--error margin-y-4 maxw-tablet", role: "alert",
+                      data: { controller: "error-links" }) do
       content_tag(:div, class: "usa-alert__body") do
         form_errors_heading(form, errors) + form_errors_description(form) + form_errors_list(form, errors)
       end
@@ -75,7 +76,7 @@ module FormHelper
         errors.map do |error|
           field_id = "#{model_name}_#{error[:attribute]}"
           content_tag(:li) do
-            link_to(error[:message], "##{field_id}", data: { action: "click->error-links#focus" })
+            link_to(error[:message], "", data: { action: "click->error-links#focus", target_id: field_id })
           end
         end
       )
@@ -115,7 +116,8 @@ module FormHelper
       next [] if record.errors[field].blank?
 
       record.errors.messages_for(field).map do |msg|
-        error_object( format_association_error(msg, association_name, index), "#{association_name}_attributes_#{index - 1}_#{field}")
+        error_object(format_association_error(msg, association_name, index),
+                     "#{association_name}_attributes_#{index - 1}_#{field}")
       end
     end
   end
@@ -126,7 +128,7 @@ module FormHelper
   end
 
   def error_object(message, attribute)
-    {message:, attribute:}
+    { message:, attribute: }
   end
 
   def formatted_object_name(form, identifier)

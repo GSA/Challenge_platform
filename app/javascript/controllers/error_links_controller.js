@@ -2,11 +2,19 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   focus(event) {
-    const targetId = event.currentTarget.getAttribute("href").slice(1);
-    const el = document.getElementById(targetId);
+    event.preventDefault();
+
+    const targetId = event.currentTarget.dataset.targetId;
+    let el = document.getElementById(targetId);
+
+    if (!el) {
+      console.log("Inside", `[data-field-name="${targetId}"]`);
+      el = document.querySelector(`[data-field-name="${targetId}"]`);
+    }
 
     if (!el) return;
 
-    el.focus();
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.focus({ preventScroll: true }); // for accessibility
   }
 }
