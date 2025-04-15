@@ -43,8 +43,9 @@ module ChallengePlatform
       private_key_path: ENV.fetch("LOGIN_PRIVATE_KEY_PATH", "config/private.pem")
     }
 
+    # TODO: revert this
     config.phx_interop = {
-      phx_uri: ENV.fetch("PHOENIX_URI", nil),
+      phx_uri: ENV.fetch("PHOENIX_URI", "http://localhost:4000"),
       login_secret: ENV.fetch("LOGIN_SECRET", "login_secret_123"),
       jwt_secret: ENV.fetch("JWT_SECRET", "jwt_secret_123")
     }
@@ -54,6 +55,8 @@ module ChallengePlatform
       host: ENV.fetch("PAGES_HOST", "https://federalist-2c628203-05c2-48ab-8f87-3eda79380559.sites.pages.cloud.gov"),
       base_url: ENV.fetch("PAGES_BASE_URL", "/preview/gsa/challenges-and-prizes/staging")
     }
+
+    config.gov_delivery_topic_subscribe_url = ENV.fetch("GOV_DELIVERY_TOPIC_SUBSCRIBE_URL", nil)
 
     config.assets.initialize_on_precompile = false
   end

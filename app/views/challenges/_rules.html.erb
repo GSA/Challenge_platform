@@ -1,0 +1,42 @@
+<div class="usa-card" data-controller="challenge-detail">
+  <div class="grid-row border-bottom margin-bottom-6" style="border-color: #c6cace">
+    <div class="grid-col">
+      <h2 class="font-sans-xl margin-y-2">Rules</h2>
+    </div>
+  </div>
+
+  <div>
+    <h3 class="font-sans-xl margin-1"><b>Eligibility requirements</b></h3>
+    <div class="usa-card usa-card__container">
+      <div class="usa-card-body">
+        <div>
+          <%= sanitize @challenge.eligibility_requirements %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3 class="font-sans-xl margin-1"><b>Rules</b></h3>
+    <div class="usa-card usa-card__container">
+      <div class="usa-card-body">
+        <div>
+          <%= sanitize @challenge.rules %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% unless @challenge.terms_equal_rules %>
+    <div>
+      <h3 class="font-sans-xl margin-1"><b>Terms and conditions</b></h3>
+      <div class="usa-card usa-card__container">
+        <div class="usa-card-body">
+          <div>
+            <%= sanitize @challenge.terms_and_conditions %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

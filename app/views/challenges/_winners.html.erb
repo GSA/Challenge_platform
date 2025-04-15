@@ -1,0 +1,48 @@
+<div class="usa-card" data-controller="challenge-detail">
+  <div class="grid-row border-bottom" style="border-color: #c6cace">
+    <div class="grid-col">
+      <h2 class="font-sans-xl margin-y-2">Winners</h2>
+    </div>
+  </div>
+
+  <div class="margin-top-6">
+    <% @challenge.phases.each do |phase| %>
+      <% phase_winner = phase.phase_winner %>
+      <% if phase_winner && phase_winner_data?(phase_winner) %>
+        <div class="usa-card">
+          <div class="usa-card-body ql-editor">
+            <% if phase_winner.overview_image_key.present? %>
+              <%= image_tag phase_winner_overview_image_path(phase_winner),
+                  alt: "Winner overview image for #{phase.title}",
+                  class: "width-full" %>
+            <% end %>
+            
+            <h1 class="usa-tbm-1rem"><%= challenge_phase_title(phase.challenge, phase) %></h1>
+            
+            <div class="usa-tbm-1rem">
+              <%= sanitize phase_winner.overview %>
+            </div>
+
+            <% if phase_winner.winners&.any? %>
+              <div class="winners-section">
+                <% phase_winner.winners.each do |winner| %>
+                  <div class="winner-card">
+                    <% if winner.image_key.present? %>
+                      <%= image_tag winner_image_path(winner),
+                          alt: "Winner image for #{winner.place_title}",
+                          class: "winner-image" %>
+                    <% end %>
+                    <h3><%= winner.name %></h3>
+                    <p class="winner-details">
+                      <%= sanitize winner.place_title %>
+                    </p>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

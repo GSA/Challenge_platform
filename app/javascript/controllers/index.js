@@ -4,6 +4,12 @@
 
 import { application } from "./application";
 
+import ChallengeDetailController from "./challenge_detail_controller";
+application.register("challenge-detail", ChallengeDetailController);
+
+import ContactFormController from "./contact_form_controller";
+application.register("contact-form", ContactFormController);
+
 import DeleteEvaluatorModalController from "./delete_evaluator_modal_controller";
 application.register("delete-evaluator-modal", DeleteEvaluatorModalController);
 
