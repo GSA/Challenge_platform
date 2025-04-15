@@ -38,7 +38,7 @@ module FormHelper
 
     errors = ordered_errors_for(form)
 
-    content_tag(:div, class: "usa-alert usa-alert--error margin-y-4 maxw-tablet", role: "alert") do
+    content_tag(:div, class: "usa-alert usa-alert--error margin-y-4 maxw-tablet", role: "alert", data: {controller: "error-links"}) do
       content_tag(:div, class: "usa-alert__body") do
         form_errors_heading(form, errors) + form_errors_description(form) + form_errors_list(form, errors)
       end
@@ -67,9 +67,18 @@ module FormHelper
     content_tag(:p, "Please review and complete all required fields for the #{form_name.downcase}.")
   end
 
-  def form_errors_list(_form, errors)
+  def form_errors_list(object, errors)
+    model_name = object.model_name.param_key
+
     content_tag(:ul) do
-      safe_join(errors.map { |error| content_tag(:li, error) })
+      safe_join(
+        errors.map do |error|
+          field_id = "#{model_name}_#{error[:attribute]}"
+          content_tag(:li) do
+            link_to(error[:message], "##{field_id}", data: { action: "click->error-links#focus" })
+          end
+        end
+      )
     end
   end
 
@@ -86,7 +95,9 @@ module FormHelper
   def attribute_errors(form, attribute)
     return [] if form.errors[attribute].blank?
 
-    form.errors.messages_for(attribute)
+    form.errors.messages_for(attribute).map do |msg|
+      error_object(msg, attribute)
+    end
   end
 
   def error_order(record)
@@ -104,7 +115,7 @@ module FormHelper
       next [] if record.errors[field].blank?
 
       record.errors.messages_for(field).map do |msg|
-        format_association_error(msg, association_name, index)
+        error_object( format_association_error(msg, association_name, index), "#{association_name}_attributes_#{index - 1}_#{field}")
       end
     end
   end
@@ -112,6 +123,10 @@ module FormHelper
   def format_association_error(msg, association_name, index)
     singular_name = association_name.to_s.singularize.humanize.downcase
     "#{msg} for #{singular_name} #{index}"
+  end
+
+  def error_object(message, attribute)
+    {message:, attribute:}
   end
 
   def formatted_object_name(form, identifier)

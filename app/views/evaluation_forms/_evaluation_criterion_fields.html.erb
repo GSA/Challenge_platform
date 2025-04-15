@@ -92,7 +92,7 @@
   </div>
 
   <div class="usa-form-group">
-    <fieldset class="usa-fieldset margin-top-205">
+    <fieldset class="usa-fieldset margin-top-205" id="<%= criteria_field_id(f, "scoring_type", is_template) %>" tabindex="-1">
       <legend class="usa-legend display-flex flex-align-center text-bold <%= label_error_class(f, :scoring_type) %>">
         <span class="margin-right-05">Scale Type</span>
         <span class="margin-right-05" style="color: darkred;">*</span>
@@ -173,7 +173,7 @@
       </div>
     </div>
 
-    <div class="criteria-scale-option-labels" data-evaluation-criteria-target="optionLabels">
+    <div class="criteria-scale-option-labels" data-evaluation-criteria-target="optionLabels" id="<%= criteria_field_id(f, "option_labels", is_template) %>" tabindex="-1">
       <% (0..10).each do |index| %>
         <% disabledOptionLabel = is_template || !f.object.scoring_type.present? || f.object.numeric? || ((f.object.option_range_start && index < f.object.option_range_start) || (f.object.option_range_end && index > f.object.option_range_end)) %>
 

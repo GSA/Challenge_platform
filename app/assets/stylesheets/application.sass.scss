@@ -110,3 +110,16 @@ dialog::backdrop {
   border: none;
   background-color: #0076D6;
 }
+
+:target {
+  animation: highlight 1s ease;
+}
+
+@keyframes highlight {
+  0% { background-color: #fef3c0; }
+  100% { background-color: transparent; }
+}
+
+[tabindex]:focus {
+  outline-offset: .5rem;
+}

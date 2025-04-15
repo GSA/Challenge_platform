@@ -40,7 +40,7 @@ class EvaluationForm < ApplicationRecord
   validate :criteria_weights_must_sum_to_one_hundred
   validate :validate_unique_criteria_titles
 
-  ERROR_ORDER = %i[instructions scale_type base evaluation_criteria closing_date].freeze
+  ERROR_ORDER = %i[instructions scale_type criteria evaluation_criteria closing_date].freeze
 
   def weighted_scoring?
     scale_type == "weight"
@@ -71,7 +71,7 @@ class EvaluationForm < ApplicationRecord
 
     criteria.each { |c| c.errors.add(:title, I18n.t("evaluation_criteria.errors.duplicate_title")) }
 
-    errors.add(:base, I18n.t("evaluation_form.errors.criteria_unique_titles"))
+    errors.add("criteria", I18n.t("evaluation_form.errors.criteria_unique_titles"))
   end
 
   def criteria_weights_must_sum_to_one_hundred
@@ -89,6 +89,6 @@ class EvaluationForm < ApplicationRecord
       criteria.errors.add(:points_or_weight, I18n.t("evaluation_criteria.errors.must_sum_to_100"))
     end
 
-    errors.add(:base, I18n.t("evaluation_form.errors.criteria_weight_total"))
+    errors.add("criteria", I18n.t("evaluation_form.errors.criteria_weight_total"))
   end
 end

@@ -28,6 +28,9 @@ application.register("evaluation-score", EvaluationScoreController);
 import ExportSubmissionsController from "./export_submissions_controller";
 application.register("export-submissions", ExportSubmissionsController);
 
+import ErrorLinksController from "./error_links_controller";
+application.register("error-links", ErrorLinksController);
+
 import FormValidationController from "./form_validation_controller";
 application.register("form-validation", FormValidationController);
 

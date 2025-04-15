@@ -39,7 +39,7 @@
       </div>
 
       <div class="usa-form-group">
-        <fieldset class="usa-fieldset margin-top-205">
+        <fieldset class="usa-fieldset margin-top-205" id="evaluation_form_scale_type" tabindex="-1">
           <legend class="usa-legend usa-process-list__heading display-flex flex-align-center font-sans-md text-bold <%= label_error_class(form, :scale_type) %>">
             <span class="margin-right-05">Scoring Type</span>
             <span class="margin-right-05" style="color: darkred;">*</span>
@@ -79,24 +79,24 @@
           <div class="margin-top-1">
             <%= inline_error(form, :scale_type) %>
           </div>
-
-          <div class="display-flex flex-align-center text-bold margin-top-3 maxw-mobile-lg">
-            <div class="usa-checkbox ">
-              <%= form.check_box :comments_required, class: "usa-checkbox__input usa-checkbox__input--tile", id: "evaluation_form_comments_required", disabled: disabled %>
-              <%= form.label :comments_required, class: "usa-checkbox__label" do %>
-                <span class="text-bold">Require score comments (optional)</span>
-                <span class="usa-checkbox__label-description">Check the box if the evaluators are required to provide comments on their scores.</span>
-              <% end %>
-            </div>
-          </div>
         </fieldset>
+
+        <div class="display-flex flex-align-center text-bold margin-top-3 maxw-mobile-lg">
+          <div class="usa-checkbox ">
+            <%= form.check_box :comments_required, class: "usa-checkbox__input usa-checkbox__input--tile", id: "evaluation_form_comments_required", disabled: disabled %>
+            <%= form.label :comments_required, class: "usa-checkbox__label" do %>
+              <span class="text-bold">Require score comments (optional)</span>
+              <span class="usa-checkbox__label-description">Check the box if the evaluators are required to provide comments on their scores.</span>
+            <% end %>
+          </div>
+        </div>
       </div>
     </li>
 
     <li class="usa-process-list__item usa-process-list__item--primary">
       <h3 class="usa-process-list__heading">Evaluation Criteria</h3>
 
-      <div data-controller="evaluation-criteria">
+      <div data-controller="evaluation-criteria" id="evaluation_form_criteria" tabindex="-1">
         <div id="criteria-list" class="margin-top-4 usa-accordion usa-accordion__multiselectable" data-allow-multiple data-evaluation-criteria-target="criteriaList">
           <% if evaluation_form.evaluation_criteria.empty? %>
             <%= form.fields_for :evaluation_criteria, EvaluationCriterion.new do |ec| %>
