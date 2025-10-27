@@ -93,7 +93,7 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     base64 (0.2.0)
     benchmark (0.4.0)
-    bigdecimal (3.1.9)
+    bigdecimal (3.3.1)
     bindex (0.8.1)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
@@ -117,7 +117,7 @@ GEM
       descendants_tracker (~> 0.0.1)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.0)
-    crack (1.0.0)
+    crack (1.0.1)
       bigdecimal
       rexml
     crass (1.0.6)
@@ -165,7 +165,7 @@ GEM
     formatador (1.1.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    hashdiff (1.1.2)
+    hashdiff (1.2.1)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
@@ -251,7 +251,7 @@ GEM
     psych (5.2.3)
       date
       stringio
-    public_suffix (6.0.1)
+    public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
@@ -303,7 +303,7 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
-    rexml (3.4.1)
+    rexml (3.4.4)
     rspec-core (3.13.3)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.3)
@@ -395,7 +395,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webmock (3.25.0)
+    webmock (3.26.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
