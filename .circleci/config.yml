@@ -97,7 +97,7 @@ jobs:
           name: Run Tests
           command: |
             mkdir /tmp/test-results
-            ./cc-test-reporter before-build
+            ./cc-test-reporter before-build || true
 
             # Run Rspec tests
             bundle exec rspec --format progress \
@@ -108,7 +108,7 @@ jobs:
 
             ./cc-test-reporter format-coverage coverage/coverage.json \
               --input-type simplecov \
-              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json
+              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json || true
 
       - persist_to_workspace:
           root: ~/Challenge_platform/coverage
