@@ -111,9 +111,9 @@ jobs:
               --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json || true
 
       - persist_to_workspace:
-          root: ~/Challenge_platform/coverage
+          root: ~/Challenge_platform/
           paths:
-          - codeclimate.rspec.*.json
+          - coverage
 
       # collect reports
       - store_test_results:
