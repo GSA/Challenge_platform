@@ -138,13 +138,13 @@ jobs:
           at: ~/Challenge_platform/coverage
 
       - run:
-          name: Report coverage to Code Climate
+          name: Report coverage to Code Climate (pass if fail)
           command: |
             ./cc-test-reporter sum-coverage \
               coverage/codeclimate.*.json \
-              --output coverage/codeclimate_full_report.json
+              --output coverage/codeclimate_full_report.json || true
 
-            ./cc-test-reporter upload-coverage --input coverage/codeclimate_full_report.json
+            ./cc-test-reporter upload-coverage --input coverage/codeclimate_full_report.json || true
 
   dev-deploy:
     parallelism: 1
