@@ -97,7 +97,7 @@ jobs:
           name: Run Tests
           command: |
             mkdir /tmp/test-results
-            ./cc-test-reporter before-build
+            ./cc-test-reporter before-build || true
 
             # Run Rspec tests
             bundle exec rspec --format progress \
@@ -108,12 +108,12 @@ jobs:
 
             ./cc-test-reporter format-coverage coverage/coverage.json \
               --input-type simplecov \
-              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json
+              --output coverage/codeclimate.rspec.$CIRCLE_NODE_INDEX.3.2.4.json || true
 
       - persist_to_workspace:
-          root: ~/Challenge_platform/coverage
+          root: ~/Challenge_platform/
           paths:
-          - codeclimate.rspec.*.json
+          - coverage
 
       # collect reports
       - store_test_results:
@@ -138,13 +138,13 @@ jobs:
           at: ~/Challenge_platform/coverage
 
       - run:
-          name: Report coverage to Code Climate
+          name: Report coverage to Code Climate (pass if fail)
           command: |
             ./cc-test-reporter sum-coverage \
               coverage/codeclimate.*.json \
-              --output coverage/codeclimate_full_report.json
+              --output coverage/codeclimate_full_report.json || true
 
-            ./cc-test-reporter upload-coverage --input coverage/codeclimate_full_report.json
+            ./cc-test-reporter upload-coverage --input coverage/codeclimate_full_report.json || true
 
   dev-deploy:
     parallelism: 1
